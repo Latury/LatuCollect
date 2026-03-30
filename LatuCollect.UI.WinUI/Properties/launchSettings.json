@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LatuCollect.UI.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LatuCollect.UI.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
