@@ -32,7 +32,9 @@
 
     <Grid>
 
+        <!--  =====================  -->
         <!--  STRUCTURE PRINCIPALE  -->
+        <!--  =====================  -->
 
         <!--  LIGNES  -->
         <Grid.RowDefinitions>
@@ -47,7 +49,9 @@
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
-        <!--  ZONE GAUCHE  -->
+        <!--  =====================  -->
+        <!--  ZONE GAUCHE : PROJET  -->
+        <!--  =====================  -->
         <Border
             Grid.Row="0"
             Grid.Column="0"
@@ -65,39 +69,41 @@
                     Margin="5"
                     Foreground="White"
                     Text="   📁 Core" />
+
                 <CheckBox
-                    Margin="20,5"
+                    x:Name="FileImportCheckBox"
                     Content="FileImportService.cs"
-                    Foreground="White" />
+                    IsChecked="{Binding IsFileImportChecked, Mode=TwoWay}" />
+
                 <CheckBox
-                    Margin="20,5"
+                    x:Name="FileExportCheckBox"
                     Content="FileExportService.cs"
-                    Foreground="White" />
+                    IsChecked="{Binding IsFileExportChecked, Mode=TwoWay}" />
 
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="   📁 UI" />
                 <CheckBox
-                    Margin="20,5"
+                    x:Name="MainWindowCheckBox"
                     Content="MainWindow.xaml"
-                    Foreground="White" />
+                    IsChecked="{Binding IsMainWindowChecked, Mode=TwoWay}" />
 
                 <CheckBox
-                    Margin="5"
+                    x:Name="ReadmeCheckBox"
                     Content="README.md"
-                    Foreground="White" />
+                    IsChecked="{Binding IsReadmeChecked, Mode=TwoWay}" />
+
 
             </StackPanel>
 
         </Border>
 
-        <!--  ZONE CENTRE  -->
+        <!--  =====================  -->
+        <!--  ZONE CENTRE : OPTIONS  -->
+        <!--  =====================  -->
         <Border
             Grid.Row="0"
             Grid.Column="1"
             Margin="5"
             Background="#2D2D30">
+
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
                 <TextBlock
@@ -107,42 +113,53 @@
                     Text="FORMAT" />
 
                 <RadioButton
-                    Margin="0,5"
                     Content="TXT"
+                    GroupName="Format"
                     IsChecked="True" />
-                <RadioButton Margin="0,5" Content="Markdown" />
+
+                <RadioButton Content="Markdown" GroupName="Format" />
 
             </StackPanel>
+
         </Border>
 
-        <!--  ZONE DROITE  -->
+        <!--  =====================  -->
+        <!--  ZONE DROITE : APERÇU  -->
+        <!--  =====================  -->
         <Border
             Grid.Row="0"
             Grid.Column="2"
             Margin="5"
             Background="#252526">
+
             <ScrollViewer>
                 <TextBlock
+                    x:Name="PreviewText"
                     Margin="10"
                     Foreground="White"
-                    Text="Aperçu du contenu ici..."
+                    Text="{Binding PreviewText}"
                     TextWrapping="Wrap" />
             </ScrollViewer>
+
         </Border>
 
-        <!--  ZONE BASSE  -->
+        <!--  =====================  -->
+        <!--  ZONE BASSE : EXPORT  -->
+        <!--  =====================  -->
         <Border
             Grid.Row="1"
             Grid.ColumnSpan="3"
             Padding="10"
             Background="#333333">
+
             <Button
                 Width="140"
                 Height="40"
                 HorizontalAlignment="Right"
                 Content="Exporter" />
+
         </Border>
 
     </Grid>
 
-</Window>    
+</Window>
