@@ -1,19 +1,148 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                        LATUCOLLECT                                   ║
+    ║     Application de collecte et export de contenu multi-fichiers      ║
+    ║                                                                      ║
+    ║  Module : UI                                                         ║
+    ║  Fichier : MainWindow.xaml                                           ║
+    ║                                                                      ║
+    ║  Rôle :                                                              ║
+    ║  Définir la structure principale de l’interface utilisateur          ║
+    ║                                                                      ║
+    ║  Responsabilités principales :                                       ║
+    ║  - Définir la structure visuelle principale (Grid)                   ║
+    ║  - Organiser les zones : projet / options / aperçu / export          ║
+    ║  - Fournir une base UI conforme à la maquette                        ║
+    ║                                                                      ║
+    ║  Dépendances :                                                       ║
+    ║  - WinUI 3 (Microsoft.UI.Xaml)                                       ║
+    ║                                                                      ║
+    ║  Licence : MIT                                                       ║
+    ║  Copyright © 2026 Flo Latury                                         ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+
 <Window
     x:Class="LatuCollect.UI.WinUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:LatuCollect.UI.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="LatuCollect.UI.WinUI">
-
-    <Window.SystemBackdrop>
-        <MicaBackdrop />
-    </Window.SystemBackdrop>
+    mc:Ignorable="d">
 
     <Grid>
 
+        <!--  STRUCTURE PRINCIPALE  -->
+
+        <!--  LIGNES  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  COLONNES  -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  ZONE GAUCHE  -->
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5"
+            Background="#1E1E1E">
+
+            <StackPanel>
+
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="📁 Projet" />
+
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="   📁 Core" />
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="      FileImportService.cs" />
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="      FileExportService.cs" />
+
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="   📁 UI" />
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="      MainWindow.xaml" />
+
+                <TextBlock
+                    Margin="5"
+                    Foreground="White"
+                    Text="   README.md" />
+
+            </StackPanel>
+
+        </Border>
+
+        <!--  ZONE CENTRE  -->
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="5"
+            Background="#2D2D30">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <TextBlock
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    Foreground="White"
+                    Text="FORMAT" />
+
+                <RadioButton
+                    Margin="0,5"
+                    Content="TXT"
+                    IsChecked="True" />
+                <RadioButton Margin="0,5" Content="Markdown" />
+
+            </StackPanel>
+        </Border>
+
+        <!--  ZONE DROITE  -->
+        <Border
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="5"
+            Background="#252526">
+            <ScrollViewer>
+                <TextBlock
+                    Margin="10"
+                    Foreground="White"
+                    Text="Aperçu du contenu ici..."
+                    TextWrapping="Wrap" />
+            </ScrollViewer>
+        </Border>
+
+        <!--  ZONE BASSE  -->
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="3"
+            Padding="10"
+            Background="#333333">
+            <Button
+                Width="140"
+                Height="40"
+                HorizontalAlignment="Right"
+                Content="Exporter" />
+        </Border>
+
     </Grid>
-</Window>
+
+</Window>    

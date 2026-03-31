@@ -40,7 +40,7 @@ Tous les fichiers `.cs` et `.xaml` doivent contenir un en-tête standard.
 /*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers         ║
+║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
 ║  Module : NomDuModule                                                ║
 ║  Fichier : NomDuFichier.cs                                           ║
@@ -66,7 +66,7 @@ Tous les fichiers `.cs` et `.xaml` doivent contenir un en-tête standard.
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers         ║
+║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
 ║  Module : UI                                                         ║
 ║  Fichier : NomDuFichier.xaml                                         ║
