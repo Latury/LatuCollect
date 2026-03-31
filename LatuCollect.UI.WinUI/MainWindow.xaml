@@ -65,28 +65,28 @@
                     Margin="5"
                     Foreground="White"
                     Text="   📁 Core" />
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="      FileImportService.cs" />
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="      FileExportService.cs" />
+                <CheckBox
+                    Margin="20,5"
+                    Content="FileImportService.cs"
+                    Foreground="White" />
+                <CheckBox
+                    Margin="20,5"
+                    Content="FileExportService.cs"
+                    Foreground="White" />
 
                 <TextBlock
                     Margin="5"
                     Foreground="White"
                     Text="   📁 UI" />
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="      MainWindow.xaml" />
+                <CheckBox
+                    Margin="20,5"
+                    Content="MainWindow.xaml"
+                    Foreground="White" />
 
-                <TextBlock
+                <CheckBox
                     Margin="5"
-                    Foreground="White"
-                    Text="   README.md" />
+                    Content="README.md"
+                    Foreground="White" />
 
             </StackPanel>
 
