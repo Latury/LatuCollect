@@ -1,24 +1,15 @@
 <!--
     ╔══════════════════════════════════════════════════════════════════════╗
     ║                        LATUCOLLECT                                   ║
-    ║     Application de collecte et export de contenu multi-fichiers      ║
-    ║                                                                      ║
     ║  Module : UI                                                         ║
     ║  Fichier : MainWindow.xaml                                           ║
     ║                                                                      ║
-    ║  Rôle :                                                              ║
-    ║  Définir la structure principale de l’interface utilisateur          ║
+    ║  Rôle : Interface utilisateur principale                             ║
     ║                                                                      ║
-    ║  Responsabilités principales :                                       ║
-    ║  - Définir la structure visuelle principale (Grid)                   ║
-    ║  - Organiser les zones : projet / options / aperçu / export          ║
-    ║  - Fournir une base UI conforme à la maquette                        ║
-    ║                                                                      ║
-    ║  Dépendances :                                                       ║
-    ║  - WinUI 3 (Microsoft.UI.Xaml)                                       ║
-    ║                                                                      ║
-    ║  Licence : MIT                                                       ║
-    ║  Copyright © 2026 Flo Latury                                         ║
+    ║  Respect ALC :                                                       ║
+    ║  - Aucune logique métier                                             ║
+    ║  - Binding uniquement                                                ║
+    ║  - Structure claire et maintenable                                   ║
     ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
@@ -26,126 +17,247 @@
     x:Class="LatuCollect.UI.WinUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:conv="using:LatuCollect.UI.WinUI.Converters"
+    xmlns:models="using:LatuCollect.UI.WinUI.Models">
 
     <Grid>
 
-        <!--  =====================  -->
-        <!--  STRUCTURE PRINCIPALE  -->
-        <!--  =====================  -->
+        <!--  =========================  -->
+        <!--  RESSOURCES UI  -->
+        <!--  =========================  -->
 
-        <!--  LIGNES  -->
+        <Grid.Resources>
+            <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
+            <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </Grid.Resources>
+
+        <!--  =========================  -->
+        <!--  STRUCTURE PRINCIPALE  -->
+        <!--  =========================  -->
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  COLONNES  -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
-        <!--  =====================  -->
-        <!--  ZONE GAUCHE : PROJET  -->
-        <!--  =====================  -->
+        <!--  ======================================================  -->
+        <!--  ZONE GAUCHE : ARBORESCENCE PROJET (COEUR APP)  -->
+        <!--  ======================================================  -->
+
         <Border
-            Grid.Row="0"
             Grid.Column="0"
             Margin="5"
             Background="#1E1E1E">
 
-            <StackPanel>
+            <Grid>
 
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="📁 Projet" />
+                <!--  STRUCTURE GAUCHE  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <TextBlock
-                    Margin="5"
-                    Foreground="White"
-                    Text="   📁 Core" />
+                <!--  CHARGEUR DE DOSSIER + BARRE RECHERCHE  -->
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <CheckBox
-                    x:Name="FileImportCheckBox"
-                    Content="FileImportService.cs"
-                    IsChecked="{Binding IsFileImportChecked, Mode=TwoWay}" />
+                    <!--  Chargement dossier  -->
+                    <Button
+                        Width="40"
+                        Height="40"
+                        Click="OnPickFolderClicked"
+                        Content="📂" />
 
-                <CheckBox
-                    x:Name="FileExportCheckBox"
-                    Content="FileExportService.cs"
-                    IsChecked="{Binding IsFileExportChecked, Mode=TwoWay}" />
+                    <!--  Barre de recherche  -->
+                    <TextBox
+                        Grid.Column="1"
+                        MinHeight="40"
+                        Margin="10,0,0,0"
+                        PlaceholderText="Rechercher un fichier..."
+                        Text="{Binding SearchText, Mode=TwoWay}" />
+                </Grid>
 
-                <CheckBox
-                    x:Name="MainWindowCheckBox"
-                    Content="MainWindow.xaml"
-                    IsChecked="{Binding IsMainWindowChecked, Mode=TwoWay}" />
+                <!--  ARBORESCENCE  -->
+                <TreeView Grid.Row="1" ItemsSource="{Binding Tree}">
 
-                <CheckBox
-                    x:Name="ReadmeCheckBox"
-                    Content="README.md"
-                    IsChecked="{Binding IsReadmeChecked, Mode=TwoWay}" />
+                    <TreeView.ItemTemplate>
+                        <DataTemplate x:DataType="models:FileNode">
 
+                            <!--  🔥 IMPORTANT : TreeViewItem ici  -->
+                            <TreeViewItem ItemsSource="{Binding Children}">
 
-            </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+
+                                    <!--  Icône  -->
+                                    <TextBlock Foreground="White" Text="{Binding IsFolder, Converter={StaticResource BoolToIconConverter}}" />
+
+                                    <!--  Checkbox  -->
+                                    <CheckBox
+                                        Content="{Binding Name}"
+                                        Foreground="White"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+
+                                </StackPanel>
+
+                            </TreeViewItem>
+
+                        </DataTemplate>
+                    </TreeView.ItemTemplate>
+
+                </TreeView>
+
+            </Grid>
 
         </Border>
 
-        <!--  =====================  -->
-        <!--  ZONE CENTRE : OPTIONS  -->
-        <!--  =====================  -->
+        <!--  ======================================================  -->
+        <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
+        <!--  ======================================================  -->
+
         <Border
-            Grid.Row="0"
             Grid.Column="1"
             Margin="5"
             Background="#2D2D30">
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel
+                Width="180"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="12">
 
+                <!--  TITRE  -->
                 <TextBlock
-                    Margin="0,0,0,10"
+                    Margin="0,0,0,20"
                     HorizontalAlignment="Center"
+                    FontSize="20"
                     Foreground="White"
-                    Text="FORMAT" />
+                    Text="Choix du format"
+                    TextAlignment="Center" />
 
-                <RadioButton
-                    Content="TXT"
-                    GroupName="Format"
-                    IsChecked="True" />
+                <!--  FORMATS  -->
+                <StackPanel
+                    Margin="0,0,0,25"
+                    HorizontalAlignment="Center"
+                    Spacing="10">
 
-                <RadioButton Content="Markdown" GroupName="Format" />
+                    <RadioButton
+                        HorizontalAlignment="Center"
+                        Content=".txt"
+                        GroupName="Format"
+                        IsChecked="{Binding IsMarkdownSelected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}" />
+
+                    <RadioButton
+                        HorizontalAlignment="Center"
+                        Content=".md"
+                        GroupName="Format"
+                        IsChecked="{Binding IsMarkdownSelected, Mode=TwoWay}" />
+
+                </StackPanel>
+
+                <!--  COPIER  -->
+                <Button
+                    Width="120"
+                    Height="40"
+                    Margin="0,0,0,25"
+                    HorizontalAlignment="Center"
+                    Click="OnCopyClicked"
+                    Content="Copier"
+                    IsEnabled="{Binding CanCopy}" />
+
+                <!--  AUTRES  -->
+                <StackPanel HorizontalAlignment="Center" Spacing="12">
+
+                    <Button
+                        Width="120"
+                        Height="36"
+                        Click="OnOptionsClicked"
+                        Content="Options" />
+
+                    <Button
+                        Width="120"
+                        Height="36"
+                        Click="OnHelpClicked"
+                        Content="Aide" />
+
+                    <Button
+                        Width="120"
+                        Height="36"
+                        Click="OnAboutClicked"
+                        Content="À propos" />
+
+                    <Button
+                        Width="120"
+                        Height="36"
+                        Click="OnQuitClicked"
+                        Content="Quitter" />
+
+                </StackPanel>
 
             </StackPanel>
 
         </Border>
 
-        <!--  =====================  -->
+        <!--  ======================================================  -->
         <!--  ZONE DROITE : APERÇU  -->
-        <!--  =====================  -->
+        <!--  ======================================================  -->
+
         <Border
-            Grid.Row="0"
             Grid.Column="2"
             Margin="5"
             Background="#252526">
 
-            <ScrollViewer>
+            <Grid>
+
+                <!--  =========================  -->
+                <!--  CONTENU FICHIER  -->
+                <!--  Visible SI contenu existe  -->
+                <!--  =========================  -->
+
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto"
+                    Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+
+                    <TextBlock
+                        Margin="20"
+                        FontFamily="Cascadia Code"
+                        FontSize="13"
+                        Foreground="White"
+                        Text="{Binding PreviewText}"
+                        TextAlignment="Left"
+                        TextWrapping="NoWrap" />
+                </ScrollViewer>
+
+                <!--  =========================  -->
+                <!--  MESSAGE VIDE  -->
+                <!--  Visible SI aucun fichier  -->
+                <!--  =========================  -->
+
                 <TextBlock
-                    x:Name="PreviewText"
-                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
                     Foreground="White"
-                    Text="{Binding PreviewText}"
-                    TextWrapping="Wrap" />
-            </ScrollViewer>
+                    Text="Aucun fichier sélectionné..."
+                    Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            </Grid>
 
         </Border>
 
-        <!--  =====================  -->
+        <!--  ======================================================  -->
         <!--  ZONE BASSE : EXPORT  -->
-        <!--  =====================  -->
+        <!--  ======================================================  -->
+
         <Border
             Grid.Row="1"
             Grid.ColumnSpan="3"
@@ -156,6 +268,7 @@
                 Width="140"
                 Height="40"
                 HorizontalAlignment="Right"
+                Click="OnExportClicked"
                 Content="Exporter" />
 
         </Border>

@@ -10,7 +10,7 @@
   <Identity
     Name="c52363d4-c850-4136-a3ba-5624514f2de4"
     Publisher="CN=Latury"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="c52363d4-c850-4136-a3ba-5624514f2de4" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
