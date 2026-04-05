@@ -1,18 +1,68 @@
-# 📝 PATCH NOTES – LatuCollect
+# 📝 PATCH NOTES – LATUCOLLECT
 
-Historique officiel des évolutions du projet LatuCollect.
+Historique officiel des évolutions du projet **LatuCollect**.
+
+👉 Ce document liste uniquement les fonctionnalités réellement implémentées.
 
 ---
 
 # 📚 Organisation documentaire
 
-| Fichier              | Rôle         |
-| -------------------- | ------------ |
-| README.md            | Présentation |
-| ARCHITECTURE.md      | Structure    |
-| GUIDE_UTILISATEUR.md | Utilisation  |
-| TESTS.md             | Validation   |
-| PATCH_NOTES.md       | Historique   |
+Les documents du projet sont organisés par rôle :
+
+---
+
+## 🧭 Documentation générale
+
+| Fichier    | Rôle                           |
+| ---------- | ------------------------------ |
+| README.md  | Présentation globale du projet |
+| LICENSE.md | Licence du projet              |
+
+---
+
+## 🧠 Documentation technique
+
+| Fichier                | Rôle                          |
+| ---------------------- | ----------------------------- |
+| ARCHITECTURE.md        | Structure et règles du projet |
+| UI_GUIDE.md            | Guide de l’interface          |
+| TESTS.md               | Tests et validation           |
+| DIRECTORY_STRUCTURE.md | Structure des dossiers        |
+
+---
+
+## 👤 Documentation utilisateur
+
+| Fichier              | Rôle                         |
+| -------------------- | ---------------------------- |
+| GUIDE_UTILISATEUR.md | Utilisation de l’application |
+
+---
+
+## 🧱 Gestion du projet
+
+| Fichier             | Rôle                         |
+| ------------------- | ---------------------------- |
+| FEUILLE_DE_ROUTE.md | Planification des évolutions |
+| PATCH_NOTES.md      | Historique des versions      |
+
+---
+
+## ⚙️ Outils et workflows
+
+| Fichier                 | Rôle                       |
+| ----------------------- | -------------------------- |
+| GUIDE_GITHUB_DESKTOP.md | Utilisation GitHub Desktop |
+| GUIDE_COMMITS.md        | Bonnes pratiques commits   |
+
+---
+
+## 🎨 Ressources
+
+| Fichier            | Rôle                      |
+| ------------------ | ------------------------- |
+| Code extractor.png | Maquette / visuel initial |
 
 ---
 
@@ -20,18 +70,13 @@ Historique officiel des évolutions du projet LatuCollect.
 
 ## 📌 Statut
 
-🟢 Fonctionnel (console – version historique)
+🟢 Fonctionnel — Version console (historique)
 
 ---
 
 ## 🎯 Objectif
 
-Mettre en place un système simple de collecte de contenu :
-
-- ✔ Importer des fichiers
-- ✔ Lire leur contenu
-- ✔ Regrouper le texte
-- ✔ Exporter un fichier unique
+Mettre en place un système simple de collecte de contenu.
 
 ---
 
@@ -39,29 +84,27 @@ Mettre en place un système simple de collecte de contenu :
 
 ### 📥 Import
 
-- ✔ Ajout de fichiers
-- ✔ Ajout de dossiers
-- ✔ Gestion des chemins
+- ✅ Ajout de fichiers
+- ✅ Ajout de dossiers
+- ✅ Gestion des chemins
 
 ---
 
 ### 📄 Lecture
 
-- ✔ Lecture du contenu des fichiers
-- ✔ Aucune transformation du code
+- ✅ Lecture du contenu des fichiers
+- ✅ Aucune transformation du code
 
 ---
 
 ### 📤 Export
 
-- ✔ Génération fichier TXT
-- ✔ Contenu concaténé
+- ✅ Génération d’un fichier TXT
+- ✅ Contenu concaténé
 
 ---
 
-## 🏗️ Architecture
-
-Pipeline initial :
+## ⚙️ Pipeline
 
 ```text
 Import → Lecture → Export
@@ -71,64 +114,128 @@ Import → Lecture → Export
 
 ## ⚠️ Limitations
 
-- ❌ Pas d’interface graphique
+- ❌ Absence d’interface graphique
 - ❌ Pas de sélection visuelle
 - ❌ Export peu structuré
 
 ---
 
-# 🚀 VERSION 0.2.0 (ACTUELLE)
+# 🚀 VERSION 0.2.0
 
 ## 📌 Statut
 
-🟡 En développement (WinUI)
+🟢 Fonctionnel — Application WinUI (MVP validé)
 
 ---
 
 ## 🎯 Objectif
 
-Passer à une application graphique permettant une collecte visuelle et contrôlée du contenu.
+Introduire une interface graphique permettant une utilisation visuelle, simple et contrôlée.
 
 ---
 
-## ✨ Évolutions majeures
+## ✨ Fonctionnalités
 
-### 🖥️ Interface WinUI
+### 🖥️ Interface utilisateur
 
-- ✔ Structure gauche / centre / droite
-- ✔ Arborescence projet
-- ✔ Navigation dossiers
-- ✔ Sélection via checkbox
+- ✅ Structure en 4 zones (gauche / centre / droite / bas)
+- ✅ Interface claire et lisible
+- ✅ Différenciation visuelle fichiers / dossiers
+
+---
+
+### 📂 Import
+
+- ✅ Sélection d’un dossier via explorateur
+- ✅ Construction automatique de l’arborescence
+- ✅ Chargement récursif des sous-dossiers
+
+---
+
+### 🌳 Arborescence
+
+- ✅ Affichage hiérarchique (TreeView)
+- ✅ Navigation fluide
+- ✅ Correction des problèmes d’affichage
+
+---
+
+### ☑️ Sélection
+
+- ✅ Sélection des fichiers via CheckBox
+- ✅ Gestion des sous-dossiers
+- ✅ Mise à jour en temps réel
+
+---
+
+### 🔎 Recherche
+
+- ✅ Barre de recherche
+- ✅ Filtrage dynamique
+- ✅ Recherche insensible à la casse
 
 ---
 
 ### 👁️ Aperçu
 
-- ✔ Génération en temps réel
-- ✔ Correspond exactement au fichier exporté
+- ✅ Génération dynamique en temps réel
+- ✅ Lecture réelle des fichiers
+- ✅ Affichage structuré :
+  - Chemin du fichier
+  - Contenu
+  - Séparateur
+- ✅ Gestion des états (vide / contenu)
+- ✅ Correction des problèmes d’affichage (doublons, visibilité)
+- ✅ Scroll automatique
+- ✅ Affichage type éditeur (monospace, alignement gauche)
 
 ---
 
 ### 📤 Export
 
-- ✔ TXT / Markdown
-- ✔ Format structuré
-- ✔ Ajout du chemin des fichiers
+- ✅ Export via FileSavePicker
+- ✅ Génération fichier TXT et Markdown (.md)
+- ✅ Choix du format utilisateur
+- ✅ Contenu identique à l’aperçu
+- ✅ Assemblage multi-fichiers
+- ✅ Confirmation après export
 
 ---
 
-### ⚙️ Architecture
+### 📋 Copie
 
-- ✔ séparation Core / UI
-- ✔ préparation MVVM
-- ✔ simplification du fonctionnement
+- ✅ Copie du contenu dans le presse-papiers
+- ✅ Activation uniquement si contenu disponible
+- ✅ Désactivation automatique si aucun contenu
+- ✅ Confirmation utilisateur
+
+---
+
+### ⚙️ Dialogs
+
+- ✅ Options
+- ✅ Aide
+- ✅ À propos
+- ✅ Confirmation de fermeture
+
+---
+
+## ⚙️ Architecture
+
+- ✅ Séparation Core / UI respectée
+- ✅ Respect du standard ALC
+- ✅ Implémentation MVVM
+- ✅ Gestion des états UI :
+  - IsPreviewEmpty
+  - CanCopy
+  - SearchText
 
 ---
 
 ## 🧠 Fonctionnement utilisateur
 
 ```text
-Importer → Sélectionner → Aperçu → Exporter
+Charger dossier → Sélectionner → Aperçu → Exporter
 ```
 
 ---
@@ -146,91 +253,26 @@ Import → Lecture → Assemblage → Export
 
 ---
 
-## ⚠️ Évolutions importantes
+## ⚠️ Limitations actuelles
 
-- ✔ passage d’un outil console à une interface visuelle
-- ✔ suppression de la complexité inutile
-- ✔ recentrage sur la collecte simple
-
----
-
-# 🚀 VERSION 0.3.0 (PRÉVU)
-
-## 🎯 Objectif
-
-Améliorer l’expérience utilisateur
-
----
-
-## ✨ Évolutions prévues
-
-- 🔄 feedback utilisateur
-- 🔄 gestion des erreurs
-- 🔄 amélioration lisibilité
-
----
-
-# 🚀 VERSION 0.4.0 (PRÉVU)
-
-## 🎯 Objectif
-
-Améliorer la qualité des exports
-
----
-
-## ✨ Évolutions prévues
-
-- 🔄 format optimisé pour IA
-- 🔄 meilleure structuration du texte
-
----
-
-# 🚀 VERSION 0.5.0 (PRÉVU)
-
-## 🎯 Objectif
-
-Améliorer le confort d’utilisation
-
----
-
-## ✨ Évolutions prévues
-
-- 🔄 filtrage fichiers
-- 🔄 exclusion dossiers (bin, obj)
-- 🔄 sauvegarde préférences
-
----
-
-# 🚀 VERSION 0.6.0 (OPTIONNEL)
-
-## 🎯 Objectif
-
-Fonctionnalités avancées si nécessaire
-
----
-
-## ✨ Évolutions possibles
-
-- 🔄 analyse
-- 🔄 déduplication
-- 🔄 statistiques
-
-👉 uniquement si besoin réel
+- ❌ Options encore limitées
+- ❌ Pas de sauvegarde des préférences utilisateur
+- ❌ Gestion des erreurs encore basique
 
 ---
 
 # 🧠 Philosophie
 
-- ✔ Simplicité avant complexité
-- ✔ Lisibilité avant optimisation
-- ✔ Utilité avant fonctionnalité
+- ✅ Simplicité avant complexité
+- ✅ Lisibilité avant optimisation
+- ✅ Utilité avant fonctionnalité
 
 ---
 
 # 📜 Rôle du Patch Notes
 
-- ✔ Suivre l’évolution réelle
-- ✔ Comprendre les changements
-- ✔ Garantir la cohérence
+- ✅ Suivre l’évolution réelle du projet
+- ✅ Comprendre les changements
+- ✅ Garantir la cohérence
 
 👉 Un historique fiable = projet maintenable

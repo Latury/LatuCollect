@@ -10,11 +10,11 @@ Dans LatuCollect, Git est un élément central du projet.
 
 Chaque commit doit être :
 
-- structuré
-- compréhensible
-- aligné avec la feuille de route
-- cohérent avec l’architecture ALC
-- cohérent avec les documents du projet
+- ✔ Structuré
+- ✔ Compréhensible
+- ✔ Aligné avec la feuille de route
+- ✔ Cohérent avec l’architecture ALC
+- ✔ Cohérent avec les documents du projet
 
 ---
 
@@ -26,12 +26,31 @@ Chaque commit doit rester cohérent avec :
 - UI_GUIDE.md
 - ARCHITECTURE.md
 - FEUILLE_DE_ROUTE.md
+- GUIDE_COMMITS.md
+
+---
+
+# ⚙️ PIPELINE LATUCOLLECT
+
+## 🔹 Pipeline interne
+
+```text
+Import → Lecture → Assemblage → Export
+```
+
+---
+
+## 🔹 Flux utilisateur
+
+```text
+Importer → Sélectionner → Aperçu → Exporter
+```
 
 ---
 
 # 🧩 WORKFLOW OFFICIEL LATUCOLLECT
 
-## Début de session
+## 🔹 Début de session
 
 1. Ouvrir GitHub Desktop
 2. Fetch origin
@@ -41,43 +60,39 @@ Chaque commit doit rester cohérent avec :
 
 ---
 
-## Pendant le développement
+## 🔹 Pendant le développement
 
-Règles obligatoires :
+### Règles obligatoires :
 
-- 1 commit = 1 intention
-- Code compilable
-- Respect ALC
-- Documentation mise à jour si nécessaire
+- ✔ 1 commit = 1 intention
+- ✔ Code compilable
+- ✔ Respect ALC
+- ✔ Documentation mise à jour si nécessaire
+- ✔ Cohérence avec la feuille de route
+- ✔ Cohérence avec la documentation
 
-Fréquence :
+---
+
+### Fréquence :
 
 Toutes les 30 à 60 minutes
 
 ---
 
-## Structure du commit
+# 🏷️ TYPES DE COMMITS (ALIGNÉS PROJET)
 
-Summary :
-
-[Type] Message clair
-
-Description :
-
-- Description simple
-- Description technique
-- Fichiers concernés
-- Impact global
-
----
-
-# 🏷️ TYPES DE COMMITS
-
-- [ADD] → ajout
-- [FIX] → correction
-- [REF] → refactor
-- [DOC] → documentation
-- [TEST] → tests
+| Emoji | Type         | Utilisation             |
+| ----- | ------------ | ----------------------- |
+| ✨    | Feature      | Nouvelle fonctionnalité |
+| ⛓️‍💥    | Bug          | Correction de bug       |
+| 🛠️    | Fix          | Correction mineure      |
+| ♻️    | Refactor     | Réorganisation code     |
+| 📝    | Docs         | Documentation           |
+| 🧪    | Test         | Tests                   |
+| 🧹    | Cleanup      | Nettoyage               |
+| 🔥    | Remove       | Suppression             |
+| ⚙️    | Service      | Services Core           |
+| 🏗️    | Architecture | Structure / MVVM        |
 
 ---
 
@@ -85,14 +100,14 @@ Description :
 
 Phase actuelle :
 
-👉 UI WinUI en développement
+👉 UI WinUI (MVP validé)
 
 Priorités :
 
-- arborescence projet
-- sélection fichiers
-- aperçu
-- export
+- Arborescence projet
+- Sélection fichiers
+- Aperçu
+- Export
 
 ---
 
@@ -101,12 +116,15 @@ Priorités :
 Indiquer si le commit concerne :
 
 - UI → interface utilisateur
-- CORE → logique métier
+- ViewModel → logique UI
+- Core → logique métier
 
-Exemple :
+---
 
-[ADD][UI] Arborescence projet
-[FIX][CORE] Correction export
+## ✔ Exemple :
+
+✨ [Feature][UI] Arborescence projet
+⛓️‍💥 [Bug][Core] Correction export
 
 ---
 
@@ -114,7 +132,7 @@ Exemple :
 
 ✔ Bon commit :
 
-[ADD][UI] Arborescence projet
+✨ [Feature][UI] Ajout arborescence projet
 
 - Affichage dossiers et fichiers
 - Checkbox sélection
@@ -125,7 +143,7 @@ Exemple :
 
 ✔ Bon commit :
 
-[ADD][UI] Aperçu temps réel
+✨ [Feature][UI] Aperçu temps réel
 
 - Génération dynamique
 - Format export respecté
@@ -142,20 +160,20 @@ update code
 
 # ⚠️ NE PAS COMMIT SI
 
-- code non compilable
-- test non terminé
+- Code non compilable
+- Test non terminé
 - UI incohérente
-- debug actif
-- fichiers inutiles présents
+- Debug actif
+- Fichiers inutiles présents
 
 ---
 
 # ⚠️ ERREURS COURANTES
 
-- fichiers bin / obj commités
-- logs ajoutés
-- commits trop gros
-- commits vagues
+- Fichiers bin / obj commités
+- Logs ajoutés
+- Commits trop gros
+- Commits vagues
 
 ---
 
@@ -179,6 +197,6 @@ Une mémoire mal tenue devient inutilisable.
 
 # 🎯 OBJECTIF FINAL
 
-- historique clair
-- projet compréhensible
-- développement propre
+- ✔ Historique clair
+- ✔ Projet compréhensible
+- ✔ Développement propre

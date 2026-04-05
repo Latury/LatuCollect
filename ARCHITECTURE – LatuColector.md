@@ -1,8 +1,8 @@
 # 🏗️ ARCHITECTURE – LATUCOLLECT (ALC)
 
-Projet : **Application de collecte de contenu multi-fichiers**
+Projet : Application de collecte de contenu multi-fichiers
 
-Ce document définit le **standard officiel d’architecture (ALC)** du projet.
+Ce document définit le standard officiel d’architecture (ALC) du projet.
 
 ---
 
@@ -26,13 +26,32 @@ Ce document sert à :
 - ✔ Discipline de développement
 - ✔ Valeur pédagogique
 
-👉 Ce standard est **obligatoire pour chaque fichier créé**
+👉 Ce standard est obligatoire pour chaque fichier créé
+
+---
+
+# ⚠️ RÈGLE CRITIQUE — AVANT MODIFICATION DE CODE
+
+Avant toute modification :
+
+- ✔ Analyser les fichiers existants
+- ✔ Comprendre le fonctionnement actuel
+- ✔ Vérifier la cohérence avec l’architecture ALC
+- ✔ Ne jamais coder sans contexte
+
+❌ Interdit :
+
+- ❌ Ajouter du code sans analyser l’existant
+- ❌ Modifier à l’aveugle
+- ❌ Casser la structure du projet
 
 ---
 
 # 1. EN-TÊTE OBLIGATOIRE
 
 Tous les fichiers `.cs` et `.xaml` doivent contenir un en-tête standard.
+
+---
 
 ## Modèle C#
 
@@ -60,6 +79,8 @@ Tous les fichiers `.cs` et `.xaml` doivent contenir un en-tête standard.
 */
 ```
 
+---
+
 ## Modèle XAML
 
 ```xml
@@ -86,31 +107,58 @@ Tous les fichiers `.cs` et `.xaml` doivent contenir un en-tête standard.
 
 Ordre recommandé :
 
-- Imports
-- Description
-- Classe
+- ✔ Imports (using en C#)
+- ✔ Description
+- ✔ Classe
 
 Dans la classe :
 
-- Champs privés
-- Propriétés
-- Constructeur
-- Méthodes publiques
-- Méthodes privées
+- ✔ Champs privés
+- ✔ Propriétés
+- ✔ Constructeur
+- ✔ Méthodes publiques
+- ✔ Méthodes privées
 
 ---
 
 # 3. SÉPARATION DES RESPONSABILITÉS
 
-| Couche | Rôle                 |
-| ------ | -------------------- |
-| Core   | Logique métier       |
-| UI     | Affichage uniquement |
+| Couche | Rôle           |
+| ------ | -------------- |
+| Core   | Logique métier |
+| UI     | Affichage      |
 
 ❌ Interdit :
 
-- logique métier dans UI
-- accès fichiers depuis UI
+- ❌ Logique métier complexe dans UI
+- ❌ Accès fichiers depuis UI
+
+⚠️ Tolérance MVP :
+
+- ✔ Logique légère autorisée dans le ViewModel
+
+---
+
+# 🔹 ViewModel (UI)
+
+Le ViewModel agit comme intermédiaire entre l’UI et le Core :
+
+- ✔ Gère l’état de l’interface
+- ✔ Orchestre les actions utilisateur
+- ✔ Prépare les données pour l’affichage
+
+👉 Il ne doit pas contenir de logique métier complexe
+
+---
+
+# 🔹 Models (UI)
+
+Les Models représentent les données manipulées dans l’interface :
+
+- ✔ Structure des fichiers (FileNode)
+- ✔ Données simples sans logique complexe
+
+👉 Ils ne contiennent pas de logique métier
 
 ---
 
@@ -122,7 +170,7 @@ Dans la classe :
 Import → Lecture → Assemblage → Export
 ```
 
-👉 utilisé dans le code
+👉 objectif final du projet
 
 ---
 
@@ -132,42 +180,46 @@ Import → Lecture → Assemblage → Export
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
-👉 basé sur la maquette réelle
 👉 orienté simplicité utilisateur
+
+---
+
+# ⚠️ 4.1 RÉALITÉ ACTUELLE (MVP)
+
+Actuellement :
+
+- ✔ Lecture via FileReaderService
+- ✔ Assemblage dans le ViewModel
+- ✔ Aperçu géré par le ViewModel
+- ✔ Export via FileExportService
+
+👉 Le Core ne gère pas encore tout le pipeline
+👉 Refactorisation prévue
 
 ---
 
 # 5. CORRESPONDANCE SERVICES
 
-| Étape                | Service               |
-| -------------------- | --------------------- |
-| Import               | FileImportService     |
-| Lecture / Assemblage | FileCollectionService |
-| Export               | FileExportService     |
+| Étape   | Service           |
+| ------- | ----------------- |
+| Lecture | FileReaderService |
+| Export  | FileExportService |
 
 ---
 
 # 6. SERVICES PRINCIPAUX
 
-## 📥 FileImportService
+## 📄 FileReaderService
 
-- ajoute fichiers et dossiers
-- filtre extensions
-- évite doublons
-
----
-
-## 📄 FileCollectionService
-
-- lit contenu
-- retourne chemin → texte
+- ✔ Lit le contenu des fichiers
+- ✔ Retourne le texte brut
 
 ---
 
 ## 📤 FileExportService
 
-- génère TXT / Markdown
-- structure le document
+- ✔ Génère TXT / Markdown
+- ✔ Structure le document final
 
 ---
 
@@ -175,7 +227,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ```text
 Gauche → Projet (arborescence)
-Centre → Options (format)
+Centre → Options (format + actions)
 Droite → Aperçu
 Bas → Export
 ```
@@ -184,10 +236,11 @@ Bas → Export
 
 # 8. COMPORTEMENT UI
 
-- sélection via checkbox
-- navigation dans dossiers
-- aperçu en temps réel
-- export final
+- ✔ Sélection via checkbox
+- ✔ Navigation dans dossiers
+- ✔ Recherche dynamique
+- ✔ Aperçu en temps réel
+- ✔ Export final
 
 ---
 
@@ -197,11 +250,13 @@ Bas → Export
 Chemin du fichier
 
 
-(contenu)
+(contenu du fichier)
 
 
 ----------------------------------------
 ```
+
+👉 2 à 3 lignes vides entre chaque section
 
 ---
 
@@ -213,6 +268,9 @@ Core/
 
 UI/
 └── WinUI/
+    ├── ViewModels/
+    ├── Models/
+    ├── Converters/
 ```
 
 ---
@@ -220,17 +278,17 @@ UI/
 # 11. RÈGLES STRICTES
 
 - ✔ 1 classe = 1 responsabilité
-- ✔ pas de code mort
-- ✔ pas de logique UI dans Core
-- ✔ pas de logique métier dans UI
-- ✔ pas de valeurs en dur UI
+- ✔ Pas de code mort
+- ✔ Pas de logique UI dans Core
+- ✔ Pas de logique métier complexe dans UI
+- ✔ Pas de valeurs en dur UI
 
 ---
 
 # 11.1 EMOJIS
 
-- ❌ interdits dans code
-- ✔ autorisés dans docs
+- ❌ Interdits dans code
+- ✔ Autorisés dans docs
 
 ---
 
@@ -238,20 +296,20 @@ UI/
 
 Classe :
 
-- rôle
-- responsabilités
+- ✔ Rôle
+- ✔ Responsabilités
 
 Méthode :
 
-- objectif
-- paramètres
-- retour
+- ✔ Objectif
+- ✔ Paramètres
+- ✔ Retour
 
 ---
 
 # 13. ASYNCHRONE
 
-- ✔ async/await
+- ✔ async / await
 - ❌ .Result / .Wait()
 - ✔ UI jamais bloquée
 
@@ -259,18 +317,18 @@ Méthode :
 
 # 14. JOURNALISATION
 
-- tracer actions
-- erreurs
+- ✔ Tracer actions
+- ✔ Tracer erreurs
 
-❌ pas d’écriture directe fichier
+❌ Pas d’écriture directe fichier
 
 ---
 
 # 15. NOMMAGE
 
-- PascalCase
-- noms explicites
-- suffixe Service
+- ✔ PascalCase
+- ✔ Noms explicites
+- ✔ Suffixe Service
 
 ---
 
@@ -278,33 +336,47 @@ Méthode :
 
 Actuel :
 
-- instanciation directe
+- ✔ Instanciation directe
 
 Futur :
 
-- injection via interfaces
+- ✔ Injection via interfaces
 
 ---
 
 # 17. ÉTAT ACTUEL
 
 - ✔ Core fonctionnel
-- ✔ export opérationnel
-- 🔄 UI WinUI en cours
+- ✔ Export opérationnel
+- ✔ UI WinUI fonctionnelle (MVP)
+- 🔄 Améliorations UX en cours
 
 ---
 
 # 18. ÉVOLUTIONS
 
-- MVVM
-- amélioration UI
-- services futurs
+- ✔ MVVM avancé
+- ✔ Refactor Core
+- ✔ Amélioration UI
+
+---
+
+# ⚠️ IMPORTANT — SIMPLICITÉ
+
+LatuCollect est volontairement simplifié :
+
+- ✔ Pas d’analyse de code
+- ✔ Pas de transformation
+- ✔ Pas de parsing complexe
+
+👉 Copier intelligent
+👉 Pas un analyseur
 
 ---
 
 # 19. OBJECTIF GLOBAL
 
-- ✔ simple
-- ✔ structuré
-- ✔ compréhensible
-- ✔ évolutif
+- ✔ Simple
+- ✔ Structuré
+- ✔ Compréhensible
+- ✔ Évolutif

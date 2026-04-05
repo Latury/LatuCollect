@@ -4,7 +4,8 @@
 
 ### Collecte simple et rapide de contenu multi-fichiers
 
-Outil permettant de sélectionner des fichiers dans un projet et de générer un export propre, lisible et prêt à être utilisé (IA, documentation, partage).
+🔹 Outil simple pour extraire, assembler et exporter du contenu de fichiers.
+🔹 Pensé pour la lisibilité et l’usage avec des outils d’IA
 
 <br>
 
@@ -26,17 +27,33 @@ Outil permettant de sélectionner des fichiers dans un projet et de générer un
 
 LatuCollect permet de :
 
-- ✔ Charger un projet complet
-- ✔ Naviguer dans sa structure (dossiers / fichiers)
-- ✔ Sélectionner les fichiers à collecter
-- ✔ Générer un aperçu du résultat final
-- ✔ Exporter un fichier structuré (.txt ou .md)
+- ✅ Charger un projet complet
+- ✅ Naviguer dans sa structure (dossiers / fichiers)
+- ✅ Rechercher rapidement des fichiers
+- ✅ Sélectionner les fichiers à collecter
+- ✅ Générer un aperçu du résultat final
+- ✅ Copier le contenu généré
+- ✅ Exporter un fichier structuré (.txt ou .md)
 
 👉 Aucun fichier source n’est modifié
+👉 Lecture seule, aucune transformation du code
 
 ---
 
-# 🧠 2. Fonctionnement
+# 🎯 2. Cas d’usage
+
+LatuCollect est utile pour :
+
+- ✅ Préparer du code pour une IA (ChatGPT, Copilot…)
+- ✅ Générer une documentation rapide
+- ✅ Partager du code de manière lisible
+- ✅ Extraire des parties spécifiques d’un projet
+
+👉 Idéal pour les développeurs débutant et les projets techniques
+
+---
+
+# 🧠 3. Fonctionnement
 
 L’application fonctionne avec un flux simple :
 
@@ -46,7 +63,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-# 🖥️ 3. Interface (WinUI)
+# 🖥️ 4. Interface (WinUI)
 
 L’interface est composée de 4 zones :
 
@@ -54,6 +71,7 @@ L’interface est composée de 4 zones :
 
 - Arborescence complète du projet
 - Navigation dans les dossiers
+- Barre de recherche
 - Sélection des fichiers via checkbox
 
 ---
@@ -61,8 +79,14 @@ L’interface est composée de 4 zones :
 ## 🟨 Centre — Options
 
 - Choix du format d’export :
-  - ✔ TXT
-  - ✔ Markdown
+  - ✅ TXT
+  - ✅ Markdown
+- Bouton Copier
+- Accès :
+  - Options
+  - Aide
+  - À propos
+  - Quitter
 
 ---
 
@@ -70,22 +94,28 @@ L’interface est composée de 4 zones :
 
 - Affichage du document final généré
 - Mise à jour en temps réel
-- 👉 correspond exactement au fichier exporté
+- Affichage type éditeur (monospace, aligné à gauche)
+- Gestion des états :
+  - Message si aucun fichier sélectionné
+  - Contenu affiché si sélection active
+
+👉 correspond exactement au fichier exporté
 
 ---
 
 ## 🔻 Bas — Action
 
-- Bouton **Exporter**
+- Bouton Exporter
 - Génère le fichier final
+- Affiche une confirmation
 
 ---
 
-# 📄 4. Format d’export
+# 📄 5. Format d’export
 
 Chaque fichier sélectionné est exporté avec :
 
-```
+```text
 C:\Projet\fichier.cs
 
 
@@ -99,62 +129,76 @@ C:\Projet\fichier.cs
 
 ---
 
-# ⚙️ 5. Fonctionnement interne
+# ⚙️ 6. Fonctionnement interne
 
 ```text
 Import → Lecture → Assemblage → Export
 ```
 
 👉 Traitement automatique via le Core
+👉 Aucune transformation du code
 
 ---
 
-# ⚙️ 6. Fonctionnalités principales
+# ⚠️ 7. Ce que l’application NE fait PAS
 
-- ✔ Import de dossiers complets (récursif)
-- ✔ Filtrage automatique des fichiers
-- ✔ Sélection manuelle
-- ✔ Aperçu en temps réel
-- ✔ Export TXT / Markdown
+- ❌ Aucune analyse de code
+- ❌ Aucune modification des fichiers
+- ❌ Aucun parsing complexe
+
+👉 LatuCollect est un outil de copie intelligente, pas un analyseur
 
 ---
 
-# 🏗️ 7. Architecture
+# ⚙️ 8. Fonctionnalités principales
+
+- ✅ Import de dossiers complets (récursif)
+- ✅ Construction automatique de l’arborescence
+- ✅ Recherche dynamique
+- ✅ Sélection manuelle des fichiers
+- ✅ Aperçu en temps réel
+- ✅ Copie dans le presse-papiers
+- ✅ Export TXT / Markdown
+- ✅ Dialogs utilisateur (Options, Aide, À propos)
+- ✅ Confirmation des actions (export, quitter)
+
+---
+
+# 🏗️ 9. Architecture
 
 Le projet respecte le standard ALC :
 
 - Core → logique métier
 - UI → affichage uniquement
 
-👉 aucune logique métier dans l’interface
+👉 Aucune logique métier dans l’interface
 
 ---
 
-# 📦 8. Structure
+# 📦 10. Structure
 
-```
+```text
 Core/
-UI/
+UI/WinUI/
 Resources/
 ```
 
 ---
 
-# ⚠️ 9. État actuel
+# ⚠️ 11. État actuel
 
-- ✔ Core fonctionnel
-- ✔ UI en cours de développement (WinUI 3)
+- ✅ Core fonctionnel
+- ✅ UI fonctionnelle (WinUI 3)
+- 🔄 Améliorations UX en cours
 
 ---
 
-# 🧠 10. Philosophie
+# 🧠 12. Philosophie
 
 LatuCollect est conçu pour être :
 
-- ✔ Simple
-- ✔ Rapide
-- ✔ Lisible
+- ✅ Simple
+- ✅ Rapide
+- ✅ Lisible
 
 👉 Un outil utile avant tout
-
----

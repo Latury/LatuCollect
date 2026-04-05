@@ -1,6 +1,6 @@
-# 🧠 GUIDE OFFICIEL DES COMMITS – LATUCOLLECT
+# 🧠 GUIDE DES COMMITS – LATUCOLLECT
 
-Application de collecte, organisation et export de code multi-fichiers
+Application de collecte, organisation et export de contenu multi-fichiers
 
 Ce document définit la convention officielle de commits pour le projet LatuCollect.
 
@@ -8,11 +8,11 @@ Ce document définit la convention officielle de commits pour le projet LatuColl
 
 # 🎯 OBJECTIFS
 
-- Structurer l’historique Git
-- Clarifier chaque intention de modification
-- Maintenir une cohérence documentaire
-- Permettre un suivi technique clair
-- Faciliter la compréhension long terme
+- ✔ Structurer l’historique Git
+- ✔ Clarifier chaque intention de modification
+- ✔ Maintenir une cohérence documentaire
+- ✔ Permettre un suivi technique clair
+- ✔ Faciliter la compréhension long terme
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -20,11 +20,11 @@ Ce document définit la convention officielle de commits pour le projet LatuColl
 
 Un commit dans LatuCollect est :
 
-- Une trace historique
-- Une décision documentée
-- Une explication technique
-- Un message au futur développeur
-- Un élément de stabilité du projet
+- ✔ Une trace historique
+- ✔ Une décision documentée
+- ✔ Une explication technique
+- ✔ Un message au futur développeur
+- ✔ Un élément de stabilité du projet
 
 Chaque commit doit répondre à :
 
@@ -49,12 +49,12 @@ Interdit :
 
 ---
 
-# ⚠️ RÈGLE SPÉCIFIQUE LATUCOLLECT
+# ⚠️ RÈGLES SPÉCIFIQUES LATUCOLLECT
 
 - ❌ Ne jamais modifier les fichiers source importés
 - ✔ LatuCollect travaille uniquement en lecture
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🔎 RÉFÉRENCE ARCHITECTURALE
 
@@ -67,8 +67,7 @@ Lorsqu’un commit modifie :
 
 👉 Consulter :
 
-ALC — Architecture LatuCollect
-ARCHITECTURE – LatuCollect.md
+- ARCHITECTURE.md
 
 ---
 
@@ -90,23 +89,19 @@ UI = affichage uniquement
 
 # ⚙️ PIPELINE LATUCOLLECT
 
-## 🔹 Pipeline réel actuel (Core)
+## 🔹 Pipeline interne
 
 ```text
-Collecte = lecture + copie du contenu
+Import → Lecture → Assemblage → Export
 ```
-
-👉 ✔ Pipeline réellement utilisé aujourd’hui
 
 ---
 
-## 🔹 Flux utilisateur réel (UI)
+## 🔹 Flux utilisateur
 
 ```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
-
-👉 ✔ basé sur la maquette actuelle
 
 ---
 
@@ -174,7 +169,7 @@ Explication claire et rapide
 - ✔ Risques éventuels
 - ✔ Impact utilisateur (UX)
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🏷️ CATÉGORIES OFFICIELLES DE COMMIT – LATUCOLLECT
 
@@ -250,12 +245,12 @@ Ajout de l’affichage des dossiers et fichiers du projet.
 
 ⚠️ Impact :
 
-- ✔ amélioration UX
-- ✔ navigation projet possible
+- ✔ Amélioration UX
+- ✔ Navigation projet possible
 
 ---
 
-⚠️ aucun fichier source modifié
+⚠️ Aucun fichier source modifié
 
 ---
 
@@ -264,9 +259,7 @@ Ajout de l’affichage des dossiers et fichiers du projet.
 - Commit = détail technique
 - Patch note = résumé de version
 
-Les versions sont définies dans :
-
-PATCH NOTES – LatuCollect.md
+👉 Les versions sont définies dans PATCH_NOTES.md
 
 ---
 
@@ -275,7 +268,9 @@ PATCH NOTES – LatuCollect.md
 - ✔ Commit clair et court
 - ✔ Commit testable
 - ✔ Commit compréhensible seul
-- ✔ Éviter commits > 300 lignes (sauf justification)
+- ✔ Vérifier cohérence avec la feuille de route
+- ✔ Vérifier cohérence avec la documentation
+
 - ❌ Pas de commit automatique non vérifié
 
 ---
@@ -292,11 +287,11 @@ PATCH NOTES – LatuCollect.md
 
 # ⚠️ NE PAS COMMIT SI
 
-- code non compilable
-- test incomplet
+- Code non compilable
+- Test incomplet
 - UI incohérente
-- debug actif
-- fichiers inutiles présents
+- Debug actif
+- Fichiers inutiles présents
 
 ---
 
@@ -310,9 +305,9 @@ Une mémoire mal tenue devient inutilisable.
 
 # 🏁 OBJECTIF FINAL
 
-Un historique Git lisible
-Une architecture compréhensible
-Un projet maintenable
-Un développement propre dans le temps
+- ✔ Un historique Git lisible
+- ✔ Une architecture compréhensible
+- ✔ Un projet maintenable
+- ✔ Un développement propre dans le temps
 
 👉 Un bon commit aujourd’hui évite un problème demain

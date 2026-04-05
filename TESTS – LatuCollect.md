@@ -8,11 +8,11 @@ Stratégie officielle de validation du projet LatuCollect.
 
 Garantir :
 
-- ✔ Fiabilité du chargement de projet
-- ✔ Robustesse de la sélection des fichiers
-- ✔ Exactitude de l’aperçu
-- ✔ Qualité des exports (TXT / Markdown)
-- ✔ Cohérence globale du système
+- ✅ Fiabilité du chargement de projet
+- ✅ Robustesse de la sélection des fichiers
+- ✅ Exactitude de l’aperçu
+- ✅ Qualité des exports (TXT / Markdown)
+- ✅ Cohérence globale du système
 
 ---
 
@@ -20,7 +20,7 @@ Garantir :
 
 Approche progressive :
 
-1. ✔ Tests manuels (UI actuels)
+1. ✅ Tests manuels (UI actuels)
 2. 🔄 Tests unitaires (à venir)
 3. 🔄 Tests système (futurs)
 
@@ -36,19 +36,20 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Cas OK
 
-- ✔ Charger un dossier valide
-- ✔ Chargement avec sous-dossiers
-- ✔ Projet volumineux
+- ✅ Charger un dossier valide
+- ✅ Chargement avec sous-dossiers
+- ✅ Projet volumineux
 
 ### Cas erreurs
 
 - ❌ Dossier invalide
 - ❌ Accès refusé
+- ❌ Sélection annulée par l’utilisateur
 
 👉 Résultat attendu :
 
-- ✔ Structure affichée correctement
-- ✔ Message clair en cas d’erreur
+- ✅ Structure affichée correctement
+- ✅ Message clair en cas d’erreur
 
 ---
 
@@ -56,9 +57,24 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✔ Affichage correct des dossiers
-- ✔ Navigation fluide
-- ✔ Retour en arrière fonctionnel
+- ✅ Affichage correct des dossiers
+- ✅ Navigation fluide
+- ✅ Retour en arrière fonctionnel
+
+---
+
+## 🔍 Recherche
+
+### Vérifier :
+
+- ✅ Filtrage correct des fichiers
+- ✅ Mise à jour en temps réel
+- ✅ Conservation de la structure
+
+### Cas limites :
+
+- ❌ Recherche vide
+- ❌ Aucun résultat
 
 ---
 
@@ -66,9 +82,9 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✔ Checkbox fonctionnelle
-- ✔ Sélection multiple
-- ✔ Désélection
+- ✅ Checkbox fonctionnelle
+- ✅ Sélection multiple
+- ✅ Désélection
 
 ### Cas limites :
 
@@ -76,8 +92,9 @@ Tests réalisés directement dans l’interface WinUI.
 
 👉 Résultat attendu :
 
-- ✔ Aperçu vide
-- ✔ Export bloqué
+- ✅ Message "Aucun fichier sélectionné..." affiché
+- ✅ Export bloqué
+- ✅ Bouton copier désactivé
 
 ---
 
@@ -85,15 +102,15 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✔ Mise à jour en temps réel
-- ✔ Correspondance exacte avec export
-- ✔ Lisibilité
+- ✅ Mise à jour en temps réel
+- ✅ Aperçu = export (strictement identique)
+- ✅ Lisibilité
 
 ### Déclencheurs :
 
-- ✔ sélection fichier
-- ✔ désélection
-- ✔ changement format
+- ✅ Sélection fichier
+- ✅ Désélection
+- ✅ Changement format
 
 ---
 
@@ -101,20 +118,39 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Cas TXT
 
-- ✔ Fichier créé
-- ✔ Contenu conforme
-- ✔ Séparateur correct
+- ✅ Fichier créé
+- ✅ Contenu conforme
+- ✅ Séparateur correct
 
 ### Cas Markdown
 
-- ✔ Structure lisible
-- ✔ Chemin affiché
-- ✔ Contenu correct
+- ✅ Structure lisible
+- ✅ Chemin affiché
+- ✅ Contenu correct
+- ✅ Format adapté au Markdown (lisibilité améliorée)
+
+### Comportement attendu
+
+- ✅ Format dépend du choix utilisateur (.txt / .md)
+- ✅ Export bloqué si aucun contenu
+- ✅ Bouton export désactivé si aucun contenu
+- ✅ Confirmation après export
 
 ### Cas erreurs
 
 - ❌ Aucun fichier sélectionné
 - ❌ Échec d’écriture
+
+---
+
+## 📋 Copier
+
+### Vérifier :
+
+- ✅ Copie du contenu correct
+- ✅ Correspond exactement à l’aperçu
+- ✅ Désactivé si aucun contenu
+- ✅ Message de confirmation affiché
 
 ---
 
@@ -130,8 +166,11 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-- ✔ Respect du format
-- ✔ Espacement correct
+---
+
+- ✅ Respect du format
+- ✅ Vérification du séparateur
+- ✅ Vérification des espacements
 
 ---
 
@@ -156,35 +195,34 @@ Chemin du fichier
 
 Cibles :
 
-- ✔ FileImportService
-- ✔ FileExportService
+- ✅ FileReaderService
+- ✅ FileExportService
 
 ---
 
 ## Cas principaux
 
-### Import
+### Lecture
 
-- ✔ Ajout dossier
-- ✔ filtre extensions
-- ✔ gestion erreurs
+- ✅ Lecture fichier valide
+- ✅ Gestion erreur lecture
 
 ---
 
 ### Export
 
-- ✔ génération TXT
-- ✔ génération Markdown
-- ✔ respect format
+- ✅ Génération TXT
+- ✅ Génération Markdown
+- ✅ Respect format
 
 ---
 
 # 📊 4. Couverture cible
 
-| Module | Objectif |
-| ------ | -------- |
-| Import | 90%      |
-| Export | 90%      |
+| Module  | Objectif |
+| ------- | -------- |
+| Lecture | 90%      |
+| Export  | 90%      |
 
 ---
 
@@ -192,11 +230,11 @@ Cibles :
 
 Priorité :
 
-1. ✔ Import fiable
-2. ✔ Sélection correcte
-3. ✔ Aperçu exact
-4. ✔ Export propre
-5. ✔ Gestion erreurs
+1. ✅ Import fiable
+2. ✅ Sélection correcte
+3. ✅ Aperçu exact
+4. ✅ Export propre
+5. ✅ Gestion erreurs
 
 ---
 
@@ -224,12 +262,12 @@ Import → Lecture → Assemblage → Export
 
 Les tests garantissent :
 
-- ✔ Aucun fichier incorrect
-- ✔ Aucun export corrompu
-- ✔ Cohérence UI / Core
+- ✅ Aucun fichier incorrect
+- ✅ Aucun export corrompu
+- ✅ Cohérence UI / Core
 
 👉 LatuCollect doit rester :
 
-- ✔ Fiable
-- ✔ Stable
-- ✔ Prévisible
+- ✅ Fiable
+- ✅ Stable
+- ✅ Prévisible

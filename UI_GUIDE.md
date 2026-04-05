@@ -4,9 +4,9 @@ Guide officiel de l’interface utilisateur WinUI 3.
 
 Ce document définit :
 
-- la structure visuelle
-- le comportement utilisateur
-- les interactions principales
+- La structure visuelle
+- Le comportement utilisateur
+- Les interactions principales
 
 👉 Référence unique pour toute la UI
 
@@ -16,10 +16,10 @@ Ce document définit :
 
 Créer une interface :
 
-- ✔ simple
-- ✔ lisible
-- ✔ rapide à comprendre
-- ✔ fidèle au besoin réel
+- ✅ Simple
+- ✅ Lisible
+- ✅ Rapide à comprendre
+- ✅ Fidèle au besoin réel
 
 ---
 
@@ -29,7 +29,7 @@ Créer une interface :
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
-👉 Toute l’interface tourne autour de ce flux.
+👉 Toute l’interface tourne autour de ce flux
 
 ---
 
@@ -48,12 +48,14 @@ Bas → Export
 
 ## 🎯 Rôle
 
-Afficher la structure complète du projet.
+Afficher la structure complète du projet
 
 ---
 
 ## 📦 Contenu
 
+- Bouton Charger un dossier (📂)
+- Barre de recherche
 - Arborescence (dossiers + sous-dossiers)
 - Fichiers sélectionnables (checkbox)
 
@@ -61,10 +63,18 @@ Afficher la structure complète du projet.
 
 ## ⚙️ Comportement
 
-- Clic sur la zone → ouvre un sélecteur de dossier
+- Clic sur le bouton 📂 → ouvre un sélecteur de dossier
 - Chargement récursif complet
 - Navigation dans les dossiers
-- Bouton retour (remonter dossier)
+- Filtrage dynamique via la recherche
+
+---
+
+## 🔎 Recherche
+
+- Filtre les fichiers et dossiers
+- Recherche insensible à la casse
+- Mise à jour instantanée
 
 ---
 
@@ -72,14 +82,14 @@ Afficher la structure complète du projet.
 
 - Checkbox = sélection pour export
 - Multi-sélection possible
-- Indépendant de l’aperçu
+- Mise à jour immédiate de l’aperçu
 
 ---
 
 ## ⚠️ Cas particuliers
 
-- ❌ Dossier invalide → message
-- ❌ Accès refusé → message
+- ❌ Dossier invalide → aucun chargement
+- ❌ Accès refusé → aucun affichage
 
 ---
 
@@ -87,21 +97,49 @@ Afficher la structure complète du projet.
 
 ## 🎯 Rôle
 
-Configurer le format d’export.
+Configurer et interagir avec l’application
 
 ---
 
 ## 📦 Contenu
 
-- ☑ TXT
-- ☑ Markdown
+- Choix du format :
+  - ✅ TXT
+  - ✅ Markdown
+- Bouton Copier
+- Boutons :
+  - Options
+  - Aide
+  - À propos
+  - Quitter
 
 ---
 
 ## ⚙️ Comportement
 
 - Un seul format actif
-- Le changement met à jour l’aperçu
+- Le format impacte l’export
+- Le bouton Copier :
+  - Activé si contenu présent
+  - Désactivé si aucun contenu
+
+---
+
+## 📋 Copier
+
+- Copie le contenu de l’aperçu
+- Affiche un message de confirmation
+
+👉 Le contenu copié correspond exactement à l’aperçu affiché
+
+---
+
+## ⚙️ Dialogs
+
+- Options → paramètres simples
+- Aide → explication rapide
+- À propos → informations application
+- Quitter → demande de confirmation
 
 ---
 
@@ -109,7 +147,7 @@ Configurer le format d’export.
 
 ## 🎯 Rôle
 
-Afficher le document final généré.
+Afficher le document final généré
 
 ---
 
@@ -117,30 +155,32 @@ Afficher le document final généré.
 
 - Texte généré en temps réel
 - Scroll vertical
-- Police lisible (type code)
+- Police monospace (type code)
 
 ---
 
 ## ⚙️ Comportement
 
 - Mise à jour automatique lors de :
-  - sélection fichier
-  - désélection
-  - changement format
+  - Sélection fichier
+  - Désélection
+  - Recherche
+  - Chargement d’un dossier
 
 ---
 
 ## ⚠️ Cas particuliers
 
-- ❌ Aucun fichier sélectionné → aperçu vide
-- ✔ Gros contenu → scroll actif
+- ❌ Aucun fichier sélectionné → message centré "Aucun fichier sélectionné..."
+- ✅ Contenu long → scroll actif
 
 ---
 
 ## 📄 Contenu affiché
 
-- chemin du fichier
-- contenu du fichier
+- Chemin du fichier
+- Contenu du fichier
+- Séparateur visuel
 
 ---
 
@@ -156,7 +196,7 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-👉 répété pour chaque fichier sélectionné
+👉 Répété pour chaque fichier sélectionné
 👉 2 à 3 lignes vides entre chaque section
 
 ---
@@ -165,13 +205,13 @@ Chemin du fichier
 
 ## 🎯 Rôle
 
-Lancer l’export final.
+Lancer l’export final
 
 ---
 
 ## 📦 Contenu
 
-- Bouton : **Exporter**
+- Bouton Exporter
 
 ---
 
@@ -180,37 +220,31 @@ Lancer l’export final.
 - Génère le fichier final
 - Respecte le format sélectionné
 - Utilise les fichiers cochés
+- Affiche une confirmation
 
 ---
 
 ## ⚠️ Cas erreurs
 
-- ❌ Aucun fichier sélectionné → blocage
+- ❌ Aucun fichier sélectionné
 - ❌ Échec export → message
-
----
-
-# ⚠️ FICHIERS IGNORÉS
-
-- bin
-- obj
 
 ---
 
 # 🧠 RÈGLE ALC (IMPORTANT)
 
-- ❌ aucune logique métier dans UI
-- ✔ UI = affichage uniquement
+- ❌ Aucune logique métier dans UI
+- ✅ UI = affichage uniquement
 
 ---
 
 # 🧠 RÈGLES UX IMPORTANTES
 
-- ✔ Une action = un rôle clair
-- ✔ Pas de surcharge visuelle
-- ✔ Sélection ≠ aperçu
-- ✔ Aperçu = résultat final
-- ✔ Feedback immédiat
+- ✅ Une action = un rôle clair
+- ✅ Pas de surcharge visuelle
+- ✅ Sélection ≠ aperçu
+- ✅ Aperçu = résultat final
+- ✅ Feedback immédiat
 
 ---
 
@@ -227,9 +261,9 @@ Lancer l’export final.
 
 Une interface :
 
-- ✔ intuitive
-- ✔ rapide
-- ✔ sans confusion
-- ✔ adaptée à un usage réel
+- ✅ Intuitive
+- ✅ Rapide
+- ✅ Sans confusion
+- ✅ Adaptée à un usage réel
 
 👉 L’utilisateur comprend immédiatement quoi faire

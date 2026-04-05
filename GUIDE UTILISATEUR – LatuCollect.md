@@ -2,13 +2,16 @@
 
 LatuCollect est une application permettant de :
 
-- ✔ Charger un projet (dossier)
-- ✔ Naviguer dans sa structure
-- ✔ Sélectionner des fichiers
-- ✔ Visualiser un aperçu du contenu
-- ✔ Exporter un document structuré
+- ✅ Charger un projet (dossier)
+- ✅ Naviguer dans sa structure
+- ✅ Rechercher des fichiers rapidement
+- ✅ Sélectionner des fichiers
+- ✅ Visualiser un aperçu du contenu
+- ✅ Copier le contenu généré
+- ✅ Exporter un document structuré
 
-👉 ✔ Aucun fichier source n’est modifié
+👉 Aucun fichier source n’est modifié
+👉 Lecture seule, aucune transformation du code
 
 ---
 
@@ -17,10 +20,10 @@ LatuCollect est une application permettant de :
 L’application est composée de 4 zones principales :
 
 ```text
-Gauche  → Arborescence projet
-Centre  → Options (format)
-Droite  → Aperçu
-Bas     → Bouton export
+Gauche → Arborescence projet
+Centre → Options (format + actions)
+Droite → Aperçu
+Bas → Bouton export
 ```
 
 ---
@@ -29,23 +32,23 @@ Bas     → Bouton export
 
 ## Étapes :
 
-1. Cliquer sur la zone gauche
+1. Cliquer sur le bouton 📂
 2. Sélectionner un dossier
 
 ---
 
 ## Comportement :
 
-- ✔ Chargement automatique des sous-dossiers
-- ✔ Affichage des fichiers
-- ✔ Structure identique au projet réel
+- ✅ Chargement automatique des sous-dossiers
+- ✅ Affichage des fichiers
+- ✅ Structure identique au projet réel
 
 ---
 
 ## ⚠️ Cas d’erreur
 
 - ❌ Dossier invalide → aucun chargement
-- ❌ Accès refusé → affichage erreur
+- ❌ Accès refusé → aucun affichage
 
 ---
 
@@ -53,35 +56,57 @@ Bas     → Bouton export
 
 L’utilisateur peut :
 
-- ✔ Ouvrir les dossiers
-- ✔ Naviguer dans les sous-dossiers
-- ✔ Revenir en arrière
+- ✅ Ouvrir les dossiers
+- ✅ Naviguer dans les sous-dossiers
+- ✅ Explorer toute la structure
 
 ---
 
-# ☑️ 4. Sélectionner les fichiers
+# 🔎 4. Rechercher un fichier
 
-- ✔ Chaque fichier possède une checkbox
-- ✔ Seuls les fichiers cochés sont utilisés
+Une barre de recherche permet de :
+
+- ✅ Filtrer les fichiers et dossiers
+- ✅ Rechercher rapidement par nom
+- ✅ Recherche insensible à la casse
+
+👉 Le résultat est affiché instantanément
+
+---
+
+# ☑️ 5. Sélectionner les fichiers
+
+- ✅ Chaque fichier possède une checkbox
+- ✅ Seuls les fichiers cochés sont utilisés
 
 ---
 
 ## ⚠️ Cas particulier
 
 - ❌ Aucun fichier sélectionné → aperçu vide
+- ❌ Bouton Copier désactivé
 - ❌ Export impossible
 
 ---
 
-# 👁️ 5. Aperçu en temps réel
+# 👁️ 6. Aperçu en temps réel
 
 ## Déclencheurs :
 
 L’aperçu se met à jour :
 
-- ✔ lors de la sélection d’un fichier
-- ✔ lors de la désélection
-- ✔ lors du changement de format
+- ✅ Lors de la sélection d’un fichier
+- ✅ Lors de la désélection
+- ✅ Lors d’une recherche
+
+---
+
+## Comportement :
+
+- ✅ Message affiché si aucun fichier sélectionné
+- ✅ Contenu affiché si sélection active
+- ✅ Affichage type éditeur (aligné à gauche, monospace)
+- ✅ Scroll automatique si contenu long
 
 ---
 
@@ -97,37 +122,59 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-👉 répété pour chaque fichier sélectionné
-
+👉 Répété pour chaque fichier sélectionné
 👉 2 à 3 lignes vides entre chaque section
 
 ---
 
-# ⚙️ 6. Choisir le format
+# ⚙️ 7. Choisir le format
 
 Dans la zone centrale :
 
-- ✔ TXT
-- ✔ Markdown (.md)
+- ✅ TXT
+- ✅ Markdown (.md)
 
-👉 impact direct sur l’aperçu
+👉 Impact direct sur l’export
 
 ---
 
-# 📤 7. Exporter
+# 📋 8. Copier le contenu
 
 ## Étapes :
 
-1. Cliquer sur "Exporter"
-2. Choisir un emplacement
+1. Cliquer sur "Copier"
 
 ---
 
 ## Résultat :
 
-- ✔ Fichier généré
-- ✔ Contenu identique à l’aperçu
-- ✔ Format respecté
+- ✅ Contenu copié dans le presse-papiers
+- ✅ Message de confirmation affiché
+
+---
+
+## ⚠️ Cas particulier
+
+- ❌ Bouton désactivé si aucun contenu
+
+---
+
+# 📤 9. Exporter
+
+## Étapes :
+
+1. Cliquer sur "Exporter"
+2. Choisir un emplacement
+3. Valider
+
+---
+
+## Résultat :
+
+- ✅ Fichier généré
+- ✅ Contenu identique à l’aperçu
+- ✅ Format respecté (.txt ou .md)
+- ✅ Message de confirmation affiché
 
 ---
 
@@ -139,7 +186,37 @@ Dans la zone centrale :
 
 ---
 
-# ⚙️ 8. Comportement interne
+# ⚙️ 10. Options et menus
+
+L’application propose plusieurs actions :
+
+---
+
+## ⚙️ Options
+
+- ✅ Paramètres de base (évolutifs)
+
+---
+
+## ❓ Aide
+
+- ✅ Explication simple du fonctionnement
+
+---
+
+## ℹ️ À propos
+
+- ✅ Informations sur l’application
+
+---
+
+## 🚪 Quitter
+
+- ✅ Demande de confirmation avant fermeture
+
+---
+
+# ⚙️ 11. Fonctionnement interne
 
 ```text
 Import → Lecture → Assemblage → Export
@@ -147,35 +224,30 @@ Import → Lecture → Assemblage → Export
 
 👉 L’application ne modifie jamais le contenu
 👉 Elle copie uniquement le texte
-👉 traitement automatique :
-
-- ✔ lecture des fichiers
-- ✔ génération du document
 
 ---
 
-## ⚠️ Fichiers ignorés
+## Traitement automatique :
 
-Certains dossiers peuvent être exclus :
-
-- bin
-- obj
-
----
-
-# ⚠️ 9. Règles importantes
-
-- ✔ Aucun fichier source n’est modifié
-- ✔ Seuls les fichiers sélectionnés sont exportés
-- ✔ L’aperçu = résultat final
+- ✅ Lecture des fichiers
+- ✅ Assemblage du contenu
+- ✅ Génération du document final
 
 ---
 
-# 🧠 10. Conseils
+# ⚠️ 12. Règles importantes
 
-- ✔ Vérifier l’aperçu avant export
-- ✔ Utiliser Markdown pour plus de lisibilité
-- ✔ Sélectionner uniquement les fichiers utiles
+- ✅ Aucun fichier source n’est modifié
+- ✅ Seuls les fichiers sélectionnés sont exportés
+- ✅ L’aperçu = résultat final
+
+---
+
+# 🧠 13. Conseils
+
+- ✅ Vérifier l’aperçu avant export
+- ✅ Utiliser Markdown pour plus de lisibilité
+- ✅ Sélectionner uniquement les fichiers utiles
 
 ---
 
@@ -183,18 +255,16 @@ Certains dossiers peuvent être exclus :
 
 LatuCollect permet de :
 
-- ✔ Regrouper du code rapidement
-- ✔ Obtenir un export propre
-- ✔ Éviter les erreurs manuelles
+- ✅ Regrouper du code rapidement
+- ✅ Obtenir un export propre
+- ✅ Éviter les erreurs manuelles
 
-👉 ✔ Un outil simple, visuel et efficace
+👉 Un outil simple, visuel et efficace
 
 ---
 
-# ⚙️ 11. Évolutions futures
+# ⚙️ 14. Évolutions futures
 
 - 🔄 Mode débutant / expert
 - 🔄 Options avancées
-- 🔄 amélioration UX
-
----
+- 🔄 Amélioration UX

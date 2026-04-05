@@ -1,22 +1,26 @@
-# 📁 STRUCTURE DU PROJET – LATUCOLLECT
+# 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE)
 
-Ce document décrit l’organisation des dossiers du projet LatuCollect.
+Ce document décrit la structure cible du projet LatuCollect.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉 ⚠️ Structure cible (non entièrement implémentée à ce jour)
+👉 Elle correspond à l’organisation prévue pour la version stable (v1.0.0)
+
+---
 
 # 🎯 Objectif
 
 Permettre :
 
-- une navigation rapide
-- une compréhension immédiate
-- une maintenance facilitée
+- ✅ Une navigation rapide
+- ✅ Une compréhension immédiate
+- ✅ Une maintenance facilitée
+- ✅ Une évolutivité propre
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧩 Structure principale
 
-```text id="final_struct"
+```text
 LatuCollect/
 │
 ├── Core/
@@ -31,17 +35,46 @@ LatuCollect/
 │   │   │   └── FileExportService.cs
 │   │   │
 │   │   └── Utils/
-│   │       └── ClipboardService.cs → copie rapide du résultat dans le presse-papier
+│   │       └── ClipboardService.cs
+│   │
+│   ├── Simulation/
+│   │   ├── SimulationConfig.cs
+│   │   ├── SimulationService.cs
+│   │   └── Scenarios/
+│   │       ├── LargeFiles/
+│   │       ├── CorruptedFiles/
+│   │       ├── EmptyFiles/
+│   │       └── AccessErrors/
+│   │
+│   ├── Configuration/
+│   │   └── AppConfig.cs
+│   │
+│   ├── Logging/
+│   │   └── LoggerService.cs
 │   │
 │   ├── Models/
 │   ├── Interfaces/
-│   └── Helpers/
+│   ├── Helpers/
+│   └── DTOs/ (Optionnel)
 │
 ├── UI/
-│   ├── Console/
 │   └── WinUI/
 │       ├── Views/
-│       └── ViewModels/
+│       │   └── MainWindow.xaml
+│       │
+│       ├── ViewModels/
+│       │   └── MainViewModel.cs
+│       │
+│       ├── Models/
+│       │   └── FileNode.cs
+│       │
+│       ├── Converters/
+│       │   ├── BooleanToVisibilityConverter.cs
+│       │   └── BoolToIconConverter.cs
+│       │
+│       └── Themes/
+│           ├── Light/
+│           └── Dark/
 │
 ├── Resources/
 │   ├── Colors/
@@ -49,6 +82,16 @@ LatuCollect/
 │   └── Dimensions/
 │
 ├── Tests/
+│   ├── Unit/
+│   └── Simulation/
+│
+├── Installer/
+│   ├── Setup/
+│   └── Assets/
+│
+├── Assets/
+│   ├── Icons/
+│   └── Images/
 │
 ├── README.md
 ├── UI_GUIDE.md
@@ -56,12 +99,19 @@ LatuCollect/
 ├── GUIDE_UTILISATEUR.md
 ├── FEUILLE_DE_ROUTE.md
 ├── PATCH_NOTES.md
+├── TESTS.md
 ├── LICENSE.md
 ├── .editorconfig
 ├── .gitignore
 ```
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
+
+# ⚠️ IMPORTANT
+
+👉 Certains services et dossiers sont prévus mais seront implémentés progressivement (voir feuille de route)
+
+---
 
 # 🧠 Description des dossiers
 
@@ -69,14 +119,53 @@ LatuCollect/
 
 Contient toute la logique métier.
 
-👉 responsabilités :
+👉 Responsabilités :
 
-- importer les fichiers
-- lire le contenu
-- générer le document final
-- exporter
+- Importer les fichiers
+- Lire le contenu
+- Assembler les données
+- Exporter
 
-👉 aucun code UI
+👉 Aucune dépendance UI
+
+---
+
+## Simulation/
+
+Permet de simuler des cas complexes pour les tests.
+
+👉 Objectifs :
+
+- Tester les erreurs
+- Simuler des gros projets
+- Simuler des comportements extrêmes
+
+👉 Activable via configuration (true / false)
+👉 Jamais actif en production
+
+---
+
+## Configuration/
+
+Centralise les paramètres globaux de l’application.
+
+👉 Contient :
+
+- Format par défaut
+- Activation simulation
+- Paramètres utilisateur
+
+---
+
+## Logging/
+
+Permet de tracer les actions et erreurs.
+
+👉 Utilisé pour :
+
+- Debug
+- Suivi des erreurs
+- Diagnostic
 
 ---
 
@@ -84,11 +173,11 @@ Contient toute la logique métier.
 
 Contient l’interface utilisateur WinUI.
 
-👉 responsabilités :
+👉 Responsabilités :
 
-- affichage
-- interactions utilisateur
-- aperçu du document
+- Affichage
+- Interaction utilisateur
+- Aperçu du document
 
 ---
 
@@ -96,19 +185,66 @@ Contient l’interface utilisateur WinUI.
 
 Structure UI :
 
-```text id="mvvm"
+```text
 View → ViewModel → Core
 ```
 
-- View = XAML (UI)
+- View = XAML
 - ViewModel = logique UI
 - Core = logique métier
 
 ---
 
+## Resources/
+
+Centralise les ressources visuelles.
+
+👉 Contient :
+
+- Couleurs
+- Styles
+- Dimensions
+
+👉 Utilisé pour le theming (Dark / Light)
+
+---
+
+## Tests/
+
+Contient les tests du projet.
+
+- Unit → tests unitaires
+- Simulation → scénarios simulés
+
+---
+
+## Installer/
+
+Contient tout ce qui concerne la distribution.
+
+👉 Responsabilités :
+
+- Création installateur
+- Gestion dépendances
+- Packaging application
+
+---
+
+## Assets/
+
+Contient les éléments visuels.
+
+👉 Contient :
+
+- Icônes
+- Images
+- Logo application
+
+---
+
 # 🧩 Fonctionnement global
 
-```text id="flow"
+```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
@@ -116,7 +252,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 # 🖥️ Interface utilisateur
 
-```text id="ui_layout"
+```text
 Gauche → Arborescence projet
 Centre → Options (format)
 Droite → Aperçu
@@ -125,23 +261,13 @@ Bas → Export
 
 ---
 
-# 🌳 Arborescence projet (IMPORTANT)
-
-L’application repose sur :
-
-- navigation dans les dossiers
-- affichage des fichiers
-- sélection via checkbox
-
----
-
 # 🔄 Communication
 
-```text id="flow_arch"
+```text
 UI → ViewModel → Core
 ```
 
-❌ jamais l’inverse
+❌ Jamais l’inverse
 
 ---
 
@@ -150,26 +276,15 @@ UI → ViewModel → Core
 - Core ne dépend jamais de UI
 - UI peut dépendre de Core
 - 1 dossier = 1 responsabilité
-- aucune logique métier dans UI
+- Aucune logique métier dans UI
+- Ne jamais modifier cette structure sans mettre à jour la documentation
 
 ---
 
-# 🧠 Évolution future
+# 🧠 Philosophie
 
-Possibilité d’ajouter :
+- Simplicité
+- Lisibilité
+- Efficacité
 
-- Analyse
-- Déduplication
-- Organisation
-
-👉 uniquement si besoin réel
-
----
-
-# 🧭 Philosophie
-
-- simplicité
-- lisibilité
-- efficacité
-
-👉 éviter toute complexité inutile
+👉 Éviter toute complexité inutile
