@@ -261,6 +261,61 @@ Import → Lecture → Assemblage → Export
 
 ---
 
+# 🚀 VERSION 0.3.0
+
+## 📌 Statut
+
+🟡 En cours — Système de simulation
+
+---
+
+## 🎯 Objectif
+
+Permettre de simuler des cas réels (erreurs, fichiers extrêmes) sans impacter l’application.
+
+---
+
+## ✨ Fonctionnalités
+
+### 🧪 Simulation
+
+- ✅ Ajout d’un système de simulation (Core)
+- ✅ Activation via configuration (SimulationConfig)
+- ✅ Choix du scénario de simulation
+
+---
+
+### 📥 Lecture
+
+- ✅ Simulation de fichiers vides
+- ✅ Simulation de fichiers corrompus
+- ✅ Simulation d’erreurs d’accès
+- ✅ Simulation de fichiers volumineux
+
+---
+
+### 📤 Export
+
+- ✅ Simulation d’erreurs d’export
+
+---
+
+## ⚙️ Architecture
+
+- ✅ Ajout du dossier Simulation dans Core
+- ✅ Création SimulationService
+- ✅ Intégration propre dans FileReaderService
+- ✅ Intégration propre dans FileExportService
+
+---
+
+## 🧠 Objectif atteint
+
+- Tester les comportements extrêmes
+- Préparer la gestion avancée des erreurs (v0.4.0)
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

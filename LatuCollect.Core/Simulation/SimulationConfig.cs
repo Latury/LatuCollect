@@ -2,37 +2,32 @@
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
 ║  Module : Core                                                       ║
-║  Fichier : FileExportService.cs                                      ║
+║  Fichier : SimulationConfig.cs                                       ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Écrire le contenu final dans un fichier                             ║
+║  Configurer le système de simulation                                 ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Écrire du texte dans un fichier                                   ║
-║                                                                      ║
-║  Dépendances :                                                       ║
-║  - System.IO                                                         ║
-║  - SimulationService                                                 ║
+║  - Activer / désactiver la simulation                                ║
+║  - Définir le scénario de simulation                                 ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using System.IO;
-using LatuCollect.Core.Simulation;
-
-namespace LatuCollect.Core.Services
+namespace LatuCollect.Core.Simulation
 {
-    public static class FileExportService
+    public static class SimulationConfig
     {
-        public static void Export(string path, string content)
-        {
-            // 🔥 Simulation
-            SimulationService.SimulateExport();
+        /// <summary>
+        // Active ou désactive la simulation
+        /// </summary>
+        public static bool IsEnabled { get; set; } = true; // Par défaut, la simulation est désactivée
 
-            // ✔ Export réel
-            File.WriteAllText(path, content);
-        }
+        /// <summary>
+        // Nom du scénario de simulation
+        /// </summary>
+        public static string Scenario { get; set; } = "FichiersVolumineux"; // Par défaut, aucun scénario n'est défini
     }
 }

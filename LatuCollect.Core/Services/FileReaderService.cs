@@ -15,6 +15,7 @@
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - System.IO                                                         ║
+║  - SimulationService                                                 ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -22,6 +23,7 @@
 */
 
 using System.IO;
+using LatuCollect.Core.Simulation;
 
 namespace LatuCollect.Core.Services
 {
@@ -32,6 +34,12 @@ namespace LatuCollect.Core.Services
             if (!File.Exists(path))
                 return "[Fichier introuvable]";
 
+            // 🔥 Simulation
+            var simulated = SimulationService.SimulateRead(path);
+            if (simulated != null)
+                return simulated;
+
+            // ✔ Lecture normale
             return File.ReadAllText(path);
         }
     }

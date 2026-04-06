@@ -178,22 +178,22 @@ Permettre de tester tous les cas (erreurs, gros projets, comportements) sans imp
 
 ## 🔧 Système de simulation
 
-- ⬜ Création dossier Simulation
-- ⬜ Activation / désactivation via booléen (true / false)
-- ⬜ Intégration dans le flux (lecture / export / UI)
+- ✅ Création dossier Simulation
+- ✅ Activation / désactivation via booléen (true / false)
+- ✅ Intégration dans le flux (lecture / export / UI)
 
 ---
 
 ## 📂 Cas simulés
 
-- ⬜ Fichiers volumineux
-- ⬜ Fichiers vides
-- ⬜ Fichiers corrompus
+- ✅ Fichiers volumineux
+- ✅ Fichiers vides
+- ✅ Fichiers corrompus
 - ⬜ Gros projets (beaucoup de fichiers)
 - ⬜ Chemins longs
-- ⬜ Accès refusé
+- ✅ Accès refusé
 - ⬜ Erreurs lecture
-- ⬜ Erreurs export
+- ✅ Erreurs export
 
 ---
 
