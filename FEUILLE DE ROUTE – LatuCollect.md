@@ -197,6 +197,17 @@ Permettre de tester tous les cas (erreurs, gros projets, comportements) sans imp
 
 ---
 
+## 🖥️ Interface simulation (mode développeur)
+
+- ⬜ Option avancée pour activer le mode simulation
+- ⬜ Affichage d’un bouton 🧪 dans la barre du bas
+- ⬜ Indicateur visuel du mode simulation actif
+- ⬜ Ouverture d’un popup de configuration
+- ⬜ Sélection du scénario directement depuis l’application
+- ⬜ Synchronisation UI ↔ SimulationConfig
+
+---
+
 ## 🧠 Règles
 
 - ⬜ Aucun impact en production
