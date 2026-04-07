@@ -34,6 +34,7 @@ using LatuCollect.Core.Services;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 
@@ -76,6 +77,30 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         public ObservableCollection<FileNode> Tree { get; } = new();
+
+        // ======================================================
+        // 🧩 UTILITAIRES
+        // ======================================================
+        private List<string> GetSelectedFiles()
+        {
+            List<string> files = new();
+
+            void ProcessNode(FileNode node)
+            {
+                if (node.IsSelected && File.Exists(node.Path))
+                {
+                    files.Add(node.Path);
+                }
+
+                foreach (var child in node.Children)
+                    ProcessNode(child);
+            }
+
+            foreach (var root in Tree)
+                ProcessNode(root);
+
+            return files;
+        }
 
         // ======================================================
         // 🔍 ÉTATS UI
@@ -249,32 +274,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private void RefreshPreview()
         {
-            PreviewText = "";
-            bool hasSelection = false;
+            var files = GetSelectedFiles();
 
-            void ProcessNode(FileNode node)
+            if (files.Count == 0)
             {
-                if (node.IsSelected && File.Exists(node.Path))
-                {
-                    hasSelection = true;
-
-                    string content = FileReaderService.ReadFile(node.Path);
-
-                    PreviewText +=
-                        $"{node.Path}\n\n\n" +
-                        $"{content}\n\n\n" +
-                        $"----------------------------------------\n\n\n";
-                }
-
-                foreach (var child in node.Children)
-                    ProcessNode(child);
-            }
-
-            foreach (var root in Tree)
-                ProcessNode(root);
-
-            if (!hasSelection)
                 PreviewText = "Aucun fichier sélectionné...";
+            }
+            else
+            {
+                PreviewText = FileExportService.BuildContent(files);
+            }
 
             OnPropertyChanged(nameof(CanCopy));
             OnPropertyChanged(nameof(IsPreviewEmpty));
@@ -313,33 +322,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string GetExportContent()
         {
-            return BuildExportContent();
-        }
-
-        public string BuildExportContent()
-        {
-            string result = "";
-
-            void ProcessNode(FileNode node)
-            {
-                if (node.IsSelected && File.Exists(node.Path))
-                {
-                    string content = FileReaderService.ReadFile(node.Path);
-
-                    result +=
-                        $"{node.Path}\n\n\n" +
-                        $"{content}\n\n\n" +
-                        $"----------------------------------------\n\n\n";
-                }
-
-                foreach (var child in node.Children)
-                    ProcessNode(child);
-            }
-
-            foreach (var root in Tree)
-                ProcessNode(root);
-
-            return result;
+            return PreviewText;
         }
     }
 }
