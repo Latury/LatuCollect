@@ -25,6 +25,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace LatuCollect.UI.WinUI.Models
 {
@@ -86,6 +87,10 @@ namespace LatuCollect.UI.WinUI.Models
 
         // Enfants (arborescence)
         public ObservableCollection<FileNode> Children { get; } = new();
+
+        // Enfants visibles (après filtrage)
+        public ObservableCollection<FileNode> VisibleChildren =>
+    new ObservableCollection<FileNode>(Children.Where(c => c.IsVisible));
 
         // Détermine si c’est un dossier
         public bool IsFolder => Children.Count > 0;

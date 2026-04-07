@@ -36,6 +36,7 @@ using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -44,28 +45,41 @@ namespace LatuCollect.UI.WinUI
 {
     public sealed partial class MainWindow : Window
     {
-        // ======================================================
-        // 🧠 VIEWMODEL (liaison UI)
-        // ======================================================
+        // ===========================================================
+        // 🧠 VIEWMODEL (LIEN AVEC LA VUE, PAS DE LOGIQUE MÉTIER ICI)
+        // ===========================================================
 
+        // Instance du ViewModel principal, qui contient l’état de l’application et la logique métier (appelée depuis la vue)
         private readonly MainViewModel _viewModel = new();
 
-        // ======================================================
-        // 🚀 INITIALISATION
-        // ======================================================
+        // ==========================================================
+        // 🚀 INITIALISATION DE LA FENÊTRE ET LIEN AVEC LE VIEWMODEL
+        // ==========================================================
 
+        // Constructeur de la fenêtre principale : initialise les composants, lie le DataContext au ViewModel et configure la taille minimale de la fenêtre
         public MainWindow()
         {
             this.InitializeComponent();
 
             if (this.Content is FrameworkElement root)
                 root.DataContext = _viewModel;
+
+            // 🔥 Taille minimale fenêtre (WinUI 3)
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+            if (appWindow != null)
+            {
+                appWindow.Resize(new Windows.Graphics.SizeInt32(1400, 850));
+            }
         }
 
         // ======================================================
-        // 📂 SÉLECTION DOSSIER
+        // 📂 SÉLECTION DE DOSSIER (FOLDERPICKER)
         // ======================================================
 
+        // Ouvre un FolderPicker pour que l’utilisateur sélectionne un dossier, puis charge l’arborescence dans le ViewModel
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
             FolderPicker picker = new();
@@ -83,48 +97,55 @@ namespace LatuCollect.UI.WinUI
                 _viewModel.LoadTree(folder.Path);
             }
         }
+        // Affiche ou masque la barre de recherche dans l’arborescence
+        private void OnSearchClicked(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ToggleSearch();
+        }
 
         // ======================================================
-        // 📄 FORMAT (RadioButton)
+        // 📄 FORMAT D'EXPORT (TXT, MD)
         // ======================================================
 
+        // Lorsque l’utilisateur sélectionne le format Texte, on met à jour le ViewModel pour refléter ce choix
         private void OnTxtSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".txt";
         }
 
+        // Lorsque l’utilisateur sélectionne le format Markdown, on met à jour le ViewModel pour refléter ce choix
         private void OnMdSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".md";
         }
 
         // ======================================================
-        // 📤 EXPORT
+        // 📤 EXPORTER (FICHIER OU PRESSE-PAPIERS)   
         // ======================================================
 
+        // Exporte le contenu dans un fichier choisi par l’utilisateur et affiche un feedback
         private async void OnExportClicked(object sender, RoutedEventArgs e)
         {
-            // 🔴 FORMAT NON SÉLECTIONNÉ
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
             {
-                await ShowDialog(
-                    "Format manquant",
-                    "Veuillez sélectionner un format (.txt ou .md).");
+                _viewModel.ShowFeedback("✖ Sélectionne un format");
                 return;
             }
 
-            // 🔍 CONTENU
             string content = _viewModel.GetExportContent();
+
+            if (content.StartsWith("⚠"))
+            {
+                _viewModel.ShowFeedback(content);
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(content))
             {
-                await ShowDialog(
-                    "Aucun contenu",
-                    "Aucun contenu à exporter.");
+                await ShowDialog("Aucun contenu", "Aucun contenu à exporter.");
                 return;
             }
 
-            // 📁 PICKER
             FileSavePicker picker = new();
 
             IntPtr hwnd = WindowNative.GetWindowHandle(this);
@@ -142,58 +163,47 @@ namespace LatuCollect.UI.WinUI
             if (file == null)
                 return;
 
-            // ⚙️ EXPORT
             try
             {
-                FileExportService.Export(file.Path, content);
+                var result = FileExportService.Export(file.Path, content);
 
-                await ShowDialog(
-                    "Export réussi",
-                    "Fichier exporté avec succès.");
+                if (result.IsSuccess)
+                {
+                    _viewModel.ShowFeedback("✔ Export réussi");
+                }
+                else
+                {
+                    _viewModel.ShowFeedback("✖ " + result.Message);
+                }
             }
             catch (Exception ex)
             {
-                await ShowDialog(
-                    "Erreur d'export",
-                    ex.Message);
+                _viewModel.ShowFeedback("✖ " + ex.Message);
             }
         }
 
         // ======================================================
-        // 💬 DIALOGUES UI
+        // 📋 COPIER DANS LE PRESSE-PAPIERS  
         // ======================================================
 
-        private async System.Threading.Tasks.Task ShowDialog(string title, string message)
+        // Copie le contenu de l’export dans le presse-papiers et affiche un feedback
+        private void OnCopyClicked(object sender, RoutedEventArgs e)
         {
-            ContentDialog dialog = new()
-            {
-                Title = title,
-                Content = message,
-                CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot
-            };
+            string content = _viewModel.GetExportContent();
 
-            await dialog.ShowAsync();
+            var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
+            package.SetText(content);
+
+            Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+
+            _viewModel.ShowFeedback("✔ Contenu copié");
         }
 
-        private async System.Threading.Tasks.Task<bool> ShowConfirm(string title, string message)
-        {
-            ContentDialog dialog = new()
-            {
-                Title = title,
-                Content = message,
-                PrimaryButtonText = "Oui",
-                CloseButtonText = "Non",
-                XamlRoot = this.Content.XamlRoot
-            };
+        // =========================================================
+        // 🧪 SIMULATION (UI UNIQUEMENT, AUCUNE LOGIQUE MÉTIER ICI)
+        // =========================================================
 
-            return await dialog.ShowAsync() == ContentDialogResult.Primary;
-        }
-
-        // ======================================================
-        // 🧪 SIMULATION (DEV)
-        // ======================================================
-
+        // Affiche une boîte de dialogue pour configurer la simulation de scénarios (UI uniquement)
         private async void OnSimulationClicked(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog
@@ -244,43 +254,158 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ======================================================
-        // 🧰 ACTIONS UI SECONDAIRES
+        // 💬 DIALOGS (UI UNIQUEMENT)
         // ======================================================
 
-        private void OnCopyClicked(object sender, RoutedEventArgs e)
+        // Affiche un message dans une boîte de dialogue avec un titre et un contenu (scrollable si nécessaire)
+        private async Task ShowDialog(string title, string message)
         {
-            string content = _viewModel.GetExportContent();
+            var scroll = new ScrollViewer
+            {
+                MaxHeight = 400,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = new TextBlock
+                {
+                    Text = message,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 15,
+                    LineHeight = 20
+                }
+            };
 
-            var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
-            package.SetText(content);
+            ContentDialog dialog = new()
+            {
+                Title = title,
+                Content = scroll,
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
 
-            Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+            await dialog.ShowAsync();
         }
 
+        // Affiche une boîte de dialogue de confirmation avec un titre, un message et des boutons Oui/Non
+        private async Task<bool> ShowConfirm(string title, string message)
+        {
+            ContentDialog dialog = new()
+            {
+                Title = title,
+                Content = message,
+                PrimaryButtonText = "Oui",
+                CloseButtonText = "Non",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            return await dialog.ShowAsync() == ContentDialogResult.Primary;
+        }
+
+        // ======================================================
+        // 🚪 QUITTER L'APPLICATION (CONFIRMATION AVANT QUIT)
+        // ======================================================
+
+        private async void OnQuitClicked(object sender, RoutedEventArgs e)
+        {
+            bool confirm = await ShowConfirm(
+                "Quitter",
+                "Voulez-vous vraiment quitter l'application ?");
+
+            if (confirm)
+            {
+                Application.Current.Exit();
+            }
+        }
+
+        // ======================================================
+        // 🧰 AUTRES (AIDE, OPTIONS, À PROPOS - UI UNIQUEMENT)
+        // ======================================================
+
+        // Aide : guide d’utilisation
         private async void OnHelpClicked(object sender, RoutedEventArgs e)
         {
             await ShowDialog(
-                "Aide",
-                "1. Sélectionne un dossier\n2. Choisis des fichiers\n3. Exporte");
+    "Aide",
+    "📚 GUIDE COMPLET — LATUCOLLECT\n\n" +
+
+    "🚀 DÉMARRAGE RAPIDE\n\n" +
+
+    "1️⃣ Charger un dossier\n" +
+    "Clique sur 📂 puis sélectionne ton projet.\n\n" +
+
+    "2️⃣ Explorer les fichiers\n" +
+    "Utilise l’arborescence à gauche pour naviguer.\n\n" +
+
+    "3️⃣ Sélectionner des fichiers\n" +
+    "Coche les fichiers à inclure.\n\n" +
+
+    "4️⃣ Vérifier l’aperçu\n" +
+    "Le contenu apparaît à droite.\n\n" +
+
+    "5️⃣ Choisir un format\n" +
+    "Sélectionne .txt ou .md.\n\n" +
+
+    "6️⃣ Exporter ou copier\n" +
+    "📤 Exporter → crée un fichier\n" +
+    "📋 Copier → copie le contenu\n\n" +
+
+    "🧠 COMMENT ÇA MARCHE\n\n" +
+    "LatuCollect assemble le contenu des fichiers sélectionnés.\n" +
+    "Aucun fichier n’est modifié.\n\n" +
+
+    "⚠️ À SAVOIR\n\n" +
+    "- Aucun fichier sélectionné → rien ne s’affiche\n" +
+    "- L’aperçu = le résultat exporté\n\n" +
+
+    "💡 CONSEILS\n\n" +
+    "- Vérifie l’aperçu\n" +
+    "- Sélectionne uniquement l’essentiel\n" +
+    "- Utilise .md pour structurer");
         }
 
+        // Options : paramètres de l’application 
         private async void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
-            await ShowDialog(
-                "Options",
-                "Options disponibles prochainement.");
+            await ShowDialog("Options", "À venir");
         }
 
+        // A propos : informations sur l'application, le développeur, la licence, etc. (UI uniquement) 
         private async void OnAboutClicked(object sender, RoutedEventArgs e)
         {
             await ShowDialog(
-                "À propos",
-                "LatuCollect v0.3.0");
-        }
+    "À propos",
+    "ℹ LATUCOLLECT\n\n" +
 
-        private void OnQuitClicked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Exit();
+    "Version : 0.5.0\n" +
+    "Créé en : Le 31 Mars 2026\n\n" +
+
+    "🧩 PRÉSENTATION\n\n" +
+    "LatuCollect permet de collecter et assembler le contenu de plusieurs fichiers.\n" +
+    "C’est un copieur intelligent, pas un analyseur.\n\n" +
+
+    "⚙ FONCTIONNALITÉS\n\n" +
+    "✔ Navigation dans un projet\n" +
+    "✔ Sélection de fichiers\n" +
+    "✔ Aperçu en temps réel\n" +
+    "✔ Export (.txt / .md)\n" +
+    "✔ Copie du contenu\n\n" +
+
+    "🏗 ARCHITECTURE\n\n" +
+    "- MVVM\n" +
+    "- Architecture ALC stricte\n" +
+    "- Séparation UI / logique métier\n\n" +
+
+    "🔒 GARANTIES\n\n" +
+    "✔ Lecture seule\n" +
+    "✔ Aucun fichier modifié\n" +
+    "✔ Aperçu = export\n\n" +
+
+    "👨‍💻 DÉVELOPPEUR\n\n" +
+    "Flo Latury\n\n" +
+
+    "🌐 GITHUB\n\n" +
+    "https://github.com/Latury\n\n" +
+
+    "📜 LICENCE\n\n" +
+    "MIT");
         }
     }
 }

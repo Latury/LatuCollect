@@ -42,8 +42,8 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
 
         <!--  ======================================================  -->
@@ -60,40 +60,66 @@
                 <!--  STRUCTURE GAUCHE  -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <!--  barre du haut  -->
+                    <RowDefinition Height="Auto" />
+                    <!--  recherche  -->
                     <RowDefinition Height="*" />
+                    <!--  tree  -->
                 </Grid.RowDefinitions>
 
                 <!--  CHARGEUR DE DOSSIER + BARRE RECHERCHE  -->
-                <Grid Margin="10">
+                <Grid Grid.Row="0" Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <!--  📂  -->
+                        <ColumnDefinition Width="Auto" />
+                        <!--  ☑  -->
                         <ColumnDefinition Width="*" />
+                        <!--  espace  -->
+                        <ColumnDefinition Width="Auto" />
+                        <!--  🔍  -->
                     </Grid.ColumnDefinitions>
-
-                    <!--  Chargement dossier  -->
+                    <!--  📂  -->
                     <Button
                         Width="40"
                         Height="40"
                         Click="OnPickFolderClicked"
                         Content="📂" />
 
-                    <!--  Barre de recherche  -->
-                    <TextBox
+                    <!--  ☑  -->
+                    <CheckBox
                         Grid.Column="1"
-                        MinHeight="40"
                         Margin="10,0,0,0"
-                        PlaceholderText="Rechercher un fichier..."
-                        Text="{Binding SearchText, Mode=TwoWay}" />
+                        VerticalAlignment="Center"
+                        Content="Tout sélectionner"
+                        IsChecked="{Binding IsAllSelected, Mode=TwoWay}" />
+
+                    <!--  🔍  -->
+                    <Button
+                        Grid.Column="3"
+                        Width="40"
+                        Height="40"
+                        Click="OnSearchClicked"
+                        Content="🔍" />
                 </Grid>
 
+                <!--  BARRE DE RECHERCHE  -->
+                <TextBox
+                    Grid.Row="1"
+                    MinHeight="40"
+                    Margin="10,0,10,5"
+                    PlaceholderText="Rechercher un fichier..."
+                    Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Visibility="{Binding IsSearchVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <!--  ARBORESCENCE  -->
-                <TreeView Grid.Row="1" ItemsSource="{Binding Tree}">
+                <TreeView Grid.Row="2" ItemsSource="{Binding Tree}">
 
                     <TreeView.ItemTemplate>
                         <DataTemplate x:DataType="models:FileNode">
 
                             <!--  🔥 IMPORTANT : TreeViewItem ici  -->
-                            <TreeViewItem ItemsSource="{Binding Children}">
+                            <TreeViewItem ItemsSource="{Binding Children}" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <StackPanel Orientation="Horizontal" Spacing="6">
 
@@ -123,20 +149,16 @@
         <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
         <!--  ======================================================  -->
 
-        <!--  ======================================================  -->
-        <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
-        <!--  ======================================================  -->
-
         <Border
             Grid.Column="1"
             Margin="5"
             Background="#2D2D30">
 
             <StackPanel
-                Width="180"
+                Width="220"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Spacing="12">
+                Spacing="22">
 
                 <!--  TITRE  -->
                 <TextBlock
@@ -151,60 +173,65 @@
                 <StackPanel
                     Margin="0,0,0,25"
                     HorizontalAlignment="Center"
-                    Spacing="10">
+                    Spacing="14">
 
                     <!--  TXT  -->
                     <RadioButton
                         HorizontalAlignment="Center"
                         Checked="OnTxtSelected"
-                        Content=".txt"
+                        Content="📄 Texte (.txt)"
                         GroupName="Format" />
 
                     <!--  MD  -->
                     <RadioButton
                         HorizontalAlignment="Center"
                         Checked="OnMdSelected"
-                        Content=".md"
+                        Content="📝 Markdown (.md)"
                         GroupName="Format" />
 
                 </StackPanel>
 
                 <!--  COPIER  -->
                 <Button
-                    Width="120"
-                    Height="40"
-                    Margin="0,0,0,25"
+                    Width="180"
+                    Height="44"
+                    Margin="0,10,0,20"
+                    Padding="12,0"
                     HorizontalAlignment="Center"
                     Click="OnCopyClicked"
-                    Content="Copier"
+                    Content="📋 Copier le contenu"
                     IsEnabled="{Binding CanCopy}" />
 
                 <!--  AUTRES  -->
-                <StackPanel HorizontalAlignment="Center" Spacing="12">
+                <StackPanel HorizontalAlignment="Center" Spacing="14">
 
                     <Button
-                        Width="120"
-                        Height="36"
+                        Width="180"
+                        Height="44"
+                        Padding="12,0"
                         Click="OnOptionsClicked"
-                        Content="Options" />
+                        Content="⚙ Paramètres" />
 
                     <Button
-                        Width="120"
-                        Height="36"
+                        Width="180"
+                        Height="44"
+                        Padding="12,0"
                         Click="OnHelpClicked"
-                        Content="Aide" />
+                        Content="❓ Aide" />
 
                     <Button
-                        Width="120"
-                        Height="36"
+                        Width="180"
+                        Height="44"
+                        Padding="12,0"
                         Click="OnAboutClicked"
-                        Content="À propos" />
+                        Content="ℹ À propos" />
 
                     <Button
-                        Width="120"
-                        Height="36"
+                        Width="180"
+                        Height="44"
+                        Padding="12,0"
                         Click="OnQuitClicked"
-                        Content="Quitter" />
+                        Content="🚪 Quitter" />
 
                 </StackPanel>
 
@@ -223,38 +250,75 @@
 
             <Grid>
 
-                <!--  =========================  -->
-                <!--  CONTENU FICHIER  -->
-                <!--  Visible SI contenu existe  -->
-                <!--  =========================  -->
+                <!--  🔥 STRUCTURE EN 2 LIGNES  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <ScrollViewer
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Auto"
-                    Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+                <!--  ======================================================  -->
+                <!--  🔥 FEEDBACK (NOUVEAU)  -->
+                <!--  ======================================================  -->
+
+                <Border
+                    Grid.Row="0"
+                    Margin="10,10,10,0"
+                    Padding="10,6"
+                    HorizontalAlignment="Right"
+                    Background="#3A3A3A"
+                    CornerRadius="6"
+                    Visibility="{Binding IsFeedbackVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+
+                        <TextBlock
+                            FontSize="13"
+                            FontWeight="SemiBold"
+                            Foreground="White"
+                            Text="{Binding FeedbackMessage}" />
+
+                    </StackPanel>
+
+                </Border>
+
+                <!--  ======================================================  -->
+                <!--  CONTENU  -->
+                <!--  ======================================================  -->
+
+                <Grid Grid.Row="1">
+
+                    <!--  =========================  -->
+                    <!--  CONTENU FICHIER  -->
+                    <!--  =========================  -->
+
+                    <ScrollViewer
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto"
+                        Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+
+                        <TextBlock
+                            Margin="20"
+                            FontFamily="Cascadia Code"
+                            FontSize="13"
+                            Foreground="White"
+                            Text="{Binding PreviewText}"
+                            TextAlignment="Left"
+                            TextWrapping="NoWrap" />
+                    </ScrollViewer>
+
+                    <!--  =========================  -->
+                    <!--  MESSAGE VIDE  -->
+                    <!--  =========================  -->
 
                     <TextBlock
-                        Margin="20"
-                        FontFamily="Cascadia Code"
-                        FontSize="13"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
                         Foreground="White"
-                        Text="{Binding PreviewText}"
-                        TextAlignment="Left"
-                        TextWrapping="NoWrap" />
-                </ScrollViewer>
+                        Text="Aucun fichier sélectionné..."
+                        Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <!--  =========================  -->
-                <!--  MESSAGE VIDE  -->
-                <!--  Visible SI aucun fichier  -->
-                <!--  =========================  -->
-
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="16"
-                    Foreground="White"
-                    Text="Aucun fichier sélectionné..."
-                    Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
 
             </Grid>
 
@@ -292,11 +356,12 @@
                     <!--  📤 EXPORT  -->
                     <Button
                         Grid.Column="1"
-                        Width="140"
                         Height="40"
+                        MinWidth="140"
+                        Margin="10,0,10,0"
                         HorizontalAlignment="Right"
                         Click="OnExportClicked"
-                        Content="Exporter"
+                        Content="📤 Exporter le fichier"
                         IsEnabled="{Binding CanExport}" />
 
                 </Grid>

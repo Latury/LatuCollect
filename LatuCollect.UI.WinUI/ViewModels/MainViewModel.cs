@@ -37,21 +37,32 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace LatuCollect.UI.WinUI.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
         // ======================================================
-        // 🧠 CHAMPS PRIVÉS
+        // 🧠 CHAMPS PRIVÉS - ÉTAT INTERNE DE LA VUE
         // ======================================================
 
         private string _previewText = "Aucun fichier sélectionné...";
         private string _currentFolderPath = string.Empty;
         private string _searchText = string.Empty;
 
+        private string _feedbackMessage = "";
+        private bool _isFeedbackVisible;
+
+        private string? _selectedFormat = null;
+
+        private bool _isSimulationEnabled = false;
+        private string _selectedSimulationScenario = "Aucun";
+        // Config de simulation partagée
+        private bool _isBatchUpdating = false;
+
         // ======================================================
-        // 📦 PROPRIÉTÉS PUBLIQUES
+        // 📦 PROPRIÉTÉS PUBLIQUES - LIÉES À L’INTERFACE
         // ======================================================
 
         public string PreviewText
@@ -75,46 +86,77 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     ApplyFilter();
             }
         }
-
         public ObservableCollection<FileNode> Tree { get; } = new();
 
         // ======================================================
-        // 🧩 UTILITAIRES
+        // 🔍 VISIBILITÉ BARRE DE RECHERCHE
         // ======================================================
-        private List<string> GetSelectedFiles()
+
+        private bool _isSearchVisible;
+        public bool IsSearchVisible
         {
-            List<string> files = new();
-
-            void ProcessNode(FileNode node)
-            {
-                if (node.IsSelected && File.Exists(node.Path))
-                {
-                    files.Add(node.Path);
-                }
-
-                foreach (var child in node.Children)
-                    ProcessNode(child);
-            }
-
-            foreach (var root in Tree)
-                ProcessNode(root);
-
-            return files;
+            get => _isSearchVisible;
+            set => SetProperty(ref _isSearchVisible, value);
         }
 
         // ======================================================
-        // 🔍 ÉTATS UI
+        // 🔍 ETAT DE L’APERÇU & EXPORT 
         // ======================================================
 
         public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
         public bool CanCopy => PreviewText != "Aucun fichier sélectionné...";
         public bool IsPreviewEmpty => PreviewText == "Aucun fichier sélectionné...";
 
+        public bool CanExport =>
+            !IsPreviewEmpty &&
+            SelectedFormat != null;
+
         // ======================================================
-        // 📄 FORMAT EXPORT
+        // ☑ SÉLECTION GLOBALE (CHECKBOX)
         // ======================================================
 
-        private string? _selectedFormat = null;
+        private bool _isAllSelected;
+        public bool IsAllSelected
+        {
+            get => _isAllSelected;
+            set
+            {
+                if (SetProperty(ref _isAllSelected, value))
+                {
+                    SetAllSelection(value);
+                }
+            }
+        }
+
+        // ======================================================
+        // 💬 RETOUR UTILISATEUR (FEEDBACK)
+        // ======================================================
+
+        public string FeedbackMessage
+        {
+            get => _feedbackMessage;
+            set => SetProperty(ref _feedbackMessage, value);
+        }
+
+        public bool IsFeedbackVisible
+        {
+            get => _isFeedbackVisible;
+            set => SetProperty(ref _isFeedbackVisible, value);
+        }
+
+        public async void ShowFeedback(string message)
+        {
+            FeedbackMessage = message;
+            IsFeedbackVisible = true;
+
+            await Task.Delay(4500);
+
+            IsFeedbackVisible = false;
+        }
+
+        // ========================================================
+        // 📄 FORMAT D’EXPORT - GESTION DE LA SÉLECTION DU FORMAT 
+        // ========================================================
 
         public string SelectedFormat
         {
@@ -126,12 +168,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        public bool CanExport =>
-            !IsPreviewEmpty &&
-            SelectedFormat != null;
-
         // ======================================================
-        // 📊 EXPORT CHECK
+        // 📊 EXOPORT - VÉRIFICATIONS AVANT EXPORT
         // ======================================================
 
         public ExportCheckResult CheckExportState()
@@ -153,10 +191,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ======================================================
-        // 🧪 SIMULATION (UI STATE)
+        // 🧪 SIMULATION - GESTION DE L’ÉTAT DE LA SIMULATION 
         // ======================================================
 
-        private bool _isSimulationEnabled = false;
         public bool IsSimulationEnabled
         {
             get => _isSimulationEnabled;
@@ -171,7 +208,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        private string _selectedSimulationScenario = "Aucun";
         public string SelectedSimulationScenario
         {
             get => _selectedSimulationScenario;
@@ -201,7 +237,58 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ======================================================
-        // 🌳 ARBORESCENCE (SIMPLIFIÉE)
+        // 🧩 UTILITAIRES - GESTION DES FICHIERS SÉLECTIONNÉS
+        // ======================================================
+
+        private List<string> GetSelectedFiles()
+        {
+            List<string> files = new();
+
+            void ProcessNode(FileNode node)
+            {
+                if (node.IsSelected && File.Exists(node.Path))
+                    files.Add(node.Path);
+
+                foreach (var child in node.Children)
+                    ProcessNode(child);
+            }
+
+            foreach (var root in Tree)
+                ProcessNode(root);
+
+            return files;
+        }
+
+        // ======================================================
+        // ☑ SÉLECTION GLOBALE (LOGIQUE)
+        // ======================================================
+
+        private void SetAllSelection(bool isSelected)
+        {
+            _isBatchUpdating = true;
+
+            foreach (var root in Tree)
+            {
+                SetNodeSelection(root, isSelected);
+            }
+
+            _isBatchUpdating = false;
+
+            RefreshPreview(); // 🔥 UN SEUL refresh
+        }
+
+        private void SetNodeSelection(FileNode node, bool isSelected)
+        {
+            node.IsSelected = isSelected;
+
+            foreach (var child in node.Children)
+            {
+                SetNodeSelection(child, isSelected);
+            }
+        }
+
+        // ======================================================
+        // 🌳 ARBORESCENCE DES FICHIERS
         // ======================================================
 
         public void LoadTree(string path)
@@ -226,20 +313,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             if (Directory.Exists(path))
             {
-                // 📁 DOSSIERS
                 foreach (var dir in Directory.GetDirectories(path))
                 {
-                    try
-                    {
-                        node.Children.Add(CreateNode(dir));
-                    }
-                    catch (Exception)
-                    {
-                        // ignore → stabilité
-                    }
+                    try { node.Children.Add(CreateNode(dir)); }
+                    catch { }
                 }
 
-                // 📄 FICHIERS
                 foreach (var file in Directory.GetFiles(path))
                 {
                     try
@@ -253,10 +332,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                         child.SelectionChanged += OnNodeSelectionChanged;
                         node.Children.Add(child);
                     }
-                    catch (Exception)
-                    {
-                        // ignore
-                    }
+                    catch { }
                 }
             }
 
@@ -264,11 +340,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ======================================================
-        // 🔄 SÉLECTION / APERÇU
+        // 🔄 APERÇU DYNAMIQUE
         // ======================================================
 
         private void OnNodeSelectionChanged(FileNode node)
         {
+            if (_isBatchUpdating)
+                return;
+
             RefreshPreview();
         }
 
@@ -282,7 +361,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             else
             {
-                PreviewText = FileExportService.BuildContent(files);
+                const int MAX_FILES_PREVIEW = 20;
+
+                var previewFiles = files.Count > MAX_FILES_PREVIEW
+                    ? files.GetRange(0, MAX_FILES_PREVIEW)
+                    : files;
+
+                var content = FileExportService.BuildContent(previewFiles);
+
+                if (files.Count > MAX_FILES_PREVIEW)
+                {
+                    content += "\n\n----------------------------------------\n";
+                    content += "⚠ Aperçu limité à 20 fichiers...\n";
+                }
+
+                PreviewText = content;
             }
 
             OnPropertyChanged(nameof(CanCopy));
@@ -292,13 +385,32 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ======================================================
-        // 🔍 FILTRAGE
+        // 🔍 FILTRE DE RECHERCHE (SEARCH)
         // ======================================================
 
         private void ApplyFilter()
         {
             foreach (var root in Tree)
-                FilterNode(root);
+            {
+                ApplyFilterToNode(root);
+            }
+        }
+
+        private bool ApplyFilterToNode(FileNode node)
+        {
+            bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+
+            bool hasChildMatch = false;
+
+            foreach (var child in node.Children)
+            {
+                if (ApplyFilterToNode(child))
+                    hasChildMatch = true;
+            }
+
+            node.IsVisible = match || hasChildMatch;
+
+            return node.IsVisible;
         }
 
         private bool FilterNode(FileNode node)
@@ -311,18 +423,45 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 if (FilterNode(child))
                     hasChild = true;
 
-            node.IsVisible = match || hasChild;
+            bool newVisibility = match || hasChild;
+
+            if (node.IsVisible != newVisibility)
+            {
+                node.IsVisible = newVisibility;
+
+                // 🔥 force le refresh UI
+                OnPropertyChanged(nameof(Tree));
+            }
 
             return node.IsVisible;
         }
+        // Toggle de la visibilité de la barre de recherche
+        public void ToggleSearch()
+        {
+            IsSearchVisible = !IsSearchVisible;
+        }
 
         // ======================================================
-        // 📦 EXPORT
+        // 📦 EXPORT - CONTENU À EXPORTER
         // ======================================================
 
         public string GetExportContent()
         {
-            return PreviewText;
+            var files = GetSelectedFiles();
+
+            if (files.Count == 0)
+                return string.Empty;
+
+            const int MAX_FILES_EXPORT = 200;
+
+            if (files.Count > MAX_FILES_EXPORT)
+            {
+                return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
+                       $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
+                       $"Réduis la sélection.";
+            }
+
+            return FileExportService.BuildContent(files);
         }
     }
 }
