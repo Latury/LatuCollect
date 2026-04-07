@@ -101,6 +101,14 @@ L’aperçu se met à jour :
 
 ---
 
+### 🔁 Cohérence du contenu (v0.4.0)
+
+- ✅ L’aperçu correspond exactement au fichier exporté
+- ✅ Aucun écart possible entre ce que vous voyez et ce qui sera généré
+- ✅ Le contenu est généré une seule fois pour garantir la fiabilité
+
+---
+
 ## Comportement :
 
 - ✅ Message affiché si aucun fichier sélectionné
@@ -186,6 +194,14 @@ Dans la zone centrale :
 
 ---
 
+### 🔒 Fiabilité (v0.4.0)
+
+- ✅ Aucun crash lors d’un problème d’export
+- ✅ Message clair affiché en cas d’erreur
+- ✅ L’application reste utilisable même si l’export échoue
+
+---
+
 # ⚙️ 10. Options et menus
 
 L’application propose plusieurs actions :
@@ -224,6 +240,10 @@ Import → Lecture → Assemblage → Export
 
 👉 L’application ne modifie jamais le contenu
 👉 Elle copie uniquement le texte
+
+👉 Le contenu est construit une seule fois puis utilisé pour l’aperçu et l’export
+
+👉 Cela garantit une cohérence parfaite entre affichage et fichier final
 
 ---
 

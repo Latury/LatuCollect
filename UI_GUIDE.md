@@ -201,6 +201,14 @@ Chemin du fichier
 
 ---
 
+### 🔁 Cohérence (v0.4.0)
+
+- ✅ Le contenu affiché provient du Core (source unique)
+- ✅ Aucun recalcul côté UI
+- ✅ L’aperçu est strictement identique à l’export
+
+---
+
 # 🔻 ZONE BASSE — ACTION
 
 ## 🎯 Rôle
@@ -231,6 +239,14 @@ Lancer l’export final
 
 ---
 
+### 🔒 Robustesse (v0.4.0)
+
+- ✅ Aucun crash en cas d’erreur d’export
+- ✅ Message d’erreur affiché à l’utilisateur
+- ✅ Comportement stable même en cas de problème disque ou accès refusé
+
+---
+
 # 🧠 RÈGLE ALC (IMPORTANT)
 
 - ❌ Aucune logique métier dans UI
@@ -245,6 +261,7 @@ Lancer l’export final
 - ✅ Sélection ≠ aperçu
 - ✅ Aperçu = résultat final
 - ✅ Feedback immédiat
+- ✅ Le contenu affiché doit toujours refléter exactement le résultat final exporté
 
 ---
 

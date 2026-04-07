@@ -222,15 +222,15 @@ Rendre l’application fiable dans tous les cas.
 
 ## 🛡️ Gestion des erreurs
 
-- ⬜ Gestion erreurs lecture fichier
-- ⬜ Gestion erreurs export
-- ⬜ Gestion chemins longs
+- ✅ Gestion erreurs lecture fichier
+- ✅ Gestion erreurs export
+- ✅ Gestion chemins longs
 
 ---
 
 ## ✔ Validation
 
-- ⬜ Vérification stricte : aperçu = export
+- ✅ Vérification stricte : aperçu = export
 
 ---
 

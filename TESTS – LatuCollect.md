@@ -112,6 +112,12 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Désélection
 - ✅ Changement format
 
+### 🔁 Cohérence (v0.4.0)
+
+- ✅ Le contenu affiché provient d’une source unique (Core)
+- ✅ Aucun recalcul côté UI
+- ✅ Aperçu strictement identique à l’export
+
 ---
 
 ## 📤 Export
@@ -121,6 +127,12 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Fichier créé
 - ✅ Contenu conforme
 - ✅ Séparateur correct
+
+### 🔒 Robustesse (v0.4.0)
+
+- ✅ Aucun crash lors d’un échec d’écriture
+- ✅ Message d’erreur retourné proprement
+- ✅ Comportement prévisible même en cas de problème disque ou accès refusé
 
 ### Cas Markdown
 
@@ -181,6 +193,12 @@ Chemin du fichier
 - ❌ Caractères spéciaux
 - ❌ Erreur lecture
 - ❌ Chemins longs
+- ❌ Échec d’écriture fichier
+
+👉 Résultat attendu :
+
+- ✅ Aucun crash
+- ✅ Message d’erreur utilisateur
 
 ---
 

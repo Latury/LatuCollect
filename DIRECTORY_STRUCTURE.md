@@ -126,9 +126,6 @@ Contient toute la logique métier.
 - Assembler les données
 - Exporter
 
-👉 Assemblage du contenu centralisé dans FileExportService
-👉 Source unique de vérité pour le contenu exporté
-
 👉 Aucune dépendance UI
 
 ---
@@ -181,9 +178,6 @@ Contient l’interface utilisateur WinUI.
 - Affichage
 - Interaction utilisateur
 - Aperçu du document
-
-👉 Ne contient aucune logique d’assemblage
-👉 Consomme uniquement le contenu généré par le Core
 
 ---
 
@@ -253,9 +247,6 @@ Contient les éléments visuels.
 ```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
-
-👉 Le contenu est construit une seule fois dans le Core
-👉 Utilisé ensuite pour l’aperçu et l’export
 
 ---
 

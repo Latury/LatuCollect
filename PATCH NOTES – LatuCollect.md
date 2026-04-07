@@ -312,9 +312,101 @@ Permettre de simuler des cas d’erreurs essentiels sans complexité inutile ni 
 
 ## 🧠 Objectif atteint
 
-- Tester les cas d’erreurs essentiels (lecture / export)
-- Garantir un comportement stable et prévisible
-- Simplifier l’architecture sans sur-ingénierie
+- ✔ Tester les cas d’erreurs essentiels (lecture / export)
+- ✔ Garantir un comportement stable et prévisible
+- ✔ Simplifier l’architecture sans sur-ingénierie
+
+---
+
+# 🚀 VERSION 0.4.0
+
+## 📌 Statut
+
+🟢 Fonctionnel — Version stable (fiabilité renforcée)
+
+---
+
+## 🎯 Objectif
+
+Rendre l’application fiable, stable et prévisible dans tous les cas d’utilisation.
+
+---
+
+## ✨ Améliorations
+
+### 🛡️ Gestion des erreurs
+
+- ✅ Sécurisation complète de la lecture des fichiers
+  - Gestion des erreurs d’accès
+  - Gestion des fichiers corrompus
+  - Gestion des chemins trop longs
+  - Aucun crash possible
+
+- ✅ Sécurisation complète de l’export
+  - Gestion des erreurs d’écriture
+  - Retour d’état via `ExportResult`
+  - Messages d’erreur clairs
+
+---
+
+### 🔁 Cohérence système
+
+- ✅ Garantie stricte : aperçu = export
+- ✅ Suppression de la duplication de logique
+- ✅ Centralisation de la construction du contenu dans le Core (`FileExportService`)
+
+---
+
+### 🧱 Architecture
+
+- ✅ Meilleur respect du standard ALC
+  - Déplacement de la logique d’assemblage vers le Core
+  - Simplification du ViewModel
+  - Réduction des responsabilités côté UI
+
+- ✅ Introduction d’une source unique de vérité pour le contenu exporté
+
+---
+
+### ⚙️ Core
+
+- ✅ Ajout de la méthode `BuildContent()` dans `FileExportService`
+- ✅ Ajout du modèle `ExportResult`
+- ✅ Gestion robuste des exceptions dans l’export
+
+---
+
+### 🖥️ UI / ViewModel
+
+- ✅ Suppression de la méthode `BuildExportContent()`
+- ✅ Utilisation directe du Core pour générer l’aperçu
+- ✅ Synchronisation parfaite entre aperçu et export
+- ✅ Simplification de la logique interne
+
+---
+
+## 🧠 Résultat
+
+- ✅ Application stable
+- ✅ Aucun crash lors de la lecture ou de l’export
+- ✅ Comportement prévisible
+- ✅ Code plus propre et maintenable
+- ✅ Respect du pipeline :
+
+```text
+Import → Lecture → Assemblage → Export
+```
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect est désormais :
+
+- ✔ Stable
+- ✔ Fiable
+- ✔ Cohérent
+- ✔ Prêt pour l’amélioration UX (v0.5.0)
 
 ---
 

@@ -9,8 +9,8 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.3.0-1E90FF?style=for-the-badge)
-![Statut](https://img.shields.io/badge/Statut-En%20développement-FF8C00?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.4.0-1E90FF?style=for-the-badge)
+![Statut](https://img.shields.io/badge/Statut-Stable-2E8B57?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-2E8B57?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -49,7 +49,7 @@ LatuCollect est utile pour :
 - ✅ Partager du code de manière lisible
 - ✅ Extraire des parties spécifiques d’un projet
 
-👉 Idéal pour les développeurs débutant et les projets techniques
+👉 Idéal pour les développeurs débutants et les projets techniques
 
 ---
 
@@ -140,7 +140,19 @@ Import → Lecture → Assemblage → Export
 
 ---
 
-# ⚠️ 7. Ce que l’application NE fait PAS
+# 🛡️ 7. Stabilité (v0.4.0)
+
+- ✅ Gestion complète des erreurs de lecture
+- ✅ Gestion des chemins longs
+- ✅ Gestion des erreurs d’export
+- ✅ Aucun crash lors de l’utilisation normale
+- ✅ Aperçu strictement identique à l’export
+
+👉 Le contenu possède une source unique de vérité
+
+---
+
+# ⚠️ 8. Ce que l’application NE fait PAS
 
 - ❌ Aucune analyse de code
 - ❌ Aucune modification des fichiers
@@ -150,7 +162,7 @@ Import → Lecture → Assemblage → Export
 
 ---
 
-# ⚙️ 8. Fonctionnalités principales
+# ⚙️ 9. Fonctionnalités principales
 
 - ✅ Import de dossiers complets (récursif)
 - ✅ Construction automatique de l’arborescence
@@ -164,7 +176,7 @@ Import → Lecture → Assemblage → Export
 
 ---
 
-# 🏗️ 9. Architecture
+# 🏗️ 10. Architecture
 
 Le projet respecte le standard ALC :
 
@@ -175,7 +187,7 @@ Le projet respecte le standard ALC :
 
 ---
 
-# 📦 10. Structure
+# 📦 11. Structure
 
 ```text
 Core/
@@ -185,15 +197,16 @@ Resources/
 
 ---
 
-# ⚠️ 11. État actuel
+# 📌 12. État actuel
 
-- ✅ Core fonctionnel
-- ✅ UI fonctionnelle (WinUI 3)
-- 🔄 Améliorations UX en cours
+- ✅ Version 0.4.0 stable
+- ✅ Core robuste et sécurisé
+- ✅ Export fiable et cohérent
+- 🔄 Prochaine étape : amélioration UX (v0.5.0)
 
 ---
 
-# 🧠 12. Philosophie
+# 🧠 13. Philosophie
 
 LatuCollect est conçu pour être :
 

@@ -189,12 +189,13 @@ Importer → Sélectionner → Aperçu → Exporter
 Actuellement :
 
 - ✔ Lecture via FileReaderService
-- ✔ Assemblage dans le ViewModel
-- ✔ Aperçu géré par le ViewModel
-- ✔ Export via FileExportService
+- ✔ Assemblage géré dans le Core (FileExportService)
+- ✔ Le ViewModel consomme uniquement le contenu généré
+- ✔ Aperçu basé sur une source unique de vérité
+- ✔ Export basé sur le même contenu que l’aperçu
 
-👉 Le Core ne gère pas encore tout le pipeline
-👉 Refactorisation prévue
+👉 Le contenu possède une source unique de vérité
+👉 Cela garantit que l’aperçu et l’export sont strictement identiques
 
 ---
 
@@ -220,6 +221,8 @@ Actuellement :
 
 - ✔ Génère TXT / Markdown
 - ✔ Structure le document final
+- ✔ Génère le contenu via une méthode centralisée (BuildContent)
+- ✔ Garantit la cohérence entre aperçu et export
 
 ---
 
