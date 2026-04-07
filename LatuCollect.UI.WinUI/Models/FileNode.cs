@@ -43,24 +43,28 @@ namespace LatuCollect.UI.WinUI.Models
         // EVENEMENTS
         // =========================
 
+        // Cet événement est déclenché lorsque la sélection change
         public event Action<FileNode>? SelectionChanged;
 
         // =========================
         // PROPRIÉTÉS PUBLIQUES
         // =========================
 
+        // Nom affiché dans l’UI
         public string Name
         {
             get => _name;
             set => SetProperty(ref _name, value);
         }
 
+        // Chemin complet du fichier / dossier
         public string Path
         {
             get => _path;
             set => SetProperty(ref _path, value);
         }
 
+        // Sélection (checkbox)
         public bool IsSelected
         {
             get => _isSelected;
@@ -73,17 +77,17 @@ namespace LatuCollect.UI.WinUI.Models
             }
         }
 
-        /// <summary>
-        /// Indique si le node est visible (filtrage)
-        /// </summary>
+        // Utilisé pour le filtrage (recherche)
         public bool IsVisible
         {
             get => _isVisible;
             set => SetProperty(ref _isVisible, value);
         }
 
+        // Enfants (arborescence)
         public ObservableCollection<FileNode> Children { get; } = new();
 
+        // Détermine si c’est un dossier
         public bool IsFolder => Children.Count > 0;
     }
 }

@@ -22,8 +22,9 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using System.IO;
 using LatuCollect.Core.Simulation;
+using System;
+using System.IO;
 
 namespace LatuCollect.Core.Services
 {
@@ -31,16 +32,31 @@ namespace LatuCollect.Core.Services
     {
         public static string ReadFile(string path)
         {
-            if (!File.Exists(path))
-                return "[Fichier introuvable]";
+            try
+            {
+                if (!File.Exists(path))
+                    return "[Fichier introuvable]";
 
-            // 🔥 Simulation
-            var simulated = SimulationService.SimulateRead(path);
-            if (simulated != null)
-                return simulated;
+                // 🔥 Simulation
+                string simulated = SimulationService.SimulateRead(path);
+                if (simulated != null)
+                    return simulated;
 
-            // ✔ Lecture normale
-            return File.ReadAllText(path);
+                // ✔ Lecture normale
+                return File.ReadAllText(path);
+            }
+            catch (PathTooLongException)
+            {
+                return "[Chemin trop long]";
+            }
+            catch (IOException)
+            {
+                return "[Erreur de lecture]";
+            }
+            catch (Exception)
+            {
+                return "[Erreur inconnue]";
+            }
         }
     }
 }

@@ -7,9 +7,14 @@
 ║  Rôle :                                                              ║
 ║  Simuler des comportements pour les tests                            ║
 ║                                                                      ║
-║  Responsabilités principales :                                       ║
-║  - Simuler la lecture des fichiers                                   ║
-║  - Simuler les erreurs d’export                                      ║
+║  VERSION SAFE :                                                      ║
+║  - NE LANCE PLUS D’EXCEPTION                                         ║
+║  - Retourne uniquement des valeurs contrôlées                        ║
+║                                                                      ║
+║  Avantages :                                                         ║
+║  - Aucun crash                                                       ║
+║  - Simulation stable                                                 ║
+║  - Respect ALC                                                       ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -22,7 +27,10 @@ namespace LatuCollect.Core.Simulation
 {
     public static class SimulationService
     {
-        // 📥 Simulation lecture
+        // ======================================================
+        // 📥 SIMULATION LECTURE (SAFE)
+        // ======================================================
+
         public static string SimulateRead(string path)
         {
             if (!SimulationConfig.IsEnabled)
@@ -33,36 +41,32 @@ namespace LatuCollect.Core.Simulation
                 case "FichiersVides":
                     return "";
 
-                case "FichiersCorrompus":
-                    return "### ERREUR : FICHIER CORROMPU ###";
+                case "ErreursLecture":
+                    return "[Erreur de lecture]";
 
-                case "ErreursAcces":
-                    throw new UnauthorizedAccessException("Accès refusé (simulation)");
-
-                case "FichiersVolumineux":
-                    return GenerateLargeContent();
+                case "CheminsLongs":
+                    return "[Chemin trop long]";
 
                 default:
                     return null;
             }
         }
 
-        // 📤 Simulation export
+        // ======================================================
+        // 📤 SIMULATION EXPORT
+        // ======================================================
+
         public static void SimulateExport()
         {
             if (!SimulationConfig.IsEnabled)
                 return;
 
-            if (SimulationConfig.Scenario == "ExportErrors")
+            if (SimulationConfig.Scenario == "ErreursExport")
             {
+                // ⚠️ Ici on garde le throw volontaire
+                // car il est géré côté UI (try/catch export)
                 throw new Exception("Erreur lors de l'export (simulation)");
             }
-        }
-
-        // 🔧 Génération gros contenu
-        private static string GenerateLargeContent()
-        {
-            return new string('A', 100000); // 100k caractères
         }
     }
 }

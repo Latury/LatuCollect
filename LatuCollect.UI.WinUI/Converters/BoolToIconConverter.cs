@@ -28,18 +28,18 @@ namespace LatuCollect.UI.WinUI.Converters
 {
     public partial class BoolToIconConverter : IValueConverter
     {
-        // =========================
-        // MÉTHODES PUBLIQUES
-        // =========================
-
+        // Convertit un bool (IsFolder) en icône
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool isFolder && isFolder)
-                return "📁";
+            if (value is bool isFolder)
+            {
+                return isFolder ? "📁" : "📄";
+            }
 
             return "📄";
         }
 
+        // Non utilisé
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return false;

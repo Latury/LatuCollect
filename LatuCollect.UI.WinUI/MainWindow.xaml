@@ -98,7 +98,7 @@
                                 <StackPanel Orientation="Horizontal" Spacing="6">
 
                                     <!--  Icône  -->
-                                    <TextBlock Foreground="White" Text="{Binding IsFolder, Converter={StaticResource BoolToIconConverter}}" />
+                                    <TextBlock Foreground="White" Text="{Binding ., Converter={StaticResource BoolToIconConverter}}" />
 
                                     <!--  Checkbox  -->
                                     <CheckBox
@@ -118,6 +118,10 @@
             </Grid>
 
         </Border>
+
+        <!--  ======================================================  -->
+        <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
+        <!--  ======================================================  -->
 
         <!--  ======================================================  -->
         <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
@@ -149,17 +153,19 @@
                     HorizontalAlignment="Center"
                     Spacing="10">
 
+                    <!--  TXT  -->
                     <RadioButton
                         HorizontalAlignment="Center"
+                        Checked="OnTxtSelected"
                         Content=".txt"
-                        GroupName="Format"
-                        IsChecked="{Binding IsMarkdownSelected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}" />
+                        GroupName="Format" />
 
+                    <!--  MD  -->
                     <RadioButton
                         HorizontalAlignment="Center"
+                        Checked="OnMdSelected"
                         Content=".md"
-                        GroupName="Format"
-                        IsChecked="{Binding IsMarkdownSelected, Mode=TwoWay}" />
+                        GroupName="Format" />
 
                 </StackPanel>
 
@@ -264,15 +270,38 @@
             Padding="10"
             Background="#333333">
 
-            <Button
-                Width="140"
-                Height="40"
-                HorizontalAlignment="Right"
-                Click="OnExportClicked"
-                Content="Exporter" />
+            <Grid>
 
+                <Grid>
+
+                    <!--  2 colonnes  -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  🧪 BOUTON SIMULATION  -->
+                    <Button
+                        Grid.Column="0"
+                        Height="40"
+                        Padding="12,0"
+                        HorizontalAlignment="Left"
+                        Click="OnSimulationClicked"
+                        Content="{Binding SimulationLabel}" />
+
+                    <!--  📤 EXPORT  -->
+                    <Button
+                        Grid.Column="1"
+                        Width="140"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        Click="OnExportClicked"
+                        Content="Exporter"
+                        IsEnabled="{Binding CanExport}" />
+
+                </Grid>
+            </Grid>
         </Border>
 
     </Grid>
-
 </Window>

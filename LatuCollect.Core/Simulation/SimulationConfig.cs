@@ -23,11 +23,11 @@ namespace LatuCollect.Core.Simulation
         /// <summary>
         // Active ou désactive la simulation
         /// </summary>
-        public static bool IsEnabled { get; set; } = true; // Par défaut, la simulation est désactivée
+        public static bool IsEnabled { get; set; } = false; // Par défaut, la simulation est désactivée
 
         /// <summary>
         // Nom du scénario de simulation
         /// </summary>
-        public static string Scenario { get; set; } = "FichiersVolumineux"; // Par défaut, aucun scénario n'est défini
+        public static string Scenario { get; set; } = "Aucun"; // Par défaut, aucun scénario n'est défini
     }
 }

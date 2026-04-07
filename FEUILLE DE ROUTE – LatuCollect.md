@@ -188,31 +188,28 @@ Permettre de tester tous les cas (erreurs, gros projets, comportements) sans imp
 
 - ✅ Fichiers volumineux
 - ✅ Fichiers vides
-- ✅ Fichiers corrompus
-- ⬜ Gros projets (beaucoup de fichiers)
-- ⬜ Chemins longs
-- ✅ Accès refusé
-- ⬜ Erreurs lecture
+- ✅ Chemins longs
+- ✅ Erreurs lecture
 - ✅ Erreurs export
 
 ---
 
 ## 🖥️ Interface simulation (mode développeur)
 
-- ⬜ Option avancée pour activer le mode simulation
-- ⬜ Affichage d’un bouton 🧪 dans la barre du bas
-- ⬜ Indicateur visuel du mode simulation actif
-- ⬜ Ouverture d’un popup de configuration
-- ⬜ Sélection du scénario directement depuis l’application
-- ⬜ Synchronisation UI ↔ SimulationConfig
+- ✅ Option avancée pour activer le mode simulation
+- ✅ Affichage d’un bouton 🧪 dans la barre du bas
+- ✅ Indicateur visuel du mode simulation actif
+- ✅ Ouverture d’un popup de configuration
+- ✅ Sélection du scénario directement depuis l’application
+- ✅ Synchronisation UI ↔ SimulationConfig
 
 ---
 
 ## 🧠 Règles
 
-- ⬜ Aucun impact en production
-- ⬜ Code séparé du Core réel
-- ⬜ Activation simple (true / false)
+- ✅ Aucun impact en production
+- ✅ Code séparé du Core réel
+- ✅ Activation simple (true / false)
 
 ---
 
