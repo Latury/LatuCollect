@@ -9,7 +9,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.2.0-1E90FF?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.3.0-1E90FF?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-En%20développement-FF8C00?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-2E8B57?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge)

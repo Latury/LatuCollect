@@ -186,7 +186,6 @@ Permettre de tester tous les cas (erreurs, gros projets, comportements) sans imp
 
 ## 📂 Cas simulés
 
-- ✅ Fichiers volumineux
 - ✅ Fichiers vides
 - ✅ Chemins longs
 - ✅ Erreurs lecture
@@ -225,8 +224,6 @@ Rendre l’application fiable dans tous les cas.
 
 - ⬜ Gestion erreurs lecture fichier
 - ⬜ Gestion erreurs export
-- ⬜ Gestion accès refusé
-- ⬜ Gestion fichiers invalides / corrompus
 - ⬜ Gestion chemins longs
 
 ---

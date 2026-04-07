@@ -265,13 +265,13 @@ Import → Lecture → Assemblage → Export
 
 ## 📌 Statut
 
-🟡 En cours — Système de simulation
+🟢 Fonctionnel — Système de simulation simplifié
 
 ---
 
 ## 🎯 Objectif
 
-Permettre de simuler des cas réels (erreurs, fichiers extrêmes) sans impacter l’application.
+Permettre de simuler des cas d’erreurs essentiels sans complexité inutile ni impact sur l’application réelle.
 
 ---
 
@@ -288,9 +288,8 @@ Permettre de simuler des cas réels (erreurs, fichiers extrêmes) sans impacter 
 ### 📥 Lecture
 
 - ✅ Simulation de fichiers vides
-- ✅ Simulation de fichiers corrompus
-- ✅ Simulation d’erreurs d’accès
-- ✅ Simulation de fichiers volumineux
+- ✅ Simulation d’erreurs de lecture
+- ✅ Simulation de chemins longs
 
 ---
 
@@ -306,13 +305,16 @@ Permettre de simuler des cas réels (erreurs, fichiers extrêmes) sans impacter 
 - ✅ Création SimulationService
 - ✅ Intégration propre dans FileReaderService
 - ✅ Intégration propre dans FileExportService
+- ✅ Simplification du système de simulation (suppression des cas inutiles)
+- ✅ Suppression du code mort (GenerateLargeContent)
 
 ---
 
 ## 🧠 Objectif atteint
 
-- Tester les comportements extrêmes
-- Préparer la gestion avancée des erreurs (v0.4.0)
+- Tester les cas d’erreurs essentiels (lecture / export)
+- Garantir un comportement stable et prévisible
+- Simplifier l’architecture sans sur-ingénierie
 
 ---
 
