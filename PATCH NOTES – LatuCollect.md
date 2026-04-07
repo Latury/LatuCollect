@@ -410,6 +410,85 @@ Import → Lecture → Assemblage → Export
 
 ---
 
+# 🚀 VERSION 0.5.0
+
+## 📌 Statut
+
+🟡 En cours — Amélioration UX
+
+---
+
+## 🎯 Objectif
+
+Améliorer l’expérience utilisateur sans complexifier l’application.
+
+---
+
+## ✨ Améliorations
+
+### 🔎 Recherche
+
+- ✅ Ajout d’un système de recherche dynamique
+- ✅ Filtrage en temps réel basé sur le nom des fichiers
+- ✅ Recherche insensible à la casse
+- ✅ Conservation de la hiérarchie (parents visibles si enfant correspondant)
+- ✅ Implémentation simple et stable (sans reconstruction de l’arbre)
+
+---
+
+### 🧭 Interface utilisateur
+
+- ✅ Ajout d’un bouton de recherche (🔍)
+- ✅ Ouverture / fermeture de la barre de recherche (toggle)
+- ✅ Amélioration du positionnement des éléments (layout propre en Grid)
+- ✅ Suppression des chevauchements UI
+
+---
+
+### 📄 Affichage
+
+- ✅ Amélioration de la lisibilité du contenu
+- ✅ Utilisation d’une police monospace (type éditeur)
+- ✅ Scroll fluide sur contenu volumineux
+
+---
+
+### 💬 Feedback utilisateur
+
+- ✅ Amélioration des messages utilisateur (export, copie)
+- ✅ Notification visuelle non intrusive
+
+---
+
+## 🧠 Résultat
+
+- ✔ Interface plus claire
+- ✔ Navigation plus fluide
+- ✔ Recherche fonctionnelle et stable
+- ✔ Expérience utilisateur améliorée
+
+---
+
+## ⚠️ Limites actuelles
+
+- ❌ Pas encore de gestion des très gros projets (optimisation)
+- ❌ Pas d’indicateur de chargement
+- ❌ Pas de sélection globale optimisée (feature volontairement simplifiée)
+
+---
+
+## 🏁 Objectif
+
+👉 LatuCollect devient :
+
+- ✔ Plus agréable
+- ✔ Plus intuitif
+- ✔ Plus fluide
+
+👉 Sans complexifier l’architecture
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

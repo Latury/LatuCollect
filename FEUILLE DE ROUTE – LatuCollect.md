@@ -244,8 +244,8 @@ Rendre l’application claire, compréhensible et agréable.
 
 ## 💬 Feedback utilisateur
 
-- ⬜ Messages clairs (erreurs / succès)
-- ⬜ Feedback visuel (copie / export)
+- ✅ Messages clairs (erreurs / succès)
+- ✅ Feedback visuel (copie / export)
 - ⬜ Gestion des actions annulées
 
 ---
@@ -253,7 +253,7 @@ Rendre l’application claire, compréhensible et agréable.
 ## 🔄 États UI
 
 - ⬜ Gestion états globaux (chargement / prêt / erreur)
-- ⬜ Gestion du message "Aucun fichier sélectionné"
+- ✅ Gestion du message "Aucun fichier sélectionné"
 
 ---
 
@@ -274,9 +274,20 @@ Rendre l’application claire, compréhensible et agréable.
 
 ## 📄 Affichage
 
-- ⬜ Amélioration lisibilité aperçu
-- ⬜ Rendu type code
-- ⬜ Scroll fluide sur gros contenu
+- ✅ Amélioration lisibilité aperçu
+- ✅ Rendu type code
+- ✅ Scroll fluide sur gros contenu
+
+---
+
+## 🔎 Recherche
+
+- ✅ Barre de recherche avec bouton toggle
+- ✅ Affichage dynamique (ouverture / fermeture)
+- ✅ Filtrage en temps réel
+- ✅ Recherche insensible à la casse
+- ✅ Conservation des dossiers parents si correspondance enfant
+- ✅ Aucun rechargement de l’arbre (UI stable)
 
 ---
 
