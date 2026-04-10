@@ -21,9 +21,9 @@
 */
 
 using LatuCollect.Core.Simulation;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 
 namespace LatuCollect.Core.Services
 {

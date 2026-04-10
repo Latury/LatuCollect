@@ -84,15 +84,17 @@
                         Width="40"
                         Height="40"
                         Click="OnPickFolderClicked"
-                        Content="📂" />
+                        Content="📂"
+                        ToolTipService.ToolTip="Ouvrir un dossier" />
 
-                    <!--  ☑  -->
+                    <!--  ☑ Sélection globale  -->
                     <CheckBox
                         Grid.Column="1"
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Content="Tout sélectionner"
-                        IsChecked="{Binding IsAllSelected, Mode=TwoWay}" />
+                        IsChecked="{Binding IsAllSelected, Mode=TwoWay}"
+                        ToolTipService.ToolTip="Sélectionne ou désélectionne tous les fichiers du projet" />
 
                     <!--  🔍  -->
                     <Button
@@ -100,7 +102,8 @@
                         Width="40"
                         Height="40"
                         Click="OnSearchClicked"
-                        Content="🔍" />
+                        Content="🔍"
+                        ToolTipService.ToolTip="Rechercher un fichier" />
                 </Grid>
 
                 <!--  BARRE DE RECHERCHE  -->
@@ -250,14 +253,15 @@
 
             <Grid>
 
-                <!--  🔥 STRUCTURE EN 2 LIGNES  -->
+                <!--  STRUCTURE EN 2 LIGNES  -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!--  ======================================================  -->
-                <!--  🔥 FEEDBACK (NOUVEAU)  -->
+                <!--  FEEDBACK  -->
                 <!--  ======================================================  -->
 
                 <Border
@@ -269,104 +273,125 @@
                     CornerRadius="6"
                     Visibility="{Binding IsFeedbackVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-
-                        <TextBlock
-                            FontSize="13"
-                            FontWeight="SemiBold"
-                            Foreground="White"
-                            Text="{Binding FeedbackMessage}" />
-
-                    </StackPanel>
+                    <TextBlock
+                        MaxWidth="240"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="White"
+                        Text="{Binding FeedbackMessage}"
+                        TextWrapping="Wrap" />
 
                 </Border>
 
                 <!--  ======================================================  -->
-                <!--  CONTENU  -->
+                <!--  CONTENU + OVERLAY  -->
                 <!--  ======================================================  -->
 
                 <Grid Grid.Row="1">
 
-                    <!--  =========================  -->
-                    <!--  CONTENU FICHIER  -->
-                    <!--  =========================  -->
+                    <!--  CONTENU  -->
+                    <Grid>
 
-                    <ScrollViewer
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto"
-                        Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+                        <ScrollViewer
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto"
+                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+
+                            <TextBlock
+                                Margin="20"
+                                FontFamily="Cascadia Code"
+                                FontSize="13"
+                                Foreground="White"
+                                Text="{Binding PreviewText}"
+                                TextWrapping="NoWrap" />
+                        </ScrollViewer>
 
                         <TextBlock
-                            Margin="20"
-                            FontFamily="Cascadia Code"
-                            FontSize="13"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="16"
                             Foreground="White"
-                            Text="{Binding PreviewText}"
-                            TextAlignment="Left"
-                            TextWrapping="NoWrap" />
-                    </ScrollViewer>
+                            Text="Aucun fichier sélectionné..."
+                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <!--  =========================  -->
-                    <!--  MESSAGE VIDE  -->
-                    <!--  =========================  -->
+                    </Grid>
 
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="White"
-                        Text="Aucun fichier sélectionné..."
-                        Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  LOADER OVERLAY  -->
+                    <Grid Background="#80000000" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="10">
+
+                            <ProgressRing
+                                Width="50"
+                                Height="50"
+                                IsActive="True" />
+
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Text="Chargement..." />
+                        </StackPanel>
+
+                    </Grid>
+
+                    <!--  ERREUR OVERLAY  -->
+                    <Grid Background="#CC000000" Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="Red"
+                            Text="{Binding ErrorMessage}" />
+
+                    </Grid>
 
                 </Grid>
+
+                <!--  ======================================================  -->
+                <!--  ZONE BASSE : EXPORT  -->
+                <!--  ======================================================  -->
+
+                <Border
+                    Grid.Row="2"
+                    Padding="10"
+                    Background="#333333">
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Simulation  -->
+                        <Button
+                            Grid.Column="0"
+                            Height="40"
+                            Padding="12,0"
+                            HorizontalAlignment="Left"
+                            Click="OnSimulationClicked"
+                            Content="{Binding SimulationLabel}" />
+
+                        <!--  Export  -->
+                        <Button
+                            Grid.Column="1"
+                            Height="40"
+                            MinWidth="140"
+                            Margin="10,0,10,0"
+                            HorizontalAlignment="Right"
+                            Click="OnExportClicked"
+                            Content="📤 Exporter le fichier"
+                            IsEnabled="{Binding CanExport}" />
+
+                    </Grid>
+
+                </Border>
 
             </Grid>
 
         </Border>
-
-        <!--  ======================================================  -->
-        <!--  ZONE BASSE : EXPORT  -->
-        <!--  ======================================================  -->
-
-        <Border
-            Grid.Row="1"
-            Grid.ColumnSpan="3"
-            Padding="10"
-            Background="#333333">
-
-            <Grid>
-
-                <Grid>
-
-                    <!--  2 colonnes  -->
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <!--  🧪 BOUTON SIMULATION  -->
-                    <Button
-                        Grid.Column="0"
-                        Height="40"
-                        Padding="12,0"
-                        HorizontalAlignment="Left"
-                        Click="OnSimulationClicked"
-                        Content="{Binding SimulationLabel}" />
-
-                    <!--  📤 EXPORT  -->
-                    <Button
-                        Grid.Column="1"
-                        Height="40"
-                        MinWidth="140"
-                        Margin="10,0,10,0"
-                        HorizontalAlignment="Right"
-                        Click="OnExportClicked"
-                        Content="📤 Exporter le fichier"
-                        IsEnabled="{Binding CanExport}" />
-
-                </Grid>
-            </Grid>
-        </Border>
-
     </Grid>
 </Window>

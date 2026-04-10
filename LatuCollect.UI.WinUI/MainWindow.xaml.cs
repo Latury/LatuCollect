@@ -96,7 +96,12 @@ namespace LatuCollect.UI.WinUI
                 _viewModel.CurrentFolderPath = folder.Path;
                 _viewModel.LoadTree(folder.Path);
             }
+            else
+            {
+                _viewModel.ShowFeedback("❌ Sélection annulée");
+            }
         }
+
         // Affiche ou masque la barre de recherche dans l’arborescence
         private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
@@ -140,10 +145,22 @@ namespace LatuCollect.UI.WinUI
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(content))
+            var check = _viewModel.CheckExportState();
+
+            if (check == MainViewModel.ExportCheckResult.NoSelection)
             {
-                await ShowDialog("Aucun contenu", "Aucun contenu à exporter.");
+                await ShowDialog("Aucun contenu", "Aucun fichier sélectionné.");
                 return;
+            }
+
+            if (check == MainViewModel.ExportCheckResult.EmptyFiles)
+            {
+                bool confirm = await ShowConfirm(
+                    "Fichiers vides",
+                    "Certains fichiers sont vides.\n\nVoulez-vous continuer l’export ?");
+
+                if (!confirm)
+                    return;
             }
 
             FileSavePicker picker = new();
@@ -161,7 +178,10 @@ namespace LatuCollect.UI.WinUI
             StorageFile file = await picker.PickSaveFileAsync();
 
             if (file == null)
+            {
+                _viewModel.ShowFeedback("❌ Export annulé");
                 return;
+            }
 
             try
             {
@@ -230,7 +250,9 @@ namespace LatuCollect.UI.WinUI
                     "FichiersVides",
                     "ErreursExport",
                     "ErreursLecture",
-                    "CheminsLongs"
+                    "CheminsLongs",
+                    "UI_Loader",
+                    "UI_Error",
                 },
                 SelectedItem = _viewModel.SelectedSimulationScenario
             };
@@ -260,24 +282,26 @@ namespace LatuCollect.UI.WinUI
         // Affiche un message dans une boîte de dialogue avec un titre et un contenu (scrollable si nécessaire)
         private async Task ShowDialog(string title, string message)
         {
-            var scroll = new ScrollViewer
+            var content = new ScrollViewer
             {
-                MaxHeight = 400,
+                MaxHeight = 420,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 Content = new TextBlock
                 {
                     Text = message,
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 15,
-                    LineHeight = 20
+                    LineHeight = 22,
+                    Margin = new Thickness(10)
                 }
             };
 
             ContentDialog dialog = new()
             {
                 Title = title,
-                Content = scroll,
+                Content = content,
                 CloseButtonText = "OK",
+                DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot
             };
 
@@ -290,9 +314,16 @@ namespace LatuCollect.UI.WinUI
             ContentDialog dialog = new()
             {
                 Title = title,
-                Content = message,
+                Content = new TextBlock
+                {
+                    Text = message,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 15,
+                    Margin = new Thickness(10)
+                },
                 PrimaryButtonText = "Oui",
                 CloseButtonText = "Non",
+                DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = this.Content.XamlRoot
             };
 

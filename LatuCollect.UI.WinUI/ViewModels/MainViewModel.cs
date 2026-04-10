@@ -33,6 +33,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LatuCollect.Core.Services;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.Models;
+using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -60,6 +61,65 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private string _selectedSimulationScenario = "Aucun";
         // Config de simulation partagée
         private bool _isBatchUpdating = false;
+
+        // ======================================================
+        // ⚡ LIMITES PERFORMANCE (ANTI FREEZE)
+        // ======================================================
+
+        private const int MAX_NODES = 1000;     // nombre total max
+        private const int MAX_DEPTH = 10;       // profondeur max
+
+        // ======================================================
+        // ⚠️ ÉTAT VOLUME PROJET
+        // ======================================================
+
+        private bool _isLimitReached;
+        public bool IsLimitReached
+        {
+            get => _isLimitReached;
+            set => SetProperty(ref _isLimitReached, value);
+        }
+
+        // ======================================================
+        // 🔄 ÉTATS UI (GLOBAL)
+        // ======================================================
+
+        public enum UiState
+        {
+            Loading,
+            Ready,
+            Error
+        }
+
+        private UiState _currentState = UiState.Ready;
+        public UiState CurrentState
+        {
+            get => _currentState;
+            set
+            {
+                if (SetProperty(ref _currentState, value))
+                {
+                    // 🔥 IMPORTANT : notifier les propriétés liées
+                    OnPropertyChanged(nameof(IsLoading));
+                    OnPropertyChanged(nameof(IsReady));
+                    OnPropertyChanged(nameof(HasError));
+                    OnPropertyChanged(nameof(IsPreviewEmpty));
+                }
+            }
+        }
+
+        // 🔎 Helpers (facilitent le binding UI plus tard)
+        public bool IsLoading => CurrentState == UiState.Loading;
+        public bool IsReady => CurrentState == UiState.Ready;
+        public bool HasError => CurrentState == UiState.Error;
+
+        // Message d'erreur éventuel
+        private string _errorMessage = string.Empty;
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set => SetProperty(ref _errorMessage, value);
+        }
 
         // ======================================================
         // 📦 PROPRIÉTÉS PUBLIQUES - LIÉES À L’INTERFACE
@@ -105,7 +165,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
         public bool CanCopy => PreviewText != "Aucun fichier sélectionné...";
-        public bool IsPreviewEmpty => PreviewText == "Aucun fichier sélectionné...";
+        public bool IsPreviewEmpty =>
+    CurrentState == UiState.Ready &&
+    PreviewText == "Aucun fichier sélectionné...";
 
         public bool CanExport =>
             !IsPreviewEmpty &&
@@ -146,6 +208,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public async void ShowFeedback(string message)
         {
+            // ❌ Bloque ce message (déjà affiché au centre)
+            if (string.IsNullOrWhiteSpace(message) || message == "Aucun fichier sélectionné.")
+                return;
+
             FeedbackMessage = message;
             IsFeedbackVisible = true;
 
@@ -287,22 +353,81 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ======================================================
-        // 🌳 ARBORESCENCE DES FICHIERS
-        // ======================================================
+        // ===========================================================
+        // 🌳 ARBORESCENCE - CHARGEMENT DE L’ARBORESCENCE DE FICHIERS
+        // ===========================================================
 
-        public void LoadTree(string path)
+        public async void LoadTree(string path)
         {
-            Tree.Clear();
+            try
+            {
+                // =========================
+                // 🔄 ÉTAT : LOADING
+                // =========================
+                CurrentState = UiState.Loading;
 
-            if (!Directory.Exists(path))
-                return;
+                // 👇 Laisse le temps à l’UI de s’afficher
+                await Task.Delay(100);
 
-            Tree.Add(CreateNode(path));
+                // ===========================================================================
+                // 🧪 SIMULATION (APPLIQUÉE AVANT LE CHARGEMENT POUR INFLUENCER LE PROCESSUS)
+                // ===========================================================================
+                if (!UiSimulationService.ApplyUiSimulation(this))
+                    return;
+
+                // ====================================================
+                // 🔄 CHARGEMENT DE L’ARBORESCENCE (THREAD BACKGROUND)
+                // ====================================================
+                var rootNode = await Task.Run(() =>
+                {
+                    if (!Directory.Exists(path))
+                        return null;
+
+                    int count = 0;
+                    return CreateNode(path, 0, ref count);
+                });
+
+                // =====================================
+                // 🔄 MISE À JOUR DE L’UI (MAIN THREAD)  
+                // =====================================
+                Tree.Clear();
+
+                if (rootNode == null)
+                {
+                    CurrentState = UiState.Error;
+                    ErrorMessage = "Dossier introuvable.";
+                    return;
+                }
+
+                Tree.Add(rootNode);
+
+                // ⚠️ Message si projet trop volumineux
+                if (IsLimitReached)
+                {
+                    ShowFeedback("⚠ Projet volumineux — affichage partiel pour éviter les ralentissements");
+                }
+
+                // =========================
+                // 🔄 ÉTAT : READY
+                // =========================
+                CurrentState = UiState.Ready;
+            }
+            catch (Exception ex)
+            {
+                CurrentState = UiState.Error;
+                ErrorMessage = ex.Message;
+            }
         }
 
-        private FileNode CreateNode(string path)
+        private FileNode CreateNode(string path, int depth, ref int count)
         {
+            // 🔒 Protection profondeur + volume
+            if (depth > MAX_DEPTH || count > MAX_NODES)
+            {
+                IsLimitReached = true;
+                return null;
+            }
+
             FileNode node = new()
             {
                 Name = Path.GetFileName(path),
@@ -311,16 +436,41 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             node.SelectionChanged += OnNodeSelectionChanged;
 
+            count++; // 🔢 on compte ce node
+
             if (Directory.Exists(path))
             {
+                // =========================
+                // 📁 DOSSIERS
+                // =========================
                 foreach (var dir in Directory.GetDirectories(path))
                 {
-                    try { node.Children.Add(CreateNode(dir)); }
+                    if (count > MAX_NODES)
+                    {
+                        IsLimitReached = true;
+                        break;
+                    }
+
+                    try
+                    {
+                        var child = CreateNode(dir, depth + 1, ref count);
+                        if (child != null)
+                            node.Children.Add(child);
+                    }
                     catch { }
                 }
 
+                // =========================
+                // 📄 FICHIERS
+                // =========================
                 foreach (var file in Directory.GetFiles(path))
                 {
+                    if (count > MAX_NODES)
+                    {
+                        IsLimitReached = true;
+                        break;
+                    }
+
                     try
                     {
                         var child = new FileNode
@@ -330,7 +480,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                         };
 
                         child.SelectionChanged += OnNodeSelectionChanged;
+
                         node.Children.Add(child);
+                        count++; // 🔢 on compte le fichier
                     }
                     catch { }
                 }
@@ -413,28 +565,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return node.IsVisible;
         }
 
-        private bool FilterNode(FileNode node)
-        {
-            bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
-
-            bool hasChild = false;
-
-            foreach (var child in node.Children)
-                if (FilterNode(child))
-                    hasChild = true;
-
-            bool newVisibility = match || hasChild;
-
-            if (node.IsVisible != newVisibility)
-            {
-                node.IsVisible = newVisibility;
-
-                // 🔥 force le refresh UI
-                OnPropertyChanged(nameof(Tree));
-            }
-
-            return node.IsVisible;
-        }
         // Toggle de la visibilité de la barre de recherche
         public void ToggleSearch()
         {
