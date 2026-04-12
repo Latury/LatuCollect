@@ -8,6 +8,8 @@ Historique officiel des évolutions du projet **LatuCollect**.
 
 # 📚 Organisation documentaire
 
+👉 Voir la documentation complète dans le README.
+
 Les documents du projet sont organisés par rôle :
 
 ---
@@ -42,10 +44,10 @@ Les documents du projet sont organisés par rôle :
 
 ## 🧱 Gestion du projet
 
-| Fichier             | Rôle                         |
-| ------------------- | ---------------------------- |
-| FEUILLE_DE_ROUTE.md | Planification des évolutions |
-| PATCH_NOTES.md      | Historique des versions      |
+| Fichier        | Rôle                         |
+| -------------- | ---------------------------- |
+| ROADMAP.md     | Planification des évolutions |
+| PATCH_NOTES.md | Historique des versions      |
 
 ---
 
@@ -414,7 +416,7 @@ Import → Lecture → Assemblage → Export
 
 ## 📌 Statut
 
-🟡 En cours — Amélioration UX
+🟢 Terminée — Amélioration UX + Stabilité
 
 ---
 
@@ -432,7 +434,7 @@ Améliorer l’expérience utilisateur sans complexifier l’application.
 - ✅ Filtrage en temps réel basé sur le nom des fichiers
 - ✅ Recherche insensible à la casse
 - ✅ Conservation de la hiérarchie (parents visibles si enfant correspondant)
-- ✅ Implémentation simple et stable (sans reconstruction de l’arbre)
+- ✅ Aucun rechargement de l’arbre (UI stable)
 
 ---
 
@@ -440,8 +442,10 @@ Améliorer l’expérience utilisateur sans complexifier l’application.
 
 - ✅ Ajout d’un bouton de recherche (🔍)
 - ✅ Ouverture / fermeture de la barre de recherche (toggle)
-- ✅ Amélioration du positionnement des éléments (layout propre en Grid)
+- ✅ Amélioration du layout (Grid structuré)
 - ✅ Suppression des chevauchements UI
+- ✅ Amélioration de la compréhension des actions (tooltips 📂 🔍)
+- ✅ Ajout d’une sélection globale (checkbox "Tout sélectionner")
 
 ---
 
@@ -450,42 +454,94 @@ Améliorer l’expérience utilisateur sans complexifier l’application.
 - ✅ Amélioration de la lisibilité du contenu
 - ✅ Utilisation d’une police monospace (type éditeur)
 - ✅ Scroll fluide sur contenu volumineux
+- ✅ Gestion correcte des états vides ("Aucun fichier sélectionné")
 
 ---
 
 ### 💬 Feedback utilisateur
 
-- ✅ Amélioration des messages utilisateur (export, copie)
-- ✅ Notification visuelle non intrusive
+- ✅ Système de feedback visuel non intrusif (toast en haut à droite)
+- ✅ Messages clairs (export, copie, erreurs)
+- ✅ Gestion des actions annulées (sélection dossier, export)
+- ✅ Correction de l’affichage (retour à la ligne, responsive)
+
+---
+
+### 🔄 États UI
+
+- ✅ Mise en place d’un système d’états global (Loading / Ready / Error)
+- ✅ Affichage conditionnel (loader / erreur / contenu)
+- ✅ Synchronisation ViewModel ↔ UI
+
+---
+
+### ⏳ Chargement
+
+- ✅ Ajout d’un indicateur de chargement (loader)
+- ✅ Affichage fluide grâce à l’async (Task.Run + UI thread sécurisé)
+- ✅ Correction du blocage UI (plus de freeze visuel)
+
+---
+
+### ⚡ Performance (gros projets)
+
+- ✅ Limitation du nombre de nœuds chargés (MAX_NODES)
+- ✅ Limitation de la profondeur (MAX_DEPTH)
+- ✅ Protection contre les boucles récursives lourdes
+- ✅ Chargement partiel sécurisé
+- ✅ Ajout protection anti-freeze (chargement asynchrone + limitation volume)
+
+---
+
+### ⚠️ Gestion des gros volumes
+
+- ✅ Détection automatique des projets volumineux
+- ✅ Affichage d’un message utilisateur :
+  → "⚠ Projet volumineux — affichage partiel"
+- ✅ Comportement expliqué (évite confusion)
 
 ---
 
 ## 🧠 Résultat
 
-- ✔ Interface plus claire
-- ✔ Navigation plus fluide
-- ✔ Recherche fonctionnelle et stable
-- ✔ Expérience utilisateur améliorée
+- ✔ Interface claire et lisible
+- ✔ Navigation fluide
+- ✔ Aucun freeze UI
+- ✔ Feedback utilisateur cohérent
+- ✔ Application stable même sur gros projets
 
 ---
 
 ## ⚠️ Limites actuelles
 
-- ❌ Pas encore de gestion des très gros projets (optimisation)
-- ❌ Pas d’indicateur de chargement
-- ❌ Pas de sélection globale optimisée (feature volontairement simplifiée)
+- ❌ Chargement partiel (pas encore de lazy loading)
+- ❌ Pas de virtualisation de l’arbre
+- ❌ Pas d’optimisation avancée (batch / streaming)
 
 ---
 
-## 🏁 Objectif
+## 🏁 Objectif atteint
 
 👉 LatuCollect devient :
 
 - ✔ Plus agréable
 - ✔ Plus intuitif
 - ✔ Plus fluide
+- ✔ Plus robuste
 
-👉 Sans complexifier l’architecture
+👉 Sans complexifier l’architecture (ALC respectée)
+
+---
+
+## 💡 Note technique
+
+Cette version introduit :
+
+- Un contrôle du volume de données (anti-freeze)
+- Une gestion des états UI propre
+- Une séparation claire entre logique et interface
+
+👉 Base solide pour les futures évolutions (0.6.0+)
 
 ---
 

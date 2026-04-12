@@ -24,8 +24,8 @@ Chaque commit doit rester cohérent avec :
 
 - README.md
 - UI_GUIDE.md
-- ARCHITECTURE.md
-- FEUILLE_DE_ROUTE.md
+- ARCHITECTURE – LatuColector.md
+- ROADMAP.md
 - GUIDE_COMMITS.md
 
 ---

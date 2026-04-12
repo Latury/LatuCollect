@@ -65,6 +65,7 @@ Afficher la structure complète du projet
 
 - Clic sur le bouton 📂 → ouvre un sélecteur de dossier
 - Chargement récursif complet
+- Chargement asynchrone (UI non bloquée)
 - Navigation dans les dossiers
 - Filtrage dynamique via la recherche
 
@@ -106,6 +107,7 @@ Configurer et interagir avec l’application
 - Choix du format :
   - ✅ TXT
   - ✅ Markdown
+
 - Bouton Copier
 - Boutons :
   - Options
@@ -169,10 +171,42 @@ Afficher le document final généré
 
 ---
 
+## 🔄 États UI (v0.5.0)
+
+- 🔄 Chargement → affichage d’un loader
+- ❌ Erreur → message affiché
+- ✅ Prêt → contenu ou message vide
+
+👉 L’interface reflète toujours l’état réel de l’application
+
+---
+
+## ⏳ Chargement
+
+- Affichage d’un indicateur visuel (loader)
+- Empêche toute confusion pendant le chargement
+- Disparaît automatiquement une fois terminé
+
+---
+
 ## ⚠️ Cas particuliers
 
 - ❌ Aucun fichier sélectionné → message centré "Aucun fichier sélectionné..."
 - ✅ Contenu long → scroll actif
+
+---
+
+## ⚠️ Projets volumineux
+
+- Chargement partiel si projet trop volumineux
+- Aucun blocage de l’interface
+- Message affiché :
+
+```text
+⚠ Projet volumineux — affichage partiel
+```
+
+👉 Ce comportement garantit la stabilité de l’application
 
 ---
 
@@ -260,8 +294,8 @@ Lancer l’export final
 - ✅ Pas de surcharge visuelle
 - ✅ Sélection ≠ aperçu
 - ✅ Aperçu = résultat final
-- ✅ Feedback immédiat
-- ✅ Le contenu affiché doit toujours refléter exactement le résultat final exporté
+- ✅ Feedback immédiat (non intrusif)
+- ✅ Le contenu affiché reflète exactement le résultat final exporté
 
 ---
 

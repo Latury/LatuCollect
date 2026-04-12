@@ -1,9 +1,12 @@
 # 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE)
 
-Ce document décrit la structure cible du projet LatuCollect.
+👉 ⚠️ Cette structure correspond à l’organisation cible du projet (v1.0.0)
 
-👉 ⚠️ Structure cible (non entièrement implémentée à ce jour)
-👉 Elle correspond à l’organisation prévue pour la version stable (v1.0.0)
+👉 Elle n’est pas entièrement implémentée actuellement.
+
+👉 Certains dossiers et services seront ajoutés progressivement (voir ROADMAP)
+
+👉 ⚠️ Les noms actuels des projets (`LatuCollect.Core`, `LatuCollect.UI.WinUI`) seront simplifiés en `Core` et `UI` dans la version cible.
 
 ---
 
@@ -60,7 +63,8 @@ LatuCollect/
 ├── UI/
 │   └── WinUI/
 │       ├── Views/
-│       │   └── MainWindow.xaml
+│       │   ├── MainWindow.xaml
+│       │   └── MainWindow.xaml.cs
 │       │
 │       ├── ViewModels/
 │       │   └── MainViewModel.cs
@@ -71,6 +75,9 @@ LatuCollect/
 │       ├── Converters/
 │       │   ├── BooleanToVisibilityConverter.cs
 │       │   └── BoolToIconConverter.cs
+│       │
+│       ├── Services/
+│       │   └── UiSimulationService.cs
 │       │
 │       └── Themes/
 │           ├── Light/
@@ -97,7 +104,7 @@ LatuCollect/
 ├── UI_GUIDE.md
 ├── ARCHITECTURE.md
 ├── GUIDE_UTILISATEUR.md
-├── FEUILLE_DE_ROUTE.md
+├── ROADMAP.md
 ├── PATCH_NOTES.md
 ├── TESTS.md
 ├── LICENSE.md
@@ -109,7 +116,14 @@ LatuCollect/
 
 # ⚠️ IMPORTANT
 
-👉 Certains services et dossiers sont prévus mais seront implémentés progressivement (voir feuille de route)
+👉 Cette structure est une cible.
+
+👉 Tous les éléments ne sont pas encore implémentés.
+
+👉 Se référer à la ROADMAP pour suivre l’évolution.
+
+👉 Les services actuels seront progressivement répartis dans les dossiers :
+Import / Collection / Export.
 
 ---
 
@@ -125,6 +139,9 @@ Contient toute la logique métier.
 - Lire le contenu
 - Assembler les données
 - Exporter
+
+👉 Assemblage du contenu centralisé dans `FileExportService`
+👉 Source unique de vérité pour le contenu exporté
 
 👉 Aucune dépendance UI
 
@@ -163,9 +180,10 @@ Permet de tracer les actions et erreurs.
 
 👉 Utilisé pour :
 
-- Debug
-- Suivi des erreurs
+- Actions
+- Erreurs
 - Diagnostic
+- Actions
 
 ---
 
@@ -178,6 +196,9 @@ Contient l’interface utilisateur WinUI.
 - Affichage
 - Interaction utilisateur
 - Aperçu du document
+
+👉 Ne contient aucune logique d’assemblage
+👉 Consomme uniquement le contenu généré par le Core
 
 ---
 
@@ -238,7 +259,7 @@ Contient les éléments visuels.
 
 - Icônes
 - Images
-- Logo application
+- Logo
 
 ---
 
@@ -247,6 +268,8 @@ Contient les éléments visuels.
 ```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
+
+👉 Le contenu est construit une seule fois dans le Core
 
 ---
 
@@ -277,7 +300,7 @@ UI → ViewModel → Core
 - UI peut dépendre de Core
 - 1 dossier = 1 responsabilité
 - Aucune logique métier dans UI
-- Ne jamais modifier cette structure sans mettre à jour la documentation
+- Documentation alignée avec la ROADMAP
 
 ---
 

@@ -1,4 +1,4 @@
-# 🗺️ FEUILLE DE ROUTE – LATUCOLLECT
+# 🗺️ ROADMAP – LATUCOLLECT
 
 Application de collecte de contenu multi-fichiers
 
@@ -246,37 +246,61 @@ Rendre l’application claire, compréhensible et agréable.
 
 - ✅ Messages clairs (erreurs / succès)
 - ✅ Feedback visuel (copie / export)
-- ⬜ Gestion des actions annulées
+- ✅ Gestion des actions annulées
+- ✅ Affichage responsive (retour à la ligne, pas de texte coupé)
 
 ---
 
 ## 🔄 États UI
 
-- ⬜ Gestion états globaux (chargement / prêt / erreur)
+- ✅ Gestion états globaux (chargement / prêt / erreur)
+- ✅ Affichage conditionnel (loader / contenu / erreur)
 - ✅ Gestion du message "Aucun fichier sélectionné"
 
 ---
 
 ## 🖥️ Interface
 
-- ⬜ Boutons plus compréhensibles
-- ⬜ Uniformisation des dialogs
-- ⬜ Bouton "Tout sélectionner / Tout désélectionner"
+- ✅ Boutons plus compréhensibles
+- ✅ Uniformisation des dialogs
+- ✅ Bouton "Tout sélectionner / Tout désélectionner"
+- ✅ Amélioration du layout (Grid propre, sans chevauchement)
 
 ---
 
 ## ⏳ Chargement
 
-- ⬜ Indicateur de chargement
-- ⬜ Gestion gros projets (pas de freeze)
+- ✅ Indicateur de chargement (loader)
+- ✅ Chargement asynchrone (Task.Run)
+- ✅ UI non bloquée
+- ✅ Gestion gros projets (pas de freeze)
 
 ---
 
 ## 📄 Affichage
 
 - ✅ Amélioration lisibilité aperçu
-- ✅ Rendu type code
+- ✅ Rendu type code (police monospace)
 - ✅ Scroll fluide sur gros contenu
+- ✅ Mise à jour en temps réel
+
+---
+
+## ⚡ Performance
+
+- ✅ Limitation du nombre de fichiers (MAX_NODES)
+- ✅ Limitation de la profondeur (MAX_DEPTH)
+- ✅ Protection contre les traitements lourds
+- ✅ Chargement partiel contrôlé
+
+---
+
+## ⚠️ Gestion des gros projets
+
+- ✅ Détection automatique des projets volumineux
+- ✅ Affichage d’un message utilisateur :
+  → "⚠ Projet volumineux — affichage partiel"
+- ✅ Comportement expliqué (évite confusion)
 
 ---
 
@@ -341,7 +365,12 @@ Rendre le code propre et maintenable.
 
 ---
 
-- ⬜ Sortir BuildExportContent du ViewModel
+- ⬜ Identifier toute logique métier restante dans le ViewModel
+- ⬜ Déplacer cette logique vers des services Core
+- ⬜ Simplifier le ViewModel pour qu’il ne fasse que :
+  → gérer l’état UI
+  → appeler le Core
+- ⬜ Vérifier que le ViewModel ne contient aucune logique métier complexe
 - ⬜ Déplacer logique vers Core
 - ⬜ Respect du pipeline complet
 - ⬜ Nettoyage ViewModel

@@ -352,7 +352,7 @@ Futur :
 - ✔ Core fonctionnel
 - ✔ Export opérationnel
 - ✔ UI WinUI fonctionnelle (MVP)
-- 🔄 Améliorations UX en cours
+- ✔ UX améliorée (v0.5.0)
 
 ---
 

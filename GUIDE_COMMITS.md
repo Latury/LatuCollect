@@ -141,16 +141,59 @@ Règles :
 
 ### 📎 Description simple
 
-Explication claire et rapide
+Explication claire, courte et compréhensible par tous.
+
+👉 Elle doit expliquer :
+
+- ✔ Ce qui a été ajouté, modifié ou corrigé
+- ✔ À quoi cela sert concrètement
+- ✔ Ce que l’utilisateur va voir ou ressentir
+
+👉 Important :
+
+- ✔ Utiliser des mots simples
+- ✔ Éviter le jargon technique
+- ✔ Être compréhensible même pour un débutant
+- ✔ Aller à l’essentiel (2 à 4 phrases maximum)
+
+👉 Exemple :
+
+Ajout d’un bouton permettant de charger un dossier.
+L’utilisateur peut maintenant importer son projet facilement.
 
 ---
 
 ### 🧑🏻‍💻 Description technique
 
-- ✔ Classes modifiées
-- ✔ Méthodes impactées
-- ✔ Logique modifiée
-- ✔ Architecture impactée
+Explication détaillée des modifications techniques.
+
+👉 Elle doit répondre à :
+
+1. Qu’est-ce qui a été modifié dans le code ?
+2. Où (fichiers / classes) ?
+3. Comment cela fonctionne maintenant ?
+
+👉 Contenu attendu :
+
+- ✔ Classes et fichiers modifiés
+- ✔ Méthodes ajoutées ou modifiées
+- ✔ Logique impactée
+- ✔ Changements d’architecture (si applicable)
+
+👉 Règles :
+
+- ✔ Être précis
+- ✔ Utiliser des termes techniques compréhensibles
+- ✔ Structurer avec des listes
+- ✔ Ne pas expliquer le "pourquoi" (réservé à la description simple ou impact)
+
+👉 Exemple :
+
+- MainViewModel.cs :
+  - Ajout du chargement asynchrone avec `Task.Run`
+  - Ajout de la gestion des états UI (Loading / Ready / Error)
+- FileExportService :
+  - Centralisation de la génération du contenu
 
 ---
 

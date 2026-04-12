@@ -112,11 +112,41 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Désélection
 - ✅ Changement format
 
-### 🔁 Cohérence (v0.4.0)
+---
 
-- ✅ Le contenu affiché provient d’une source unique (Core)
-- ✅ Aucun recalcul côté UI
-- ✅ Aperçu strictement identique à l’export
+## 🔄 États UI (v0.5.0)
+
+### Vérifier :
+
+- 🔄 Chargement → affichage du loader
+- ❌ Erreur → message affiché
+- ✅ Prêt → contenu ou message vide
+
+👉 L’UI doit toujours refléter l’état réel
+
+---
+
+## ⏳ Loader
+
+### Vérifier :
+
+- ✅ Visible pendant le chargement
+- ✅ Disparaît correctement
+- ✅ Aucun blocage UI
+
+---
+
+## ⚠️ Projets volumineux
+
+### Vérifier :
+
+- ✅ Aucun freeze
+- ✅ Chargement partiel
+- ✅ Message affiché :
+
+```text
+⚠ Projet volumineux — affichage partiel
+```
 
 ---
 
@@ -139,7 +169,7 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Structure lisible
 - ✅ Chemin affiché
 - ✅ Contenu correct
-- ✅ Format adapté au Markdown (lisibilité améliorée)
+- ✅ Format adapté au Markdown
 
 ### Comportement attendu
 
