@@ -175,6 +175,8 @@ Introduire une interface graphique permettant une utilisation visuelle, simple e
 - ✅ Barre de recherche
 - ✅ Filtrage dynamique
 - ✅ Recherche insensible à la casse
+- ✅ Filtrage simple des fichiers (nom + extension)
+- ✅ Mise à jour dynamique de l’arborescence après modification (sans rechargement complet)
 
 ---
 
@@ -545,6 +547,133 @@ Cette version introduit :
 
 ---
 
+# 🚀 VERSION 0.6.0
+
+## 📌 Statut
+
+🟢 Terminée — Recherche & gestion des fichiers améliorées
+
+---
+
+## 🎯 Objectif
+
+Améliorer la gestion des fichiers et la navigation dans l’arborescence.
+
+---
+
+## ✨ Améliorations
+
+### 🔎 Recherche
+
+- ✅ Recherche fiable et stable (zéro bug)
+- ✅ Gestion du cas "aucun résultat" avec affichage clair
+- ✅ Ajout d’un filtrage par extension :
+  - `.cs`, `.xaml`, `.json`, etc.
+
+- ✅ Conservation du filtrage classique (par nom)
+- ✅ Conservation de la hiérarchie (parents visibles si enfant correspondant)
+
+---
+
+### ⚡ Performance
+
+- ✅ Ajout d’un système de debounce sur la recherche
+  - Réduction des recalculs inutiles
+  - Amélioration de la fluidité sur gros projets
+
+- ✅ Optimisation du cas recherche vide (reset immédiat sans recalcul lourd)
+
+---
+
+### 📁 Gestion des fichiers
+
+- ✅ Exclusion automatique de dossiers :
+  - `bin`
+  - `obj`
+  - `.git`
+
+- ✅ Mise en place d’un système de configuration globale (`AppConfig`)
+- ✅ Exclusion appliquée directement au chargement (meilleure performance)
+
+---
+
+### ⚙️ Options utilisateur
+
+- ✅ Ajout d’un panneau Options fonctionnel
+- ✅ Gestion dynamique des exclusions :
+  - Ajouter un dossier à exclure
+  - Supprimer un dossier exclu
+
+- ✅ Mise à jour automatique de l’arborescence après modification
+
+---
+
+### 🖥️ Interface utilisateur
+
+- ✅ Affichage explicite "Aucun résultat"
+- ✅ Amélioration de la compréhension de la recherche
+- ✅ Feedback visuel clair en cas de filtrage vide
+
+---
+
+### 🧱 Architecture
+
+- ✅ Introduction d’un module Configuration (Core)
+- ✅ Respect strict de l’architecture ALC :
+  - Core → configuration globale
+  - UI → interaction utilisateur
+
+- ✅ Aucune logique métier ajoutée dans l’UI
+
+---
+
+## 🧠 Résultat
+
+- ✔ Recherche rapide et fiable
+- ✔ Filtrage plus puissant (nom + extension)
+- ✔ Interface plus claire et compréhensible
+- ✔ Meilleure performance sur gros projets
+- ✔ Application plus configurable
+
+---
+
+## ⚠️ Limites actuelles
+
+- ❌ Pas de sauvegarde des exclusions (non persistées)
+- ❌ Filtrage avancé limité (pas de multi-critères)
+- ❌ Pas de virtualisation de l’arbre
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect devient :
+
+- ✔ Plus performant
+- ✔ Plus flexible
+- ✔ Plus précis
+- ✔ Plus agréable à utiliser
+
+👉 Sans complexifier l’application (simplicité respectée)
+
+---
+
+## 💡 Note technique
+
+Cette version introduit :
+
+- Un système de recherche optimisé (debounce)
+- Un filtrage étendu (extensions)
+- Une configuration dynamique des exclusions
+
+👉 Base prête pour :
+
+- sauvegarde des préférences (JSON)
+- filtrage avancé
+- amélioration performance future
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité
@@ -559,4 +688,4 @@ Cette version introduit :
 - ✅ Comprendre les changements
 - ✅ Garantir la cohérence
 
-👉 Un historique fiable = projet maintenable
+👉 Un historique fiable = un projet maintenable

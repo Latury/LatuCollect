@@ -23,7 +23,7 @@ Un commit dans LatuCollect est :
 - ✔ Une trace historique
 - ✔ Une décision documentée
 - ✔ Une explication technique
-- ✔ Un message au futur développeur
+- ✔ Un message destiné au futur développeur
 - ✔ Un élément de stabilité du projet
 
 Chaque commit doit répondre à :
@@ -78,10 +78,10 @@ Core = logique métier
 UI = affichage uniquement
 ```
 
-❌ interdit :
+❌ Interdit :
 
-- logique métier dans UI
-- accès fichiers depuis UI
+- Logique métier dans UI
+- Accès fichiers depuis UI
 
 ---
 
@@ -107,9 +107,9 @@ Importer → Sélectionner → Aperçu → Exporter
 
 👉 Toute modification doit préciser :
 
-- étape modifiée
-- impact sur le traitement
-- impact sur le résultat final
+- Étape modifiée
+- Impact sur le traitement
+- Impact sur le résultat final
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -229,7 +229,7 @@ Explication détaillée des modifications techniques.
 | 📚    | Readme       | Modification README                        |
 | 🔒    | Security     | Sécurité                                   |
 | 🚀    | Performance  | Optimisation                               |
-| 🧪    | Test         | Ajout ou modification tests                |
+| 🧪    | Tests        | Ajout ou modification tests                |
 | 🧹    | Cleanup      | Nettoyage code                             |
 | 🔥    | Remove       | Suppression code                           |
 | 🔧    | Config       | Configuration                              |
@@ -313,6 +313,7 @@ Ajout de l’affichage des dossiers et fichiers du projet.
 - ✔ Commit compréhensible seul
 - ✔ Vérifier cohérence avec la feuille de route
 - ✔ Vérifier cohérence avec la documentation
+- ✔ Commit lié à une version de la roadmap si applicable
 
 - ❌ Pas de commit automatique non vérifié
 

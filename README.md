@@ -9,7 +9,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.5.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.6.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -17,7 +17,7 @@
 
 <br>
 
---Auteur : Flo Latury--
+Auteur : Flo Latury
 
 </div>
 
@@ -139,22 +139,30 @@ Import → Lecture → Assemblage → Export
 
 ---
 
-# ⚡ 7. Performance & stabilité (v0.5.0)
+# ⚡ 7. Performance & stabilité
+
+## v0.5.0
 
 - ✅ Chargement asynchrone (pas de blocage UI)
 - ✅ Indicateur de chargement (loader)
 - ✅ Protection contre les gros projets :
-  - Limite du nombre de fichiers (MAX_NODES)
-  - Limite de profondeur (MAX_DEPTH)
+  - MAX_NODES
+  - MAX_DEPTH
 
 👉 Si le projet dépasse les limites définies :
 
-```text id="bigprojectmsg"
 ⚠ Projet volumineux — affichage partiel
-```
 
 👉 Cela signifie que seuls une partie des fichiers est chargée
 afin de garantir la fluidité de l’application
+
+---
+
+## v0.6.0
+
+- ✅ Optimisation de la recherche (debounce)
+- ✅ Réduction des recalculs inutiles
+- ✅ Amélioration de la fluidité lors de la saisie
 
 ---
 
@@ -179,6 +187,10 @@ afin de garantir la fluidité de l’application
 - ✅ Export TXT / Markdown
 - ✅ Feedback utilisateur
 - ✅ États UI (Loading / Ready / Error)
+- ✅ Filtrage par extension (.cs, .xaml, etc.)
+- ✅ Gestion du cas "aucun résultat"
+- ✅ Recherche optimisée (debounce)
+- ✅ Exclusion de dossiers (bin, obj, .git)
 
 ---
 
@@ -201,13 +213,13 @@ UI/WinUI/
 Resources/
 ```
 
-👉 Voir : DIRECTORY_STRUCTURE.md
+👉 Voir : DIRECTORY_STRUCTURE.md pour le détail complet
 
 ---
 
 # 📌 12. État actuel
 
-- ✅ Version 0.5.0 stable
+- ✅ Version 0.6.0 stable
 - ✅ UX améliorée
 - ✅ Application fluide
 - ✅ Gestion des gros projets sécurisée

@@ -68,13 +68,55 @@ Tests réalisés directement dans l’interface WinUI.
 ### Vérifier :
 
 - ✅ Filtrage correct des fichiers
-- ✅ Mise à jour en temps réel
+- ✅ Mise à jour rapide (optimisée pour la fluidité)
 - ✅ Conservation de la structure
 
 ### Cas limites :
 
 - ❌ Recherche vide
 - ❌ Aucun résultat
+
+---
+
+### Nouveautés (v0.6.0)
+
+- ✅ Filtrage par extension :
+  - Recherche ".cs" → uniquement fichiers .cs
+  - Recherche ".xaml" → uniquement fichiers XAML
+
+- ✅ Vérification :
+  - Les fichiers affichés correspondent bien à l’extension demandée
+  - Les dossiers parents restent visibles si un enfant correspond
+
+---
+
+- ✅ Gestion "aucun résultat" :
+  - Recherche sans correspondance
+
+👉 Résultat attendu :
+
+- Message "Aucun résultat" affiché
+- Arbre masqué
+- Aucun écran vide (toujours un message affiché)
+
+---
+
+- ✅ Performance (debounce) :
+  - Saisie rapide dans la barre de recherche
+
+👉 Résultat attendu :
+
+- Aucun freeze UI
+- Pas de recalcul à chaque frappe
+- Filtrage déclenché après une courte pause utilisateur
+
+---
+
+- ✅ Les dossiers exclus (bin, obj, .git) ne doivent jamais apparaître dans les résultats de recherche
+
+👉 Important :
+
+- Ça couvre exclusion + recherche ensemble
 
 ---
 
@@ -148,6 +190,8 @@ Tests réalisés directement dans l’interface WinUI.
 ⚠ Projet volumineux — affichage partiel
 ```
 
+- ✅ Recherche fluide même sur projet volumineux (optimisation v0.6.0)
+
 ---
 
 ## 📤 Export
@@ -175,7 +219,7 @@ Tests réalisés directement dans l’interface WinUI.
 
 - ✅ Format dépend du choix utilisateur (.txt / .md)
 - ✅ Export bloqué si aucun contenu
-- ✅ Bouton export désactivé si aucun contenu
+- ✅ Bouton Export désactivé si aucun contenu
 - ✅ Confirmation après export
 
 ### Cas erreurs
@@ -236,6 +280,7 @@ Chemin du fichier
 
 - bin
 - obj
+- .git
 
 ---
 

@@ -1,4 +1,4 @@
-# 🏗️ ARCHITECTURE – LATUCOLLECT (ALC)
+# 🏗️ ARCHITECTURE – LatuCollect (ALC)
 
 Projet : Application de collecte de contenu multi-fichiers
 
@@ -136,29 +136,64 @@ Dans la classe :
 ⚠️ Tolérance MVP :
 
 - ✔ Logique légère autorisée dans le ViewModel
+- ✔ La configuration globale appartient au Core (ex : AppConfig)
 
 ---
 
-# 🔹 ViewModel (UI)
-
-Le ViewModel agit comme intermédiaire entre l’UI et le Core :
+## 🔹 ViewModel (UI)
 
 - ✔ Gère l’état de l’interface
 - ✔ Orchestre les actions utilisateur
-- ✔ Prépare les données pour l’affichage
-
-👉 Il ne doit pas contenir de logique métier complexe
+- ✔ Applique les filtres (recherche, visibilité)
+- ✔ Déclenche les chargements (LoadTree)
 
 ---
 
-# 🔹 Models (UI)
+## 🔹 Models (UI)
 
-Les Models représentent les données manipulées dans l’interface :
+- ✔ Structure des données (FileNode)
+- ✔ Contient les états UI (IsVisible, IsSelected)
+- ❌ Pas de logique métier
 
-- ✔ Structure des fichiers (FileNode)
-- ✔ Données simples sans logique complexe
+---
 
-👉 Ils ne contiennent pas de logique métier
+## 🔹 Core
+
+- ✔ Contient la logique métier
+- ✔ Services (lecture / export)
+- ✔ Configuration globale
+
+---
+
+# 3.1 CONFIGURATION GLOBALE
+
+## 📄 AppConfig
+
+```text
+Core/Configuration/AppConfig.cs
+```
+
+### Rôle :
+
+- ✔ Centraliser les paramètres globaux
+- ✔ Gérer les exclusions de dossiers
+
+### Exemple :
+
+```csharp
+ExcludedFolders = ["bin", "obj", ".git"]
+```
+
+### Utilisation :
+
+- ✔ Utilisé dans CreateNode (ViewModel)
+- ✔ Permet d’éviter la création de nodes inutiles
+
+👉 Impact :
+
+- ✔ Amélioration des performances
+- ✔ Réduction du bruit dans l’arborescence
+- ✔ Base pour Options dynamiques
 
 ---
 
@@ -170,8 +205,6 @@ Les Models représentent les données manipulées dans l’interface :
 Import → Lecture → Assemblage → Export
 ```
 
-👉 objectif final du projet
-
 ---
 
 ## 🔹 Pipeline utilisateur (UI simplifiée)
@@ -180,22 +213,14 @@ Import → Lecture → Assemblage → Export
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
-👉 orienté simplicité utilisateur
-
 ---
 
-# ⚠️ 4.1 RÉALITÉ ACTUELLE (MVP)
-
-Actuellement :
+# 4.1 RÉALITÉ ACTUELLE
 
 - ✔ Lecture via FileReaderService
-- ✔ Assemblage géré dans le Core (FileExportService)
-- ✔ Le ViewModel consomme uniquement le contenu généré
-- ✔ Aperçu basé sur une source unique de vérité
-- ✔ Export basé sur le même contenu que l’aperçu
-
-👉 Le contenu possède une source unique de vérité
-👉 Cela garantit que l’aperçu et l’export sont strictement identiques
+- ✔ Assemblage via FileExportService
+- ✔ Source unique de vérité pour le contenu
+- ✔ Aperçu = Export (strictement identique)
 
 ---
 
@@ -221,8 +246,8 @@ Actuellement :
 
 - ✔ Génère TXT / Markdown
 - ✔ Structure le document final
-- ✔ Génère le contenu via une méthode centralisée (BuildContent)
-- ✔ Garantit la cohérence entre aperçu et export
+- ✔ Méthode centrale : BuildContent()
+- ✔ Garantit la cohérence aperçu/export
 
 ---
 
@@ -240,8 +265,8 @@ Bas → Export
 # 8. COMPORTEMENT UI
 
 - ✔ Sélection via checkbox
-- ✔ Navigation dans dossiers
-- ✔ Recherche dynamique
+- ✔ Navigation dossiers
+- ✔ Recherche dynamique (filtrage géré dans le ViewModel)
 - ✔ Aperçu en temps réel
 - ✔ Export final
 
@@ -259,8 +284,6 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-👉 2 à 3 lignes vides entre chaque section
-
 ---
 
 # 10. STRUCTURE PROJET
@@ -268,6 +291,7 @@ Chemin du fichier
 ```text
 Core/
 ├── Services/
+├── Configuration/
 
 UI/
 └── WinUI/
@@ -275,6 +299,8 @@ UI/
     ├── Models/
     ├── Converters/
 ```
+
+👉 Voir DIRECTORY_STRUCTURE.md pour le détail complet
 
 ---
 
@@ -290,8 +316,8 @@ UI/
 
 # 11.1 EMOJIS
 
-- ❌ Interdits dans code
-- ✔ Autorisés dans docs
+- ❌ Interdits dans le code en version finale
+- ✔ Autorisés dans la documentation
 
 ---
 
@@ -315,6 +341,8 @@ Méthode :
 - ✔ async / await
 - ❌ .Result / .Wait()
 - ✔ UI jamais bloquée
+
+👉 Les opérations coûteuses doivent être contrôlées (ex : debounce côté UI)
 
 ---
 
@@ -351,8 +379,9 @@ Futur :
 
 - ✔ Core fonctionnel
 - ✔ Export opérationnel
-- ✔ UI WinUI fonctionnelle (MVP)
-- ✔ UX améliorée (v0.5.0)
+- ✔ UI WinUI fonctionnelle
+- ✔ Recherche performante et filtrage dynamique
+- ✔ Configuration globale centralisée
 
 ---
 
@@ -361,6 +390,8 @@ Futur :
 - ✔ MVVM avancé
 - ✔ Refactor Core
 - ✔ Amélioration UI
+- 🔄 Persistance configuration (JSON)
+- 🔄 Filtrage avancé
 
 ---
 

@@ -16,6 +16,7 @@ Construire une application WinUI 3 (.NET 8) permettant :
 - ✅ Exporter un document structuré
 
 👉 LatuCollect est un outil simple, visuel et efficace
+👉 basé sur un principe de copie intelligente
 
 ---
 
@@ -208,7 +209,7 @@ Permettre de tester tous les cas (erreurs, gros projets, comportements) sans imp
 
 - ✅ Aucun impact en production
 - ✅ Code séparé du Core réel
-- ✅ Activation simple (true / false)
+- ✅ Activation simple (true / false via configuration)
 
 ---
 
@@ -323,11 +324,12 @@ Améliorer la gestion des fichiers et la navigation.
 
 ---
 
-- ⬜ Recherche fiable (zéro bug)
-- ⬜ Gestion "aucun résultat"
-- ⬜ Performance sur gros projets
-- ⬜ Exclusion dossiers (bin, obj)
-- ⬜ Filtrage simple des fichiers
+- ✅ Recherche fiable (zéro bug)
+- ✅ Gestion "aucun résultat"
+- ✅ Performance sur gros projets
+- ✅ Exclusion dossiers (bin, obj)
+- ✅ Filtrage simple des fichiers
+- ✅ Optimisation de la recherche (debounce)
 
 ---
 
@@ -366,12 +368,11 @@ Rendre le code propre et maintenable.
 ---
 
 - ⬜ Identifier toute logique métier restante dans le ViewModel
-- ⬜ Déplacer cette logique vers des services Core
+- ⬜ Déplacer la logique métier restante vers des services Core
 - ⬜ Simplifier le ViewModel pour qu’il ne fasse que :
   → gérer l’état UI
   → appeler le Core
 - ⬜ Vérifier que le ViewModel ne contient aucune logique métier complexe
-- ⬜ Déplacer logique vers Core
 - ⬜ Respect du pipeline complet
 - ⬜ Nettoyage ViewModel
 - ⬜ Structuration services

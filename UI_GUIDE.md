@@ -61,13 +61,17 @@ Afficher la structure complète du projet
 
 ---
 
-## ⚙️ Comportement
+## ⚙️ Comportement (zone gauche)
 
 - Clic sur le bouton 📂 → ouvre un sélecteur de dossier
 - Chargement récursif complet
 - Chargement asynchrone (UI non bloquée)
 - Navigation dans les dossiers
 - Filtrage dynamique via la recherche
+- Certains dossiers sont exclus automatiquement (ex: bin, obj, .git)
+- Ces exclusions sont définies dans la configuration globale (Core)
+- Les dossiers exclus ne sont jamais affichés dans l’arborescence
+- L’arbre est allégé pour améliorer les performances et la lisibilité
 
 ---
 
@@ -75,7 +79,34 @@ Afficher la structure complète du projet
 
 - Filtre les fichiers et dossiers
 - Recherche insensible à la casse
-- Mise à jour instantanée
+- Mise à jour rapide (optimisée avec un léger délai pour la fluidité)
+
+### 🔄 Améliorations (v0.6.0)
+
+- Filtrage possible par extension :
+  - .cs
+  - .xaml
+  - .json
+
+👉 Permet de cibler rapidement un type de fichier
+
+---
+
+- Optimisation des performances :
+  - Déclenchement différé (debounce)
+  - Réduction des recalculs inutiles
+
+👉 Garantit une recherche fluide même sur de gros projets
+
+---
+
+- Gestion du cas "aucun résultat" :
+
+👉 Si aucun fichier ne correspond :
+→ un message "Aucun résultat" est affiché au centre de la zone
+
+✔ Évite un écran vide incompréhensible
+✔ Améliore la lisibilité de l’interface
 
 ---
 
@@ -142,6 +173,11 @@ Configurer et interagir avec l’application
 - Aide → explication rapide
 - À propos → informations application
 - Quitter → demande de confirmation
+- Paramètres → gestion des exclusions
+  - Ajouter un dossier à exclure
+  - Supprimer un dossier de la liste
+
+👉 Toute modification entraîne un rechargement de l’arborescence
 
 ---
 
@@ -206,7 +242,7 @@ Afficher le document final généré
 ⚠ Projet volumineux — affichage partiel
 ```
 
-👉 Ce comportement garantit la stabilité de l’application
+👉 Ce comportement garantit la stabilité et la fluidité de l’application
 
 ---
 

@@ -24,7 +24,7 @@ Chaque commit doit rester cohérent avec :
 
 - README.md
 - UI_GUIDE.md
-- ARCHITECTURE – LatuColector.md
+- ARCHITECTURE – LatuCollect.md
 - ROADMAP.md
 - GUIDE_COMMITS.md
 
@@ -88,7 +88,7 @@ Toutes les 30 à 60 minutes
 | 🛠️    | Fix          | Correction mineure      |
 | ♻️    | Refactor     | Réorganisation code     |
 | 📝    | Docs         | Documentation           |
-| 🧪    | Test         | Tests                   |
+| 🧪    | Tests        | Tests                   |
 | 🧹    | Cleanup      | Nettoyage               |
 | 🔥    | Remove       | Suppression             |
 | ⚙️    | Service      | Services Core           |

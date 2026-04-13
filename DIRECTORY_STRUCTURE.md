@@ -75,6 +75,7 @@ LatuCollect/
 │       ├── Converters/
 │       │   ├── BooleanToVisibilityConverter.cs
 │       │   └── BoolToIconConverter.cs
+│       │   └── InverseBooleanToVisibilityConverter.cs
 │       │
 │       ├── Services/
 │       │   └── UiSimulationService.cs
@@ -124,6 +125,11 @@ LatuCollect/
 
 👉 Les services actuels seront progressivement répartis dans les dossiers :
 Import / Collection / Export.
+
+👉 Sera utilisé pour le theming (non implémenté actuellement)
+Themes/
+├── Light/
+└── Dark/
 
 ---
 
@@ -183,7 +189,6 @@ Permet de tracer les actions et erreurs.
 - Actions
 - Erreurs
 - Diagnostic
-- Actions
 
 ---
 

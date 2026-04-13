@@ -72,6 +72,69 @@ Une barre de recherche permet de :
 
 👉 Le résultat est affiché instantanément
 
+👉 La recherche est optimisée pour rester fluide, même sur des projets volumineux.
+
+👉 La recherche ne modifie jamais les fichiers, elle agit uniquement sur l’affichage.
+
+---
+
+## 🔎 Nouveautés (v0.6.0)
+
+- Il est maintenant possible de filtrer par extension :
+  - .cs → fichiers C#
+  - .xaml → fichiers XAML
+  - .json → fichiers JSON
+
+👉 Exemple :
+Tape ".cs" pour afficher uniquement les fichiers C#
+
+---
+
+- Si aucun résultat n’est trouvé :
+  → un message "Aucun résultat" s’affiche clairement au centre de l’écran
+
+👉 Cela évite toute confusion pour l’utilisateur
+
+---
+
+# ⚙️ 4.1 Exclusion de dossiers (v0.6.0)
+
+LatuCollect permet d’exclure certains dossiers du chargement.
+
+Par défaut, les dossiers suivants sont ignorés :
+
+- bin
+- obj
+- .git
+
+👉 Ces dossiers sont souvent volumineux et inutiles pour l’export
+
+---
+
+## 🔧 Personnalisation
+
+Depuis le menu :
+
+Paramètres → Exclusions
+
+Tu peux :
+
+- Ajouter un dossier à exclure
+- Supprimer un dossier de la liste
+
+👉 Exemple :
+Ajouter "node_modules" pour ignorer ce dossier
+
+---
+
+## ⚠️ Important
+
+- Les exclusions sont appliquées au chargement du projet
+- Les dossiers exclus ne sont jamais affichés
+- L’arborescence est plus lisible et plus rapide
+
+👉 Après modification, l’arbre est automatiquement rechargé
+
 ---
 
 # ☑️ 5. Sélectionner les fichiers
