@@ -29,6 +29,7 @@
         <Grid.Resources>
             <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         </Grid.Resources>
 
         <!--  =========================  -->
@@ -116,33 +117,44 @@
                     Visibility="{Binding IsSearchVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--  ARBORESCENCE  -->
-                <TreeView Grid.Row="2" ItemsSource="{Binding Tree}">
+                <Grid Grid.Row="2">
 
-                    <TreeView.ItemTemplate>
-                        <DataTemplate x:DataType="models:FileNode">
+                    <!--  🌳 ARBRE  -->
+                    <TreeView ItemsSource="{Binding Tree}" Visibility="{Binding HasSearchResult, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                            <!--  🔥 IMPORTANT : TreeViewItem ici  -->
-                            <TreeViewItem ItemsSource="{Binding Children}" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TreeView.ItemTemplate>
+                            <DataTemplate x:DataType="models:FileNode">
 
-                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TreeViewItem ItemsSource="{Binding Children}" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                                    <!--  Icône  -->
-                                    <TextBlock Foreground="White" Text="{Binding ., Converter={StaticResource BoolToIconConverter}}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
 
-                                    <!--  Checkbox  -->
-                                    <CheckBox
-                                        Content="{Binding Name}"
-                                        Foreground="White"
-                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                        <TextBlock Foreground="White" Text="{Binding ., Converter={StaticResource BoolToIconConverter}}" />
 
-                                </StackPanel>
+                                        <CheckBox
+                                            Content="{Binding Name}"
+                                            Foreground="White"
+                                            IsChecked="{Binding IsSelected, Mode=TwoWay}" />
 
-                            </TreeViewItem>
+                                    </StackPanel>
 
-                        </DataTemplate>
-                    </TreeView.ItemTemplate>
+                                </TreeViewItem>
 
-                </TreeView>
+                            </DataTemplate>
+                        </TreeView.ItemTemplate>
+
+                    </TreeView>
+
+                    <!--  🚫 AUCUN RÉSULTAT  -->
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Opacity="0.6"
+                        Text="Aucun résultat"
+                        Visibility="{Binding HasSearchResult, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                </Grid>
 
             </Grid>
 

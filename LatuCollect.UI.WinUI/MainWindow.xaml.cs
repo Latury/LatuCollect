@@ -40,6 +40,8 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using LatuCollect.Core.Configuration;
+using System.Collections.Generic;
 
 namespace LatuCollect.UI.WinUI
 {
@@ -392,10 +394,87 @@ namespace LatuCollect.UI.WinUI
     "- Utilise .md pour structurer");
         }
 
-        // Options : paramètres de l’application 
+        // Options : gestion des dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders) 
         private async void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
-            await ShowDialog("Options", "À venir");
+            var listView = new ListView
+            {
+                ItemsSource = AppConfig.ExcludedFolders,
+                Height = 200
+            };
+
+            var input = new TextBox
+            {
+                PlaceholderText = "Nom du dossier (ex: node_modules)"
+            };
+
+            var addButton = new Button
+            {
+                Content = "Ajouter"
+            };
+
+            var removeButton = new Button
+            {
+                Content = "Supprimer sélection"
+            };
+
+            // ➕ Ajouter
+            addButton.Click += (_, __) =>
+            {
+                var value = input.Text?.Trim();
+
+                if (!string.IsNullOrWhiteSpace(value) &&
+                    !AppConfig.ExcludedFolders.Contains(value))
+                {
+                    AppConfig.ExcludedFolders.Add(value);
+
+                    listView.ItemsSource = null;
+                    listView.ItemsSource = AppConfig.ExcludedFolders;
+
+                    input.Text = "";
+                }
+            };
+
+            // ➖ Supprimer
+            removeButton.Click += (_, __) =>
+            {
+                if (listView.SelectedItem is string selected)
+                {
+                    AppConfig.ExcludedFolders.Remove(selected);
+
+                    listView.ItemsSource = null;
+                    listView.ItemsSource = AppConfig.ExcludedFolders;
+                }
+            };
+
+            var stack = new StackPanel { Spacing = 10 };
+
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Dossiers exclus",
+                FontSize = 16
+            });
+
+            stack.Children.Add(listView);
+            stack.Children.Add(input);
+            stack.Children.Add(addButton);
+            stack.Children.Add(removeButton);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Options - Exclusions",
+                Content = stack,
+                PrimaryButtonText = "Fermer",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+
+            // 🔄 Recharge l’arbre après fermeture
+            if (!string.IsNullOrWhiteSpace(_viewModel.CurrentFolderPath))
+            {
+                _viewModel.LoadTree(_viewModel.CurrentFolderPath);
+            }
         }
 
         // A propos : informations sur l'application, le développeur, la licence, etc. (UI uniquement) 

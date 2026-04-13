@@ -30,6 +30,7 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using LatuCollect.Core.Configuration;
 using LatuCollect.Core.Services;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.Models;
@@ -38,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LatuCollect.UI.WinUI.ViewModels
@@ -61,6 +63,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private string _selectedSimulationScenario = "Aucun";
         // Config de simulation partagée
         private bool _isBatchUpdating = false;
+
+        private CancellationTokenSource? _searchCts;
 
         // ======================================================
         // ⚡ LIMITES PERFORMANCE (ANTI FREEZE)
@@ -143,10 +147,20 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set
             {
                 if (SetProperty(ref _searchText, value))
-                    ApplyFilter();
+                {
+                    DebounceFilter();
+                }
             }
         }
+
         public ObservableCollection<FileNode> Tree { get; } = new();
+
+        private bool _hasSearchResult = true;
+        public bool HasSearchResult
+        {
+            get => _hasSearchResult;
+            set => SetProperty(ref _hasSearchResult, value);
+        }
 
         // ======================================================
         // 🔍 VISIBILITÉ BARRE DE RECHERCHE
@@ -453,6 +467,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                     try
                     {
+                        string folderName = Path.GetFileName(dir);
+
+                        // 🚫 EXCLUSION DOSSIERS
+                        if (AppConfig.ExcludedFolders.Contains(folderName))
+                            continue;
+
                         var child = CreateNode(dir, depth + 1, ref count);
                         if (child != null)
                             node.Children.Add(child);
@@ -542,10 +562,27 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private void ApplyFilter()
         {
+            // 👉 Cas important : recherche vide
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                foreach (var root in Tree)
+                {
+                    SetAllVisible(root);
+                }
+
+                HasSearchResult = true;
+                return;
+            }
+
+            bool hasVisible = false;
+
             foreach (var root in Tree)
             {
-                ApplyFilterToNode(root);
+                if (ApplyFilterToNode(root))
+                    hasVisible = true;
             }
+
+            HasSearchResult = hasVisible;
         }
 
         private bool ApplyFilterToNode(FileNode node)
@@ -563,6 +600,40 @@ namespace LatuCollect.UI.WinUI.ViewModels
             node.IsVisible = match || hasChildMatch;
 
             return node.IsVisible;
+        }
+
+        private async void DebounceFilter()
+        {
+            // Annule la recherche précédente
+            _searchCts?.Cancel();
+
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+
+            try
+            {
+                // ⏱ délai (300ms = fluide)
+                await Task.Delay(300, token);
+
+                if (!token.IsCancellationRequested)
+                {
+                    ApplyFilter();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Normal → on ignore
+            }
+        }
+
+        private void SetAllVisible(FileNode node)
+        {
+            node.IsVisible = true;
+
+            foreach (var child in node.Children)
+            {
+                SetAllVisible(child);
+            }
         }
 
         // Toggle de la visibilité de la barre de recherche
