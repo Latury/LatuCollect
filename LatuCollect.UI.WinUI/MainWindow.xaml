@@ -29,7 +29,7 @@
         <Grid.Resources>
             <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+            <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         </Grid.Resources>
 
         <!--  =========================  -->
@@ -95,7 +95,8 @@
                         VerticalAlignment="Center"
                         Content="Tout sélectionner"
                         IsChecked="{Binding IsAllSelected, Mode=TwoWay}"
-                        ToolTipService.ToolTip="Sélectionne ou désélectionne tous les fichiers du projet" />
+                        Opacity="0.6"
+                        ToolTipService.ToolTip="Désactivé temporairement pour performance" />
 
                     <!--  🔍  -->
                     <Button
@@ -215,7 +216,8 @@
                     HorizontalAlignment="Center"
                     Click="OnCopyClicked"
                     Content="📋 Copier le contenu"
-                    IsEnabled="{Binding CanCopy}" />
+                    IsEnabled="{Binding CanCopy}"
+                    ToolTipService.ToolTip="Copier le contenu" />
 
                 <!--  AUTRES  -->
                 <StackPanel HorizontalAlignment="Center" Spacing="14">
@@ -225,28 +227,41 @@
                         Height="44"
                         Padding="12,0"
                         Click="OnOptionsClicked"
-                        Content="⚙ Paramètres" />
+                        Content="⚙ Paramètres"
+                        ToolTipService.ToolTip="Paramètres" />
+
+                    <Button
+                        Width="180"
+                        Height="44"
+                        Padding="12,0"
+                        Click="OnStatsClicked"
+                        Content="📊 Statistiques"
+                        ToolTipService.ToolTip="Statistiques" />
 
                     <Button
                         Width="180"
                         Height="44"
                         Padding="12,0"
                         Click="OnHelpClicked"
-                        Content="❓ Aide" />
+                        Content="❓ Aide"
+                        ToolTipService.ToolTip="Aide" />
 
                     <Button
                         Width="180"
                         Height="44"
                         Padding="12,0"
                         Click="OnAboutClicked"
-                        Content="ℹ À propos" />
+                        Content="ℹ À propos"
+                        ToolTipService.ToolTip="À propos" />
+
 
                     <Button
                         Width="180"
                         Height="44"
                         Padding="12,0"
                         Click="OnQuitClicked"
-                        Content="🚪 Quitter" />
+                        Content="🚪 Quitter"
+                        ToolTipService.ToolTip="Quitter" />
 
                 </StackPanel>
 
@@ -385,7 +400,8 @@
                             Padding="12,0"
                             HorizontalAlignment="Left"
                             Click="OnSimulationClicked"
-                            Content="{Binding SimulationLabel}" />
+                            Content="{Binding SimulationLabel}"
+                            ToolTipService.ToolTip="Simulation" />
 
                         <!--  Export  -->
                         <Button
@@ -396,7 +412,8 @@
                             HorizontalAlignment="Right"
                             Click="OnExportClicked"
                             Content="📤 Exporter le fichier"
-                            IsEnabled="{Binding CanExport}" />
+                            IsEnabled="{Binding CanExport}"
+                            ToolTipService.ToolTip="Exporter le fichier" />
 
                     </Grid>
 

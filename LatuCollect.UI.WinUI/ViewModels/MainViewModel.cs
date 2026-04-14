@@ -141,6 +141,35 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _currentFolderPath, value);
         }
 
+
+        private int _fileCount;
+        public int FileCount
+        {
+            get => _fileCount;
+            set => SetProperty(ref _fileCount, value);
+        }
+
+        private int _totalLines;
+        public int TotalLines
+        {
+            get => _totalLines;
+            set => SetProperty(ref _totalLines, value);
+        }
+
+        private int _totalCharacters;
+        public int TotalCharacters
+        {
+            get => _totalCharacters;
+            set => SetProperty(ref _totalCharacters, value);
+        }
+
+        private long _totalSize;
+        public long TotalSize
+        {
+            get => _totalSize;
+            set => SetProperty(ref _totalSize, value);
+        }
+
         public string SearchText
         {
             get => _searchText;
@@ -161,6 +190,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             get => _hasSearchResult;
             set => SetProperty(ref _hasSearchResult, value);
         }
+
+        public event Action? OnSelectAllBlocked;
 
         // ======================================================
         // 🔍 VISIBILITÉ BARRE DE RECHERCHE
@@ -192,6 +223,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ======================================================
 
         private bool _isAllSelected;
+
+        // 🔥 LOGIQUE DE SÉLECTION GLOBALE (CHECKBOX) - PAS UN VRAI "SELECT ALL" MAIS UN DÉCLENCHEUR
         public bool IsAllSelected
         {
             get => _isAllSelected;
@@ -199,7 +232,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _isAllSelected, value))
                 {
-                    SetAllSelection(value);
+                    // 🔥 popup
+                    OnSelectAllBlocked?.Invoke();
+
+                    // 🔁 on remet à false après
+                    _isAllSelected = false;
+                    OnPropertyChanged(nameof(IsAllSelected));
                 }
             }
         }
@@ -523,32 +561,48 @@ namespace LatuCollect.UI.WinUI.ViewModels
             RefreshPreview();
         }
 
-        private void RefreshPreview()
+        private async void RefreshPreview()
         {
             var files = GetSelectedFiles();
 
             if (files.Count == 0)
             {
                 PreviewText = "Aucun fichier sélectionné...";
+                return;
             }
-            else
+
+            CurrentState = UiState.Loading;
+
+            const int MAX_FILES_PREVIEW = 20;
+
+            var previewFiles = files.Count > MAX_FILES_PREVIEW
+                ? files.GetRange(0, MAX_FILES_PREVIEW)
+                : files;
+
+            bool isMarkdown = SelectedFormat == ".md";
+
+            var data = await Task.Run(() =>
             {
-                const int MAX_FILES_PREVIEW = 20;
+                return FileExportService.BuildContentWithStats(previewFiles, isMarkdown);
+            });
 
-                var previewFiles = files.Count > MAX_FILES_PREVIEW
-                    ? files.GetRange(0, MAX_FILES_PREVIEW)
-                    : files;
+            var content = data.Content;
+            var stats = data.Stats;
 
-                var content = FileExportService.BuildContent(previewFiles);
-
-                if (files.Count > MAX_FILES_PREVIEW)
-                {
-                    content += "\n\n----------------------------------------\n";
-                    content += "⚠ Aperçu limité à 20 fichiers...\n";
-                }
-
-                PreviewText = content;
+            if (files.Count > MAX_FILES_PREVIEW)
+            {
+                content += "\n\n----------------------------------------\n";
+                content += "⚠ Aperçu limité à 20 fichiers...\n";
             }
+
+            PreviewText = content;
+
+            FileCount = stats.FileCount;
+            TotalLines = stats.TotalLines;
+            TotalCharacters = stats.TotalCharacters;
+            TotalSize = stats.TotalSizeBytes;
+
+            CurrentState = UiState.Ready;
 
             OnPropertyChanged(nameof(CanCopy));
             OnPropertyChanged(nameof(IsPreviewEmpty));
@@ -662,7 +716,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                        $"Réduis la sélection.";
             }
 
-            return FileExportService.BuildContent(files);
+            bool isMarkdown = SelectedFormat == ".md";
+
+            var data = FileExportService.BuildContentWithStats(files, isMarkdown);
+            return data.Content;
         }
     }
 }

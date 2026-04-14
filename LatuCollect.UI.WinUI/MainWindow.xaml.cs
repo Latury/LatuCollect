@@ -30,35 +30,26 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Configuration;
 using LatuCollect.Core.Services;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Text;
 using WinRT.Interop;
-using LatuCollect.Core.Configuration;
-using System.Collections.Generic;
 
 namespace LatuCollect.UI.WinUI
 {
     public sealed partial class MainWindow : Window
     {
-        // ===========================================================
-        // 🧠 VIEWMODEL (LIEN AVEC LA VUE, PAS DE LOGIQUE MÉTIER ICI)
-        // ===========================================================
-
-        // Instance du ViewModel principal, qui contient l’état de l’application et la logique métier (appelée depuis la vue)
         private readonly MainViewModel _viewModel = new();
 
-        // ==========================================================
-        // 🚀 INITIALISATION DE LA FENÊTRE ET LIEN AVEC LE VIEWMODEL
-        // ==========================================================
-
-        // Constructeur de la fenêtre principale : initialise les composants, lie le DataContext au ViewModel et configure la taille minimale de la fenêtre
         public MainWindow()
         {
             this.InitializeComponent();
@@ -66,7 +57,9 @@ namespace LatuCollect.UI.WinUI
             if (this.Content is FrameworkElement root)
                 root.DataContext = _viewModel;
 
-            // 🔥 Taille minimale fenêtre (WinUI 3)
+            // 🔥 AJOUT (popup sélection globale)
+            _viewModel.OnSelectAllBlocked += ShowSelectAllDialog;
+
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
@@ -78,10 +71,26 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ======================================================
+        // 🆕 POPUP SÉLECTION GLOBALE BLOQUÉE
+        // ======================================================
+
+        private async void ShowSelectAllDialog()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Sélection globale désactivée",
+                Content = "Pour éviter les ralentissements, la sélection de tous les fichiers est temporairement désactivée.\n\nVeuillez sélectionner les fichiers manuellement.",
+                CloseButtonText = "Compris",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
+
+        // ======================================================
         // 📂 SÉLECTION DE DOSSIER (FOLDERPICKER)
         // ======================================================
 
-        // Ouvre un FolderPicker pour que l’utilisateur sélectionne un dossier, puis charge l’arborescence dans le ViewModel
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
             FolderPicker picker = new();
@@ -104,33 +113,21 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // Affiche ou masque la barre de recherche dans l’arborescence
         private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
             _viewModel.ToggleSearch();
         }
 
-        // ======================================================
-        // 📄 FORMAT D'EXPORT (TXT, MD)
-        // ======================================================
-
-        // Lorsque l’utilisateur sélectionne le format Texte, on met à jour le ViewModel pour refléter ce choix
         private void OnTxtSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".txt";
         }
 
-        // Lorsque l’utilisateur sélectionne le format Markdown, on met à jour le ViewModel pour refléter ce choix
         private void OnMdSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".md";
         }
 
-        // ======================================================
-        // 📤 EXPORTER (FICHIER OU PRESSE-PAPIERS)   
-        // ======================================================
-
-        // Exporte le contenu dans un fichier choisi par l’utilisateur et affiche un feedback
         private async void OnExportClicked(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
@@ -204,11 +201,6 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // ======================================================
-        // 📋 COPIER DANS LE PRESSE-PAPIERS  
-        // ======================================================
-
-        // Copie le contenu de l’export dans le presse-papiers et affiche un feedback
         private void OnCopyClicked(object sender, RoutedEventArgs e)
         {
             string content = _viewModel.GetExportContent();
@@ -219,6 +211,80 @@ namespace LatuCollect.UI.WinUI
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
 
             _viewModel.ShowFeedback("✔ Contenu copié");
+        }
+
+        // ======================================================
+        // 📊 STATISTIQUES (UI UNIQUEMENT, AUCUNE LOGIQUE MÉTIER ICI)  
+        // ======================================================
+
+        // Affiche une boîte de dialogue avec des statistiques sur les fichiers sélectionnés (nombre de fichiers, lignes, caractères, taille totale)
+        private async void OnStatsClicked(object sender, RoutedEventArgs e)
+        {
+            var content = new StackPanel { Spacing = 10 };
+
+            content.Children.Add(new TextBlock
+            {
+                Text = "📊 Statistiques",
+                FontSize = 18
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = $"📄 Fichiers : {_viewModel.FileCount}"
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = $"📏 Lignes : {_viewModel.TotalLines:N0}"
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = $"🔤 Caractères : {_viewModel.TotalCharacters:N0}"
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = $"💾 Taille : {FormatSize(_viewModel.TotalSize)}"
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = "────────────────────────────"
+            });
+
+            content.Children.Add(new TextBlock
+            {
+                Text = "✔ Données mises à jour en temps réel",
+                FontStyle = Windows.UI.Text.FontStyle.Italic,
+                Opacity = 0.7
+            });
+
+            var dialog = new ContentDialog
+            {
+                Title = "Statistiques",
+                Content = content,
+                CloseButtonText = "Fermer",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
+
+        // Formate une taille en octets en une chaîne lisible (B, KB, MB)
+        private string FormatSize(long bytes)
+        {
+            if (bytes < 1024)
+                return $"{bytes} B";
+
+            double kb = bytes / 1024.0;
+
+            if (kb < 1024)
+                return $"{kb:F1} KB";
+
+            double mb = kb / 1024.0;
+
+            return $"{mb:F1} MB";
         }
 
         // =========================================================
