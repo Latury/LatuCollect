@@ -9,7 +9,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.6.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.7.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -69,7 +69,7 @@ Importer → Sélectionner → Aperçu → Exporter
 - Navigation dans les dossiers
 - Barre de recherche dynamique
 - Sélection des fichiers via checkbox
-- Bouton "Tout sélectionner"
+- Bouton "Tout sélectionner" (désactivé temporairement)
 
 ---
 
@@ -83,9 +83,26 @@ Importer → Sélectionner → Aperçu → Exporter
 
 - Accès :
   - Options
+  - Statistiques
   - Aide
   - À propos
   - Quitter
+
+---
+
+- Bouton Statistiques
+
+---
+
+### 📊 Statistiques (v0.7.0)
+
+- Nombre de fichiers sélectionnés
+- Nombre total de lignes
+- Nombre total de caractères
+- Taille totale
+
+👉 Mise à jour en temps réel
+👉 Calcul en arrière-plan (aucun freeze)
 
 ---
 
@@ -164,6 +181,13 @@ afin de garantir la fluidité de l’application
 - ✅ Réduction des recalculs inutiles
 - ✅ Amélioration de la fluidité lors de la saisie
 
+## v0.7.0
+
+- ✅ Ajout des statistiques en temps réel
+- ✅ Limitation de l’aperçu à 20 fichiers
+- ✅ Calcul en arrière-plan (Task.Run)
+- ✅ Réduction des freezes lors de grosses sélections
+
 ---
 
 # ⚠️ 8. Ce que l’application NE fait PAS
@@ -191,6 +215,8 @@ afin de garantir la fluidité de l’application
 - ✅ Gestion du cas "aucun résultat"
 - ✅ Recherche optimisée (debounce)
 - ✅ Exclusion de dossiers (bin, obj, .git)
+- ✅ Statistiques en temps réel
+- ✅ Limitation intelligente de l’aperçu
 
 ---
 
@@ -219,7 +245,9 @@ Resources/
 
 # 📌 12. État actuel
 
-- ✅ Version 0.6.0 stable
+- ✅ Version 0.7.0 stable
+- ✅ Export amélioré
+- ✅ Statistiques intégrées
 - ✅ UX améliorée
 - ✅ Application fluide
 - ✅ Gestion des gros projets sécurisée

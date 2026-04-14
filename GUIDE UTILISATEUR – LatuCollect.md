@@ -152,6 +152,27 @@ Ajouter "node_modules" pour ignorer ce dossier
 
 ---
 
+### ⚠️ Sélection globale (v0.7.0)
+
+Le bouton "Tout sélectionner" est actuellement désactivé.
+
+---
+
+## 📢 Comportement :
+
+- Un clic affiche un message explicatif
+
+---
+
+## 🎯 Pourquoi ?
+
+- Éviter les ralentissements sur les gros projets
+- Préserver la fluidité de l’application
+
+👉 Une amélioration est prévue dans une future version
+
+---
+
 # 👁️ 6. Aperçu en temps réel
 
 ## Déclencheurs :
@@ -198,6 +219,23 @@ Chemin du fichier
 
 ---
 
+## ⚠️ Limitation de l’aperçu (v0.7.0)
+
+- L’aperçu est limité à 20 fichiers maximum
+
+👉 Si plus de fichiers sont sélectionnés :
+
+→ un message s’affiche :
+
+⚠ Aperçu limité à 20 fichiers
+
+---
+
+👉 L’export n’est pas limité
+👉 Seul l’affichage est réduit pour éviter les ralentissements
+
+---
+
 # ⚙️ 7. Choisir le format
 
 Dans la zone centrale :
@@ -227,6 +265,31 @@ Dans la zone centrale :
 ## ⚠️ Cas particulier
 
 - ❌ Bouton désactivé si aucun contenu
+
+---
+
+# 📊 8.1 Voir les statistiques (v0.7.0)
+
+Un bouton "Statistiques" permet d’afficher des informations sur les fichiers sélectionnés.
+
+---
+
+## 📊 Informations affichées :
+
+- Nombre de fichiers sélectionnés
+- Nombre total de lignes
+- Nombre total de caractères
+- Taille totale des fichiers
+
+---
+
+## ⚙️ Comportement :
+
+- Mise à jour en temps réel
+- Calcul automatique
+- Aucun impact sur les performances
+
+👉 Permet de mieux comprendre le contenu avant export
 
 ---
 
@@ -298,7 +361,7 @@ L’application propose plusieurs actions :
 # ⚙️ 11. Fonctionnement interne
 
 ```text
-Import → Lecture → Assemblage → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
 
 👉 L’application ne modifie jamais le contenu

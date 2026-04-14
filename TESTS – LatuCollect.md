@@ -140,6 +140,23 @@ Tests réalisés directement dans l’interface WinUI.
 
 ---
 
+### ⚠️ Sélection globale (v0.7.0)
+
+### Vérifier :
+
+- ❌ Bouton "Tout sélectionner" désactivé
+- ✅ Clic affiche un popup explicatif
+
+---
+
+### Comportement attendu :
+
+- Aucun traitement massif
+- Aucun freeze UI
+- Message clair utilisateur
+
+---
+
 ## 👁️ Aperçu
 
 ### Vérifier :
@@ -154,6 +171,17 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Désélection
 - ✅ Changement format
 
+### ⚠️ Limitation aperçu (v0.7.0)
+
+### Vérifier :
+
+- ✅ Maximum 20 fichiers affichés
+- ✅ Message affiché :
+
+```text
+⚠ Aperçu limité à 20 fichiers
+```
+
 ---
 
 ## 🔄 États UI (v0.5.0)
@@ -165,6 +193,20 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Prêt → contenu ou message vide
 
 👉 L’UI doit toujours refléter l’état réel
+
+---
+
+---
+
+### ⚠️ Limitation aperçu (v0.7.0)
+
+### Vérifier :
+
+- ✅ Maximum 20 fichiers affichés
+- ✅ Message affiché :
+
+````text
+⚠ Aperçu limité à 20 fichiers
 
 ---
 
@@ -188,7 +230,7 @@ Tests réalisés directement dans l’interface WinUI.
 
 ```text
 ⚠ Projet volumineux — affichage partiel
-```
+````
 
 - ✅ Recherche fluide même sur projet volumineux (optimisation v0.6.0)
 
@@ -221,6 +263,7 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Export bloqué si aucun contenu
 - ✅ Bouton Export désactivé si aucun contenu
 - ✅ Confirmation après export
+- ✅ Vérification des messages d’erreur spécifiques (accès refusé, fichier utilisé, etc.)
 
 ### Cas erreurs
 
@@ -237,6 +280,34 @@ Tests réalisés directement dans l’interface WinUI.
 - ✅ Correspond exactement à l’aperçu
 - ✅ Désactivé si aucun contenu
 - ✅ Message de confirmation affiché
+
+---
+
+---
+
+## 📊 Statistiques (v0.7.0)
+
+### Vérifier :
+
+- ✅ Nombre de fichiers correct
+- ✅ Nombre total de lignes correct
+- ✅ Nombre total de caractères correct
+- ✅ Taille totale cohérente
+
+---
+
+### Comportement attendu :
+
+- Mise à jour en temps réel
+- Aucun freeze UI
+- Résultats cohérents avec les fichiers sélectionnés
+
+---
+
+### Cas limites :
+
+- ❌ Aucun fichier sélectionné → toutes les valeurs à 0
+- ❌ Fichiers vides
 
 ---
 
@@ -344,7 +415,7 @@ Importer → Sélectionner → Aperçu → Exporter
 ## 🔹 Pipeline interne
 
 ```text
-Import → Lecture → Assemblage → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
 
 👉 Aucune transformation du code

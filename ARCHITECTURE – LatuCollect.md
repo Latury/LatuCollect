@@ -202,7 +202,7 @@ ExcludedFolders = ["bin", "obj", ".git"]
 ## 🔹 Pipeline réel (Core)
 
 ```text
-Import → Lecture → Assemblage → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
 
 ---
@@ -248,6 +248,57 @@ Importer → Sélectionner → Aperçu → Exporter
 - ✔ Structure le document final
 - ✔ Méthode centrale : BuildContent()
 - ✔ Garantit la cohérence aperçu/export
+
+### 🔄 Évolution (v0.7.0)
+
+- ✔ Optimisation du traitement des fichiers
+- ✔ Participation au calcul global (via le flux)
+- ✔ Réduction des lectures multiples
+
+👉 Objectif :
+
+- Améliorer les performances
+- Centraliser la logique
+
+---
+
+# 6.1 STATISTIQUES (v0.7.0)
+
+Les statistiques sont calculées à partir des fichiers sélectionnés :
+
+- ✔ Nombre de fichiers
+- ✔ Nombre de lignes
+- ✔ Nombre de caractères
+- ✔ Taille totale
+
+### ⚙️ Fonctionnement
+
+- Calcul déclenché par le ViewModel
+- Exécuté en arrière-plan (`Task.Run`)
+- Mise à jour en temps réel
+
+👉 Objectif :
+
+- Fournir un retour utilisateur immédiat
+- Sans impacter les performances
+
+---
+
+# 6.2 PERFORMANCE (v0.7.0)
+
+- ✔ Limitation de l’aperçu à 20 fichiers
+- ✔ Calcul en arrière-plan (async)
+- ✔ Réduction des recalculs inutiles
+
+### ⚠️ Cas projet volumineux
+
+- Affichage partiel activé
+- Message utilisateur affiché
+
+👉 Objectif :
+
+- Éviter les freezes UI
+- Garantir la fluidité
 
 ---
 
@@ -382,6 +433,8 @@ Futur :
 - ✔ UI WinUI fonctionnelle
 - ✔ Recherche performante et filtrage dynamique
 - ✔ Configuration globale centralisée
+- ✔ Statistiques temps réel
+- ✔ Optimisation des performances (aperçu limité)
 
 ---
 

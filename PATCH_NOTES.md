@@ -674,6 +674,154 @@ Cette version introduit :
 
 ---
 
+# 🚀 VERSION 0.7.0
+
+## 📌 Statut
+
+🟢 Terminée — Export amélioré & Statistiques temps réel
+
+---
+
+## 🎯 Objectif
+
+Améliorer la qualité du contenu exporté et fournir des informations utiles à l’utilisateur, sans complexifier l’application.
+
+---
+
+## ✨ Améliorations
+
+### 📤 Export
+
+- ✅ Amélioration du format Markdown :
+  - Ajout de titres par fichier (`## 📄 chemin`)
+  - Encapsulation du contenu dans des blocs de code (` `)
+
+- ✅ Amélioration de la lisibilité :
+  - Espacement homogène
+  - Séparateurs clairs (`---` en Markdown, `-----` en TXT)
+
+- ✅ Nettoyage de la structure :
+  - Centralisation complète dans `FileExportService`
+  - Suppression de la duplication (aperçu = export garanti)
+
+- ✅ Optimisation du traitement :
+  - Lecture des fichiers en une seule passe
+  - Construction du contenu + statistiques simultanée
+
+---
+
+### 📊 Statistiques
+
+- ✅ Nombre de fichiers sélectionnés
+- ✅ Nombre total de lignes
+- ✅ Nombre total de caractères
+- ✅ Taille totale des fichiers
+
+- ✅ Calcul optimisé :
+  - Aucune double lecture des fichiers
+  - Exécution en arrière-plan (`Task.Run`)
+  - Mise à jour en temps réel
+
+---
+
+### ⚡ Performance
+
+- ✅ Suppression du double calcul (avant : contenu + stats séparés)
+- ✅ Réduction importante de la consommation mémoire
+- ✅ Amélioration de la fluidité sur gros projets
+
+- ✅ Limitation de l’aperçu :
+  - Maximum 20 fichiers affichés
+  - Message utilisateur :
+    → "⚠ Aperçu limité à 20 fichiers"
+
+---
+
+### 🧠 Architecture
+
+- ✅ Respect strict de l’architecture ALC :
+  - Core → logique d’export + statistiques
+  - UI → affichage uniquement
+
+- ✅ Suppression de `FileStatisticsService` :
+  - Fusion des responsabilités dans `FileExportService`
+  - Élimination des doublons
+
+- ✅ Introduction du modèle `ExportData` :
+  - Contenu + statistiques regroupés
+  - Source unique de vérité
+
+---
+
+### 💬 Expérience utilisateur
+
+- ✅ Ajout d’un affichage des statistiques via dialog :
+  - Fichiers / lignes / caractères / taille
+
+- ✅ Désactivation temporaire de la sélection globale :
+  - Évite les freezes sur gros projets
+  - Ajout d’un popup explicatif utilisateur
+
+---
+
+### 🛡️ Gestion des erreurs
+
+- ✅ Amélioration des messages d’erreurs d’export :
+  - Accès refusé
+  - Fichier utilisé (ouvert ailleurs)
+  - Chemin invalide
+  - Erreur inattendue
+
+- ✅ Messages clairs et compréhensibles pour l’utilisateur
+
+---
+
+## 🧠 Résultat
+
+- ✔ Export plus lisible et structuré
+- ✔ Statistiques fiables et en temps réel
+- ✔ Application plus rapide et stable
+- ✔ Meilleure expérience utilisateur
+- ✔ Code plus propre et maintenable
+
+---
+
+## ⚠️ Limites actuelles
+
+- ❌ Sélection globale désactivée (temporairement)
+- ❌ Pas encore de sélection intelligente (limite / confirmation)
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect devient :
+
+- ✔ Plus performant
+- ✔ Plus informatif
+- ✔ Plus professionnel
+- ✔ Plus stable sur gros projets
+
+👉 Sans complexifier l’application (simplicité respectée)
+
+---
+
+## 💡 Note technique
+
+Cette version introduit :
+
+- Un pipeline optimisé (lecture unique)
+- Une fusion logique export + statistiques
+- Une meilleure gestion des performances
+
+👉 Base solide pour :
+
+- sélection intelligente
+- optimisation avancée
+- amélioration UX future (v0.8.0)
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

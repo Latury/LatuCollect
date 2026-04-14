@@ -343,19 +343,19 @@ Améliorer le contenu généré et ajouter des infos utiles.
 
 ## 📤 Export
 
-- ⬜ Amélioration format Markdown
-- ⬜ Amélioration lisibilité export
-- ⬜ Nettoyage structure export
-- ⬜ Gestion améliorée des erreurs export
+- ✅ Amélioration format Markdown
+- ✅ Amélioration lisibilité export
+- ✅ Nettoyage structure export
+- ✅ Gestion améliorée des erreurs export
 
 ---
 
 ## 📊 Statistiques
 
-- ⬜ Nombre de fichiers sélectionnés
-- ⬜ Taille totale (approx)
-- ⬜ Nombre de lignes total
-- ⬜ Nombre de caractères
+- ✅ Nombre de fichiers sélectionnés
+- ✅ Taille totale (approx)
+- ✅ Nombre de lignes total
+- ✅ Nombre de caractères
 
 ---
 

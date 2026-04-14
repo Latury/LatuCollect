@@ -118,6 +118,24 @@ Afficher la structure complète du projet
 
 ---
 
+### ⚠️ Sélection globale
+
+- La sélection globale est temporairement désactivée
+
+### 📢 Comportement (v0.7.0)
+
+- Clic sur "Tout sélectionner" :
+  → affiche un popup explicatif
+
+👉 Raison :
+
+- Éviter les ralentissements sur les gros projets
+- Préserver la fluidité de l’application
+
+👉 Une amélioration future est prévue (sélection intelligente)
+
+---
+
 ## ⚠️ Cas particuliers
 
 - ❌ Dossier invalide → aucun chargement
@@ -142,9 +160,33 @@ Configurer et interagir avec l’application
 - Bouton Copier
 - Boutons :
   - Options
+  - Statistiques
   - Aide
   - À propos
   - Quitter
+
+---
+
+## 📊 Statistiques (v0.7.0)
+
+- Bouton dédié (entre Paramètres et Aide)
+- Affiche un dialog contenant :
+  - Nombre de fichiers sélectionnés
+  - Nombre total de lignes
+  - Nombre total de caractères
+  - Taille totale
+
+---
+
+### ⚙️ Comportement
+
+- Mise à jour en temps réel
+- Calcul effectué en arrière-plan
+- Aucun blocage de l’interface
+
+👉 Permet à l’utilisateur de mieux comprendre le contenu sélectionné
+
+👉 Basé uniquement sur les fichiers sélectionnés
 
 ---
 
@@ -271,6 +313,15 @@ Chemin du fichier
 
 ---
 
+### 🟢 Format Markdown (v0.7.0)
+
+```md
+## 📄 chemin du fichier
+
+(contenu du fichier)
+
+---
+
 ### 🔁 Cohérence (v0.4.0)
 
 - ✅ Le contenu affiché provient du Core (source unique)
@@ -354,3 +405,4 @@ Une interface :
 - ✅ Adaptée à un usage réel
 
 👉 L’utilisateur comprend immédiatement quoi faire
+```

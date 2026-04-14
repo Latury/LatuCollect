@@ -31,8 +31,14 @@ LatuCollect/
 │   │   ├── Import/
 │   │   │   └── FileImportService.cs
 │   │   │
+│   │   ├── Reader/
+│   │   │   └── FileReaderService.cs
+│   │   │
 │   │   ├── Collection/
 │   │   │   └── FileCollectionService.cs
+│   │   │
+│   │   ├── Statistics/
+│   │   │   └── FileStatisticsService.cs
 │   │   │
 │   │   ├── Export/
 │   │   │   └── FileExportService.cs
@@ -146,10 +152,12 @@ Contient toute la logique métier.
 - Assembler les données
 - Exporter
 
-👉 Assemblage du contenu centralisé dans `FileExportService`
-👉 Source unique de vérité pour le contenu exporté
+👉 Assemblage du contenu et structuration centralisés dans `FileExportService`
+👉 Source unique de vérité pour aperçu et export
 
 👉 Aucune dépendance UI
+
+👉 Contient également la construction du contenu final (aperçu/export)
 
 ---
 
