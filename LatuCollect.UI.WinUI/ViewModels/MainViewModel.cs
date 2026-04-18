@@ -1,28 +1,28 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : UI                                                         ║
+║     Application de collecte et export de contenu multi-fichiers      ║
+║                                                                      ║
+║  Module : UI.WinUI.ViewModels                                        ║
 ║  Fichier : MainViewModel.cs                                          ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Gérer l’état et la logique de l’interface principale (MVVM)         ║
+║  Gérer l’état de l’interface utilisateur principale                  ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Gérer la sélection des fichiers                                   ║
-║  - Générer l’aperçu dynamique                                        ║
-║  - Construire l’arborescence projet                                  ║
-║  - Gérer la recherche (filtrage temps réel)                          ║
-║  - Centraliser la logique d’export (respect ALC)                     ║
+║  - Gestion de l’arborescence affichée                                ║
+║  - Gestion des sélections utilisateur                                ║
+║  - Gestion des commandes UI (charger, exporter, copier)              ║
+║  - Interaction avec les services Core                                ║
 ║                                                                      ║
-║  IMPORTANT (ALC) :                                                   ║
-║  - Contient la logique métier liée à l’UI                            ║
-║  - Aucun accès direct à l’UI                                         ║
-║  - Aucun accès direct aux fichiers depuis l’UI                       ║
+║    NOTE IMPORTANTE (ALC) :                                           ║
+║  Ce ViewModel contient encore de la logique métier (temporaire)      ║
+║  → Doit être déplacée progressivement vers le Core                   ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
-║  - CommunityToolkit.Mvvm                                             ║
-║  - System.IO                                                         ║
-║  - FileReaderService                                                 ║
+║  - FileImportService (Core)                                          ║
+║  - FileExportService (Core)                                          ║
+║  - FileNode (UI Model)                                               ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -30,63 +30,119 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using LatuCollect.Core.Configuration;
-using LatuCollect.Core.Services;
+using LatuCollect.Core.Services.Collection;
+using LatuCollect.Core.Services.Export;
+using LatuCollect.Core.Services.Import;
 using LatuCollect.Core.Simulation;
-using LatuCollect.UI.WinUI.Models;
 using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using CoreFileNode = LatuCollect.Core.Models.FileNode;
+using UiFileNode = LatuCollect.UI.WinUI.Models.FileNode;
 
 namespace LatuCollect.UI.WinUI.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        // ======================================================
-        // 🧠 CHAMPS PRIVÉS - ÉTAT INTERNE DE LA VUE
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS - ÉTAT INTERNE DU VIEWMODEL
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Contient :
+        // - État local (texte, recherche, sélection)
+        // - Flags UI (feedback, simulation, batch)
+        // - Services Core
+        // - Outils techniques (async, debounce)
+        //
+
+        // ─────────────────────────────────────────────
+        // 📝 ÉTAT LOCAL (UI)
+        // ─────────────────────────────────────────────
 
         private string _previewText = "Aucun fichier sélectionné...";
         private string _currentFolderPath = string.Empty;
         private string _searchText = string.Empty;
+        private string? _selectedFormat = null;
+
+        // ─────────────────────────────────────────────
+        // 💬 FEEDBACK UTILISATEUR
+        // ─────────────────────────────────────────────
 
         private string _feedbackMessage = "";
         private bool _isFeedbackVisible;
 
-        private string? _selectedFormat = null;
+        // ─────────────────────────────────────────────
+        // 🧪 SIMULATION
+        // ─────────────────────────────────────────────
 
         private bool _isSimulationEnabled = false;
         private string _selectedSimulationScenario = "Aucun";
-        // Config de simulation partagée
+
+        // ─────────────────────────────────────────────
+        // ⚙️ FLAGS TECHNIQUES
+        // ─────────────────────────────────────────────
+
+        // Évite les refresh multiples lors des sélections massives
         private bool _isBatchUpdating = false;
 
+        // Permet d’annuler une recherche en cours (debounce)
         private CancellationTokenSource? _searchCts;
 
-        // ======================================================
-        // ⚡ LIMITES PERFORMANCE (ANTI FREEZE)
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 🔧 SERVICES CORE
+        // ─────────────────────────────────────────────
 
-        private const int MAX_NODES = 1000;     // nombre total max
-        private const int MAX_DEPTH = 10;       // profondeur max
+        // Service de chargement de l’arborescence
+        private readonly FileImportService _importService;
+        // Service de collecte des fichiers sélectionnés
+        private readonly FileCollectionService _collectionService;
+        // Service de génération du contenu exporté
+        private readonly FileExportService _exportService;
 
-        // ======================================================
-        // ⚠️ ÉTAT VOLUME PROJET
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. CONSTANTES / LIMITES (PERFORMANCE & SÉCURITÉ)
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Objectif :
+        // - Éviter les freezes UI sur gros projets
+        // - Limiter la charge mémoire
+        // - Contrôler la profondeur de l’arborescence
+        //
+        // IMPORTANT :
+        // Ces valeurs sont utilisées lors du chargement des fichiers
+        // (CreateNode / LoadTree)
+        //
+        // ─────────────────────────────────────────────
 
-        private bool _isLimitReached;
-        public bool IsLimitReached
-        {
-            get => _isLimitReached;
-            set => SetProperty(ref _isLimitReached, value);
-        }
+        // Nombre maximum de nodes (fichiers + dossiers)
+        private const int MAX_NODES = 1000;
 
-        // ======================================================
-        // 🔄 ÉTATS UI (GLOBAL)
-        // ======================================================
+        // Profondeur maximale de l’arborescence
+        private const int MAX_DEPTH = 10;
+
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 3. ÉTATS UI (GLOBAL)
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Gestion de l’état global de l’application :
+        // - Chargement (Loading)
+        // - Prêt (Ready)
+        // - Erreur (Error)
+        //
+        // Permet à l’UI de s’adapter automatiquement :
+        // - Afficher un loader
+        // - Afficher le contenu
+        // - Afficher un message d’erreur
+        //
+
+        // ─────────────────────────────────────────────
+        // 📊 ENUM DES ÉTATS
+        // ─────────────────────────────────────────────
 
         public enum UiState
         {
@@ -95,7 +151,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
             Error
         }
 
+        // ─────────────────────────────────────────────
+        // 🔄 ÉTAT ACTUEL
+        // ─────────────────────────────────────────────
+
         private UiState _currentState = UiState.Ready;
+
         public UiState CurrentState
         {
             get => _currentState;
@@ -103,7 +164,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _currentState, value))
                 {
-                    // 🔥 IMPORTANT : notifier les propriétés liées
+                    // 🔁 Notifie les propriétés dépendantes
                     OnPropertyChanged(nameof(IsLoading));
                     OnPropertyChanged(nameof(IsReady));
                     OnPropertyChanged(nameof(HasError));
@@ -112,22 +173,36 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // 🔎 Helpers (facilitent le binding UI plus tard)
+        // ─────────────────────────────────────────────
+        // 🔎 HELPERS POUR LE BINDING UI
+        // ─────────────────────────────────────────────
+
         public bool IsLoading => CurrentState == UiState.Loading;
         public bool IsReady => CurrentState == UiState.Ready;
         public bool HasError => CurrentState == UiState.Error;
 
-        // Message d'erreur éventuel
+        // ─────────────────────────────────────────────
+        // ❌ GESTION DES ERREURS
+        // ─────────────────────────────────────────────
+
         private string _errorMessage = string.Empty;
+
         public string ErrorMessage
         {
             get => _errorMessage;
             set => SetProperty(ref _errorMessage, value);
         }
 
-        // ======================================================
-        // 📦 PROPRIÉTÉS PUBLIQUES - LIÉES À L’INTERFACE
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 4. PROPRIÉTÉS UI (BINDING)
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Données exposées à l’interface (XAML)
+        //
+        // ─────────────────────────────────────────────
+        // 📝 APERÇU & DOSSIER
+        // ─────────────────────────────────────────────
 
         public string PreviewText
         {
@@ -141,6 +216,31 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _currentFolderPath, value);
         }
 
+        // ═════════════════════════════════════════════════════════════════════
+        // 📊 EXPORT - VÉRIFICATIONS AVANT EXPORT
+        // ═════════════════════════════════════════════════════════════════════
+
+        public enum ExportCheckResult
+        {
+            Ok,
+            NoSelection,
+            EmptyFiles
+        }
+
+        public ExportCheckResult CheckExportState()
+        {
+            if (IsPreviewEmpty)
+                return ExportCheckResult.NoSelection;
+
+            if (HasEmptyFiles)
+                return ExportCheckResult.EmptyFiles;
+
+            return ExportCheckResult.Ok;
+        }
+
+        // ─────────────────────────────────────────────
+        // 📊 STATISTIQUES
+        // ─────────────────────────────────────────────
 
         private int _fileCount;
         public int FileCount
@@ -170,6 +270,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _totalSize, value);
         }
 
+        // ─────────────────────────────────────────────
+        // 🌳 ARBORESCENCE
+        // ─────────────────────────────────────────────
+
+        public ObservableCollection<UiFileNode> Tree { get; } = new();
+
+        // ─────────────────────────────────────────────
+        // 🔍 RECHERCHE
+        // ─────────────────────────────────────────────
+
         public string SearchText
         {
             get => _searchText;
@@ -182,8 +292,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        public ObservableCollection<FileNode> Tree { get; } = new();
-
         private bool _hasSearchResult = true;
         public bool HasSearchResult
         {
@@ -191,11 +299,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _hasSearchResult, value);
         }
 
-        public event Action? OnSelectAllBlocked;
-
-        // ======================================================
-        // 🔍 VISIBILITÉ BARRE DE RECHERCHE
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 🔍 VISIBILITÉ UI (RECHERCHE)
+        // ─────────────────────────────────────────────
 
         private bool _isSearchVisible;
         public bool IsSearchVisible
@@ -204,47 +310,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _isSearchVisible, value);
         }
 
-        // ======================================================
-        // 🔍 ETAT DE L’APERÇU & EXPORT 
-        // ======================================================
-
-        public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
-        public bool CanCopy => PreviewText != "Aucun fichier sélectionné...";
-        public bool IsPreviewEmpty =>
-    CurrentState == UiState.Ready &&
-    PreviewText == "Aucun fichier sélectionné...";
-
-        public bool CanExport =>
-            !IsPreviewEmpty &&
-            SelectedFormat != null;
-
-        // ======================================================
-        // ☑ SÉLECTION GLOBALE (CHECKBOX)
-        // ======================================================
-
-        private bool _isAllSelected;
-
-        // 🔥 LOGIQUE DE SÉLECTION GLOBALE (CHECKBOX) - PAS UN VRAI "SELECT ALL" MAIS UN DÉCLENCHEUR
-        public bool IsAllSelected
-        {
-            get => _isAllSelected;
-            set
-            {
-                if (SetProperty(ref _isAllSelected, value))
-                {
-                    // 🔥 popup
-                    OnSelectAllBlocked?.Invoke();
-
-                    // 🔁 on remet à false après
-                    _isAllSelected = false;
-                    OnPropertyChanged(nameof(IsAllSelected));
-                }
-            }
-        }
-
-        // ======================================================
-        // 💬 RETOUR UTILISATEUR (FEEDBACK)
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 💬 FEEDBACK UTILISATEUR
+        // ─────────────────────────────────────────────
 
         public string FeedbackMessage
         {
@@ -258,23 +326,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _isFeedbackVisible, value);
         }
 
-        public async void ShowFeedback(string message)
+        // ─────────────────────────────────────────────
+        // ⚠️ ÉTAT LIMITE PROJET (GROS DOSSIERS)
+        // ─────────────────────────────────────────────
+
+        private bool _isLimitReached;
+
+        public bool IsLimitReached
         {
-            // ❌ Bloque ce message (déjà affiché au centre)
-            if (string.IsNullOrWhiteSpace(message) || message == "Aucun fichier sélectionné.")
-                return;
-
-            FeedbackMessage = message;
-            IsFeedbackVisible = true;
-
-            await Task.Delay(4500);
-
-            IsFeedbackVisible = false;
+            get => _isLimitReached;
+            set => SetProperty(ref _isLimitReached, value);
         }
 
-        // ========================================================
-        // 📄 FORMAT D’EXPORT - GESTION DE LA SÉLECTION DU FORMAT 
-        // ========================================================
+        // ─────────────────────────────────────────────
+        // 📄 FORMAT EXPORT
+        // ─────────────────────────────────────────────
 
         public string SelectedFormat
         {
@@ -286,31 +352,48 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ======================================================
-        // 📊 EXOPORT - VÉRIFICATIONS AVANT EXPORT
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // ⚙️ ÉTATS DÉRIVÉS (LOGIQUE UI)
+        // ─────────────────────────────────────────────
 
-        public ExportCheckResult CheckExportState()
+        public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
+
+        public bool CanCopy => PreviewText != "Aucun fichier sélectionné...";
+
+        public bool IsPreviewEmpty =>
+            CurrentState == UiState.Ready &&
+            PreviewText == "Aucun fichier sélectionné...";
+
+        public bool CanExport =>
+            !IsPreviewEmpty &&
+            SelectedFormat != null;
+
+        // ─────────────────────────────────────────────
+        // ☑ SÉLECTION GLOBALE (UI)
+        // ─────────────────────────────────────────────
+
+        private bool _isAllSelected;
+
+        public bool IsAllSelected
         {
-            if (IsPreviewEmpty)
-                return ExportCheckResult.NoSelection;
+            get => _isAllSelected;
+            set
+            {
+                if (SetProperty(ref _isAllSelected, value))
+                {
+                    OnSelectAllBlocked?.Invoke();
 
-            if (HasEmptyFiles)
-                return ExportCheckResult.EmptyFiles;
-
-            return ExportCheckResult.Ok;
+                    _isAllSelected = false;
+                    OnPropertyChanged(nameof(IsAllSelected));
+                }
+            }
         }
 
-        public enum ExportCheckResult
-        {
-            Ok,
-            NoSelection,
-            EmptyFiles
-        }
+        public event Action? OnSelectAllBlocked;
 
-        // ======================================================
-        // 🧪 SIMULATION - GESTION DE L’ÉTAT DE LA SIMULATION 
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 🧪 SIMULATION
+        // ─────────────────────────────────────────────
 
         public bool IsSimulationEnabled
         {
@@ -354,114 +437,94 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ======================================================
-        // 🧩 UTILITAIRES - GESTION DES FICHIERS SÉLECTIONNÉS
-        // ======================================================
 
-        private List<string> GetSelectedFiles()
+        // ═════════════════════════════════════════════════════════════════════
+        // 5. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Initialisation du ViewModel :
+        // - Création des services Core
+        // - Initialisation des valeurs par défaut
+        //
+
+        public MainViewModel()
         {
-            List<string> files = new();
+            // ─────────────────────────────────────────────
+            // 🔧 SERVICES CORE
+            // ─────────────────────────────────────────────
 
-            void ProcessNode(FileNode node)
-            {
-                if (node.IsSelected && File.Exists(node.Path))
-                    files.Add(node.Path);
+            // Initialisation des services Core
+            _importService = new FileImportService();
+            // Le FileCollectionService est léger et sans état, on peut l’instancier directement ici
+            _collectionService = new FileCollectionService();
+            // Le FileExportService est également léger, mais on peut le garder en champ pour une utilisation future (ex: export asynchrone)
+            _exportService = new FileExportService();
 
-                foreach (var child in node.Children)
-                    ProcessNode(child);
-            }
+            // ─────────────────────────────────────────────
+            // ⚙️ ÉTAT INITIAL UI
+            // ─────────────────────────────────────────────
 
-            foreach (var root in Tree)
-                ProcessNode(root);
+            CurrentState = UiState.Ready;
 
-            return files;
+            PreviewText = "Aucun fichier sélectionné...";
+
+            CurrentFolderPath = string.Empty;
+
+            SelectedFormat = null;
+
+            IsSimulationEnabled = false;
+
+            SelectedSimulationScenario = "Aucun";
         }
 
-        // ======================================================
-        // ☑ SÉLECTION GLOBALE (LOGIQUE)
-        // ======================================================
 
-        private void SetAllSelection(bool isSelected)
-        {
-            _isBatchUpdating = true;
+        // ═════════════════════════════════════════════════════════════════════
+        // 6. COMMANDES UI
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Actions déclenchées par l’utilisateur :
+        // - Charger un dossier
+        // - Exporter le contenu
+        // - Copier le contenu (via Preview)
+        // - Activer / désactiver la recherche
+        //
+        // 👉 Correspond aux interactions utilisateur (boutons UI)
+        //
 
-            foreach (var root in Tree)
-            {
-                SetNodeSelection(root, isSelected);
-            }
+        // ─────────────────────────────────────────────
+        // 📂 CHARGER UN DOSSIER
+        // ─────────────────────────────────────────────
 
-            _isBatchUpdating = false;
-
-            RefreshPreview(); // 🔥 UN SEUL refresh
-        }
-
-        private void SetNodeSelection(FileNode node, bool isSelected)
-        {
-            node.IsSelected = isSelected;
-
-            foreach (var child in node.Children)
-            {
-                SetNodeSelection(child, isSelected);
-            }
-        }
-
-        // ===========================================================
-        // 🌳 ARBORESCENCE - CHARGEMENT DE L’ARBORESCENCE DE FICHIERS
-        // ===========================================================
-
+        // 🔥 VERSION CORE (ASYNCHRONE)
         public async void LoadTree(string path)
         {
             try
             {
-                // =========================
-                // 🔄 ÉTAT : LOADING
-                // =========================
                 CurrentState = UiState.Loading;
 
-                // 👇 Laisse le temps à l’UI de s’afficher
                 await Task.Delay(100);
 
-                // ===========================================================================
-                // 🧪 SIMULATION (APPLIQUÉE AVANT LE CHARGEMENT POUR INFLUENCER LE PROCESSUS)
-                // ===========================================================================
                 if (!UiSimulationService.ApplyUiSimulation(this))
                     return;
 
-                // ====================================================
-                // 🔄 CHARGEMENT DE L’ARBORESCENCE (THREAD BACKGROUND)
-                // ====================================================
-                var rootNode = await Task.Run(() =>
-                {
-                    if (!Directory.Exists(path))
-                        return null;
+                // 🔥 UTILISATION DU CORE
+                var coreNodes = await _importService.LoadTreeAsync(path);
 
-                    int count = 0;
-                    return CreateNode(path, 0, ref count);
-                });
-
-                // =====================================
-                // 🔄 MISE À JOUR DE L’UI (MAIN THREAD)  
-                // =====================================
                 Tree.Clear();
 
-                if (rootNode == null)
+                if (coreNodes.Count == 0)
                 {
                     CurrentState = UiState.Error;
                     ErrorMessage = "Dossier introuvable.";
                     return;
                 }
 
-                Tree.Add(rootNode);
-
-                // ⚠️ Message si projet trop volumineux
-                if (IsLimitReached)
+                // 🔁 CONVERSION CORE → UI
+                foreach (var coreNode in coreNodes)
                 {
-                    ShowFeedback("⚠ Projet volumineux — affichage partiel pour éviter les ralentissements");
+                    Tree.Add(ConvertToUiNode(coreNode));
                 }
 
-                // =========================
-                // 🔄 ÉTAT : READY
-                // =========================
                 CurrentState = UiState.Ready;
             }
             catch (Exception ex)
@@ -471,89 +534,61 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        private FileNode CreateNode(string path, int depth, ref int count)
+        // ─────────────────────────────────────────────
+        // 📦 EXPORTER LE CONTENU
+        // ─────────────────────────────────────────────
+
+        public string GetExportContent()
         {
-            // 🔒 Protection profondeur + volume
-            if (depth > MAX_DEPTH || count > MAX_NODES)
+            var files = GetSelectedFiles();
+
+            if (files.Count == 0)
+                return string.Empty;
+
+            const int MAX_FILES_EXPORT = 200;
+
+            if (files.Count > MAX_FILES_EXPORT)
             {
-                IsLimitReached = true;
-                return null;
+                return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
+                       $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
+                       $"Réduis la sélection.";
             }
 
-            FileNode node = new()
-            {
-                Name = Path.GetFileName(path),
-                Path = path
-            };
+            bool isMarkdown = SelectedFormat == ".md";
 
-            node.SelectionChanged += OnNodeSelectionChanged;
-
-            count++; // 🔢 on compte ce node
-
-            if (Directory.Exists(path))
-            {
-                // =========================
-                // 📁 DOSSIERS
-                // =========================
-                foreach (var dir in Directory.GetDirectories(path))
-                {
-                    if (count > MAX_NODES)
-                    {
-                        IsLimitReached = true;
-                        break;
-                    }
-
-                    try
-                    {
-                        string folderName = Path.GetFileName(dir);
-
-                        // 🚫 EXCLUSION DOSSIERS
-                        if (AppConfig.ExcludedFolders.Contains(folderName))
-                            continue;
-
-                        var child = CreateNode(dir, depth + 1, ref count);
-                        if (child != null)
-                            node.Children.Add(child);
-                    }
-                    catch { }
-                }
-
-                // =========================
-                // 📄 FICHIERS
-                // =========================
-                foreach (var file in Directory.GetFiles(path))
-                {
-                    if (count > MAX_NODES)
-                    {
-                        IsLimitReached = true;
-                        break;
-                    }
-
-                    try
-                    {
-                        var child = new FileNode
-                        {
-                            Name = Path.GetFileName(file),
-                            Path = file
-                        };
-
-                        child.SelectionChanged += OnNodeSelectionChanged;
-
-                        node.Children.Add(child);
-                        count++; // 🔢 on compte le fichier
-                    }
-                    catch { }
-                }
-            }
-
-            return node;
+            var data = _exportService.BuildContentWithStats(files, isMarkdown);
+            return data.Content;
         }
 
-        // ======================================================
-        // 🔄 APERÇU DYNAMIQUE
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 🔍 TOGGLE RECHERCHE
+        // ─────────────────────────────────────────────
 
-        private void OnNodeSelectionChanged(FileNode node)
+        public void ToggleSearch()
+        {
+            IsSearchVisible = !IsSearchVisible;
+        }
+
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 7. LOGIQUE UI (AUTORISÉE)
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Gestion de l’interface utilisateur :
+        // - Mise à jour de l’aperçu
+        // - Feedback utilisateur
+        // - Réactions aux actions UI
+        // - Synchronisation avec le Core
+        //
+        // ⚠️ IMPORTANT :
+        // Ne doit PAS contenir de logique métier complexe
+        //
+
+        // ─────────────────────────────────────────────
+        // 🔄 APERÇU DYNAMIQUE
+        // ─────────────────────────────────────────────
+
+        private void OnNodeSelectionChanged(UiFileNode node)
         {
             if (_isBatchUpdating)
                 return;
@@ -583,7 +618,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             var data = await Task.Run(() =>
             {
-                return FileExportService.BuildContentWithStats(previewFiles, isMarkdown);
+                return _exportService.BuildContentWithStats(previewFiles, isMarkdown);
             });
 
             var content = data.Content;
@@ -610,13 +645,69 @@ namespace LatuCollect.UI.WinUI.ViewModels
             OnPropertyChanged(nameof(HasEmptyFiles));
         }
 
-        // ======================================================
-        // 🔍 FILTRE DE RECHERCHE (SEARCH)
-        // ======================================================
+        // ─────────────────────────────────────────────
+        // 💬 FEEDBACK UTILISATEUR
+        // ─────────────────────────────────────────────
+
+        public async void ShowFeedback(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message) || message == "Aucun fichier sélectionné.")
+                return;
+
+            FeedbackMessage = message;
+            IsFeedbackVisible = true;
+
+            await Task.Delay(4500);
+
+            IsFeedbackVisible = false;
+        }
+
+        // ─────────────────────────────────────────────
+        // ☑ SÉLECTION GLOBALE (LOGIQUE)
+        // ─────────────────────────────────────────────
+
+        private void SetAllSelection(bool isSelected)
+        {
+            _isBatchUpdating = true;
+
+            foreach (var root in Tree)
+            {
+                SetNodeSelection(root, isSelected);
+            }
+
+            _isBatchUpdating = false;
+
+            RefreshPreview();
+        }
+
+        private void SetNodeSelection(UiFileNode node, bool isSelected)
+        {
+            node.IsSelected = isSelected;
+
+            foreach (var child in node.Children)
+            {
+                SetNodeSelection(child, isSelected);
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 8. MÉTHODES PRIVÉES (UTILITAIRES)
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Méthodes internes au ViewModel :
+        // - Filtrage de l’arborescence (recherche)
+        // - Helpers récursifs
+        // - Gestion du debounce (optimisation UI)
+        //
+        // ⚠️ Doivent rester simples (pas de logique métier complexe)
+        //
+
+        // ─────────────────────────────────────────────
+        // 🔍 FILTRE DE RECHERCHE
+        // ─────────────────────────────────────────────
 
         private void ApplyFilter()
         {
-            // 👉 Cas important : recherche vide
             if (string.IsNullOrWhiteSpace(SearchText))
             {
                 foreach (var root in Tree)
@@ -639,7 +730,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             HasSearchResult = hasVisible;
         }
 
-        private bool ApplyFilterToNode(FileNode node)
+        private bool ApplyFilterToNode(UiFileNode node)
         {
             bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
 
@@ -656,31 +747,35 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return node.IsVisible;
         }
 
-        private async void DebounceFilter()
+        private UiFileNode ConvertToUiNode(CoreFileNode coreNode)
         {
-            // Annule la recherche précédente
-            _searchCts?.Cancel();
-
-            _searchCts = new CancellationTokenSource();
-            var token = _searchCts.Token;
-
-            try
+            var uiNode = new UiFileNode
             {
-                // ⏱ délai (300ms = fluide)
-                await Task.Delay(300, token);
+                Name = coreNode.Name,
+                Path = coreNode.Path
+            };
 
-                if (!token.IsCancellationRequested)
-                {
-                    ApplyFilter();
-                }
-            }
-            catch (TaskCanceledException)
+            uiNode.SelectionChanged += OnNodeSelectionChanged;
+
+            foreach (var child in coreNode.Children)
             {
-                // Normal → on ignore
+                uiNode.Children.Add(ConvertToUiNode(child));
             }
+
+            return uiNode;
         }
 
-        private void SetAllVisible(FileNode node)
+        private List<string> GetSelectedFiles()
+        {
+            var coreNodes = _collectionService.ConvertFromUiTree(Tree);
+            return _collectionService.GetSelectedFiles(coreNodes);
+        }
+
+        // ─────────────────────────────────────────────
+        // 🌳 HELPER RÉCURSIF (VISIBILITÉ)
+        // ─────────────────────────────────────────────
+
+        private void SetAllVisible(UiFileNode node)
         {
             node.IsVisible = true;
 
@@ -690,36 +785,31 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // Toggle de la visibilité de la barre de recherche
-        public void ToggleSearch()
+        // ─────────────────────────────────────────────
+        // ⏱ DEBOUNCE RECHERCHE
+        // ─────────────────────────────────────────────
+
+        // Permet d’attendre que l’utilisateur ait fini de taper avant d’appliquer le filtre
+        private async void DebounceFilter()
         {
-            IsSearchVisible = !IsSearchVisible;
-        }
+            _searchCts?.Cancel();
 
-        // ======================================================
-        // 📦 EXPORT - CONTENU À EXPORTER
-        // ======================================================
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
 
-        public string GetExportContent()
-        {
-            var files = GetSelectedFiles();
-
-            if (files.Count == 0)
-                return string.Empty;
-
-            const int MAX_FILES_EXPORT = 200;
-
-            if (files.Count > MAX_FILES_EXPORT)
+            try
             {
-                return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
-                       $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
-                       $"Réduis la sélection.";
+                await Task.Delay(300, token);
+
+                if (!token.IsCancellationRequested)
+                {
+                    ApplyFilter();
+                }
             }
-
-            bool isMarkdown = SelectedFormat == ".md";
-
-            var data = FileExportService.BuildContentWithStats(files, isMarkdown);
-            return data.Content;
+            catch (TaskCanceledException)
+            {
+                // Normal → ignoré
+            }
         }
     }
 }

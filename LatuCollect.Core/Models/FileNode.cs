@@ -1,60 +1,61 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : UI.WinUI.Converters                                        ║
-║  Fichier : BooleanToVisibilityConverter.cs                           ║
+║  Module : Core.Models                                                ║
+║  Fichier : FileNode.cs                                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Convertir un booléen en visibilité UI                               ║
+║  Représenter un fichier ou dossier dans le Core                      ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - true  → Visible                                                   ║
-║  - false → Collapsed                                                 ║
+║  - Stocker les informations d’un node                                ║
+║  - Représenter une structure arborescente                            ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Utilisé uniquement dans l’UI                                      ║
-║  - Aucune logique métier                                             ║
-║                                                                      ║
-║  Dépendances :                                                       ║
-║  - Microsoft.UI.Xaml                                                 ║
+║  - Aucune dépendance UI                                              ║
+║  - Modèle simple (data only)                                         ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-using System;
+using System.Collections.Generic;
 
-namespace LatuCollect.UI.WinUI.Converters
+namespace LatuCollect.Core.Models
 {
-    public partial class BooleanToVisibilityConverter : IValueConverter
+    public class FileNode
     {
 
         // ═════════════════════════════════════════════════════════════════════
-        // 1. CONVERSION → BOOL → VISIBILITY
+        // 1. PROPRIÉTÉS PRINCIPALES
         // ═════════════════════════════════════════════════════════════════════
+        //
+        // Informations de base du fichier / dossier
+        //
 
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (value is bool isVisible && isVisible)
-                return Visibility.Visible;
+        public string Name { get; set; } = string.Empty;
 
-            return Visibility.Collapsed;
-        }
+        public string Path { get; set; } = string.Empty;
 
 
         // ═════════════════════════════════════════════════════════════════════
-        // 2. CONVERSION INVERSE (OPTIONNELLE)
+        // 2. ÉTAT DE SÉLECTION
         // ═════════════════════════════════════════════════════════════════════
+        //
+        // Indique si le fichier est sélectionné pour l’export
+        //
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            if (value is Visibility visibility)
-                return visibility == Visibility.Visible;
+        public bool IsSelected { get; set; }
 
-            return false;
-        }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 3. STRUCTURE ARBORESCENTE
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Permet de représenter les sous-dossiers / fichiers
+        //
+
+        public List<FileNode> Children { get; set; } = new();
     }
 }

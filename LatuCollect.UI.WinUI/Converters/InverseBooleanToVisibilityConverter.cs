@@ -1,20 +1,18 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers      ║
-║                                                                      ║
-║  Module : UI                                                         ║
+║  Module : UI.WinUI.Converters                                        ║
 ║  Fichier : InverseBooleanToVisibilityConverter.cs                    ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Convertir un booléen en Visibility inversée                         ║
+║  Convertir un booléen en visibilité inversée                         ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Transformer true → Collapsed                                      ║
-║  - Transformer false → Visible                                       ║
+║  - true  → Collapsed                                                 ║
+║  - false → Visible                                                   ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Utilisé uniquement par la couche UI                               ║
+║  - Utilisé uniquement dans l’UI                                      ║
 ║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
@@ -33,25 +31,30 @@ namespace LatuCollect.UI.WinUI.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {
-        // ======================================================
-        // 🔄 CONVERSION (bool → Visibility inversée)
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. CONVERSION → BOOL → VISIBILITY (INVERSE)
+        // ═════════════════════════════════════════════════════════════════════
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool b)
-                return b ? Visibility.Collapsed : Visibility.Visible;
+            if (value is bool isVisible && isVisible)
+                return Visibility.Collapsed;
 
             return Visibility.Visible;
         }
 
-        // ======================================================
-        // 🔁 CONVERSION INVERSE (non utilisée)
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. CONVERSION INVERSE (OPTIONNELLE)
+        // ═════════════════════════════════════════════════════════════════════
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            if (value is Visibility visibility)
+                return visibility != Visibility.Visible;
+
+            return false;
         }
     }
 }

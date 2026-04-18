@@ -1,18 +1,21 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : UI                                                         ║
+║  Module : UI.WinUI.Models                                            ║
 ║  Fichier : FileNode.cs                                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Représenter un élément de l’arborescence                            ║
+║  Représenter un fichier ou dossier pour l’interface utilisateur      ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Représenter un fichier ou dossier                                 ║
-║  - Gérer la sélection                                                ║
-║  - Gérer la visibilité (filtrage)                                    ║
-║  - Contenir des enfants                                              ║
-║  - Notifier les changements de sélection                             ║
+║  - Gérer l’affichage (Name, Path)                                    ║
+║  - Gérer la sélection utilisateur                                    ║
+║  - Gérer la visibilité (recherche)                                   ║
+║  - Notifier l’UI (binding)                                           ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Contient de la logique UI (autorisé)                              ║
+║  - Ne doit PAS contenir de logique métier                            ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - CommunityToolkit.Mvvm                                             ║
@@ -25,47 +28,36 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LatuCollect.UI.WinUI.Models
 {
     public partial class FileNode : ObservableObject
     {
-        // =========================
-        // CHAMPS PRIVÉS
-        // =========================
 
-        private string _name = string.Empty;
-        private string _path = string.Empty;
-        private bool _isSelected;
-        private bool _isVisible = true;
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. INFORMATIONS FICHIER / DOSSIER
+        // ═════════════════════════════════════════════════════════════════════
 
-        // =========================
-        // EVENEMENTS
-        // =========================
-
-        // Cet événement est déclenché lorsque la sélection change
-        public event Action<FileNode>? SelectionChanged;
-
-        // =========================
-        // PROPRIÉTÉS PUBLIQUES
-        // =========================
-
-        // Nom affiché dans l’UI
+        private string _name = "";
         public string Name
         {
             get => _name;
             set => SetProperty(ref _name, value);
         }
 
-        // Chemin complet du fichier / dossier
+        private string _path = "";
         public string Path
         {
             get => _path;
             set => SetProperty(ref _path, value);
         }
 
-        // Sélection (checkbox)
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. ÉTAT DE SÉLECTION (UI)
+        // ═════════════════════════════════════════════════════════════════════
+
+        private bool _isSelected;
         public bool IsSelected
         {
             get => _isSelected;
@@ -78,21 +70,25 @@ namespace LatuCollect.UI.WinUI.Models
             }
         }
 
-        // Utilisé pour le filtrage (recherche)
+        public event Action<FileNode>? SelectionChanged;
+
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 3. VISIBILITÉ (RECHERCHE)
+        // ═════════════════════════════════════════════════════════════════════
+
+        private bool _isVisible = true;
         public bool IsVisible
         {
             get => _isVisible;
             set => SetProperty(ref _isVisible, value);
         }
 
-        // Enfants (arborescence)
-        public ObservableCollection<FileNode> Children { get; } = new();
 
-        // Enfants visibles (après filtrage)
-        public ObservableCollection<FileNode> VisibleChildren =>
-    new ObservableCollection<FileNode>(Children.Where(c => c.IsVisible));
+        // ═════════════════════════════════════════════════════════════════════
+        // 4. STRUCTURE ARBORESCENTE
+        // ═════════════════════════════════════════════════════════════════════
 
-        // Détermine si c’est un dossier
-        public bool IsFolder => Children.Count > 0;
+        public ObservableCollection<FileNode> Children { get; set; } = new();
     }
 }

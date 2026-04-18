@@ -1,20 +1,22 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers      ║
-║                                                                      ║
-║  Module : UI                                                         ║
+║  Module : UI.WinUI.Converters                                        ║
 ║  Fichier : BoolToIconConverter.cs                                    ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Convertir un booléen (IsFolder) en icône visuelle                   ║
+║  Convertir un booléen en icône UI                                    ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Retourner  si dossier                                             ║
-║  - Retourner  si fichier                                             ║
+║  - true  → icône active                                              ║
+║  - false → icône inactive                                            ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Utilisé uniquement dans l’UI                                      ║
+║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
-║  - Microsoft.UI.Xaml.Data                                            ║
+║  - Microsoft.UI.Xaml                                                 ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -28,21 +30,31 @@ namespace LatuCollect.UI.WinUI.Converters
 {
     public partial class BoolToIconConverter : IValueConverter
     {
-        // Convertit un bool (IsFolder) en icône
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. CONVERSION → BOOL → ICÔNE
+        // ═════════════════════════════════════════════════════════════════════
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool isFolder)
+            if (value is bool isChecked && isChecked)
             {
-                return isFolder ? "📁" : "📄";
+                // ✔ Icône active (ex: cochée)
+                return "✔";
             }
 
-            return "📄";
+            // ❌ Icône inactive
+            return "";
         }
 
-        // Non utilisé
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. CONVERSION INVERSE (NON UTILISÉE)
+        // ═════════════════════════════════════════════════════════════════════
+
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return false;
+            throw new NotImplementedException();
         }
     }
 }

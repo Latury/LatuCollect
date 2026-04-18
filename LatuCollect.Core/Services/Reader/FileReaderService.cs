@@ -1,9 +1,7 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers      ║
-║                                                                      ║
-║  Module : Core                                                       ║
+║  Module : Core.Services.Reader                                       ║
 ║  Fichier : FileReaderService.cs                                      ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
@@ -11,11 +9,16 @@
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Lire un fichier texte                                             ║
-║  - Retourner son contenu brut                                        ║
+║  - Gérer les erreurs de lecture                                      ║
+║  - Appliquer la simulation si activée                                ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - System.IO                                                         ║
 ║  - SimulationService                                                 ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Aucune dépendance UI                                              ║
+║  - Aucune logique d’export                                           ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -26,18 +29,30 @@ using LatuCollect.Core.Simulation;
 using System;
 using System.IO;
 
-namespace LatuCollect.Core.Services
+namespace LatuCollect.Core.Services.Reader
 {
     public static class FileReaderService
     {
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. MÉTHODE PUBLIQUE
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Lit le contenu d’un fichier :
+        // - applique la simulation si activée
+        // - gère les erreurs
+        // - retourne toujours une string
+        //
+
         public static string ReadFile(string path)
         {
             try
             {
+                // 📄 Vérification existence
                 if (!File.Exists(path))
                     return "[Fichier introuvable]";
 
-                // 🔥 Simulation
+                // 🧪 Simulation (prioritaire)
                 string simulated = SimulationService.SimulateRead(path);
                 if (simulated != null)
                     return simulated;

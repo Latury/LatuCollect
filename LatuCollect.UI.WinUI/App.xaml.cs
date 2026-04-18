@@ -1,27 +1,62 @@
-﻿using Microsoft.UI.Xaml;
+﻿/*
+╔══════════════════════════════════════════════════════════════════════╗
+║                        LATUCOLLECT                                   ║
+║  Module : UI                                                         ║
+║  Fichier : App.xaml.cs                                               ║
+║                                                                      ║
+║  Rôle :                                                              ║
+║  Point d’entrée de l’application WinUI                               ║
+║                                                                      ║
+║  Responsabilités principales :                                       ║
+║  - Initialiser l’application                                         ║
+║  - Gérer le cycle de vie                                             ║
+║  - Créer la fenêtre principale                                       ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Aucune logique métier                                             ║
+║  - Gestion globale uniquement                                        ║
+║                                                                      ║
+║  Dépendances :                                                       ║
+║  - Microsoft.UI.Xaml                                                 ║
+║                                                                      ║
+║  Licence : MIT                                                       ║
+║  Copyright © 2026 Flo Latury                                         ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+using Microsoft.UI.Xaml;
+using LatuCollect.UI.WinUI;
 
 namespace LatuCollect.UI.WinUI
 {
     public partial class App : Application
     {
-        private Window? _window;
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Initialise l’application WinUI
+        //
 
         public App()
         {
             this.InitializeComponent();
-
-            this.UnhandledException += App_UnhandledException;
         }
 
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            System.IO.File.WriteAllText("crash.txt", e.Exception.ToString());
-        }
 
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. DÉMARRAGE APPLICATION
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Point d’entrée après lancement
+        // Crée et affiche la fenêtre principale
+        //
+
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            _window = new MainWindow();
-            _window.Activate();
+            var window = new MainWindow();
+            window.Activate();
         }
     }
 }

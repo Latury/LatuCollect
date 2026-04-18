@@ -31,25 +31,36 @@
 */
 
 using LatuCollect.Core.Configuration;
-using LatuCollect.Core.Services;
+using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Text;
 using WinRT.Interop;
+
+
+// ═════════════════════════════════════════════════════════════
+// 0. STRUCTURE GLOBALE DU FICHIER
+// ═════════════════════════════════════════════════════════════
+//
+// Contient :
+// 1. Champs privés / Services
+// 2. Popups UI (Dialogues)
+// 3. Actions principales utilisateur
+// 4. Statistiques (UI)
+// 5. Simulation (UI)
+// 6. Dialogs génériques
+// 7. Fermeture application
+// 8. Menus / Aide / Options / À propos
 
 namespace LatuCollect.UI.WinUI
 {
     public sealed partial class MainWindow : Window
     {
-        private readonly MainViewModel _viewModel = new();
-
         public MainWindow()
         {
             this.InitializeComponent();
@@ -57,7 +68,6 @@ namespace LatuCollect.UI.WinUI
             if (this.Content is FrameworkElement root)
                 root.DataContext = _viewModel;
 
-            // 🔥 AJOUT (popup sélection globale)
             _viewModel.OnSelectAllBlocked += ShowSelectAllDialog;
 
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -70,9 +80,25 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // ======================================================
-        // 🆕 POPUP SÉLECTION GLOBALE BLOQUÉE
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS / SERVICES
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Contient :
+        // - ViewModel
+        // - Services utilisés uniquement côté UI
+        //
+
+        private readonly MainViewModel _viewModel = new();
+        private readonly FileExportService _exportService = new FileExportService();
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. POPUPS UI (DIALOGUES)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Dialogues affichés à l’utilisateur
+        // (aucune logique métier)
+        //
 
         private async void ShowSelectAllDialog()
         {
@@ -87,9 +113,16 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-        // ======================================================
-        // 📂 SÉLECTION DE DOSSIER (FOLDERPICKER)
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════
+        // 3. ACTIONS PRINCIPALES UTILISATEUR
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Boutons principaux :
+        // - Charger dossier
+        // - Recherche
+        // - Choix format
+        // - Export / Copier
+        //
 
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
@@ -184,7 +217,7 @@ namespace LatuCollect.UI.WinUI
 
             try
             {
-                var result = FileExportService.Export(file.Path, content);
+                var result = _exportService.Export(file.Path, content);
 
                 if (result.IsSuccess)
                 {
@@ -213,11 +246,13 @@ namespace LatuCollect.UI.WinUI
             _viewModel.ShowFeedback("✔ Contenu copié");
         }
 
-        // ======================================================
-        // 📊 STATISTIQUES (UI UNIQUEMENT, AUCUNE LOGIQUE MÉTIER ICI)  
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════
+        // 4. STATISTIQUES (UI)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Affichage uniquement (les données viennent du ViewModel)
+        //
 
-        // Affiche une boîte de dialogue avec des statistiques sur les fichiers sélectionnés (nombre de fichiers, lignes, caractères, taille totale)
         private async void OnStatsClicked(object sender, RoutedEventArgs e)
         {
             var content = new StackPanel { Spacing = 10 };
@@ -271,7 +306,7 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-        // Formate une taille en octets en une chaîne lisible (B, KB, MB)
+
         private string FormatSize(long bytes)
         {
             if (bytes < 1024)
@@ -287,11 +322,15 @@ namespace LatuCollect.UI.WinUI
             return $"{mb:F1} MB";
         }
 
-        // =========================================================
-        // 🧪 SIMULATION (UI UNIQUEMENT, AUCUNE LOGIQUE MÉTIER ICI)
-        // =========================================================
 
-        // Affiche une boîte de dialogue pour configurer la simulation de scénarios (UI uniquement)
+        // ═════════════════════════════════════════════════════════════
+        // 5. SIMULATION (UI)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Configuration des scénarios de simulation
+        // (interaction UI uniquement)
+        //
+
         private async void OnSimulationClicked(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog
@@ -343,11 +382,13 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // ======================================================
-        // 💬 DIALOGS (UI UNIQUEMENT)
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════
+        // 6. DIALOGS GÉNÉRIQUES
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Helpers UI pour afficher des messages
+        //
 
-        // Affiche un message dans une boîte de dialogue avec un titre et un contenu (scrollable si nécessaire)
         private async Task ShowDialog(string title, string message)
         {
             var content = new ScrollViewer
@@ -376,7 +417,6 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-        // Affiche une boîte de dialogue de confirmation avec un titre, un message et des boutons Oui/Non
         private async Task<bool> ShowConfirm(string title, string message)
         {
             ContentDialog dialog = new()
@@ -398,9 +438,13 @@ namespace LatuCollect.UI.WinUI
             return await dialog.ShowAsync() == ContentDialogResult.Primary;
         }
 
-        // ======================================================
-        // 🚪 QUITTER L'APPLICATION (CONFIRMATION AVANT QUIT)
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════
+        // 7. FERMETURE APPLICATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gestion de la fermeture avec confirmation
+        //
 
         private async void OnQuitClicked(object sender, RoutedEventArgs e)
         {
@@ -414,50 +458,52 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // ======================================================
-        // 🧰 AUTRES (AIDE, OPTIONS, À PROPOS - UI UNIQUEMENT)
-        // ======================================================
+        // ═════════════════════════════════════════════════════════════
+        // 8. MENUS / AIDE / OPTIONS / À PROPOS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Écrans secondaires de l’application
+        //
 
-        // Aide : guide d’utilisation
         private async void OnHelpClicked(object sender, RoutedEventArgs e)
         {
             await ShowDialog(
-    "Aide",
-    "📚 GUIDE COMPLET — LATUCOLLECT\n\n" +
+        "Aide",
+        "📚 GUIDE COMPLET — LATUCOLLECT\n\n" +
 
-    "🚀 DÉMARRAGE RAPIDE\n\n" +
+        "🚀 DÉMARRAGE RAPIDE\n\n" +
 
-    "1️⃣ Charger un dossier\n" +
-    "Clique sur 📂 puis sélectionne ton projet.\n\n" +
+        "1️⃣ Charger un dossier\n" +
+        "Clique sur 📂 puis sélectionne ton projet.\n\n" +
 
-    "2️⃣ Explorer les fichiers\n" +
-    "Utilise l’arborescence à gauche pour naviguer.\n\n" +
+        "2️⃣ Explorer les fichiers\n" +
+        "Utilise l’arborescence à gauche pour naviguer.\n\n" +
 
-    "3️⃣ Sélectionner des fichiers\n" +
-    "Coche les fichiers à inclure.\n\n" +
+        "3️⃣ Sélectionner des fichiers\n" +
+        "Coche les fichiers à inclure.\n\n" +
 
-    "4️⃣ Vérifier l’aperçu\n" +
-    "Le contenu apparaît à droite.\n\n" +
+        "4️⃣ Vérifier l’aperçu\n" +
+        "Le contenu apparaît à droite.\n\n" +
 
-    "5️⃣ Choisir un format\n" +
-    "Sélectionne .txt ou .md.\n\n" +
+        "5️⃣ Choisir un format\n" +
+        "Sélectionne .txt ou .md.\n\n" +
 
-    "6️⃣ Exporter ou copier\n" +
-    "📤 Exporter → crée un fichier\n" +
-    "📋 Copier → copie le contenu\n\n" +
+        "6️⃣ Exporter ou copier\n" +
+        "📤 Exporter → crée un fichier\n" +
+        "📋 Copier → copie le contenu\n\n" +
 
-    "🧠 COMMENT ÇA MARCHE\n\n" +
-    "LatuCollect assemble le contenu des fichiers sélectionnés.\n" +
-    "Aucun fichier n’est modifié.\n\n" +
+        "🧠 COMMENT ÇA MARCHE\n\n" +
+        "LatuCollect assemble le contenu des fichiers sélectionnés.\n" +
+        "Aucun fichier n’est modifié.\n\n" +
 
-    "⚠️ À SAVOIR\n\n" +
-    "- Aucun fichier sélectionné → rien ne s’affiche\n" +
-    "- L’aperçu = le résultat exporté\n\n" +
+        "⚠️ À SAVOIR\n\n" +
+        "- Aucun fichier sélectionné → rien ne s’affiche\n" +
+        "- L’aperçu = le résultat exporté\n\n" +
 
-    "💡 CONSEILS\n\n" +
-    "- Vérifie l’aperçu\n" +
-    "- Sélectionne uniquement l’essentiel\n" +
-    "- Utilise .md pour structurer");
+        "💡 CONSEILS\n\n" +
+        "- Vérifie l’aperçu\n" +
+        "- Sélectionne uniquement l’essentiel\n" +
+        "- Utilise .md pour structurer");
         }
 
         // Options : gestion des dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders) 
@@ -547,41 +593,41 @@ namespace LatuCollect.UI.WinUI
         private async void OnAboutClicked(object sender, RoutedEventArgs e)
         {
             await ShowDialog(
-    "À propos",
-    "ℹ LATUCOLLECT\n\n" +
+        "À propos",
+        "ℹ LATUCOLLECT\n\n" +
 
-    "Version : 0.5.0\n" +
-    "Créé en : Le 31 Mars 2026\n\n" +
+        "Version : 0.5.0\n" +
+        "Créé en : Le 31 Mars 2026\n\n" +
 
-    "🧩 PRÉSENTATION\n\n" +
-    "LatuCollect permet de collecter et assembler le contenu de plusieurs fichiers.\n" +
-    "C’est un copieur intelligent, pas un analyseur.\n\n" +
+        "🧩 PRÉSENTATION\n\n" +
+        "LatuCollect permet de collecter et assembler le contenu de plusieurs fichiers.\n" +
+        "C’est un copieur intelligent, pas un analyseur.\n\n" +
 
-    "⚙ FONCTIONNALITÉS\n\n" +
-    "✔ Navigation dans un projet\n" +
-    "✔ Sélection de fichiers\n" +
-    "✔ Aperçu en temps réel\n" +
-    "✔ Export (.txt / .md)\n" +
-    "✔ Copie du contenu\n\n" +
+        "⚙ FONCTIONNALITÉS\n\n" +
+        "✔ Navigation dans un projet\n" +
+        "✔ Sélection de fichiers\n" +
+        "✔ Aperçu en temps réel\n" +
+        "✔ Export (.txt / .md)\n" +
+        "✔ Copie du contenu\n\n" +
 
-    "🏗 ARCHITECTURE\n\n" +
-    "- MVVM\n" +
-    "- Architecture ALC stricte\n" +
-    "- Séparation UI / logique métier\n\n" +
+        "🏗 ARCHITECTURE\n\n" +
+        "- MVVM\n" +
+        "- Architecture ALC stricte\n" +
+        "- Séparation UI / logique métier\n\n" +
 
-    "🔒 GARANTIES\n\n" +
-    "✔ Lecture seule\n" +
-    "✔ Aucun fichier modifié\n" +
-    "✔ Aperçu = export\n\n" +
+        "🔒 GARANTIES\n\n" +
+        "✔ Lecture seule\n" +
+        "✔ Aucun fichier modifié\n" +
+        "✔ Aperçu = export\n\n" +
 
-    "👨‍💻 DÉVELOPPEUR\n\n" +
-    "Flo Latury\n\n" +
+        "👨‍💻 DÉVELOPPEUR\n\n" +
+        "Flo Latury\n\n" +
 
-    "🌐 GITHUB\n\n" +
-    "https://github.com/Latury\n\n" +
+        "🌐 GITHUB\n\n" +
+        "https://github.com/Latury\n\n" +
 
-    "📜 LICENCE\n\n" +
-    "MIT");
+        "📜 LICENCE\n\n" +
+        "MIT");
         }
     }
 }

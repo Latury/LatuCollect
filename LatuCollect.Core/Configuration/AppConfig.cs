@@ -1,19 +1,19 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core                                                       ║
+║  Module : Core.Configuration                                         ║
 ║  Fichier : AppConfig.cs                                              ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Centraliser la configuration globale de l’application               ║
+║  Stocker la configuration globale de l’application                   ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Stocker les paramètres globaux                                    ║
-║  - Fournir les exclusions de dossiers                                ║
+║  - Gérer les dossiers exclus                                         ║
+║  - Fournir des paramètres globaux                                    ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Appartient au Core                                                ║
-║  - Aucune dépendance UI                                              ║
+║  - Aucune logique métier                                             ║
+║  - Données uniquement                                                ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -26,15 +26,29 @@ namespace LatuCollect.Core.Configuration
 {
     public static class AppConfig
     {
-        // ======================================================
-        // 📁 DOSSIERS EXCLUS (CONFIG GLOBALE)
-        // ======================================================
 
-        public static List<string> ExcludedFolders { get; set; } = new()
-{
-    "bin",
-    "obj",
-    ".git"
-};
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. CONFIGURATION GLOBALE
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Contient :
+        // - Paramètres globaux
+        // - Données modifiables à chaud
+        //
+
+        // ─────────────────────────────────────────────
+        // 📁 DOSSIERS EXCLUS
+        // ─────────────────────────────────────────────
+        //
+        // Liste des dossiers ignorés lors de la lecture du projet
+        //
+
+        public static List<string> ExcludedFolders { get; } = new()
+        {
+            "bin",
+            "obj",
+            ".git"
+        };
+
     }
 }

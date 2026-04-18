@@ -9,12 +9,12 @@
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Déterminer l’état UI simulé (Loading / Error)                     ║
-║  - Centraliser la logique de simulation côté UI                      ║
+║  - Appliquer les effets de simulation sur le ViewModel               ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - NE modifie JAMAIS le ViewModel directement                        ║
-║  - NE contient AUCUNE logique métier                                 ║
-║  - Retourne uniquement des états                                     ║
+║  - Logique UI uniquement                                             ║
+║  - Peut modifier le ViewModel (UI uniquement)                        ║
+║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - SimulationConfig (Core)                                           ║
@@ -31,9 +31,14 @@ namespace LatuCollect.UI.WinUI.Services
 {
     public static class UiSimulationService
     {
-        // ======================================================
-        // 🔍 ÉTAT SIMULATION UI
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. ÉTAT SIMULATION UI
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Retourne l’état simulé actuel
+        // (aucune modification du ViewModel ici)
+        //
 
         public static UiSimulationResult GetState()
         {
@@ -48,13 +53,21 @@ namespace LatuCollect.UI.WinUI.Services
             };
         }
 
-        // ======================================================
-        // 🧪 APPLICATION SIMULATION UI
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. APPLICATION SIMULATION UI
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Applique les effets visuels sur le ViewModel
+        //
 
         public static bool ApplyUiSimulation(MainViewModel viewModel)
         {
             var sim = GetState();
+
+            // ─────────────────────────────────────────────
+            // ❌ ERREUR SIMULÉE
+            // ─────────────────────────────────────────────
 
             if (sim == UiSimulationResult.Error)
             {
@@ -62,6 +75,10 @@ namespace LatuCollect.UI.WinUI.Services
                 viewModel.ErrorMessage = "Erreur simulée (UI)";
                 return false;
             }
+
+            // ─────────────────────────────────────────────
+            // ⏳ LOADING SIMULÉ
+            // ─────────────────────────────────────────────
 
             if (sim == UiSimulationResult.Loading)
             {
@@ -72,9 +89,13 @@ namespace LatuCollect.UI.WinUI.Services
         }
     }
 
-    // ======================================================
-    // 📊 RESULTAT SIMULATION
-    // ======================================================
+
+    // ═════════════════════════════════════════════════════════════════════
+    // 3. RÉSULTAT SIMULATION
+    // ═════════════════════════════════════════════════════════════════════
+    //
+    // États possibles de simulation UI
+    //
 
     public enum UiSimulationResult
     {

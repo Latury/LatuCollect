@@ -1,60 +1,84 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : UI.WinUI.Converters                                        ║
-║  Fichier : BooleanToVisibilityConverter.cs                           ║
+║     Application de collecte et export de contenu multi-fichiers      ║
+║                                                                      ║
+║  Module : Core.Services.Collection                                   ║
+║  Fichier : FileCollectionService.cs                                  ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Convertir un booléen en visibilité UI                               ║
+║  Gérer la sélection et la récupération des fichiers                  ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - true  → Visible                                                   ║
-║  - false → Collapsed                                                 ║
+║  - Parcourir une arborescence de fichiers                            ║
+║  - Identifier les fichiers sélectionnés                              ║
+║  - Retourner une liste de chemins exploitables                       ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Utilisé uniquement dans l’UI                                      ║
-║  - Aucune logique métier                                             ║
+║  - Ne dépend PAS de l’UI                                             ║
+║  - Travaille uniquement avec Core.Models.FileNode                    ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
-║  - Microsoft.UI.Xaml                                                 ║
+║  - System.IO                                                         ║
+║  - Core.Models.FileNode                                              ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
-using System;
+using LatuCollect.Core.Models;
+using System.Collections.Generic;
+using System.IO;
 
-namespace LatuCollect.UI.WinUI.Converters
+namespace LatuCollect.Core.Services.Collection
 {
-    public partial class BooleanToVisibilityConverter : IValueConverter
+    public class FileCollectionService
     {
 
         // ═════════════════════════════════════════════════════════════════════
-        // 1. CONVERSION → BOOL → VISIBILITY
+        // 1. MÉTHODE PUBLIQUE
         // ═════════════════════════════════════════════════════════════════════
+        //
+        // Point d’entrée principal :
+        // - récupère tous les fichiers sélectionnés
+        //
 
-        public object Convert(object value, Type targetType, object parameter, string language)
+        public List<string> GetSelectedFiles(List<FileNode> roots)
         {
-            if (value is bool isVisible && isVisible)
-                return Visibility.Visible;
+            List<string> files = new();
 
-            return Visibility.Collapsed;
+            foreach (var root in roots)
+            {
+                ProcessNode(root, files);
+            }
+
+            return files;
         }
 
 
         // ═════════════════════════════════════════════════════════════════════
-        // 2. CONVERSION INVERSE (OPTIONNELLE)
+        // 2. PARCOURS RÉCURSIF
         // ═════════════════════════════════════════════════════════════════════
+        //
+        // Parcourt l’arborescence :
+        // - ajoute les fichiers sélectionnés
+        // - descend dans les enfants
+        //
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        private void ProcessNode(FileNode node, List<string> files)
         {
-            if (value is Visibility visibility)
-                return visibility == Visibility.Visible;
+            // 📄 Si sélectionné et fichier réel
+            if (node.IsSelected && File.Exists(node.Path))
+            {
+                files.Add(node.Path);
+            }
 
-            return false;
+            // 🔁 Parcours des enfants
+            foreach (var child in node.Children)
+            {
+                ProcessNode(child, files);
+            }
         }
     }
 }

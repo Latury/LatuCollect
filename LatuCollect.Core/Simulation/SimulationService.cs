@@ -1,35 +1,36 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core                                                       ║
+║  Module : Core.Simulation                                            ║
 ║  Fichier : SimulationService.cs                                      ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Simuler des comportements pour les tests                            ║
+║  Simuler des comportements pour tests et debug                       ║
 ║                                                                      ║
-║  VERSION SAFE :                                                      ║
-║  - NE LANCE PLUS D’EXCEPTION                                         ║
-║  - Retourne uniquement des valeurs contrôlées                        ║
+║  Responsabilités principales :                                       ║
+║  - Simuler lecture de fichiers                                       ║
+║  - Simuler erreurs d’export                                          ║
+║  - Simuler cas spécifiques (UI, fichiers, erreurs)                   ║
 ║                                                                      ║
-║  Avantages :                                                         ║
-║  - Aucun crash                                                       ║
-║  - Simulation stable                                                 ║
-║  - Respect ALC                                                       ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Aucune dépendance UI                                              ║
+║  - Utilise SimulationConfig                                          ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using System;
+using LatuCollect.Core.Configuration;
 
 namespace LatuCollect.Core.Simulation
 {
     public static class SimulationService
     {
-        // ======================================================
-        // 📥 SIMULATION LECTURE (SAFE)
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. LECTURE FICHIER
+        // ═════════════════════════════════════════════════════════════════════
 
         public static string SimulateRead(string path)
         {
@@ -39,22 +40,22 @@ namespace LatuCollect.Core.Simulation
             switch (SimulationConfig.Scenario)
             {
                 case "FichiersVides":
-                    return "";
+                    return string.Empty;
 
                 case "ErreursLecture":
-                    return "[Erreur de lecture]";
+                    return "[Erreur simulée de lecture]";
 
                 case "CheminsLongs":
-                    return "[Chemin trop long]";
-
-                default:
-                    return null;
+                    return "[Chemin trop long simulé]";
             }
+
+            return null;
         }
 
-        // ======================================================
-        // 📤 SIMULATION EXPORT
-        // ======================================================
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. EXPORT
+        // ═════════════════════════════════════════════════════════════════════
 
         public static void SimulateExport()
         {
@@ -63,10 +64,25 @@ namespace LatuCollect.Core.Simulation
 
             if (SimulationConfig.Scenario == "ErreursExport")
             {
-                // ⚠️ Ici on garde le throw volontaire
-                // car il est géré côté UI (try/catch export)
-                throw new Exception("Erreur lors de l'export (simulation)");
+                throw new System.Exception("Erreur simulée lors de l’export");
             }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 3. HELPERS (UI / ÉTAT)
+        // ═════════════════════════════════════════════════════════════════════
+
+        public static bool IsLoaderSimulation()
+        {
+            return SimulationConfig.IsEnabled &&
+                   SimulationConfig.Scenario == "UI_Loader";
+        }
+
+        public static bool IsErrorSimulation()
+        {
+            return SimulationConfig.IsEnabled &&
+                   SimulationConfig.Scenario == "UI_Error";
         }
     }
 }

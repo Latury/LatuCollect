@@ -1,32 +1,38 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core                                                       ║
+║  Module : Core.Services.Export                                       ║
 ║  Fichier : FileExportService.cs                                      ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Écrire le contenu final dans un fichier                             ║
+║  Construire et exporter le contenu des fichiers                      ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Écrire du texte dans un fichier                                   ║
-║  - Construire le contenu exporté + statistiques                      ║
+║  - Construire le contenu final                                       ║
+║  - Calculer les statistiques                                         ║
+║  - Écrire le fichier exporté                                         ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
-║  - System.IO                                                         ║
+║  - FileReaderService                                                 ║
 ║  - SimulationService                                                 ║
+║  - System.IO                                                         ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Aucune dépendance UI                                              ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Services.Reader;
 using LatuCollect.Core.Simulation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace LatuCollect.Core.Services
+namespace LatuCollect.Core.Services.Export
 {
     public class ExportResult
     {
@@ -48,13 +54,24 @@ namespace LatuCollect.Core.Services
         public StatisticsResult Stats { get; set; } = new();
     }
 
-    public static class FileExportService
+    public class FileExportService
     {
-        public static ExportResult Export(string path, string content)
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 1. EXPORT FICHIER
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Écrit le contenu dans un fichier
+        //
+
+        public ExportResult Export(string path, string content)
         {
             try
             {
+                // 🧪 Simulation
                 SimulationService.SimulateExport();
+
+                // 📄 Écriture fichier
                 File.WriteAllText(path, content);
 
                 return new ExportResult
@@ -97,9 +114,19 @@ namespace LatuCollect.Core.Services
             }
         }
 
-        public static ExportData BuildContentWithStats(IEnumerable<string> filePaths, bool isMarkdown)
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. CONSTRUCTION CONTENU + STATISTIQUES
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Assemble :
+        // - contenu des fichiers
+        // - statistiques
+        //
+
+        public ExportData BuildContentWithStats(IEnumerable<string> filePaths, bool isMarkdown)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             var stats = new StatisticsResult();
 
             foreach (var path in filePaths)
@@ -109,6 +136,7 @@ namespace LatuCollect.Core.Services
 
                 stats.FileCount++;
 
+                // 📄 Lecture fichier
                 string content = FileReaderService.ReadFile(path);
 
                 if (string.IsNullOrWhiteSpace(content))
@@ -116,14 +144,14 @@ namespace LatuCollect.Core.Services
                     content = "[Fichier vide ou erreur de lecture]";
                 }
 
-                // 📊 Stats
+                // 📊 Statistiques
                 stats.TotalCharacters += content.Length;
                 stats.TotalLines += content.Split('\n').Length;
 
                 var fileInfo = new FileInfo(path);
                 stats.TotalSizeBytes += fileInfo.Length;
 
-                // 📄 Contenu
+                // 📦 Formatage
                 if (isMarkdown)
                 {
                     result.AppendLine($"## 📄 {path}");
