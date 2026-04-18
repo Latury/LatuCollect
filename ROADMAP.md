@@ -367,15 +367,37 @@ Rendre le code propre et maintenable.
 
 ---
 
-- ⬜ Identifier toute logique métier restante dans le ViewModel
-- ⬜ Déplacer la logique métier restante vers des services Core
-- ⬜ Simplifier le ViewModel pour qu’il ne fasse que :
+- ✅ Identifier toute logique métier restante dans le ViewModel
+- ✅ Déplacer la logique métier restante vers des services Core
+- ✅ Simplifier le ViewModel pour qu’il ne fasse que :
   → gérer l’état UI
   → appeler le Core
-- ⬜ Vérifier que le ViewModel ne contient aucune logique métier complexe
-- ⬜ Respect du pipeline complet
-- ⬜ Nettoyage ViewModel
-- ⬜ Structuration services
+- ✅ Vérifier que le ViewModel ne contient aucune logique métier complexe
+- ✅ Respect du pipeline complet
+- ✅ Nettoyage ViewModel
+- ✅ Structuration services
+
+---
+
+## 🧠 Résultat
+
+- ✔ Architecture propre et lisible
+- ✔ Séparation UI / Core respectée
+- ✔ Services clarifiés (Import / Reader / Collection / Export)
+- ✔ ViewModel simplifié (orchestrateur uniquement)
+- ✔ Pipeline cohérent et centralisé
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect devient :
+
+- ✔ Maintenable
+- ✔ Structuré
+- ✔ Évolutif
+
+👉 Base solide pour optimisation (0.9.0)
 
 ---
 
@@ -383,14 +405,64 @@ Rendre le code propre et maintenable.
 
 ## 🎯 Objectif
 
-Améliorer les performances globales.
+Améliorer les performances, la fluidité et préparer les bases d’un comportement scalable.
 
 ---
 
-- ⬜ Optimisation lecture fichiers
-- ⬜ Optimisation mémoire
-- ⬜ Réduction ralentissements UI
-- ⬜ Amélioration vitesse globale
+## ⚡ Performance
+
+- ⬜ Optimisation lecture fichiers (réduction I/O inutiles)
+- ⬜ Optimisation mémoire (réduction allocations)
+- ⬜ Amélioration du temps de génération preview
+- ⬜ Réduction des recalculs inutiles
+
+---
+
+## 🖥️ UI
+
+- ⬜ Amélioration réactivité interface
+- ⬜ Optimisation rafraîchissement aperçu
+- ⬜ Gestion plus fine des états (loading / ready)
+
+---
+
+## 🧠 Core
+
+- ⬜ Préparation séparation :
+  - StatisticsService (future extraction)
+- ⬜ Réduction responsabilité FileExportService
+- ⬜ Amélioration pipeline interne
+
+---
+
+## 🔄 Pipeline
+
+- ⬜ Vérification complète du flux :
+  Import → Lecture → Collection → Assemblage → Statistiques → Export
+
+- ⬜ Suppression éventuelle des doublons internes
+
+---
+
+## 🧪 Simulation (REPORTÉ)
+
+⚠️ Décidé :
+
+- ❌ Pas dans cette version
+- ✔ À traiter dans une discussion dédiée
+
+Objectif futur :
+
+- Structurer simulation (UI + Core)
+- Ajouter scénarios complets (erreurs, UI, performance)
+
+---
+
+## 🏁 Objectif final
+
+- ✔ Application plus rapide
+- ✔ UI plus fluide
+- ✔ Code encore plus propre
 
 ---
 
@@ -398,69 +470,241 @@ Améliorer les performances globales.
 
 ## 🎯 Objectif
 
-Préparer l’application pour une distribution réelle.
+Finaliser l’application pour une utilisation réelle, stable, testée et distribuable.
 
 ---
 
-## 📦 Distribution
+# 🧪 Simulation (REFONTE COMPLÈTE)
 
-- ⬜ Création installateur
-- ⬜ Gestion dépendances
-- ⬜ Multi-architecture (x64 / x86)
-- ⬜ Choix dossier installation
-- ⬜ Création raccourcis
+👉 À faire après discussion dédiée (architecture + implémentation)
 
 ---
 
-## 🧾 Application
+## 🧱 Architecture
 
-- ⬜ Version affichée (À propos)
-- ⬜ Licence visible
-- ⬜ Informations application
-
----
-
-## 🖼️ Identité visuelle
-
-- ⬜ Création logo application
-- ⬜ Icône .ico (exe + Windows)
-- ⬜ Icône barre des tâches
+* ⬜ Refonte complète du système de simulation
+* ⬜ Séparation stricte UI / Core
+* ⬜ Centralisation des scénarios
+* ⬜ Système extensible (ajout facile de scénarios)
 
 ---
 
-## ⚙️ Configuration utilisateur
+## 🧑‍💻 Mode développeur
 
-- ⬜ Sauvegarde préférences
-- ⬜ Format par défaut
-- ⬜ Thème sélectionné
-
----
-
-## 🌗 Thèmes
-
-- ⬜ Mode sombre
-- ⬜ Mode clair
-- ⬜ Système de couleurs centralisé
+* ⬜ Activation via Paramètres → Paramètres avancés
+* ⬜ Désactivation par défaut
+* ⬜ Aucun impact utilisateur normal
 
 ---
 
-## 🎨 Refonte UI
+## 🧪 UI Simulation
 
-- ⬜ Modernisation design
-- ⬜ Amélioration couleurs
-- ⬜ Amélioration lisibilité
-- ⬜ Cohérence visuelle
-
----
-
-## 🔄 Mise à jour
-
-- ⬜ Vérification version
-- ⬜ Notification utilisateur
+* ⬜ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
+* ⬜ Popup de sélection des scénarios
+* ⬜ Activation / désactivation en temps réel
 
 ---
 
-## ⚙️ Build
+## 🛡️ Règles
 
-- ⬜ Build release propre
-- ⬜ Optimisation finale
+* ⬜ Aucun impact en production
+* ⬜ Simulation isolée du Core réel
+* ⬜ Activation explicite uniquement
+
+---
+
+# 🔬 Scénarios de simulation
+
+## 📂 Lecture (Reader)
+
+* ⬜ Fichier introuvable
+* ⬜ Chemin invalide
+* ⬜ Chemin trop long
+* ⬜ Accès refusé
+* ⬜ Fichier verrouillé
+* ⬜ Fichier vide
+* ⬜ Fichier très volumineux
+* ⬜ Fichier binaire
+* ⬜ Encodage spécial
+
+---
+
+## 📤 Export
+
+* ⬜ Accès refusé
+* ⬜ Fichier déjà ouvert
+* ⬜ Chemin invalide
+* ⬜ Disque plein (simulation)
+* ⬜ Export vide
+* ⬜ Export massif
+
+---
+
+## 📦 Collection
+
+* ⬜ Aucun fichier sélectionné
+* ⬜ Sélection partielle
+* ⬜ Sélection profonde
+* ⬜ Sélection massive
+* ⬜ Fichiers supprimés entre-temps
+
+---
+
+## 🖥️ UI
+
+* ⬜ Loader bloqué
+* ⬜ Erreur UI forcée
+* ⬜ État incohérent
+* ⬜ UI figée (simulation extrême)
+
+---
+
+## 👁️ Aperçu
+
+* ⬜ Aucun fichier sélectionné
+* ⬜ Limitation à 20 fichiers
+* ⬜ Contenu très long
+* ⬜ Fichiers vides
+
+---
+
+## 🔍 Recherche
+
+* ⬜ Aucun résultat
+* ⬜ Recherche rapide (debounce)
+* ⬜ Recherche par extension
+* ⬜ Recherche sur gros projet
+
+---
+
+## ⚡ Performance
+
+* ⬜ Projet volumineux
+* ⬜ Arborescence profonde
+* ⬜ Sélection massive
+* ⬜ Export lourd
+
+---
+
+## 👤 Utilisateur réel
+
+* ⬜ Clics rapides répétés
+* ⬜ Changement dossier pendant chargement
+* ⬜ Fermeture pendant traitement
+* ⬜ Actions simultanées
+
+---
+
+# 📜 Logs application
+
+## 🧱 Core
+
+* ⬜ Mise en place d’un LogService
+* ⬜ Centralisation des logs
+
+---
+
+## 📊 Types de logs
+
+* ⬜ Chargement dossier
+* ⬜ Lecture fichiers
+* ⬜ Export
+* ⬜ Erreurs
+* ⬜ Actions utilisateur
+
+---
+
+## 🖥️ UI
+
+* ⬜ Accès aux logs via Paramètres avancés
+* ⬜ Visualisation dans l’application
+* ⬜ Export des logs
+
+---
+
+## 🎯 Objectif
+
+* Faciliter le debug
+* Comprendre les erreurs
+* Aider à la maintenance
+
+---
+
+# 🎨 Refonte UI
+
+* ⬜ Modernisation du design
+* ⬜ Amélioration des couleurs
+* ⬜ Amélioration lisibilité
+* ⬜ Cohérence visuelle globale
+* ⬜ Harmonisation des composants
+
+---
+
+# 🌗 Thèmes
+
+* ⬜ Mode sombre
+* ⬜ Mode clair
+* ⬜ Système de couleurs centralisé
+
+---
+
+# ⚙️ Configuration utilisateur
+
+* ⬜ Sauvegarde des préférences
+* ⬜ Format par défaut (.txt / .md)
+* ⬜ Gestion des exclusions persistées
+* ⬜ Thème sélectionné
+* ⬜ Activation mode développeur
+
+---
+
+# 🧾 Application
+
+* ⬜ Version affichée (À propos)
+* ⬜ Licence visible
+* ⬜ Informations application
+
+---
+
+# 🖼️ Identité visuelle
+
+* ⬜ Création logo
+* ⬜ Icône .ico (exe + Windows)
+* ⬜ Icône barre des tâches
+
+---
+
+# 🔄 Mise à jour
+
+* ⬜ Vérification de version
+* ⬜ Notification utilisateur
+
+---
+
+# 📦 Distribution
+
+* ⬜ Création installateur
+* ⬜ Gestion dépendances
+* ⬜ Multi-architecture (x64 / x86)
+* ⬜ Choix dossier installation
+* ⬜ Création raccourcis
+
+---
+
+# ⚙️ Build
+
+* ⬜ Build release propre
+* ⬜ Optimisation finale
+* ⬜ Vérification stabilité globale
+
+---
+
+# 🏁 Objectif final
+
+👉 LatuCollect devient :
+
+* ✔ Stable
+* ✔ Testé en profondeur
+* ✔ Robuste face aux erreurs
+* ✔ Maintenable
+* ✔ Distribuable proprement

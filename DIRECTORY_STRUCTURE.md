@@ -324,3 +324,118 @@ UI → ViewModel → Core
 - Efficacité
 
 👉 Éviter toute complexité inutile
+
+---
+
+---
+
+# 🧩 Structure actuelle (v0.8.0)
+
+👉 Cette section reflète l’état réel du projet actuellement.
+
+```text
+LatuCollect/
+│
+├── LatuCollect.Core/
+│   ├── Configuration/
+│   │   └── AppConfig.cs
+│   │
+│   ├── Models/
+│   │   └── FileNode.cs
+│   │
+│   ├── Services/
+│   │   ├── Import/
+│   │   │   └── FileImportService.cs
+│   │   ├── Reader/
+│   │   │   └── FileReaderService.cs
+│   │   ├── Collection/
+│   │   │   └── FileCollectionService.cs
+│   │   ├── Export/
+│   │   │   └── FileExportService.cs
+│   │
+│   └── Simulation/
+│       ├── SimulationConfig.cs
+│       └── SimulationService.cs
+│
+├── LatuCollect.UI.WinUI/
+│   ├── MainWindow.xaml
+│   ├── MainWindow.xaml.cs
+│   │
+│   ├── ViewModels/
+│   │   └── MainViewModel.cs
+│   │
+│   ├── Models/
+│   │   └── FileNode.cs
+│   │
+│   ├── Services/
+│   │   └── UiSimulationService.cs
+│   │
+│   ├── Converters/
+│   │   ├── BooleanToVisibilityConverter.cs
+│   │   ├── BoolToIconConverter.cs
+│   │   └── InverseBooleanToVisibilityConverter.cs
+│   │
+│   └── Assets/
+│
+├── README.md
+├── ARCHITECTURE.md
+├── DIRECTORY_STRUCTURE.md
+├── UI_GUIDE.md
+├── GUIDE_UTILISATEUR.md
+├── ROADMAP.md
+├── PATCH_NOTES.md
+├── TESTS.md
+```
+
+---
+
+# 🔄 Différences avec la structure cible
+
+👉 Ce qui n’est PAS encore implémenté :
+
+- ❌ Dossier `Statistics/` (prévu)
+- ❌ Dossier `Utils/` (prévu)
+- ❌ Dossier `Logging/`
+- ❌ Dossier `Interfaces/`
+- ❌ Dossier `Helpers/`
+- ❌ Dossier `DTOs/`
+- ❌ Dossier `Themes/`
+- ❌ Dossier `Resources/`
+- ❌ Dossier `Tests/` structuré
+- ❌ Dossier `Installer/`
+- ❌ Dossier `Assets/` global (hors UI)
+
+---
+
+👉 Différence de nommage :
+
+- Actuel :
+  - `LatuCollect.Core`
+  - `LatuCollect.UI.WinUI`
+
+- Cible :
+  - `Core`
+  - `UI`
+
+---
+
+# 🧠 État du projet
+
+```text
+✔ Architecture en cours de stabilisation (0.8.0)
+✔ Services principaux en place (Import / Reader / Collection / Export)
+✔ Séparation UI / Core respectée
+✔ Base solide pour évolution vers v1.0.0
+```
+
+---
+
+# 🎯 Objectif prochain
+
+```text
+➡ Continuer le découpage des services
+➡ Finaliser la séparation complète des responsabilités
+➡ Implémenter les dossiers manquants progressivement
+```
+
+---

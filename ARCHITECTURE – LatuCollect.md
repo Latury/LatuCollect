@@ -149,11 +149,53 @@ Dans la classe :
 
 ---
 
+## 🔹 Rôle réel du ViewModel (v0.8.0)
+
+Le ViewModel ne contient plus de logique métier complexe.
+
+### ✔ Il fait uniquement :
+
+- Gérer l’état UI
+- Convertir les données UI → Core
+- Appeler les services Core
+- Gérer le rafraîchissement de l’aperçu
+
+### ❌ Il ne fait pas :
+
+- Lecture de fichiers
+- Assemblage de contenu
+- Calcul métier complexe
+
+👉 Le ViewModel agit comme un orchestrateur UI.
+
+---
+
 ## 🔹 Models (UI)
 
 - ✔ Structure des données (FileNode)
 - ✔ Contient les états UI (IsVisible, IsSelected)
 - ❌ Pas de logique métier
+
+---
+
+## 🔄 Conversion UI ↔ Core
+
+Le projet utilise deux modèles distincts :
+
+- `UI.Models.FileNode`
+- `Core.Models.FileNode`
+
+### ✔ Pourquoi ?
+
+- Séparer les responsabilités
+- Éviter les dépendances UI dans le Core
+
+### ✔ Fonctionnement
+
+- Conversion UI → Core avant appel des services
+- Conversion Core → UI lors du chargement
+
+👉 Cette conversion est gérée dans le ViewModel ou via des services dédiés.
 
 ---
 
@@ -205,6 +247,12 @@ ExcludedFolders = ["bin", "obj", ".git"]
 Import → Lecture → Assemblage → Statistiques → Export
 ```
 
+⚠️ Note :
+
+Actuellement, l’assemblage et les statistiques sont réalisés dans `FileExportService`.
+
+Une séparation complète est prévue dans les versions futures.
+
 ---
 
 ## 🔹 Pipeline utilisateur (UI simplifiée)
@@ -224,12 +272,44 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
+## 🔍 État réel (v0.8.0)
+
+👉 Le pipeline est maintenant partiellement découpé en services distincts.
+
+### ✔ Services actuellement en place
+
+- Import → `FileImportService`
+- Lecture → `FileReaderService`
+- Collection → `FileCollectionService`
+- Export + Assemblage → `FileExportService`
+
+👉 Le service `FileExportService` reste actuellement responsable de :
+
+- l’assemblage du contenu
+- le calcul des statistiques
+- la génération finale
+
+---
+
+### ⚠️ Ce qui sera refactorisé plus tard
+
+- Séparation de `Statistics` dans un service dédié
+- Réduction du rôle du `FileExportService`
+- Découpage plus fin du pipeline
+
+👉 Voir ROADMAP pour la suite
+
+---
+
 # 5. CORRESPONDANCE SERVICES
 
-| Étape   | Service           |
-| ------- | ----------------- |
-| Lecture | FileReaderService |
-| Export  | FileExportService |
+| Étape      | Service               |
+| ---------- | --------------------- |
+| Import     | FileImportService     |
+| Lecture    | FileReaderService     |
+| Collection | FileCollectionService |
+| Assemblage | FileExportService     |
+| Export     | FileExportService     |
 
 ---
 

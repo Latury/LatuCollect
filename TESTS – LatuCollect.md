@@ -8,11 +8,11 @@ Stratégie officielle de validation du projet LatuCollect.
 
 Garantir :
 
-- ✅ Fiabilité du chargement de projet
-- ✅ Robustesse de la sélection des fichiers
-- ✅ Exactitude de l’aperçu
-- ✅ Qualité des exports (TXT / Markdown)
-- ✅ Cohérence globale du système
+* ✅ Fiabilité du chargement de projet
+* ✅ Robustesse de la sélection des fichiers
+* ✅ Exactitude de l’aperçu
+* ✅ Qualité des exports (TXT / Markdown)
+* ✅ Cohérence globale du système
 
 ---
 
@@ -36,20 +36,20 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Cas OK
 
-- ✅ Charger un dossier valide
-- ✅ Chargement avec sous-dossiers
-- ✅ Projet volumineux
+* ✅ Charger un dossier valide
+* ✅ Chargement avec sous-dossiers
+* ✅ Projet volumineux
 
 ### Cas erreurs
 
-- ❌ Dossier invalide
-- ❌ Accès refusé
-- ❌ Sélection annulée par l’utilisateur
+* ❌ Dossier invalide
+* ❌ Accès refusé
+* ❌ Sélection annulée par l’utilisateur
 
 👉 Résultat attendu :
 
-- ✅ Structure affichée correctement
-- ✅ Message clair en cas d’erreur
+* ✅ Structure affichée correctement
+* ✅ Message clair en cas d’erreur
 
 ---
 
@@ -57,9 +57,9 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Affichage correct des dossiers
-- ✅ Navigation fluide
-- ✅ Retour en arrière fonctionnel
+* ✅ Affichage correct des dossiers
+* ✅ Navigation fluide
+* ✅ Retour en arrière fonctionnel
 
 ---
 
@@ -67,56 +67,60 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Filtrage correct des fichiers
-- ✅ Mise à jour rapide (optimisée pour la fluidité)
-- ✅ Conservation de la structure
+* ✅ Filtrage correct des fichiers
+* ✅ Mise à jour rapide (optimisée pour la fluidité)
+* ✅ Conservation de la structure
 
 ### Cas limites :
 
-- ❌ Recherche vide
-- ❌ Aucun résultat
+* ❌ Recherche vide
+* ❌ Aucun résultat
 
 ---
 
 ### Nouveautés (v0.6.0)
 
-- ✅ Filtrage par extension :
-  - Recherche ".cs" → uniquement fichiers .cs
-  - Recherche ".xaml" → uniquement fichiers XAML
+* ✅ Filtrage par extension :
 
-- ✅ Vérification :
-  - Les fichiers affichés correspondent bien à l’extension demandée
-  - Les dossiers parents restent visibles si un enfant correspond
+  * Recherche ".cs" → uniquement fichiers .cs
+  * Recherche ".xaml" → uniquement fichiers XAML
+
+* ✅ Vérification :
+
+  * Les fichiers affichés correspondent bien à l’extension demandée
+  * Les dossiers parents restent visibles si un enfant correspond
 
 ---
 
-- ✅ Gestion "aucun résultat" :
-  - Recherche sans correspondance
+* ✅ Gestion "aucun résultat" :
+
+  * Recherche sans correspondance
 
 👉 Résultat attendu :
 
-- Message "Aucun résultat" affiché
-- Arbre masqué
-- Aucun écran vide (toujours un message affiché)
+* Message "Aucun résultat" affiché
+* Arbre masqué
+* Aucun écran vide (toujours un message affiché)
 
 ---
 
-- ✅ Performance (debounce) :
-  - Saisie rapide dans la barre de recherche
+* ✅ Performance (debounce) :
+
+  * Saisie rapide dans la barre de recherche
 
 👉 Résultat attendu :
 
-- Aucun freeze UI
-- Pas de recalcul à chaque frappe
-- Filtrage déclenché après une courte pause utilisateur
+* Aucun freeze UI
+* Pas de recalcul à chaque frappe
+* Filtrage déclenché après une courte pause utilisateur
 
 ---
 
-- ✅ Les dossiers exclus (bin, obj, .git) ne doivent jamais apparaître dans les résultats de recherche
+* ✅ Les dossiers exclus (bin, obj, .git) ne doivent jamais apparaître dans les résultats de recherche
 
 👉 Important :
 
-- Ça couvre exclusion + recherche ensemble
+* Couvre à la fois l’exclusion et la recherche
 
 ---
 
@@ -124,36 +128,34 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Checkbox fonctionnelle
-- ✅ Sélection multiple
-- ✅ Désélection
+* ✅ Checkbox fonctionnelle
+* ✅ Sélection multiple
+* ✅ Désélection
 
 ### Cas limites :
 
-- ❌ Aucun fichier sélectionné
+* ❌ Aucun fichier sélectionné
 
 👉 Résultat attendu :
 
-- ✅ Message "Aucun fichier sélectionné..." affiché
-- ✅ Export bloqué
-- ✅ Bouton copier désactivé
+* ✅ Message "Aucun fichier sélectionné..." affiché
+* ✅ Export bloqué
+* ✅ Bouton copier désactivé
 
 ---
 
-### ⚠️ Sélection globale (v0.7.0)
+### ⚠️ Sélection globale (v0.8.0)
 
 ### Vérifier :
 
-- ❌ Bouton "Tout sélectionner" désactivé
-- ✅ Clic affiche un popup explicatif
-
----
+* ❌ Bouton "Tout sélectionner" désactivé
+* ✅ Clic affiche un popup explicatif
 
 ### Comportement attendu :
 
-- Aucun traitement massif
-- Aucun freeze UI
-- Message clair utilisateur
+* Aucun traitement massif
+* Aucun freeze UI
+* Message clair utilisateur
 
 ---
 
@@ -161,22 +163,22 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Mise à jour en temps réel
-- ✅ Aperçu = export (strictement identique)
-- ✅ Lisibilité
+* ✅ Mise à jour en temps réel
+* ✅ Aperçu = export (strictement identique)
+* ✅ Lisibilité
 
 ### Déclencheurs :
 
-- ✅ Sélection fichier
-- ✅ Désélection
-- ✅ Changement format
+* ✅ Sélection fichier
+* ✅ Désélection
+* ✅ Changement format
 
-### ⚠️ Limitation aperçu (v0.7.0)
+### ⚠️ Limitation aperçu (v0.8.0)
 
 ### Vérifier :
 
-- ✅ Maximum 20 fichiers affichés
-- ✅ Message affiché :
+* ✅ Maximum 20 fichiers affichés
+* ✅ Message affiché :
 
 ```text
 ⚠ Aperçu limité à 20 fichiers
@@ -188,35 +190,11 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- 🔄 Chargement → affichage du loader
-- ❌ Erreur → message affiché
-- ✅ Prêt → contenu ou message vide
+* 🔄 Chargement → affichage du loader
+* ❌ Erreur → message affiché
+* ✅ Prêt → contenu ou message vide
 
 👉 L’UI doit toujours refléter l’état réel
-
----
-
----
-
-### ⚠️ Limitation aperçu (v0.7.0)
-
-### Vérifier :
-
-- ✅ Maximum 20 fichiers affichés
-- ✅ Message affiché :
-
-````text
-⚠ Aperçu limité à 20 fichiers
-
----
-
-## ⏳ Loader
-
-### Vérifier :
-
-- ✅ Visible pendant le chargement
-- ✅ Disparaît correctement
-- ✅ Aucun blocage UI
 
 ---
 
@@ -224,15 +202,25 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Aucun freeze
-- ✅ Chargement partiel
-- ✅ Message affiché :
+* ✅ Aucun freeze
+* ✅ Chargement partiel
+* ✅ Message affiché :
 
 ```text
 ⚠ Projet volumineux — affichage partiel
-````
+```
 
-- ✅ Recherche fluide même sur projet volumineux (optimisation v0.6.0)
+* ✅ Recherche fluide même sur projet volumineux (optimisation v0.6.0)
+
+---
+
+## ⏳ Loader
+
+### Vérifier :
+
+* ✅ Visible pendant le chargement
+* ✅ Disparaît correctement
+* ✅ Aucun blocage UI
 
 ---
 
@@ -240,35 +228,35 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Cas TXT
 
-- ✅ Fichier créé
-- ✅ Contenu conforme
-- ✅ Séparateur correct
+* ✅ Fichier créé
+* ✅ Contenu conforme
+* ✅ Séparateur correct
 
 ### 🔒 Robustesse (v0.4.0)
 
-- ✅ Aucun crash lors d’un échec d’écriture
-- ✅ Message d’erreur retourné proprement
-- ✅ Comportement prévisible même en cas de problème disque ou accès refusé
+* ✅ Aucun crash lors d’un échec d’écriture
+* ✅ Message d’erreur retourné proprement
+* ✅ Comportement prévisible même en cas de problème disque ou accès refusé
 
 ### Cas Markdown
 
-- ✅ Structure lisible
-- ✅ Chemin affiché
-- ✅ Contenu correct
-- ✅ Format adapté au Markdown
+* ✅ Structure lisible
+* ✅ Chemin affiché
+* ✅ Contenu correct
+* ✅ Format adapté au Markdown
 
 ### Comportement attendu
 
-- ✅ Format dépend du choix utilisateur (.txt / .md)
-- ✅ Export bloqué si aucun contenu
-- ✅ Bouton Export désactivé si aucun contenu
-- ✅ Confirmation après export
-- ✅ Vérification des messages d’erreur spécifiques (accès refusé, fichier utilisé, etc.)
+* ✅ Format dépend du choix utilisateur (.txt / .md)
+* ✅ Export bloqué si aucun contenu
+* ✅ Bouton Export désactivé si aucun contenu
+* ✅ Confirmation après export
+* ✅ Vérification des messages d’erreur spécifiques (accès refusé, fichier utilisé, etc.)
 
 ### Cas erreurs
 
-- ❌ Aucun fichier sélectionné
-- ❌ Échec d’écriture
+* ❌ Aucun fichier sélectionné
+* ❌ Échec d’écriture
 
 ---
 
@@ -276,38 +264,32 @@ Tests réalisés directement dans l’interface WinUI.
 
 ### Vérifier :
 
-- ✅ Copie du contenu correct
-- ✅ Correspond exactement à l’aperçu
-- ✅ Désactivé si aucun contenu
-- ✅ Message de confirmation affiché
+* ✅ Copie du contenu correct
+* ✅ Correspond exactement à l’aperçu
+* ✅ Désactivé si aucun contenu
+* ✅ Message de confirmation affiché
 
 ---
 
----
-
-## 📊 Statistiques (v0.7.0)
+## 📊 Statistiques (v0.8.0)
 
 ### Vérifier :
 
-- ✅ Nombre de fichiers correct
-- ✅ Nombre total de lignes correct
-- ✅ Nombre total de caractères correct
-- ✅ Taille totale cohérente
-
----
+* ✅ Nombre de fichiers correct
+* ✅ Nombre total de lignes correct
+* ✅ Nombre total de caractères correct
+* ✅ Taille totale cohérente
 
 ### Comportement attendu :
 
-- Mise à jour en temps réel
-- Aucun freeze UI
-- Résultats cohérents avec les fichiers sélectionnés
-
----
+* Mise à jour en temps réel
+* Aucun freeze UI
+* Résultats cohérents avec les fichiers sélectionnés
 
 ### Cas limites :
 
-- ❌ Aucun fichier sélectionné → toutes les valeurs à 0
-- ❌ Fichiers vides
+* ❌ Aucun fichier sélectionné → toutes les valeurs à 0
+* ❌ Fichiers vides
 
 ---
 
@@ -323,35 +305,33 @@ Chemin du fichier
 ----------------------------------------
 ```
 
----
-
-- ✅ Respect du format
-- ✅ Vérification du séparateur
-- ✅ Vérification des espacements
+* ✅ Respect du format
+* ✅ Vérification du séparateur
+* ✅ Vérification des espacements
 
 ---
 
 ## ⚠️ Cas particuliers
 
-- ❌ Fichier vide
-- ❌ Fichier volumineux
-- ❌ Caractères spéciaux
-- ❌ Erreur lecture
-- ❌ Chemins longs
-- ❌ Échec d’écriture fichier
+* ❌ Fichier vide
+* ❌ Fichier volumineux
+* ❌ Caractères spéciaux
+* ❌ Erreur lecture
+* ❌ Chemins longs
+* ❌ Échec d’écriture fichier
 
 👉 Résultat attendu :
 
-- ✅ Aucun crash
-- ✅ Message d’erreur utilisateur
+* ✅ Aucun crash
+* ✅ Message d’erreur utilisateur
 
 ---
 
 ## ⚠️ Fichiers ignorés
 
-- bin
-- obj
-- .git
+* bin
+* obj
+* .git
 
 ---
 
@@ -359,8 +339,8 @@ Chemin du fichier
 
 Cibles :
 
-- ✅ FileReaderService
-- ✅ FileExportService
+* ✅ FileReaderService
+* ✅ FileExportService
 
 ---
 
@@ -368,16 +348,16 @@ Cibles :
 
 ### Lecture
 
-- ✅ Lecture fichier valide
-- ✅ Gestion erreur lecture
+* ✅ Lecture fichier valide
+* ✅ Gestion erreur lecture
 
 ---
 
 ### Export
 
-- ✅ Génération TXT
-- ✅ Génération Markdown
-- ✅ Respect format
+* ✅ Génération TXT
+* ✅ Génération Markdown
+* ✅ Respect format
 
 ---
 
@@ -415,7 +395,7 @@ Importer → Sélectionner → Aperçu → Exporter
 ## 🔹 Pipeline interne
 
 ```text
-Import → Lecture → Assemblage → Statistiques → Export
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
 👉 Aucune transformation du code
@@ -426,12 +406,12 @@ Import → Lecture → Assemblage → Statistiques → Export
 
 Les tests garantissent :
 
-- ✅ Aucun fichier incorrect
-- ✅ Aucun export corrompu
-- ✅ Cohérence UI / Core
+* ✅ Aucun fichier incorrect
+* ✅ Aucun export corrompu
+* ✅ Cohérence UI / Core
 
 👉 LatuCollect doit rester :
 
-- ✅ Fiable
-- ✅ Stable
-- ✅ Prévisible
+* ✅ Fiable
+* ✅ Stable
+* ✅ Prévisible

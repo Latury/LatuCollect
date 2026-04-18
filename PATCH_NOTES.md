@@ -822,6 +822,144 @@ Cette version introduit :
 
 ---
 
+# 🚀 VERSION 0.8.0
+
+## 📌 Statut
+
+🟢 Terminée — Structuration & architecture propre
+
+---
+
+## 🎯 Objectif
+
+Rendre le projet propre, lisible et maintenable en respectant strictement l’architecture ALC.
+
+---
+
+## ✨ Améliorations
+
+### 🧱 Structuration du projet
+
+* ✅ Réorganisation complète des fichiers
+* ✅ Ajout d’une structure claire et cohérente (Core / UI / Services)
+* ✅ Harmonisation de tous les fichiers avec des sections structurées
+
+---
+
+### 🧠 Architecture (ALC)
+
+* ✅ Séparation stricte UI / Core
+* ✅ Suppression de la logique métier côté UI
+* ✅ Clarification du rôle du ViewModel :
+
+  * Gestion de l’état UI
+  * Appel des services Core uniquement
+
+---
+
+### 🔧 Services Core
+
+* ✅ Création de dossiers dédiés :
+
+  * `Reader`
+  * `Export`
+  * `Collection`
+
+* ✅ Clarification des responsabilités :
+
+  * `FileImportService` → chargement arborescence
+  * `FileReaderService` → lecture fichiers
+  * `FileCollectionService` → récupération fichiers sélectionnés
+  * `FileExportService` → assemblage + export + statistiques
+
+---
+
+### 🔄 Pipeline
+
+* ✅ Pipeline clarifié :
+
+```text
+Import → Lecture → Collection → Assemblage → Statistiques → Export
+```
+
+* ✅ Cohérence complète entre tous les services
+
+---
+
+### 🔁 Conversion UI ↔ Core
+
+* ✅ Séparation des modèles :
+
+  * `UI.Models.FileNode`
+  * `Core.Models.FileNode`
+
+* ✅ Conversion mise en place dans le ViewModel
+
+👉 Permet de découpler complètement UI et logique métier
+
+---
+
+### 🖥️ UI
+
+* ✅ Structuration complète de `MainWindow.xaml.cs`
+
+* ✅ Organisation en sections :
+
+  * Initialisation
+  * Actions utilisateur
+  * Dialogs
+  * Statistiques
+  * Menus
+
+* ✅ Amélioration de la lisibilité du code UI
+
+---
+
+### 🧾 Documentation
+
+* ✅ Mise à jour complète :
+
+  * README
+  * ARCHITECTURE
+  * UI_GUIDE
+  * GUIDE_UTILISATEUR
+  * TESTS
+  * DIRECTORY_STRUCTURE
+
+* ✅ Ajout des différences entre structure actuelle et cible
+
+---
+
+## 🧠 Résultat
+
+* ✔ Code plus propre
+* ✔ Architecture claire
+* ✔ Meilleure maintenabilité
+* ✔ Base solide pour évolutions futures
+
+---
+
+## ⚠️ Limites actuelles
+
+* ❌ Certaines optimisations encore à faire (refactor avancé)
+* ❌ Simulation à restructurer (future discussion)
+* ❌ Découpage des services encore améliorable
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect devient :
+
+* ✔ Structuré
+* ✔ Maintenable
+* ✔ Évolutif
+* ✔ Conforme ALC
+
+👉 Prêt pour la version 0.9.0
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

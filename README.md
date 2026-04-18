@@ -6,10 +6,11 @@
 
 🔹 Outil simple pour extraire, assembler et exporter du contenu de fichiers
 🔹 Pensé pour la lisibilité et l’usage avec des outils d’IA
+🔹 Assemble rapidement le contenu de plusieurs fichiers en un seul document propre et lisible
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.7.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.8.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -94,7 +95,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-### 📊 Statistiques (v0.7.0)
+### 📊 Statistiques (v0.8.0)
 
 - Nombre de fichiers sélectionnés
 - Nombre total de lignes
@@ -148,7 +149,7 @@ C:\Projet\fichier.cs
 # ⚙️ 6. Fonctionnement interne
 
 ```text id="pipelinereadme"
-Import → Lecture → Assemblage → Export
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
 👉 Aucun traitement complexe
@@ -229,6 +230,20 @@ UI = affichage uniquement
 
 👉 Respect strict du modèle ALC
 
+## 🔍 Architecture actuelle (v0.8.0)
+
+Le projet est maintenant structuré en services distincts :
+
+- Import → FileImportService
+- Lecture → FileReaderService
+- Collection → FileCollectionService
+- Assemblage + Export → FileExportService
+
+👉 Le ViewModel agit uniquement comme orchestrateur UI
+👉 Le Core contient toute la logique métier
+
+👉 Objectif : séparation claire UI / Core
+
 ---
 
 # 📦 11. Structure
@@ -243,14 +258,27 @@ Resources/
 
 ---
 
-# 📌 12. État actuel
+# 📌 12. État actuel (v0.8.0)
 
-- ✅ Version 0.7.0 stable
+- ✅ Version 0.8.0 stable
 - ✅ Export amélioré
 - ✅ Statistiques intégrées
 - ✅ UX améliorée
 - ✅ Application fluide
 - ✅ Gestion des gros projets sécurisée
+- ✅ Architecture restructurée (ALC respectée)
+- ✅ Services Core séparés (Import / Reader / Collection / Export)
+
+---
+
+# ⭐ Points forts
+
+- ✔ Très simple à utiliser
+- ✔ Aperçu en temps réel
+- ✔ Aucun risque (lecture seule)
+- ✔ Export propre et structuré
+- ✔ Performant même sur gros projets
+- ✔ Architecture claire (ALC)
 
 ---
 

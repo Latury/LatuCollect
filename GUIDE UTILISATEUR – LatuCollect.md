@@ -97,7 +97,7 @@ Tape ".cs" pour afficher uniquement les fichiers C#
 
 ---
 
-# ⚙️ 4.1 Exclusion de dossiers (v0.6.0)
+# ⚙️ Exclusion de dossiers (v0.6.0)
 
 LatuCollect permet d’exclure certains dossiers du chargement.
 
@@ -152,7 +152,7 @@ Ajouter "node_modules" pour ignorer ce dossier
 
 ---
 
-### ⚠️ Sélection globale (v0.7.0)
+### ⚠️ Sélection globale (v0.8.0)
 
 Le bouton "Tout sélectionner" est actuellement désactivé.
 
@@ -219,7 +219,7 @@ Chemin du fichier
 
 ---
 
-## ⚠️ Limitation de l’aperçu (v0.7.0)
+## ⚠️ Limitation de l’aperçu (v0.8.0)
 
 - L’aperçu est limité à 20 fichiers maximum
 
@@ -268,7 +268,7 @@ Dans la zone centrale :
 
 ---
 
-# 📊 8.1 Voir les statistiques (v0.7.0)
+# 📊 Voir les statistiques (v0.8.0)
 
 Un bouton "Statistiques" permet d’afficher des informations sur les fichiers sélectionnés.
 
@@ -361,13 +361,14 @@ L’application propose plusieurs actions :
 # ⚙️ 11. Fonctionnement interne
 
 ```text
-Import → Lecture → Assemblage → Statistiques → Export
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
 👉 L’application ne modifie jamais le contenu
 👉 Elle copie uniquement le texte
 
-👉 Le contenu est construit une seule fois puis utilisé pour l’aperçu et l’export
+👉 Le contenu est généré une seule fois,
+puis utilisé à la fois pour l’aperçu et l’export
 
 👉 Cela garantit une cohérence parfaite entre affichage et fichier final
 
@@ -411,6 +412,5 @@ LatuCollect permet de :
 
 # ⚙️ 14. Évolutions futures
 
-- 🔄 Mode débutant / expert
 - 🔄 Options avancées
 - 🔄 Amélioration UX
