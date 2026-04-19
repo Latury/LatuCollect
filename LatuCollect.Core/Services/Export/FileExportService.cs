@@ -26,6 +26,7 @@
 */
 
 using LatuCollect.Core.Services.Reader;
+using LatuCollect.Core.Services.Statistics;
 using LatuCollect.Core.Simulation;
 using System;
 using System.Collections.Generic;
@@ -134,8 +135,6 @@ namespace LatuCollect.Core.Services.Export
                 if (!File.Exists(path))
                     continue;
 
-                stats.FileCount++;
-
                 // 📄 Lecture fichier
                 string content = FileReaderService.ReadFile(path);
 
@@ -144,12 +143,8 @@ namespace LatuCollect.Core.Services.Export
                     content = "[Fichier vide ou erreur de lecture]";
                 }
 
-                // 📊 Statistiques
-                stats.TotalCharacters += content.Length;
-                stats.TotalLines += content.Split('\n').Length;
-
-                var fileInfo = new FileInfo(path);
-                stats.TotalSizeBytes += fileInfo.Length;
+                // 📊 Statistiques (APRÈS avoir le contenu)
+                FileStatisticsService.UpdateStatistics(stats, content, path);
 
                 // 📦 Formatage
                 if (isMarkdown)

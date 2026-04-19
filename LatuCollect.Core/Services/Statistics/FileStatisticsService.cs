@@ -1,103 +1,85 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core.Services.Reader                                       ║
-║  Fichier : FileReaderService.cs                                      ║
+║  Module : Core.Services.Statistics                                   ║
+║  Fichier : FileStatisticsService.cs                                  ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Lire le contenu des fichiers                                        ║
+║  Calculer les statistiques des fichiers                              ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Lire un fichier texte                                             ║
-║  - Gérer les erreurs de lecture                                      ║
-║  - Appliquer la simulation si activée                                ║
+║  - Compter les fichiers traités                                      ║
+║  - Calculer le nombre de lignes                                      ║
+║  - Calculer le nombre de caractères                                  ║
+║  - Calculer la taille totale                                         ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - System.IO                                                         ║
-║  - SimulationService                                                 ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
+║  - Service Core pur                                                  ║
 ║  - Aucune dépendance UI                                              ║
-║  - Aucune logique d’export                                           ║
+║  - Ne contient aucune logique d’export                               ║
+║  - Ne lit pas les fichiers (responsabilité du Reader)                ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Simulation;
-using System;
-using System.Collections.Generic;
 using System.IO;
+using LatuCollect.Core.Services.Export;
 
-namespace LatuCollect.Core.Services.Reader
+namespace LatuCollect.Core.Services.Statistics
 {
-    public static class FileReaderService
+    public static class FileStatisticsService
     {
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CHAMPS STATIQUES (CACHE)
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Cache mémoire des fichiers déjà lus
-        // Clé   = chemin du fichier
-        // Valeur = contenu du fichier
-        //
-        // Objectif :
-        // - éviter les lectures disque répétées
-        // - améliorer les performances
-        //
-
-        private static readonly Dictionary<string, string> _fileCache = new();
 
         // ═════════════════════════════════════════════════════════════════════
-        // 2. MÉTHODE PUBLIQUE
+        // 1. MÉTHODE PUBLIQUE
         // ═════════════════════════════════════════════════════════════════════
         //
-        // Lit le contenu d’un fichier :
-        // - applique la simulation si activée
-        // - gère les erreurs
-        // - retourne toujours une string
+        // Met à jour les statistiques globales
+        // à partir du contenu d’un fichier
+        //
 
-        
-        public static string ReadFile(string path)
+        public static void UpdateStatistics(
+            StatisticsResult stats,
+            string content,
+            string path)
         {
-            try
+            stats.FileCount++;
+
+            stats.TotalCharacters += content.Length;
+            stats.TotalLines += CountLines(content);
+
+            var fileInfo = new FileInfo(path);
+            stats.TotalSizeBytes += fileInfo.Length;
+        }
+
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. MÉTHODES PRIVÉES
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Méthodes internes :
+        // - calcul rapide du nombre de lignes
+        //
+
+        private static int CountLines(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
+            int count = 1;
+
+            foreach (char c in text)
             {
-                // 📄 Vérification existence
-                if (!File.Exists(path))
-                    return "[Fichier introuvable]";
-
-                // 🧪 Simulation (prioritaire)
-                string simulated = SimulationService.SimulateRead(path);
-                if (simulated != null)
-                    return simulated;
-
-                // 🔁 Vérifie le cache
-                if (_fileCache.TryGetValue(path, out var cachedContent))
-                {
-                    return cachedContent;
-                }
-
-                // ✔ Lecture normale
-                string content = File.ReadAllText(path);
-
-                // 💾 Stocke en cache
-                _fileCache[path] = content;
-
-                return content;
+                if (c == '\n')
+                    count++;
             }
-            catch (PathTooLongException)
-            {
-                return "[Chemin trop long]";
-            }
-            catch (IOException)
-            {
-                return "[Erreur de lecture]";
-            }
-            catch (Exception)
-            {
-                return "[Erreur inconnue]";
-            }
+
+            return count;
         }
     }
 }

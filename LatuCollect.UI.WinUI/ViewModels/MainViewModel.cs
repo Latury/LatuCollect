@@ -38,6 +38,7 @@ using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreFileNode = LatuCollect.Core.Models.FileNode;
@@ -67,6 +68,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private string _currentFolderPath = string.Empty;
         private string _searchText = string.Empty;
         private string? _selectedFormat = null;
+        // Cache du dernier état utilisé pour le preview
+        private string _lastSelectionSignature = string.Empty;
+        private bool _lastIsMarkdown = false;
 
         // ─────────────────────────────────────────────
         // 💬 FEEDBACK UTILISATEUR
@@ -91,6 +95,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         // Permet d’annuler une recherche en cours (debounce)
         private CancellationTokenSource? _searchCts;
+
+        // Évite plusieurs refresh preview simultanés
+        private bool _isPreviewLoading = false;
 
         // ─────────────────────────────────────────────
         // 🔧 SERVICES CORE
@@ -597,53 +604,77 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         private async void RefreshPreview()
+{
+    if (_isPreviewLoading)
+        return;
+
+    _isPreviewLoading = true;
+
+    try
+    {
+        var files = GetSelectedFiles(); // ✅ ici
+
+        if (files.Count == 0)
         {
-            var files = GetSelectedFiles();
+            _lastSelectionSignature = string.Empty;
+            _lastIsMarkdown = false;
 
-            if (files.Count == 0)
-            {
-                PreviewText = "Aucun fichier sélectionné...";
-                return;
-            }
-
-            CurrentState = UiState.Loading;
-
-            const int MAX_FILES_PREVIEW = 20;
-
-            var previewFiles = files.Count > MAX_FILES_PREVIEW
-                ? files.GetRange(0, MAX_FILES_PREVIEW)
-                : files;
-
-            bool isMarkdown = SelectedFormat == ".md";
-
-            var data = await Task.Run(() =>
-            {
-                return _exportService.BuildContentWithStats(previewFiles, isMarkdown);
-            });
-
-            var content = data.Content;
-            var stats = data.Stats;
-
-            if (files.Count > MAX_FILES_PREVIEW)
-            {
-                content += "\n\n----------------------------------------\n";
-                content += "⚠ Aperçu limité à 20 fichiers...\n";
-            }
-
-            PreviewText = content;
-
-            FileCount = stats.FileCount;
-            TotalLines = stats.TotalLines;
-            TotalCharacters = stats.TotalCharacters;
-            TotalSize = stats.TotalSizeBytes;
-
-            CurrentState = UiState.Ready;
-
-            OnPropertyChanged(nameof(CanCopy));
-            OnPropertyChanged(nameof(IsPreviewEmpty));
-            OnPropertyChanged(nameof(CanExport));
-            OnPropertyChanged(nameof(HasEmptyFiles));
+            PreviewText = "Aucun fichier sélectionné...";
+            return;
         }
+
+        bool isMarkdown = SelectedFormat == ".md";
+        string currentSignature = BuildSelectionSignature(files);
+
+        if (currentSignature == _lastSelectionSignature && isMarkdown == _lastIsMarkdown)
+        {
+            return;
+        }
+
+        _lastSelectionSignature = currentSignature;
+        _lastIsMarkdown = isMarkdown;
+
+        CurrentState = UiState.Loading;
+
+        const int MAX_FILES_PREVIEW = 20;
+
+        var previewFiles = files.Count > MAX_FILES_PREVIEW
+            ? files.GetRange(0, MAX_FILES_PREVIEW)
+            : files;
+
+        var data = await Task.Run(() =>
+        {
+            return _exportService.BuildContentWithStats(previewFiles, isMarkdown);
+        });
+
+        var content = data.Content;
+        var stats = data.Stats;
+
+        if (files.Count > MAX_FILES_PREVIEW)
+        {
+            content += "\n\n----------------------------------------\n";
+            content += "⚠ Aperçu limité à 20 fichiers...\n";
+        }
+
+        PreviewText = content;
+
+        FileCount = stats.FileCount;
+        TotalLines = stats.TotalLines;
+        TotalCharacters = stats.TotalCharacters;
+        TotalSize = stats.TotalSizeBytes;
+
+        CurrentState = UiState.Ready;
+
+        OnPropertyChanged(nameof(CanCopy));
+        OnPropertyChanged(nameof(IsPreviewEmpty));
+        OnPropertyChanged(nameof(CanExport));
+        OnPropertyChanged(nameof(HasEmptyFiles));
+    }
+    finally
+    {
+        _isPreviewLoading = false;
+    }
+}
 
         // ─────────────────────────────────────────────
         // 💬 FEEDBACK UTILISATEUR
@@ -701,6 +732,23 @@ namespace LatuCollect.UI.WinUI.ViewModels
         //
         // ⚠️ Doivent rester simples (pas de logique métier complexe)
         //
+
+        // ─────────────────────────────────────────────
+        // 🧠 CACHE / SIGNATURE (OPTIMISATION PREVIEW)
+        // ─────────────────────────────────────────────
+
+        // Génère une signature unique basée sur les fichiers sélectionnés
+        // Permet de détecter si l'état a changé
+        private string BuildSelectionSignature(List<string> filePaths)
+        {
+            if (filePaths == null || filePaths.Count == 0)
+                return string.Empty;
+
+            // Ordre stable pour éviter faux changements
+            var ordered = filePaths.OrderBy(p => p);
+
+            return string.Join("|", ordered);
+        }
 
         // ─────────────────────────────────────────────
         // 🔍 FILTRE DE RECHERCHE
@@ -767,8 +815,29 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private List<string> GetSelectedFiles()
         {
-            var coreNodes = _collectionService.ConvertFromUiTree(Tree);
+            var coreNodes = ConvertToCoreNodes(Tree);
             return _collectionService.GetSelectedFiles(coreNodes);
+        }
+
+        private List<CoreFileNode> ConvertToCoreNodes(IEnumerable<UiFileNode> uiNodes)
+        {
+            var result = new List<CoreFileNode>();
+
+            foreach (var uiNode in uiNodes)
+            {
+                var coreNode = new CoreFileNode
+                {
+                    Name = uiNode.Name,
+                    Path = uiNode.Path,
+                    IsSelected = uiNode.IsSelected
+                };
+
+                coreNode.Children = ConvertToCoreNodes(uiNode.Children);
+
+                result.Add(coreNode);
+            }
+
+            return result;
         }
 
         // ─────────────────────────────────────────────
