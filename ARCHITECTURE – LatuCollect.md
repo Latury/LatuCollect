@@ -244,14 +244,18 @@ ExcludedFolders = ["bin", "obj", ".git"]
 ## 🔹 Pipeline réel (Core)
 
 ```text
-Import → Lecture → Assemblage → Statistiques → Export
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
 ⚠️ Note :
 
-Actuellement, l’assemblage et les statistiques sont réalisés dans `FileExportService`.
+Le pipeline est maintenant partiellement découplé :
 
-Une séparation complète est prévue dans les versions futures.
+- Assemblage → FileExportService
+- Statistiques → FileStatisticsService
+
+👉 Séparation introduite en v0.9.0
+👉 Évolution progressive vers un pipeline totalement modulaire
 
 ---
 
@@ -272,7 +276,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-## 🔍 État réel (v0.8.0)
+## 🔍 État réel (v0.9.0)
 
 👉 Le pipeline est maintenant partiellement découpé en services distincts.
 
@@ -283,17 +287,23 @@ Importer → Sélectionner → Aperçu → Exporter
 - Collection → `FileCollectionService`
 - Export + Assemblage → `FileExportService`
 
-👉 Le service `FileExportService` reste actuellement responsable de :
+👉 Les responsabilités sont maintenant réparties :
 
-- l’assemblage du contenu
-- le calcul des statistiques
-- la génération finale
+- `FileExportService` → assemblage + génération du contenu
+- `FileStatisticsService` → calcul des statistiques
+
+👉 Cette séparation améliore :
+
+- la lisibilité
+- la maintenabilité
+- la scalabilité du Core
 
 ---
 
 ### ⚠️ Ce qui sera refactorisé plus tard
 
-- Séparation de `Statistics` dans un service dédié
+- Amélioration du FileStatisticsService
+- Extension du système de statistiques
 - Réduction du rôle du `FileExportService`
 - Découpage plus fin du pipeline
 
@@ -303,13 +313,14 @@ Importer → Sélectionner → Aperçu → Exporter
 
 # 5. CORRESPONDANCE SERVICES
 
-| Étape      | Service               |
-| ---------- | --------------------- |
-| Import     | FileImportService     |
-| Lecture    | FileReaderService     |
-| Collection | FileCollectionService |
-| Assemblage | FileExportService     |
-| Export     | FileExportService     |
+| Étape        | Service               |
+| ------------ | --------------------- |
+| Import       | FileImportService     |
+| Lecture      | FileReaderService     |
+| Collection   | FileCollectionService |
+| Statistiques | FileStatisticsService |
+| Assemblage   | FileExportService     |
+| Export       | FileExportService     |
 
 ---
 
@@ -329,7 +340,25 @@ Importer → Sélectionner → Aperçu → Exporter
 - ✔ Méthode centrale : BuildContent()
 - ✔ Garantit la cohérence aperçu/export
 
-### 🔄 Évolution (v0.7.0)
+## 📊 FileStatisticsService (v0.9.0)
+
+- ✔ Calcule les statistiques des fichiers
+- ✔ Séparation complète de la logique métier liée aux stats
+- ✔ Aucune dépendance UI
+
+👉 Responsabilités :
+
+- Nombre de fichiers
+- Nombre de lignes
+- Nombre de caractères
+- Taille totale
+
+👉 Objectif :
+
+- Alléger FileExportService
+- Préparer une architecture scalable
+
+### 🔄 Évolution (v0.9.0)
 
 - ✔ Optimisation du traitement des fichiers
 - ✔ Participation au calcul global (via le flux)
@@ -379,6 +408,20 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 - Éviter les freezes UI
 - Garantir la fluidité
+
+## ⚡ PERFORMANCE (v0.9.0)
+
+- ✔ Mise en cache des fichiers (FileReaderService)
+- ✔ Réduction des accès disque (I/O)
+- ✔ Réduction des recalculs inutiles (cache ViewModel)
+- ✔ Optimisation mémoire (moins d’allocations)
+- ✔ Amélioration du temps de génération du preview
+
+👉 Résultat :
+
+- Application plus rapide
+- UI plus fluide
+- Pipeline plus efficace
 
 ---
 
@@ -515,6 +558,11 @@ Futur :
 - ✔ Configuration globale centralisée
 - ✔ Statistiques temps réel
 - ✔ Optimisation des performances (aperçu limité)
+
+- ✔ Optimisation globale du pipeline (v0.9.0)
+- ✔ Mise en cache des fichiers
+- ✔ Séparation des statistiques
+- ✔ UI plus stable (gestion des états améliorée)
 
 ---
 

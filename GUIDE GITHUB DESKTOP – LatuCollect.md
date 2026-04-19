@@ -35,7 +35,7 @@ Chaque commit doit rester cohérent avec :
 ## 🔹 Pipeline interne
 
 ```text
-Import → Lecture → Assemblage → Export
+Import → Lecture (cache) → Collection → Assemblage → Statistiques → Export
 ```
 
 ---
@@ -45,6 +45,12 @@ Import → Lecture → Assemblage → Export
 ```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
+
+👉 Optimisations v0.9.0 :
+
+- Mise en cache des fichiers (lecture)
+- Réduction des recalculs preview
+- Pipeline optimisé sans doublons
 
 ---
 
@@ -100,7 +106,9 @@ Toutes les 30 à 60 minutes
 
 Phase actuelle :
 
-👉 UI WinUI (MVP validé)
+👉 Version 0.9.0 — Optimisation terminée
+👉 Application stable et performante
+👉 Préparation phase de finalisation (0.10.0)
 
 Priorités :
 

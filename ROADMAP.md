@@ -411,36 +411,40 @@ Améliorer les performances, la fluidité et préparer les bases d’un comporte
 
 ## ⚡ Performance
 
-- ⬜ Optimisation lecture fichiers (réduction I/O inutiles)
-- ⬜ Optimisation mémoire (réduction allocations)
-- ⬜ Amélioration du temps de génération preview
-- ⬜ Réduction des recalculs inutiles
+- ✅ Optimisation lecture fichiers (réduction I/O inutiles)
+- ✅ Mise en cache des fichiers (FileReaderService)
+- ✅ Optimisation mémoire (réduction allocations)
+- ✅ Amélioration du temps de génération preview
+- ✅ Réduction des recalculs inutiles
 
 ---
 
 ## 🖥️ UI
 
-- ⬜ Amélioration réactivité interface
-- ⬜ Optimisation rafraîchissement aperçu
-- ⬜ Gestion plus fine des états (loading / ready)
+- ✅ Amélioration réactivité interface
+- ✅ Optimisation rafraîchissement aperçu
+- ✅ Réduction des appels inutiles au Core
+- ✅ Gestion plus fine des états (loading / ready)
 
 ---
 
 ## 🧠 Core
 
-- ⬜ Préparation séparation :
-  - StatisticsService (future extraction)
-- ⬜ Réduction responsabilité FileExportService
-- ⬜ Amélioration pipeline interne
+- ✅ Séparation des statistiques (FileStatisticsService)
+- ✅ Préparation à l’extension du système de statistiques
+- ✅ Externalisation du calcul des statistiques
+- ✅ Réduction responsabilité FileExportService
+- ✅ Amélioration pipeline interne
 
 ---
 
 ## 🔄 Pipeline
 
-- ⬜ Vérification complète du flux :
+- ✅ Vérification complète du flux :
   Import → Lecture → Collection → Assemblage → Statistiques → Export
-
-- ⬜ Suppression éventuelle des doublons internes
+- ✅ Optimisation du flux Preview → Export (source unique maintenue)
+- ✅ Suppression des doublons internes
+- ✅ Mise en place de caches (lecture + preview)
 
 ---
 
@@ -462,7 +466,7 @@ Objectif futur :
 
 - ✔ Application plus rapide
 - ✔ UI plus fluide
-- ✔ Code encore plus propre
+- ✔ Code plus modulaire et maintenable
 
 ---
 
@@ -482,34 +486,34 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🧱 Architecture
 
-* ⬜ Refonte complète du système de simulation
-* ⬜ Séparation stricte UI / Core
-* ⬜ Centralisation des scénarios
-* ⬜ Système extensible (ajout facile de scénarios)
+- ⬜ Refonte complète du système de simulation
+- ⬜ Séparation stricte UI / Core
+- ⬜ Centralisation des scénarios
+- ⬜ Système extensible (ajout facile de scénarios)
 
 ---
 
 ## 🧑‍💻 Mode développeur
 
-* ⬜ Activation via Paramètres → Paramètres avancés
-* ⬜ Désactivation par défaut
-* ⬜ Aucun impact utilisateur normal
+- ⬜ Activation via Paramètres → Paramètres avancés
+- ⬜ Désactivation par défaut
+- ⬜ Aucun impact utilisateur normal
 
 ---
 
 ## 🧪 UI Simulation
 
-* ⬜ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
-* ⬜ Popup de sélection des scénarios
-* ⬜ Activation / désactivation en temps réel
+- ⬜ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
+- ⬜ Popup de sélection des scénarios
+- ⬜ Activation / désactivation en temps réel
 
 ---
 
 ## 🛡️ Règles
 
-* ⬜ Aucun impact en production
-* ⬜ Simulation isolée du Core réel
-* ⬜ Activation explicite uniquement
+- ⬜ Aucun impact en production
+- ⬜ Simulation isolée du Core réel
+- ⬜ Activation explicite uniquement
 
 ---
 
@@ -517,81 +521,81 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 📂 Lecture (Reader)
 
-* ⬜ Fichier introuvable
-* ⬜ Chemin invalide
-* ⬜ Chemin trop long
-* ⬜ Accès refusé
-* ⬜ Fichier verrouillé
-* ⬜ Fichier vide
-* ⬜ Fichier très volumineux
-* ⬜ Fichier binaire
-* ⬜ Encodage spécial
+- ⬜ Fichier introuvable
+- ⬜ Chemin invalide
+- ⬜ Chemin trop long
+- ⬜ Accès refusé
+- ⬜ Fichier verrouillé
+- ⬜ Fichier vide
+- ⬜ Fichier très volumineux
+- ⬜ Fichier binaire
+- ⬜ Encodage spécial
 
 ---
 
 ## 📤 Export
 
-* ⬜ Accès refusé
-* ⬜ Fichier déjà ouvert
-* ⬜ Chemin invalide
-* ⬜ Disque plein (simulation)
-* ⬜ Export vide
-* ⬜ Export massif
+- ⬜ Accès refusé
+- ⬜ Fichier déjà ouvert
+- ⬜ Chemin invalide
+- ⬜ Disque plein (simulation)
+- ⬜ Export vide
+- ⬜ Export massif
 
 ---
 
 ## 📦 Collection
 
-* ⬜ Aucun fichier sélectionné
-* ⬜ Sélection partielle
-* ⬜ Sélection profonde
-* ⬜ Sélection massive
-* ⬜ Fichiers supprimés entre-temps
+- ⬜ Aucun fichier sélectionné
+- ⬜ Sélection partielle
+- ⬜ Sélection profonde
+- ⬜ Sélection massive
+- ⬜ Fichiers supprimés entre-temps
 
 ---
 
 ## 🖥️ UI
 
-* ⬜ Loader bloqué
-* ⬜ Erreur UI forcée
-* ⬜ État incohérent
-* ⬜ UI figée (simulation extrême)
+- ⬜ Loader bloqué
+- ⬜ Erreur UI forcée
+- ⬜ État incohérent
+- ⬜ UI figée (simulation extrême)
 
 ---
 
 ## 👁️ Aperçu
 
-* ⬜ Aucun fichier sélectionné
-* ⬜ Limitation à 20 fichiers
-* ⬜ Contenu très long
-* ⬜ Fichiers vides
+- ⬜ Aucun fichier sélectionné
+- ⬜ Limitation à 20 fichiers
+- ⬜ Contenu très long
+- ⬜ Fichiers vides
 
 ---
 
 ## 🔍 Recherche
 
-* ⬜ Aucun résultat
-* ⬜ Recherche rapide (debounce)
-* ⬜ Recherche par extension
-* ⬜ Recherche sur gros projet
+- ⬜ Aucun résultat
+- ⬜ Recherche rapide (debounce)
+- ⬜ Recherche par extension
+- ⬜ Recherche sur gros projet
 
 ---
 
 ## ⚡ Performance
 
-* ⬜ Projet volumineux
-* ⬜ Arborescence profonde
-* ⬜ Sélection massive
-* ⬜ Export lourd
+- ⬜ Projet volumineux
+- ⬜ Arborescence profonde
+- ⬜ Sélection massive
+- ⬜ Export lourd
 
 ---
 
 ## 👤 Utilisateur réel
 
-* ⬜ Clics rapides répétés
-* ⬜ Changement dossier pendant chargement
-* ⬜ Fermeture pendant traitement
-* ⬜ Actions simultanées
+- ⬜ Clics rapides répétés
+- ⬜ Changement dossier pendant chargement
+- ⬜ Fermeture pendant traitement
+- ⬜ Actions simultanées
 
 ---
 
@@ -599,103 +603,103 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🧱 Core
 
-* ⬜ Mise en place d’un LogService
-* ⬜ Centralisation des logs
+- ⬜ Mise en place d’un LogService
+- ⬜ Centralisation des logs
 
 ---
 
 ## 📊 Types de logs
 
-* ⬜ Chargement dossier
-* ⬜ Lecture fichiers
-* ⬜ Export
-* ⬜ Erreurs
-* ⬜ Actions utilisateur
+- ⬜ Chargement dossier
+- ⬜ Lecture fichiers
+- ⬜ Export
+- ⬜ Erreurs
+- ⬜ Actions utilisateur
 
 ---
 
 ## 🖥️ UI
 
-* ⬜ Accès aux logs via Paramètres avancés
-* ⬜ Visualisation dans l’application
-* ⬜ Export des logs
+- ⬜ Accès aux logs via Paramètres avancés
+- ⬜ Visualisation dans l’application
+- ⬜ Export des logs
 
 ---
 
 ## 🎯 Objectif
 
-* Faciliter le debug
-* Comprendre les erreurs
-* Aider à la maintenance
+- Faciliter le debug
+- Comprendre les erreurs
+- Aider à la maintenance
 
 ---
 
 # 🎨 Refonte UI
 
-* ⬜ Modernisation du design
-* ⬜ Amélioration des couleurs
-* ⬜ Amélioration lisibilité
-* ⬜ Cohérence visuelle globale
-* ⬜ Harmonisation des composants
+- ⬜ Modernisation du design
+- ⬜ Amélioration des couleurs
+- ⬜ Amélioration lisibilité
+- ⬜ Cohérence visuelle globale
+- ⬜ Harmonisation des composants
 
 ---
 
 # 🌗 Thèmes
 
-* ⬜ Mode sombre
-* ⬜ Mode clair
-* ⬜ Système de couleurs centralisé
+- ⬜ Mode sombre
+- ⬜ Mode clair
+- ⬜ Système de couleurs centralisé
 
 ---
 
 # ⚙️ Configuration utilisateur
 
-* ⬜ Sauvegarde des préférences
-* ⬜ Format par défaut (.txt / .md)
-* ⬜ Gestion des exclusions persistées
-* ⬜ Thème sélectionné
-* ⬜ Activation mode développeur
+- ⬜ Sauvegarde des préférences
+- ⬜ Format par défaut (.txt / .md)
+- ⬜ Gestion des exclusions persistées
+- ⬜ Thème sélectionné
+- ⬜ Activation mode développeur
 
 ---
 
 # 🧾 Application
 
-* ⬜ Version affichée (À propos)
-* ⬜ Licence visible
-* ⬜ Informations application
+- ⬜ Version affichée (À propos)
+- ⬜ Licence visible
+- ⬜ Informations application
 
 ---
 
 # 🖼️ Identité visuelle
 
-* ⬜ Création logo
-* ⬜ Icône .ico (exe + Windows)
-* ⬜ Icône barre des tâches
+- ⬜ Création logo
+- ⬜ Icône .ico (exe + Windows)
+- ⬜ Icône barre des tâches
 
 ---
 
 # 🔄 Mise à jour
 
-* ⬜ Vérification de version
-* ⬜ Notification utilisateur
+- ⬜ Vérification de version
+- ⬜ Notification utilisateur
 
 ---
 
 # 📦 Distribution
 
-* ⬜ Création installateur
-* ⬜ Gestion dépendances
-* ⬜ Multi-architecture (x64 / x86)
-* ⬜ Choix dossier installation
-* ⬜ Création raccourcis
+- ⬜ Création installateur
+- ⬜ Gestion dépendances
+- ⬜ Multi-architecture (x64 / x86)
+- ⬜ Choix dossier installation
+- ⬜ Création raccourcis
 
 ---
 
 # ⚙️ Build
 
-* ⬜ Build release propre
-* ⬜ Optimisation finale
-* ⬜ Vérification stabilité globale
+- ⬜ Build release propre
+- ⬜ Optimisation finale
+- ⬜ Vérification stabilité globale
 
 ---
 
@@ -703,8 +707,8 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 👉 LatuCollect devient :
 
-* ✔ Stable
-* ✔ Testé en profondeur
-* ✔ Robuste face aux erreurs
-* ✔ Maintenable
-* ✔ Distribuable proprement
+- ✔ Stable
+- ✔ Testé en profondeur
+- ✔ Robuste face aux erreurs
+- ✔ Maintenable
+- ✔ Distribuable proprement

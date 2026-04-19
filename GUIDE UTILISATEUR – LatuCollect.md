@@ -70,7 +70,7 @@ Une barre de recherche permet de :
 - ✅ Rechercher rapidement par nom
 - ✅ Recherche insensible à la casse
 
-👉 Le résultat est affiché instantanément
+👉 Le résultat est affiché rapidement et de manière fluide
 
 👉 La recherche est optimisée pour rester fluide, même sur des projets volumineux.
 
@@ -227,12 +227,28 @@ Chemin du fichier
 
 → un message s’affiche :
 
-⚠ Aperçu limité à 20 fichiers
+⚠ Aperçu limité à 20 fichiers pour garantir la fluidité
 
 ---
 
 👉 L’export n’est pas limité
 👉 Seul l’affichage est réduit pour éviter les ralentissements
+
+---
+
+## ⚡ Améliorations (v0.9.0)
+
+L’aperçu a été optimisé pour améliorer la fluidité :
+
+- ✅ Mise à jour uniquement en cas de changement réel
+- ✅ Réduction des recalculs inutiles
+- ✅ Affichage plus rapide
+
+👉 Résultat :
+
+- Interface plus fluide
+- Moins d’attente
+- Meilleure expérience utilisateur
 
 ---
 
@@ -271,6 +287,16 @@ Dans la zone centrale :
 # 📊 Voir les statistiques (v0.8.0)
 
 Un bouton "Statistiques" permet d’afficher des informations sur les fichiers sélectionnés.
+
+---
+
+### 🔄 Améliorations (v0.9.0)
+
+- ✅ Calcul plus rapide
+- ✅ Optimisation interne des performances
+
+👉 Les statistiques sont désormais calculées de manière plus efficace,
+sans impact sur la fluidité de l’application
 
 ---
 
@@ -414,3 +440,17 @@ LatuCollect permet de :
 
 - 🔄 Options avancées
 - 🔄 Amélioration UX
+
+---
+
+# ⚡ Améliorations globales (v0.9.0)
+
+Cette version apporte une amélioration générale des performances :
+
+- ✅ Application plus rapide
+- ✅ Interface plus fluide
+- ✅ Réduction des temps d’attente
+- ✅ Meilleure stabilité
+
+👉 Aucun changement de fonctionnement :
+l’application reste simple et identique à utiliser

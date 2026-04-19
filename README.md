@@ -10,7 +10,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.8.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.9.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -191,6 +191,26 @@ afin de garantir la fluidité de l’application
 
 ---
 
+## v0.9.0
+
+- ✅ Mise en cache des fichiers (lecture disque optimisée)
+- ✅ Réduction des recalculs inutiles (cache ViewModel)
+- ✅ Amélioration de la génération du preview
+- ✅ Réduction des allocations mémoire
+- ✅ Optimisation globale du pipeline
+
+- ✅ Interface plus fluide :
+  - Suppression des refresh multiples
+  - Meilleure gestion des états (Loading / Ready)
+
+👉 Résultat :
+
+- Génération plus rapide
+- Moins de charge CPU
+- UI plus stable
+
+---
+
 # ⚠️ 8. Ce que l’application NE fait PAS
 
 - ❌ Aucune analyse de code
@@ -230,7 +250,7 @@ UI = affichage uniquement
 
 👉 Respect strict du modèle ALC
 
-## 🔍 Architecture actuelle (v0.8.0)
+## 🔍 Architecture actuelle (v0.9.0)
 
 Le projet est maintenant structuré en services distincts :
 
@@ -243,6 +263,13 @@ Le projet est maintenant structuré en services distincts :
 👉 Le Core contient toute la logique métier
 
 👉 Objectif : séparation claire UI / Core
+
+### Améliorations 0.9.0
+
+- Séparation du calcul des statistiques (`FileStatisticsService`)
+- Allègement du `FileExportService`
+- Optimisation des services Core
+- Pipeline plus efficace (moins de doublons)
 
 ---
 
@@ -258,16 +285,18 @@ Resources/
 
 ---
 
-# 📌 12. État actuel (v0.8.0)
+# 📌 12. État actuel (v0.9.0)
 
-- ✅ Version 0.8.0 stable
-- ✅ Export amélioré
-- ✅ Statistiques intégrées
-- ✅ UX améliorée
-- ✅ Application fluide
-- ✅ Gestion des gros projets sécurisée
-- ✅ Architecture restructurée (ALC respectée)
-- ✅ Services Core séparés (Import / Reader / Collection / Export)
+- ✅ Version 0.9.0 stable
+- ✅ Performance fortement améliorée
+- ✅ Preview optimisé (cache + anti recalcul)
+- ✅ Lecture fichiers optimisée (cache)
+- ✅ UI plus fluide et stable
+- ✅ Gestion des états améliorée
+- ✅ Architecture renforcée (séparation des responsabilités)
+- ✅ Pipeline optimisé (aucun doublon)
+
+👉 Application prête pour la phase de finalisation (v0.10.0)
 
 ---
 

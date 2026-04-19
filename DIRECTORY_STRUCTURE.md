@@ -329,7 +329,7 @@ UI → ViewModel → Core
 
 ---
 
-# 🧩 Structure actuelle (v0.8.0)
+# 🧩 Structure actuelle (v0.9.0)
 
 👉 Cette section reflète l’état réel du projet actuellement.
 
@@ -393,7 +393,6 @@ LatuCollect/
 
 👉 Ce qui n’est PAS encore implémenté :
 
-- ❌ Dossier `Statistics/` (prévu)
 - ❌ Dossier `Utils/` (prévu)
 - ❌ Dossier `Logging/`
 - ❌ Dossier `Interfaces/`
@@ -419,14 +418,20 @@ LatuCollect/
 
 ---
 
+````md
 # 🧠 État du projet
 
 ```text
-✔ Architecture en cours de stabilisation (0.8.0)
-✔ Services principaux en place (Import / Reader / Collection / Export)
+✔ Architecture stabilisée (v0.9.0)
+✔ Services principaux en place (Import / Reader / Collection / Export / Statistics)
 ✔ Séparation UI / Core respectée
+✔ Optimisation globale du pipeline
+✔ Mise en cache des fichiers (lecture + preview)
+✔ Réduction des recalculs inutiles
+✔ Séparation des statistiques (FileStatisticsService)
 ✔ Base solide pour évolution vers v1.0.0
 ```
+````
 
 ---
 

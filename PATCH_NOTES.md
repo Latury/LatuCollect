@@ -840,60 +840,56 @@ Rendre le projet propre, lisible et maintenable en respectant strictement l’ar
 
 ### 🧱 Structuration du projet
 
-* ✅ Réorganisation complète des fichiers
-* ✅ Ajout d’une structure claire et cohérente (Core / UI / Services)
-* ✅ Harmonisation de tous les fichiers avec des sections structurées
+- ✅ Réorganisation complète des fichiers
+- ✅ Ajout d’une structure claire et cohérente (Core / UI / Services)
+- ✅ Harmonisation de tous les fichiers avec des sections structurées
 
 ---
 
 ### 🧠 Architecture (ALC)
 
-* ✅ Séparation stricte UI / Core
-* ✅ Suppression de la logique métier côté UI
-* ✅ Clarification du rôle du ViewModel :
-
-  * Gestion de l’état UI
-  * Appel des services Core uniquement
+- ✅ Séparation stricte UI / Core
+- ✅ Suppression de la logique métier côté UI
+- ✅ Clarification du rôle du ViewModel :
+  - Gestion de l’état UI
+  - Appel des services Core uniquement
 
 ---
 
 ### 🔧 Services Core
 
-* ✅ Création de dossiers dédiés :
+- ✅ Création de dossiers dédiés :
+  - `Reader`
+  - `Export`
+  - `Collection`
 
-  * `Reader`
-  * `Export`
-  * `Collection`
-
-* ✅ Clarification des responsabilités :
-
-  * `FileImportService` → chargement arborescence
-  * `FileReaderService` → lecture fichiers
-  * `FileCollectionService` → récupération fichiers sélectionnés
-  * `FileExportService` → assemblage + export + statistiques
+- ✅ Clarification des responsabilités :
+  - `FileImportService` → chargement arborescence
+  - `FileReaderService` → lecture fichiers
+  - `FileCollectionService` → récupération fichiers sélectionnés
+  - `FileExportService` → assemblage + export + statistiques
 
 ---
 
 ### 🔄 Pipeline
 
-* ✅ Pipeline clarifié :
+- ✅ Pipeline clarifié :
 
 ```text
 Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
-* ✅ Cohérence complète entre tous les services
+- ✅ Cohérence complète entre tous les services
 
 ---
 
 ### 🔁 Conversion UI ↔ Core
 
-* ✅ Séparation des modèles :
+- ✅ Séparation des modèles :
+  - `UI.Models.FileNode`
+  - `Core.Models.FileNode`
 
-  * `UI.Models.FileNode`
-  * `Core.Models.FileNode`
-
-* ✅ Conversion mise en place dans le ViewModel
+- ✅ Conversion mise en place dans le ViewModel
 
 👉 Permet de découpler complètement UI et logique métier
 
@@ -901,49 +897,47 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ### 🖥️ UI
 
-* ✅ Structuration complète de `MainWindow.xaml.cs`
+- ✅ Structuration complète de `MainWindow.xaml.cs`
 
-* ✅ Organisation en sections :
+- ✅ Organisation en sections :
+  - Initialisation
+  - Actions utilisateur
+  - Dialogs
+  - Statistiques
+  - Menus
 
-  * Initialisation
-  * Actions utilisateur
-  * Dialogs
-  * Statistiques
-  * Menus
-
-* ✅ Amélioration de la lisibilité du code UI
+- ✅ Amélioration de la lisibilité du code UI
 
 ---
 
 ### 🧾 Documentation
 
-* ✅ Mise à jour complète :
+- ✅ Mise à jour complète :
+  - README
+  - ARCHITECTURE
+  - UI_GUIDE
+  - GUIDE_UTILISATEUR
+  - TESTS
+  - DIRECTORY_STRUCTURE
 
-  * README
-  * ARCHITECTURE
-  * UI_GUIDE
-  * GUIDE_UTILISATEUR
-  * TESTS
-  * DIRECTORY_STRUCTURE
-
-* ✅ Ajout des différences entre structure actuelle et cible
+- ✅ Ajout des différences entre structure actuelle et cible
 
 ---
 
 ## 🧠 Résultat
 
-* ✔ Code plus propre
-* ✔ Architecture claire
-* ✔ Meilleure maintenabilité
-* ✔ Base solide pour évolutions futures
+- ✔ Code plus propre
+- ✔ Architecture claire
+- ✔ Meilleure maintenabilité
+- ✔ Base solide pour évolutions futures
 
 ---
 
 ## ⚠️ Limites actuelles
 
-* ❌ Certaines optimisations encore à faire (refactor avancé)
-* ❌ Simulation à restructurer (future discussion)
-* ❌ Découpage des services encore améliorable
+- ❌ Certaines optimisations encore à faire (refactor avancé)
+- ❌ Simulation à restructurer (future discussion)
+- ❌ Découpage des services encore améliorable
 
 ---
 
@@ -951,12 +945,137 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 👉 LatuCollect devient :
 
-* ✔ Structuré
-* ✔ Maintenable
-* ✔ Évolutif
-* ✔ Conforme ALC
+- ✔ Structuré
+- ✔ Maintenable
+- ✔ Évolutif
+- ✔ Conforme ALC
 
 👉 Prêt pour la version 0.9.0
+
+---
+
+# 🚀 VERSION 0.9.0
+
+## 📌 Statut
+
+🟢 Terminée — Optimisation & performance
+
+---
+
+## 🎯 Objectif
+
+Améliorer les performances, la fluidité et préparer une architecture scalable, sans modifier le comportement utilisateur.
+
+---
+
+## ✨ Améliorations
+
+### ⚡ Performance
+
+- ✅ Mise en cache des fichiers (FileReaderService)
+  - Lecture disque effectuée une seule fois par fichier
+  - Réduction importante des I/O
+
+- ✅ Réduction des recalculs inutiles
+  - Ajout d’un cache de signature dans le ViewModel
+  - Recalcul du preview uniquement si nécessaire
+
+- ✅ Optimisation mémoire
+  - Suppression des allocations inutiles
+  - Remplacement du `Split()` par un comptage optimisé des lignes
+
+- ✅ Amélioration du temps de génération du preview
+  - Calcul plus rapide
+  - Moins de traitement redondant
+
+---
+
+### 🖥️ Interface utilisateur
+
+- ✅ Amélioration de la réactivité globale
+  - Interface plus fluide
+  - Réduction des temps d’attente
+
+- ✅ Optimisation du rafraîchissement du preview
+  - Mise à jour uniquement en cas de changement réel
+
+- ✅ Gestion des états améliorée (Loading / Ready)
+  - Ajout d’un verrou (`_isPreviewLoading`)
+  - Protection contre les appels multiples
+  - État UI toujours cohérent (try/finally)
+
+---
+
+### 🧠 Core
+
+- ✅ Externalisation du calcul des statistiques
+  - Création de `FileStatisticsService`
+  - Séparation des responsabilités
+
+- ✅ Réduction des responsabilités de `FileExportService`
+  - Assemblage uniquement
+  - Délégation du calcul des statistiques
+
+- ✅ Clarification de l’architecture interne
+  - Services mieux définis
+  - Code plus lisible et maintenable
+
+---
+
+### 🔄 Pipeline
+
+- ✅ Optimisation complète du flux :
+
+  Import → Lecture (cache) → Collection → Assemblage → Statistiques → Export
+
+- ✅ Suppression des doublons internes
+  - Plus de double lecture des fichiers
+  - Plus de recalcul inutile
+
+- ✅ Garantie maintenue :
+  - Aperçu = Export (source unique de vérité)
+
+---
+
+## 🧠 Résultat
+
+- ✔ Application plus rapide
+- ✔ Interface plus fluide
+- ✔ Moins de consommation mémoire
+- ✔ Aucun recalcul inutile
+- ✔ Architecture plus propre et évolutive
+
+---
+
+## ⚠️ Limites actuelles
+
+- ❌ Cache non invalidé si les fichiers sont modifiés pendant l’utilisation
+- ❌ Pas encore de virtualisation UI avancée
+
+---
+
+## 🏁 Objectif atteint
+
+👉 LatuCollect devient :
+
+- ✔ Plus performant
+- ✔ Plus fluide
+- ✔ Plus stable
+- ✔ Plus scalable
+
+👉 Sans complexifier l’application (simplicité respectée)
+
+---
+
+## 💡 Note technique
+
+Cette version introduit :
+
+- Un système de cache (lecture + preview)
+- Une séparation des responsabilités améliorée
+- Une optimisation globale du pipeline
+
+👉 Base solide pour la finalisation du projet (v0.10.0)
 
 ---
 
