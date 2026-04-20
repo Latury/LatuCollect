@@ -393,17 +393,46 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!--  Simulation  -->
-                        <Button
-                            Grid.Column="0"
-                            Height="40"
-                            Padding="12,0"
-                            HorizontalAlignment="Left"
-                            Click="OnSimulationClicked"
-                            Content="{Binding SimulationLabel}"
-                            ToolTipService.ToolTip="Simulation" />
+                        <!--  GAUCHE : BOUTONS  -->
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10">
 
-                        <!--  Export  -->
+                            <!--  🧪 SIMULATION (futur : visible seulement en mode dev)  -->
+                            <Button
+                                Height="40"
+                                Padding="12,0"
+                                Click="OnSimulationClicked"
+                                Content="{Binding SimulationLabel}"
+                                ToolTipService.ToolTip="Simulation"
+                                Visibility="{Binding IsSimulationEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <!--  🧾 LOGS  -->
+                            <Grid>
+
+                                <Button
+                                    Height="40"
+                                    Padding="12,0"
+                                    Click="OnLogsClicked"
+                                    Content="🧾 Logs"
+                                    ToolTipService.ToolTip="Afficher les logs" />
+
+                                <!--  🔴 BADGE ERREUR  -->
+                                <Ellipse
+                                    Width="10"
+                                    Height="10"
+                                    Margin="0,-2,-2,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Fill="Red"
+                                    Visibility="{Binding HasLogErrors, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            </Grid>
+
+                        </StackPanel>
+
+                        <!--  EXPORT  -->
                         <Button
                             Grid.Column="1"
                             Height="40"

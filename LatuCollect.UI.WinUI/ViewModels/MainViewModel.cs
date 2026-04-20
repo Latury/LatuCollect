@@ -30,6 +30,9 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using LatuCollect.Core.Logging.Interfaces;
+using LatuCollect.Core.Logging.Models;
+using LatuCollect.Core.Logging.Services;
 using LatuCollect.Core.Services.Collection;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
@@ -58,6 +61,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // - Flags UI (feedback, simulation, batch)
         // - Services Core
         // - Outils techniques (async, debounce)
+        // - Cache pour optimisation (preview)
         //
 
         // ─────────────────────────────────────────────
@@ -109,6 +113,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly FileCollectionService _collectionService;
         // Service de génération du contenu exporté
         private readonly FileExportService _exportService;
+        // Service de logging (pour les erreurs, warnings, infos)
+        private readonly ILogService _logger;
 
         // ═════════════════════════════════════════════════════════════════════
         // 2. CONSTANTES / LIMITES (PERFORMANCE & SÉCURITÉ)
@@ -444,18 +450,57 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // ─────────────────────────────────────────────
+        // 🧾 LOGS (DEBUG / SUIVI)
+        // ─────────────────────────────────────────────
+
+        public IReadOnlyList<LogEntry> Logs
+        {
+            get
+            {
+                if (_logger is LogService logService)
+                    return logService.Logs;
+
+                return new List<LogEntry>();
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 🧾 LOGS - INDICATEUR ERREUR
+        // ─────────────────────────────────────────────
+
+        public bool HasLogErrors
+        {
+            get
+            {
+                if (_logger is LogService logService)
+                {
+                    return logService.Logs.Any(l => l.Level == LogLevel.Error);
+                }
+
+                return false;
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════════════
         // 5. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════════════
         //
         // Initialisation du ViewModel :
+        // - Configuration du logging
         // - Création des services Core
         // - Initialisation des valeurs par défaut
+        // - Configuration de la simulation
         //
 
         public MainViewModel()
         {
+            // ─────────────────────────────────────────────
+            // 🧾 LOGGING
+            // ─────────────────────────────────────────────
+            _logger = new LogService();
+            _logger.Info("MainViewModel initialisé");
+
             // ─────────────────────────────────────────────
             // 🔧 SERVICES CORE
             // ─────────────────────────────────────────────
@@ -507,6 +552,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             try
             {
+                // 🟢 LOG — DÉBUT
+                _logger.Info("Chargement du dossier lancé");
+                _logger.Info("Dossier sélectionné", path);
+
                 CurrentState = UiState.Loading;
 
                 await Task.Delay(100);
@@ -521,6 +570,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 if (coreNodes.Count == 0)
                 {
+                    _logger.Warning("Aucun fichier trouvé dans le dossier", path);
+
                     CurrentState = UiState.Error;
                     ErrorMessage = "Dossier introuvable.";
                     return;
@@ -532,10 +583,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     Tree.Add(ConvertToUiNode(coreNode));
                 }
 
+                // 🟢 LOG — SUCCÈS
+                _logger.Info("Arborescence projet chargée", $"Nodes: {coreNodes.Count}");
+
                 CurrentState = UiState.Ready;
             }
             catch (Exception ex)
             {
+                // 🔴 LOG — ERREUR
+                _logger.Error("Erreur lors du chargement du dossier", ex.Message);
+
                 CurrentState = UiState.Error;
                 ErrorMessage = ex.Message;
             }
@@ -547,15 +604,25 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string GetExportContent()
         {
+            // 🟢 LOG — DÉBUT EXPORT
+            _logger.Info("Export lancé");
+
             var files = GetSelectedFiles();
 
+            // 🟡 LOG — AUCUN FICHIER
             if (files.Count == 0)
+            {
+                _logger.Warning("Export annulé : aucun fichier sélectionné");
                 return string.Empty;
+            }
 
             const int MAX_FILES_EXPORT = 200;
 
+            // 🔴 LOG — TROP DE FICHIERS
             if (files.Count > MAX_FILES_EXPORT)
             {
+                _logger.Warning("Export annulé : trop de fichiers", files.Count.ToString());
+
                 return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
                        $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
                        $"Réduis la sélection.";
@@ -564,6 +631,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             bool isMarkdown = SelectedFormat == ".md";
 
             var data = _exportService.BuildContentWithStats(files, isMarkdown);
+
+            // 🟢 LOG — SUCCÈS
+            _logger.Info("Export généré avec succès");
+
             return data.Content;
         }
 
@@ -604,77 +675,87 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         private async void RefreshPreview()
-{
-    if (_isPreviewLoading)
-        return;
-
-    _isPreviewLoading = true;
-
-    try
-    {
-        var files = GetSelectedFiles(); // ✅ ici
-
-        if (files.Count == 0)
         {
-            _lastSelectionSignature = string.Empty;
-            _lastIsMarkdown = false;
+            // 🔒 Protection anti multi-appel
+            if (_isPreviewLoading)
+                return;
 
-            PreviewText = "Aucun fichier sélectionné...";
-            return;
+            // 🟢 LOG — DÉBUT PREVIEW
+            _logger.Info("Génération du preview");
+
+            _isPreviewLoading = true;
+
+            try
+            {
+                var files = GetSelectedFiles();
+
+                // 🟡 LOG — AUCUN FICHIER
+                if (files.Count == 0)
+                {
+                    _logger.Warning("Aucun fichier sélectionné pour le preview");
+
+                    _lastSelectionSignature = string.Empty;
+                    _lastIsMarkdown = false;
+
+                    PreviewText = "Aucun fichier sélectionné...";
+                    return;
+                }
+
+                bool isMarkdown = SelectedFormat == ".md";
+                string currentSignature = BuildSelectionSignature(files);
+
+                if (currentSignature == _lastSelectionSignature && isMarkdown == _lastIsMarkdown)
+                {
+                    return;
+                }
+
+                _lastSelectionSignature = currentSignature;
+                _lastIsMarkdown = isMarkdown;
+
+                CurrentState = UiState.Loading;
+
+                const int MAX_FILES_PREVIEW = 20;
+
+                var previewFiles = files.Count > MAX_FILES_PREVIEW
+                    ? files.GetRange(0, MAX_FILES_PREVIEW)
+                    : files;
+
+                var data = await Task.Run(() =>
+                {
+                    return _exportService.BuildContentWithStats(previewFiles, isMarkdown);
+                });
+
+                var content = data.Content;
+                var stats = data.Stats;
+
+                if (files.Count > MAX_FILES_PREVIEW)
+                {
+                    content += "\n\n----------------------------------------\n";
+                    content += "⚠ Aperçu limité à 20 fichiers...\n";
+                }
+
+                PreviewText = content;
+
+                FileCount = stats.FileCount;
+                TotalLines = stats.TotalLines;
+                TotalCharacters = stats.TotalCharacters;
+                TotalSize = stats.TotalSizeBytes;
+
+                // 🟢 LOG — SUCCÈS PREVIEW
+                _logger.Info("Preview généré avec succès", $"Fichiers: {files.Count}");
+
+                CurrentState = UiState.Ready;
+
+                OnPropertyChanged(nameof(CanCopy));
+                OnPropertyChanged(nameof(IsPreviewEmpty));
+                OnPropertyChanged(nameof(CanExport));
+                OnPropertyChanged(nameof(HasEmptyFiles));
+            }
+            finally
+            {
+                _isPreviewLoading = false;
+            }
         }
-
-        bool isMarkdown = SelectedFormat == ".md";
-        string currentSignature = BuildSelectionSignature(files);
-
-        if (currentSignature == _lastSelectionSignature && isMarkdown == _lastIsMarkdown)
-        {
-            return;
-        }
-
-        _lastSelectionSignature = currentSignature;
-        _lastIsMarkdown = isMarkdown;
-
-        CurrentState = UiState.Loading;
-
-        const int MAX_FILES_PREVIEW = 20;
-
-        var previewFiles = files.Count > MAX_FILES_PREVIEW
-            ? files.GetRange(0, MAX_FILES_PREVIEW)
-            : files;
-
-        var data = await Task.Run(() =>
-        {
-            return _exportService.BuildContentWithStats(previewFiles, isMarkdown);
-        });
-
-        var content = data.Content;
-        var stats = data.Stats;
-
-        if (files.Count > MAX_FILES_PREVIEW)
-        {
-            content += "\n\n----------------------------------------\n";
-            content += "⚠ Aperçu limité à 20 fichiers...\n";
-        }
-
-        PreviewText = content;
-
-        FileCount = stats.FileCount;
-        TotalLines = stats.TotalLines;
-        TotalCharacters = stats.TotalCharacters;
-        TotalSize = stats.TotalSizeBytes;
-
-        CurrentState = UiState.Ready;
-
-        OnPropertyChanged(nameof(CanCopy));
-        OnPropertyChanged(nameof(IsPreviewEmpty));
-        OnPropertyChanged(nameof(CanExport));
-        OnPropertyChanged(nameof(HasEmptyFiles));
-    }
-    finally
-    {
-        _isPreviewLoading = false;
-    }
-}
 
         // ─────────────────────────────────────────────
         // 💬 FEEDBACK UTILISATEUR

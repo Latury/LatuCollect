@@ -118,12 +118,15 @@ namespace LatuCollect.UI.WinUI
         // ═════════════════════════════════════════════════════════════
         //
         // Boutons principaux :
-        // - Charger dossier
-        // - Recherche
-        // - Choix format
-        // - Export / Copier
+        // - Ouvrir un dossier
+        // - Toggle barre de recherche
+        // - Sélection format export
+        // - Exporter
+        // - Copier
+        // - Logs
         //
 
+        // Ouvre un dialogue de sélection de dossier et charge l’arborescence
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
             FolderPicker picker = new();
@@ -146,21 +149,25 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // Toggle de la barre de recherche (UI uniquement, le filtrage est géré par le ViewModel)
         private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
             _viewModel.ToggleSearch();
         }
 
+        // Sélection du format Texte
         private void OnTxtSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".txt";
         }
 
+        // Sélection du format Markdown
         private void OnMdSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".md";
         }
 
+        // Export le contenu dans un fichier choisi par l’utilisateur
         private async void OnExportClicked(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
@@ -234,6 +241,7 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // Copie le contenu dans le presse-papiers
         private void OnCopyClicked(object sender, RoutedEventArgs e)
         {
             string content = _viewModel.GetExportContent();
@@ -244,6 +252,23 @@ namespace LatuCollect.UI.WinUI
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
 
             _viewModel.ShowFeedback("✔ Contenu copié");
+        }
+
+        // ─────────────────────────────────────────────
+        // 🧾 LOGS
+        // ─────────────────────────────────────────────
+
+        private async void OnLogsClicked(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Logs",
+                Content = "Affichage des logs à venir...",
+                CloseButtonText = "Fermer",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
         }
 
         // ═════════════════════════════════════════════════════════════
