@@ -322,7 +322,7 @@
                         <ScrollViewer
                             HorizontalScrollBarVisibility="Auto"
                             VerticalScrollBarVisibility="Auto"
-                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Invert}">
+                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
                             <TextBlock
                                 Margin="20"
