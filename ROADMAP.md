@@ -495,15 +495,15 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🧑‍💻 Mode développeur
 
-- ⬜ Activation via Paramètres → Paramètres avancés
-- ⬜ Désactivation par défaut
-- ⬜ Aucun impact utilisateur normal
+- ✅ Activation via Paramètres → Paramètres avancés
+- ✅ Désactivation par défaut
+- ✅ Aucun impact utilisateur normal
 
 ---
 
 ## 🧪 UI Simulation
 
-- ⬜ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
+- ✅ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
 - ⬜ Popup de sélection des scénarios
 - ⬜ Activation / désactivation en temps réel
 
@@ -541,6 +541,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Disque plein (simulation)
 - ⬜ Export vide
 - ⬜ Export massif
+- ⬜ Confirmation avant écrasement d’un fichier existant
 
 ---
 
@@ -551,6 +552,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Sélection profonde
 - ⬜ Sélection massive
 - ⬜ Fichiers supprimés entre-temps
+- ⬜ Bouton “vider la sélection”
 
 ---
 
@@ -560,6 +562,8 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Erreur UI forcée
 - ⬜ État incohérent
 - ⬜ UI figée (simulation extrême)
+- ⬜ Affichage du chemin du dossier chargé
+- ⬜ Blocage temporaire des actions (anti double clic)
 
 ---
 
@@ -569,6 +573,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Limitation à 20 fichiers
 - ⬜ Contenu très long
 - ⬜ Fichiers vides
+- ⬜ Limitation configurable du nombre de fichiers
 
 ---
 
@@ -587,6 +592,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Arborescence profonde
 - ⬜ Sélection massive
 - ⬜ Export lourd
+- ⬜ Réduction du flickering lors du redimensionnement
 
 ---
 
@@ -603,26 +609,27 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🧱 Core
 
-- ⬜ Mise en place d’un LogService
-- ⬜ Centralisation des logs
+- ✅ Mise en place d’un LogService
+- ✅ Centralisation des logs
 
 ---
 
 ## 📊 Types de logs
 
-- ⬜ Chargement dossier
-- ⬜ Lecture fichiers
-- ⬜ Export
-- ⬜ Erreurs
-- ⬜ Actions utilisateur
+- ✅ Chargement dossier
+- ✅ Lecture fichiers
+- ✅ Export
+- ✅ Erreurs
+- ✅ Actions utilisateur
 
 ---
 
 ## 🖥️ UI
 
-- ⬜ Accès aux logs via Paramètres avancés
-- ⬜ Visualisation dans l’application
-- ⬜ Export des logs
+- ✅ Accès aux logs via bouton principal
+- ✅ Visualisation dans l’application
+- ✅ Export des logs
+- ⬜ Niveau de log minimum configurable (Info / Warning / Error)
 
 ---
 
@@ -654,11 +661,25 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 # ⚙️ Configuration utilisateur
 
-- ⬜ Sauvegarde des préférences
+- ⬜ Sauvegarde des préférences utilisateur (config.json)
+
 - ⬜ Format par défaut (.txt / .md)
+
 - ⬜ Gestion des exclusions persistées
+
 - ⬜ Thème sélectionné
+
 - ⬜ Activation mode développeur
+
+- ⬜ Sauvegarde du dernier dossier ouvert
+
+- ⬜ Chargement automatique au démarrage
+
+- ⬜ Option pour désactiver le chargement automatique
+
+- ⬜ Vérification validité du dossier au lancement
+
+- ⬜ Bouton "Réinitialiser les paramètres"
 
 ---
 
@@ -700,6 +721,16 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Build release propre
 - ⬜ Optimisation finale
 - ⬜ Vérification stabilité globale
+
+---
+
+# ⚠️ STABILITÉ UI
+
+## 🖥️ Fenêtre / Redimensionnement
+
+- ⬜ Définir taille minimale fenêtre (évite UI cassée)
+- ⬜ Réduction du flickering lors du resize
+- ⬜ Optimisation du rendu (éviter refresh complet)
 
 ---
 

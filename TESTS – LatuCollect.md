@@ -1,405 +1,335 @@
 # 🧪 TESTS – LATUCOLLECT
 
-Stratégie officielle de validation du projet LatuCollect.
+Stratégie officielle de validation du projet LatuCollect
 
 ---
 
-# 🎯 Objectif
+# 🎯 OBJECTIF
 
 Garantir :
 
-- ✅ Fiabilité du chargement de projet
-- ✅ Robustesse de la sélection des fichiers
-- ✅ Exactitude de l’aperçu
-- ✅ Qualité des exports (TXT / Markdown)
-- ✅ Cohérence globale du système
+- Fiabilité du chargement de projet
+- Robustesse de la sélection des fichiers
+- Exactitude de l’aperçu
+- Qualité des exports (TXT / Markdown)
+- Cohérence globale du système
 
 ---
 
-# 🧩 1. Niveaux de tests
+# 🧩 NIVEAUX DE TESTS
 
 Approche progressive :
 
-1. ✅ Tests manuels (UI actuels)
-2. 🔄 Tests unitaires (à venir)
-3. 🔄 Tests système (futurs)
+1. Tests manuels (actuels)
+2. Tests unitaires (à venir)
+3. Tests système (futurs)
 
 ---
 
-# 🧪 2. Tests manuels (UI)
+# 🧪 TESTS MANUELS (UI)
 
-Tests réalisés directement dans l’interface WinUI.
+Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## 📂 Chargement du projet
+## 📂 CHARGEMENT DU PROJET
 
 ### Cas OK
 
-- ✅ Charger un dossier valide
-- ✅ Chargement avec sous-dossiers
-- ✅ Projet volumineux
+- Charger un dossier valide
+- Chargement avec sous-dossiers
+- Projet volumineux
 
 ### Cas erreurs
 
-- ❌ Dossier invalide
-- ❌ Accès refusé
-- ❌ Sélection annulée par l’utilisateur
+- Dossier invalide
+- Accès refusé
+- Sélection annulée
 
 👉 Résultat attendu :
 
-- ✅ Structure affichée correctement
-- ✅ Message clair en cas d’erreur
+- Structure affichée correctement
+- Message clair en cas d’erreur
 
 ---
 
-## 🌳 Arborescence
+## 🌳 ARBORESCENCE
 
 ### Vérifier :
 
-- ✅ Affichage correct des dossiers
-- ✅ Navigation fluide
-- ✅ Retour en arrière fonctionnel
+- Affichage correct
+- Navigation fluide
+- Aucun blocage UI
 
 ---
 
-## 🔍 Recherche
+## 🔍 RECHERCHE
 
 ### Vérifier :
 
-- ✅ Filtrage correct des fichiers
-- ✅ Mise à jour rapide (optimisée pour la fluidité)
-- ✅ Conservation de la structure
+- Filtrage correct
+- Mise à jour rapide
+- Structure conservée
 
 ### Cas limites :
 
-- ❌ Recherche vide
-- ❌ Aucun résultat
-
----
-
-### Nouveautés (v0.6.0)
-
-- ✅ Filtrage par extension :
-  - Recherche ".cs" → uniquement fichiers .cs
-  - Recherche ".xaml" → uniquement fichiers XAML
-
-- ✅ Vérification :
-  - Les fichiers affichés correspondent bien à l’extension demandée
-  - Les dossiers parents restent visibles si un enfant correspond
-
----
-
-- ✅ Gestion "aucun résultat" :
-  - Recherche sans correspondance
+- Recherche vide
+- Aucun résultat
 
 👉 Résultat attendu :
 
-- Message "Aucun résultat" affiché
-- Arbre masqué
-- Aucun écran vide (toujours un message affiché)
+- Message "Aucun résultat"
+- Aucun écran vide
 
 ---
 
-- ✅ Performance (debounce) :
-  - Saisie rapide dans la barre de recherche
+### ✔ Extensions
 
-👉 Résultat attendu :
+- .cs
+- .xaml
+- .json
 
+👉 Vérifier cohérence des résultats
+
+---
+
+### ⚡ Performance
+
+- Débounce actif
 - Aucun freeze UI
-- Pas de recalcul à chaque frappe
-- Filtrage déclenché après une courte pause utilisateur
+- Filtrage fluide
 
 ---
 
-- ✅ Les dossiers exclus (bin, obj, .git) ne doivent jamais apparaître dans les résultats de recherche
-
-👉 Important :
-
-- Couvre à la fois l’exclusion et la recherche
-
----
-
-## ☑️ Sélection des fichiers
-
-### Vérifier :
-
-- ✅ Checkbox fonctionnelle
-- ✅ Sélection multiple
-- ✅ Désélection
-
-### Cas limites :
-
-- ❌ Aucun fichier sélectionné
-
-👉 Résultat attendu :
-
-- ✅ Message "Aucun fichier sélectionné..." affiché
-- ✅ Export bloqué
-- ✅ Bouton copier désactivé
-
----
-
-### ⚠️ Sélection globale (v0.8.0)
-
-### Vérifier :
-
-- ❌ Bouton "Tout sélectionner" désactivé
-- ✅ Clic affiche un popup explicatif
-
-### Comportement attendu :
-
-- Aucun traitement massif
-- Aucun freeze UI
-- Message clair utilisateur
-
----
-
-## 👁️ Aperçu
-
-### Vérifier :
-
-- ✅ Mise à jour en temps réel
-- ✅ Aperçu = export (strictement identique)
-- ✅ Lisibilité
-
-### Déclencheurs :
-
-- ✅ Sélection fichier
-- ✅ Désélection
-- ✅ Changement format
-
-### ⚠️ Limitation aperçu (v0.8.0)
-
-### Vérifier :
-
-- ✅ Maximum 20 fichiers affichés
-- ✅ Message affiché :
-
-```text
-⚠ Aperçu limité à 20 fichiers
-```
-
----
-
-### ⚡ Optimisation preview (v0.9.0)
-
-### Vérifier :
-
-- ✅ Aucun recalcul si la sélection est identique
-- ✅ Recalcul uniquement si modification réelle
-
-### Cas :
-
-- Sélectionner un fichier
-- Recliquer dessus sans changer l’état
-
-👉 Résultat attendu :
-
-- Aucun changement du preview
-- Pas de recalcul visible
-
----
-
-## 🔄 États UI (v0.5.0)
-
-### Vérifier :
-
-- 🔄 Chargement → affichage du loader
-- ❌ Erreur → message affiché
-- ✅ Prêt → contenu ou message vide
-
-👉 L’UI doit toujours refléter l’état réel
-
----
-
-## ⚠️ Projets volumineux
-
-### Vérifier :
-
-- ✅ Aucun freeze
-- ✅ Chargement partiel
-- ✅ Message affiché :
-
-```text
-⚠ Projet volumineux — affichage partiel
-```
-
-- ✅ Recherche fluide même sur projet volumineux (optimisation v0.6.0)
-
----
-
-## ⚡ Performance (v0.9.0)
-
-### Vérifier :
-
-- ✅ Aucune lecture disque répétée sur les mêmes fichiers (cache actif)
-- ✅ Aucun recalcul du preview si la sélection ne change pas
-- ✅ Aucun appel multiple de RefreshPreview (protection active)
-
-### Cas :
-
-- Sélectionner un fichier → puis recliquer plusieurs fois
-
-👉 Résultat attendu :
-
-- Aucun recalcul visible
-- Aucun ralentissement
-- UI stable
-
----
-
-### Test sélection rapide :
-
-- Cocher / décocher rapidement plusieurs fichiers
-
-👉 Résultat attendu :
-
-- Aucun freeze
-- Aucun bug visuel
-- Preview reste cohérent
-
----
-
-## ⏳ Loader
-
-### Vérifier :
-
-- ✅ Visible pendant le chargement
-- ✅ Disparaît correctement
-- ✅ Aucun blocage UI
-
----
-
-## 📤 Export
-
-### Cas TXT
-
-- ✅ Fichier créé
-- ✅ Contenu conforme
-- ✅ Séparateur correct
-
-### 🔒 Robustesse (v0.4.0)
-
-- ✅ Aucun crash lors d’un échec d’écriture
-- ✅ Message d’erreur retourné proprement
-- ✅ Comportement prévisible même en cas de problème disque ou accès refusé
-
-### Cas Markdown
-
-- ✅ Structure lisible
-- ✅ Chemin affiché
-- ✅ Contenu correct
-- ✅ Format adapté au Markdown
-
-### Comportement attendu
-
-- ✅ Format dépend du choix utilisateur (.txt / .md)
-- ✅ Export bloqué si aucun contenu
-- ✅ Bouton Export désactivé si aucun contenu
-- ✅ Confirmation après export
-- ✅ Vérification des messages d’erreur spécifiques (accès refusé, fichier utilisé, etc.)
-
-### Cas erreurs
-
-- ❌ Aucun fichier sélectionné
-- ❌ Échec d’écriture
-
----
-
-## 📋 Copier
-
-### Vérifier :
-
-- ✅ Copie du contenu correct
-- ✅ Correspond exactement à l’aperçu
-- ✅ Désactivé si aucun contenu
-- ✅ Message de confirmation affiché
-
----
-
-## 📊 Statistiques (v0.9.0)
-
-### Vérifier :
-
-- ✅ Nombre de fichiers correct
-- ✅ Nombre total de lignes correct
-- ✅ Nombre total de caractères correct
-- ✅ Taille totale cohérente
-
-### Comportement attendu :
-
-- Mise à jour en temps réel
-- Aucun freeze UI
-- Résultats cohérents avec les fichiers sélectionnés
-
-### Cas limites :
-
-- ❌ Aucun fichier sélectionné → toutes les valeurs à 0
-- ❌ Fichiers vides
-
----
-
-## 📄 Format
-
-```text
-Chemin du fichier
-
-
-(contenu du fichier)
-
-
-----------------------------------------
-```
-
-- ✅ Respect du format
-- ✅ Vérification du séparateur
-- ✅ Vérification des espacements
-
----
-
-## ⚠️ Cas particuliers
-
-- ❌ Fichier vide
-- ❌ Fichier volumineux
-- ❌ Caractères spéciaux
-- ❌ Erreur lecture
-- ❌ Chemins longs
-- ❌ Échec d’écriture fichier
-
-👉 Résultat attendu :
-
-- ✅ Aucun crash
-- ✅ Message d’erreur utilisateur
-
----
-
-## ⚠️ Fichiers ignorés
+### 📁 Exclusions
 
 - bin
 - obj
 - .git
 
+👉 Ne doivent jamais apparaître
+
 ---
 
-### ⚡ Performance (v0.9.0)
+## ☑️ SÉLECTION
 
-- ✅ Calcul optimisé (FileStatisticsService)
-- ✅ Aucun impact sur la fluidité
+### Vérifier :
+
+- Checkbox fonctionnelle
+- Multi-sélection
+- Désélection
+
+### Cas limites :
+
+- Aucun fichier sélectionné
 
 👉 Résultat attendu :
 
-- Mise à jour rapide
-- Aucun freeze UI
+- Message affiché
+- Export bloqué
+- Copier désactivé
 
 ---
 
-# 🧠 3. Tests unitaires (À FAIRE)
+### ⚠️ Sélection globale
+
+- Désactivée volontairement
+
+👉 Clic = popup explicatif
+👉 Aucun freeze
+
+---
+
+## 👁️ APERÇU
+
+### Vérifier :
+
+- Mise à jour en temps réel
+- Aperçu = export
+- Lisibilité correcte
+
+### Déclencheurs :
+
+- Sélection
+- Désélection
+- Changement format
+
+---
+
+### ⚠️ Limitation
+
+- Maximum 20 fichiers
+
+👉 Message :
+
+```texte
+⚠ Aperçu limité à 20 fichiers
+```
+
+---
+
+### ⚡ Optimisation
+
+- Pas de recalcul inutile
+- Cache actif
+- Protection double appel
+
+---
+
+## 🔄 ÉTATS UI
+
+- Chargement → loader
+- Erreur → message
+- Prêt → contenu
+
+👉 Toujours cohérent
+
+---
+
+## ⚠️ PROJETS VOLUMINEUX
+
+👉 Message :
+
+```texte
+⚠ Projet volumineux — affichage partiel
+```
+
+### Vérifier :
+
+- Aucun freeze
+- UI fluide
+- Recherche fonctionnelle
+
+---
+
+## ⚡ PERFORMANCE
+
+### Vérifier :
+
+- Cache actif (pas de relecture disque)
+- Pas de recalcul inutile
+- UI stable
+
+### Cas :
+
+- Clics rapides
+- Sélections répétées
+
+👉 Résultat :
+
+- Aucun ralentissement
+- Aucun bug visuel
+
+---
+
+## ⏳ LOADER
+
+### Vérifier :
+
+- Visible pendant chargement
+- Disparaît correctement
+- UI non bloquée
+
+---
+
+## 📤 EXPORT
+
+### TXT
+
+- Fichier créé
+- Contenu correct
+- Séparateur respecté
+
+### MARKDOWN
+
+- Structure correcte
+- Lisible
+- Conforme
+
+---
+
+### ⚠️ Comportement
+
+- Format respecté
+- Export bloqué si vide
+- Confirmation affichée
+
+---
+
+### ❌ Cas erreurs
+
+- Aucun fichier sélectionné
+- Échec d’écriture
+
+👉 Résultat :
+
+- Aucun crash
+- Message utilisateur
+
+---
+
+## 📋 COPIER
+
+### Vérifier :
+
+- Contenu exact
+- Correspond à l’aperçu
+- Désactivé si vide
+
+---
+
+## 📊 STATISTIQUES
+
+### Vérifier :
+
+- Fichiers
+- Lignes
+- Caractères
+- Taille
+
+### Comportement :
+
+- Temps réel
+- Aucun freeze
+- Cohérence
+
+---
+
+## 📄 FORMAT
+
+```texte
+Chemin du fichier
+
+(contenu du fichier)
+
+---
+
+```
+
+---
+
+## ⚠️ CAS PARTICULIERS
+
+- Fichier vide
+- Fichier volumineux
+- Caractères spéciaux
+- Erreur lecture
+- Chemins longs
+- Échec export
+
+👉 Résultat attendu :
+
+- Aucun crash
+- Message clair
+
+---
+
+# 🧠 TESTS UNITAIRES (À FAIRE)
 
 Cibles :
 
-- ✅ FileReaderService
-- ✅ FileExportService
+- FileReaderService
+- FileExportService
 
 ---
 
@@ -407,20 +337,20 @@ Cibles :
 
 ### Lecture
 
-- ✅ Lecture fichier valide
-- ✅ Gestion erreur lecture
+- Lecture valide
+- Gestion erreur
 
 ---
 
 ### Export
 
-- ✅ Génération TXT
-- ✅ Génération Markdown
-- ✅ Respect format
+- TXT
+- Markdown
+- Format respecté
 
 ---
 
-# 📊 4. Couverture cible
+# 📊 COUVERTURE CIBLE
 
 | Module  | Objectif |
 | ------- | -------- |
@@ -429,48 +359,49 @@ Cibles :
 
 ---
 
-# 🧭 5. Stratégie
+# 🧭 STRATÉGIE
 
 Priorité :
 
-1. ✅ Import fiable
-2. ✅ Sélection correcte
-3. ✅ Aperçu exact
-4. ✅ Export propre
-5. ✅ Gestion erreurs
+1. Import fiable
+2. Sélection correcte
+3. Aperçu exact
+4. Export propre
+5. Gestion erreurs
 
 ---
 
-# 🧠 6. Fonctionnement validé
+# 🧠 FONCTIONNEMENT VALIDÉ
 
-## 🔹 Flux utilisateur
+## Flux utilisateur
 
-```text
+```text id="fluxtest-latucollect"
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
 ---
 
-## 🔹 Pipeline interne
+## Pipeline interne
 
-```text
-Import → Lecture (cache) → Collection → Assemblage → Statistiques → Export
+```text id="pipelinetest-latucollect"
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
-👉 Aucune transformation du code
+👉 Aucun traitement complexe
+👉 Copier intelligent uniquement
 
 ---
 
-# 🏁 Conclusion
+# 🏁 CONCLUSION
 
 Les tests garantissent :
 
-- ✅ Aucun fichier incorrect
-- ✅ Aucun export corrompu
-- ✅ Cohérence UI / Core
+- Aucun export incorrect
+- Aucun crash
+- Cohérence UI / Core
 
-👉 LatuCollect doit rester :
+👉 LatuCollect reste :
 
-- ✅ Fiable
-- ✅ Stable
-- ✅ Prévisible
+- Fiable
+- Stable
+- Prévisible

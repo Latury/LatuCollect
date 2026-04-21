@@ -1,274 +1,171 @@
 # 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE)
 
-👉 ⚠️ Cette structure correspond à l’organisation cible du projet (v1.0.0)
-
-👉 Elle n’est pas entièrement implémentée actuellement.
-
-👉 Certains dossiers et services seront ajoutés progressivement (voir ROADMAP)
-
-👉 ⚠️ Les noms actuels des projets (`LatuCollect.Core`, `LatuCollect.UI.WinUI`) seront simplifiés en `Core` et `UI` dans la version cible.
+👉 ⚠️ Cette structure correspond à l’organisation cible (v1.0.0)
+👉 Elle n’est pas entièrement implémentée actuellement
+👉 Voir ROADMAP pour l’évolution
 
 ---
 
-# 🎯 Objectif
+# 🎯 OBJECTIF
 
 Permettre :
 
-- ✅ Une navigation rapide
-- ✅ Une compréhension immédiate
-- ✅ Une maintenance facilitée
-- ✅ Une évolutivité propre
+- Navigation rapide
+- Compréhension immédiate
+- Maintenance facilitée
+- Évolutivité propre
 
 ---
 
-# 🧩 Structure principale
+# 🧩 STRUCTURE PRINCIPALE (CIBLE)
 
-```text
+```texte
 LatuCollect/
 │
 ├── Core/
-│   ├── Services/
-│   │   ├── Import/
-│   │   │   └── FileImportService.cs
-│   │   │
-│   │   ├── Reader/
-│   │   │   └── FileReaderService.cs
-│   │   │
-│   │   ├── Collection/
-│   │   │   └── FileCollectionService.cs
-│   │   │
-│   │   ├── Statistics/
-│   │   │   └── FileStatisticsService.cs
-│   │   │
-│   │   ├── Export/
-│   │   │   └── FileExportService.cs
-│   │   │
-│   │   └── Utils/
-│   │       └── ClipboardService.cs
-│   │
-│   ├── Simulation/
-│   │   ├── SimulationConfig.cs
-│   │   ├── SimulationService.cs
-│   │   └── Scenarios/
-│   │       ├── LargeFiles/
-│   │       ├── CorruptedFiles/
-│   │       ├── EmptyFiles/
-│   │       └── AccessErrors/
-│   │
-│   ├── Configuration/
-│   │   └── AppConfig.cs
-│   │
-│   ├── Logging/
-│   │   └── LoggerService.cs
-│   │
-│   ├── Models/
-│   ├── Interfaces/
-│   ├── Helpers/
-│   └── DTOs/ (Optionnel)
+│ ├── Services/
+│ │ ├── Import/
+│ │ ├── Reader/
+│ │ ├── Collection/
+│ │ ├── Statistics/
+│ │ ├── Export/
+│ │ └── Utils/
+│ │
+│ ├── Simulation/
+│ │ ├── Scenarios/
+│ │
+│ ├── Configuration/
+│ ├── Logging/
+│ ├── Models/
+│ ├── Interfaces/
+│ ├── Helpers/
+│ └── DTOs/
 │
 ├── UI/
-│   └── WinUI/
-│       ├── Views/
-│       │   ├── MainWindow.xaml
-│       │   └── MainWindow.xaml.cs
-│       │
-│       ├── ViewModels/
-│       │   └── MainViewModel.cs
-│       │
-│       ├── Models/
-│       │   └── FileNode.cs
-│       │
-│       ├── Converters/
-│       │   ├── BooleanToVisibilityConverter.cs
-│       │   └── BoolToIconConverter.cs
-│       │   └── InverseBooleanToVisibilityConverter.cs
-│       │
-│       ├── Services/
-│       │   └── UiSimulationService.cs
-│       │
-│       └── Themes/
-│           ├── Light/
-│           └── Dark/
+│ └── WinUI/
+│ ├── Views/
+│ ├── ViewModels/
+│ ├── Models/
+│ ├── Converters/
+│ ├── Services/
+│ └── Themes/
 │
 ├── Resources/
-│   ├── Colors/
-│   ├── Styles/
-│   └── Dimensions/
-│
 ├── Tests/
-│   ├── Unit/
-│   └── Simulation/
-│
 ├── Installer/
-│   ├── Setup/
-│   └── Assets/
-│
 ├── Assets/
-│   ├── Icons/
-│   └── Images/
 │
 ├── README.md
-├── UI_GUIDE.md
 ├── ARCHITECTURE.md
+├── UI_GUIDE.md
+├── DIRECTORY_STRUCTURE.md
 ├── GUIDE_UTILISATEUR.md
 ├── ROADMAP.md
 ├── PATCH_NOTES.md
 ├── TESTS.md
-├── LICENSE.md
-├── .editorconfig
-├── .gitignore
 ```
 
 ---
 
 # ⚠️ IMPORTANT
 
-👉 Cette structure est une cible.
-
-👉 Tous les éléments ne sont pas encore implémentés.
-
-👉 Se référer à la ROADMAP pour suivre l’évolution.
-
-👉 Les services actuels seront progressivement répartis dans les dossiers :
-Import / Collection / Export.
-
-👉 Sera utilisé pour le theming (non implémenté actuellement)
-Themes/
-├── Light/
-└── Dark/
+- Structure cible (pas encore complète)
+- Implémentation progressive
+- Alignement avec ROADMAP obligatoire
 
 ---
 
-# 🧠 Description des dossiers
+# 🧠 DESCRIPTION DES DOSSIERS
 
 ## Core/
 
-Contient toute la logique métier.
+Contient toute la logique métier
 
-👉 Responsabilités :
+Responsabilités :
 
-- Importer les fichiers
-- Lire le contenu
-- Assembler les données
-- Exporter
+- Import des fichiers
+- Lecture du contenu
+- Assemblage
+- Export
 
-👉 Assemblage du contenu et structuration centralisés dans `FileExportService`
-👉 Source unique de vérité pour aperçu et export
-
+👉 Source unique de vérité
 👉 Aucune dépendance UI
-
-👉 Contient également la construction du contenu final (aperçu/export)
 
 ---
 
 ## Simulation/
 
-Permet de simuler des cas complexes pour les tests.
+Permet de simuler :
 
-👉 Objectifs :
+- Erreurs
+- Gros projets
+- Cas extrêmes
 
-- Tester les erreurs
-- Simuler des gros projets
-- Simuler des comportements extrêmes
-
-👉 Activable via configuration (true / false)
-👉 Jamais actif en production
+👉 Activé uniquement en mode développeur
+👉 Jamais en production
 
 ---
 
 ## Configuration/
 
-Centralise les paramètres globaux de l’application.
+Centralise :
 
-👉 Contient :
-
-- Format par défaut
-- Activation simulation
-- Paramètres utilisateur
+- Paramètres globaux
+- Préférences utilisateur
 
 ---
 
 ## Logging/
 
-Permet de tracer les actions et erreurs.
+Permet :
 
-👉 Utilisé pour :
-
-- Actions
-- Erreurs
+- Traçage des actions
+- Gestion des erreurs
 - Diagnostic
 
 ---
 
 ## UI/
 
-Contient l’interface utilisateur WinUI.
+Contient l’interface WinUI
 
-👉 Responsabilités :
+Responsabilités :
 
 - Affichage
 - Interaction utilisateur
-- Aperçu du document
+- Aperçu
 
-👉 Ne contient aucune logique d’assemblage
-👉 Consomme uniquement le contenu généré par le Core
-
----
-
-## 🧠 Architecture MVVM
-
-Structure UI :
-
-```text
-View → ViewModel → Core
-```
-
-- View = XAML
-- ViewModel = logique UI
-- Core = logique métier
+👉 Aucune logique métier
+👉 Consomme uniquement le Core
 
 ---
 
 ## Resources/
 
-Centralise les ressources visuelles.
-
-👉 Contient :
-
 - Couleurs
 - Styles
 - Dimensions
 
-👉 Utilisé pour le theming (Dark / Light)
+👉 Base pour theming futur
 
 ---
 
 ## Tests/
 
-Contient les tests du projet.
-
-- Unit → tests unitaires
-- Simulation → scénarios simulés
+- Tests unitaires
+- Tests simulation
 
 ---
 
 ## Installer/
 
-Contient tout ce qui concerne la distribution.
-
-👉 Responsabilités :
-
-- Création installateur
-- Gestion dépendances
-- Packaging application
+- Packaging
+- Distribution
+- Dépendances
 
 ---
 
 ## Assets/
-
-Contient les éléments visuels.
-
-👉 Contient :
 
 - Icônes
 - Images
@@ -276,30 +173,36 @@ Contient les éléments visuels.
 
 ---
 
-# 🧩 Fonctionnement global
+# 🧠 ARCHITECTURE MVVM
 
-```text
-Importer → Sélectionner → Aperçu → Exporter
+```texte
+View → ViewModel → Core
 ```
-
-👉 Le contenu est construit une seule fois dans le Core
 
 ---
 
-# 🖥️ Interface utilisateur
+# 🧩 FONCTIONNEMENT GLOBAL
 
-```text
-Gauche → Arborescence projet
-Centre → Options (format)
+```texte
+Importer → Sélectionner → Aperçu → Exporter
+```
+
+---
+
+# 🖥️ UI STRUCTURE
+
+```texte
+Gauche → Arborescence
+Centre → Options
 Droite → Aperçu
 Bas → Export
 ```
 
 ---
 
-# 🔄 Communication
+# 🔄 COMMUNICATION
 
-```text
+```texte
 UI → ViewModel → Core
 ```
 
@@ -307,17 +210,16 @@ UI → ViewModel → Core
 
 ---
 
-# ⚠️ Règles importantes
+# ⚠️ RÈGLES
 
 - Core ne dépend jamais de UI
 - UI peut dépendre de Core
 - 1 dossier = 1 responsabilité
-- Aucune logique métier dans UI
-- Documentation alignée avec la ROADMAP
+- Pas de logique métier dans UI
 
 ---
 
-# 🧠 Philosophie
+# 🧠 PHILOSOPHIE
 
 - Simplicité
 - Lisibilité
@@ -327,120 +229,79 @@ UI → ViewModel → Core
 
 ---
 
----
-
-# 🧩 Structure actuelle (v0.9.0)
-
-👉 Cette section reflète l’état réel du projet actuellement.
+# 🧩 STRUCTURE ACTUELLE (v0.10.0)
 
 ```text
 LatuCollect/
 │
 ├── LatuCollect.Core/
-│   ├── Configuration/
-│   │   └── AppConfig.cs
-│   │
-│   ├── Models/
-│   │   └── FileNode.cs
-│   │
-│   ├── Services/
-│   │   ├── Import/
-│   │   │   └── FileImportService.cs
-│   │   ├── Reader/
-│   │   │   └── FileReaderService.cs
-│   │   ├── Collection/
-│   │   │   └── FileCollectionService.cs
-│   │   ├── Export/
-│   │   │   └── FileExportService.cs
-│   │
-│   └── Simulation/
-│       ├── SimulationConfig.cs
-│       └── SimulationService.cs
+│ ├── Configuration/
+│ ├── Models/
+│ ├── Services/
+│ │ ├── Import/
+│ │ ├── Reader/
+│ │ ├── Collection/
+│ │ ├── Export/
+│ │ └── Statistics/
+│ │
+│ ├── Simulation/
+│ └── Logging/
 │
 ├── LatuCollect.UI.WinUI/
-│   ├── MainWindow.xaml
-│   ├── MainWindow.xaml.cs
-│   │
-│   ├── ViewModels/
-│   │   └── MainViewModel.cs
-│   │
-│   ├── Models/
-│   │   └── FileNode.cs
-│   │
-│   ├── Services/
-│   │   └── UiSimulationService.cs
-│   │
-│   ├── Converters/
-│   │   ├── BooleanToVisibilityConverter.cs
-│   │   ├── BoolToIconConverter.cs
-│   │   └── InverseBooleanToVisibilityConverter.cs
-│   │
-│   └── Assets/
+│ ├── Views/
+│ ├── ViewModels/
+│ ├── Models/
+│ ├── Services/
+│ ├── Converters/
+│ └── Assets/
 │
-├── README.md
-├── ARCHITECTURE.md
-├── DIRECTORY_STRUCTURE.md
-├── UI_GUIDE.md
-├── GUIDE_UTILISATEUR.md
-├── ROADMAP.md
-├── PATCH_NOTES.md
-├── TESTS.md
+├── Documentation/
+│ ├── README.md
+│ ├── ARCHITECTURE.md
+│ ├── UI_GUIDE.md
+│ ├── DIRECTORY_STRUCTURE.md
+│ ├── GUIDE_UTILISATEUR.md
+│ ├── ROADMAP.md
+│ ├── PATCH_NOTES.md
+│ ├── TESTS.md
 ```
 
 ---
 
-# 🔄 Différences avec la structure cible
+# 🔄 DIFFÉRENCES AVEC LA CIBLE
 
-👉 Ce qui n’est PAS encore implémenté :
+❌ Non implémenté :
 
-- ❌ Dossier `Utils/` (prévu)
-- ❌ Dossier `Logging/`
-- ❌ Dossier `Interfaces/`
-- ❌ Dossier `Helpers/`
-- ❌ Dossier `DTOs/`
-- ❌ Dossier `Themes/`
-- ❌ Dossier `Resources/`
-- ❌ Dossier `Tests/` structuré
-- ❌ Dossier `Installer/`
-- ❌ Dossier `Assets/` global (hors UI)
-
----
-
-👉 Différence de nommage :
-
-- Actuel :
-  - `LatuCollect.Core`
-  - `LatuCollect.UI.WinUI`
-
-- Cible :
-  - `Core`
-  - `UI`
+- Utils/
+- Interfaces/
+- Helpers/
+- DTOs/
+- Themes/
+- Resources/
+- Tests structuré
+- Installer
+- Assets global
 
 ---
 
-````md
-# 🧠 État du projet
+# 🧠 ÉTAT DU PROJET
 
-```text
-✔ Architecture stabilisée (v0.9.0)
-✔ Services principaux en place (Import / Reader / Collection / Export / Statistics)
-✔ Séparation UI / Core respectée
-✔ Optimisation globale du pipeline
-✔ Mise en cache des fichiers (lecture + preview)
-✔ Réduction des recalculs inutiles
-✔ Séparation des statistiques (FileStatisticsService)
-✔ Base solide pour évolution vers v1.0.0
+```texte
+✔ Architecture stabilisée
+✔ Pipeline optimisé
+✔ Cache actif
+✔ Logs intégrés
+✔ Mode développeur
+✔ UI stable
+✔ Séparation UI / Core
 ```
-````
 
 ---
 
-# 🎯 Objectif prochain
+# 🎯 OBJECTIF SUIVANT
 
-```text
+```texte
+➡ Finaliser la structure cible
 ➡ Continuer le découpage des services
-➡ Finaliser la séparation complète des responsabilités
-➡ Implémenter les dossiers manquants progressivement
+➡ Stabiliser la version 1.0.0
 ```
-
----

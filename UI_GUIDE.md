@@ -1,6 +1,6 @@
 # 🖥️ UI GUIDE – LATUCOLLECT
 
-Guide officiel de l’interface utilisateur WinUI 3.
+Guide officiel de l’interface utilisateur WinUI 3
 
 Ce document définit :
 
@@ -16,26 +16,26 @@ Ce document définit :
 
 Créer une interface :
 
-- ✅ Simple
-- ✅ Lisible
-- ✅ Rapide à comprendre
-- ✅ Fidèle au besoin réel
+- Simple
+- Lisible
+- Rapide à comprendre
+- Fidèle au besoin réel
 
 ---
 
 # 🧠 CONCEPT GLOBAL
 
-```text
+```text id="pipelineui-guide"
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
-👉 Toute l’interface tourne autour de ce flux
+👉 Toute l’interface repose sur ce flux
 
 ---
 
 # 🧩 STRUCTURE PRINCIPALE
 
-```text
+```text id="structureui-guide"
 Gauche → Projet
 Centre → Options
 Droite → Aperçu
@@ -54,92 +54,81 @@ Afficher la structure complète du projet
 
 ## 📦 Contenu
 
-- Bouton Charger un dossier (📂)
+- Bouton charger un dossier (📂)
 - Barre de recherche
-- Arborescence (dossiers + sous-dossiers)
+- Arborescence complète
 - Fichiers sélectionnables (checkbox)
 
 ---
 
-## ⚙️ Comportement (zone gauche)
+## ⚙️ Comportement
 
-- Clic sur le bouton 📂 → ouvre un sélecteur de dossier
+- Ouverture du sélecteur de dossier
 - Chargement récursif complet
 - Chargement asynchrone (UI non bloquée)
 - Navigation dans les dossiers
-- Filtrage dynamique via la recherche
-- Certains dossiers sont exclus automatiquement (ex: bin, obj, .git)
-- Ces exclusions sont définies dans la configuration globale (Core)
-- Les dossiers exclus ne sont jamais affichés dans l’arborescence
-- L’arbre est allégé pour améliorer les performances et la lisibilité
+- Filtrage dynamique
+
+### 📁 Exclusions
+
+- Dossiers exclus automatiquement :
+  - bin
+  - obj
+  - .git
+
+👉 Définis dans le Core (AppConfig)
+👉 Jamais affichés dans l’arborescence
 
 ---
 
 ## 🔎 Recherche
 
-- Filtre les fichiers et dossiers
-- Recherche insensible à la casse
-- Mise à jour rapide (optimisée avec un léger délai pour la fluidité)
+- Filtrage fichiers + dossiers
+- Insensible à la casse
+- Mise à jour rapide (debounce)
 
-### 🔄 Améliorations (v0.6.0)
+### ✔ Améliorations
 
-- Filtrage possible par extension :
+- Filtrage par extension :
   - .cs
   - .xaml
   - .json
 
-👉 Permet de cibler rapidement un type de fichier
+- Optimisation :
+  - Moins de recalculs
+  - UI fluide même sur gros projets
 
----
+### ⚠️ Aucun résultat
 
-- Optimisation des performances :
-  - Déclenchement différé (debounce)
-  - Réduction des recalculs inutiles
+👉 Affichage :
 
-👉 Garantit une recherche fluide même sur de gros projets
-
----
-
-- Gestion du cas "aucun résultat" :
-
-👉 Si aucun fichier ne correspond :
-→ un message "Aucun résultat" est affiché au centre de la zone
-
-✔ Évite un écran vide incompréhensible
-✔ Améliore la lisibilité de l’interface
+"Aucun résultat"
 
 ---
 
 ## ✅ Sélection
 
-- Checkbox = sélection pour export
-- Multi-sélection possible
+- Checkbox = inclusion dans l’export
+- Multi-sélection
 - Mise à jour immédiate de l’aperçu
 
 ---
 
-### ⚠️ Sélection globale
+## ⚠️ Sélection globale
 
-- La sélection globale est temporairement désactivée
-
-### 📢 Comportement (v0.7.0)
-
-- Clic sur "Tout sélectionner" :
-  → affiche un popup explicatif
+- Désactivée temporairement
 
 👉 Raison :
 
-- Éviter les ralentissements sur les gros projets
-- Préserver la fluidité de l’application
-
-👉 Une amélioration future est prévue (sélection intelligente)
+- Éviter les ralentissements
+- Préserver la fluidité
 
 ---
 
 ## ⚠️ Cas particuliers
 
-- ❌ Dossier invalide → aucun chargement
-- ❌ Accès refusé → aucun affichage
+- Dossier invalide → aucun chargement
+- Accès refusé → ignoré
 
 ---
 
@@ -154,74 +143,68 @@ Configurer et interagir avec l’application
 ## 📦 Contenu
 
 - Choix du format :
-  - ✅ TXT
-  - ✅ Markdown
+  - TXT
+  - Markdown
 
 - Bouton Copier
 
-- Boutons :
-  - Options
-  - Statistiques
-  - Aide
-  - À propos
-  - Quitter
+- Accès :
+
+- Paramètres
+- Statistiques
+- Aide
+- À propos
+- Quitter
 
 ---
 
-## 📊 Statistiques (v0.8.0)
+## 🧑‍💻 Mode développeur
 
-- Bouton dédié (entre Paramètres et Aide)
-- Affiche un dialog contenant :
-  - Nombre de fichiers sélectionnés
-  - Nombre total de lignes
-  - Nombre total de caractères
-  - Taille totale
+- Activation via paramètres
+- Indicateur visuel affiché
+- Aucun impact utilisateur standard
 
 ---
 
-### ⚙️ Comportement
+## 📊 Statistiques
 
-- Mise à jour en temps réel
-- Calcul effectué en arrière-plan
-- Aucun blocage de l’interface
+Affiche :
 
-👉 Permet à l’utilisateur de mieux comprendre le contenu sélectionné
-👉 Basé uniquement sur les fichiers sélectionnés
+- Nombre de fichiers
+- Nombre de lignes
+- Nombre de caractères
+- Taille totale
 
----
-
-### ⚙️ Interaction utilisateur
-
-- Un seul format actif
-- Le format impacte l’export
-- Le bouton Copier :
-  - Activé si contenu présent
-  - Désactivé si aucun contenu
+👉 Mise à jour en temps réel
+👉 Calcul en arrière-plan
 
 ---
 
 ## 📋 Copier
 
 - Copie le contenu de l’aperçu
-- Affiche un message de confirmation
+- Message de confirmation
 
-👉 Le contenu copié correspond exactement à l’aperçu affiché
+👉 Aperçu = contenu copié
 
 ---
 
 ## ⚙️ Dialogs
 
-- Options → paramètres simples
-  - Ajouter un dossier à exclure
-  - Supprimer un dossier de la liste
+- Paramètres :
+  - Gestion des dossiers exclus
+  - Activation mode développeur
 
-- Aide → explication rapide
+- Aide :
+  - Guide rapide
 
-- À propos → informations application
+- À propos :
+  - Infos application
 
-- Quitter → demande de confirmation
+- Quitter :
+  - Confirmation
 
-👉 Toute modification entraîne un rechargement de l’arborescence
+👉 Toute modification → recharge de l’arbre
 
 ---
 
@@ -229,72 +212,61 @@ Configurer et interagir avec l’application
 
 ## 🎯 Rôle
 
-Afficher le document final généré
+Afficher le document final
 
 ---
 
 ## 📦 Contenu
 
-- Texte généré en temps réel
+- Texte généré
 - Scroll vertical
-- Police monospace (type code)
+- Police monospace
 
 ---
 
 ## ⚙️ Comportement
 
-- Mise à jour automatique lors de :
-  - Sélection fichier
-  - Désélection
-  - Recherche
-  - Chargement d’un dossier
+Mise à jour automatique lors de :
+
+- Sélection
+- Désélection
+- Recherche
+- Chargement dossier
 
 ---
 
-## 🔄 États UI (v0.5.0)
+## 🔄 États UI
 
-- 🔄 Chargement → affichage d’un loader
-- ❌ Erreur → message affiché
-- ✅ Prêt → contenu ou message vide
-
-👉 L’interface reflète toujours l’état réel de l’application
+- Chargement → loader
+- Erreur → message
+- Prêt → contenu ou vide
 
 ---
 
-## ⏳ Chargement
+## ⚠️ Cas
 
-- Affichage d’un indicateur visuel (loader)
-- Empêche toute confusion pendant le chargement
-- Disparaît automatiquement une fois terminé
-
----
-
-## ⚠️ Cas particuliers
-
-- ❌ Aucun fichier sélectionné → message centré "Aucun fichier sélectionné..."
-- ✅ Contenu long → scroll actif
+- Aucun fichier → message centré
+- Contenu long → scroll actif
 
 ---
 
 ## ⚠️ Projets volumineux
 
-- Chargement partiel si projet trop volumineux
-- Aucun blocage de l’interface
-- Message affiché :
+👉 Message :
 
 ```text
 ⚠ Projet volumineux — affichage partiel
 ```
 
-👉 Ce comportement garantit la stabilité et la fluidité de l’application
+👉 Chargement partiel pour garantir la fluidité
 
 ---
 
 ## 📄 Contenu affiché
 
 - Chemin du fichier
-- Contenu du fichier
-- Séparateur visuel
+- Contenu
+- Séparateur
 
 ---
 
@@ -303,66 +275,48 @@ Afficher le document final généré
 ```text
 Chemin du fichier
 
-
 (contenu du fichier)
-
-
-----------------------------------------
-```
-
-👉 Répété pour chaque fichier sélectionné
-👉 2 à 3 lignes vides entre chaque section
 
 ---
 
-### 🟢 Format Markdown (v0.8.0)
+```
 
-```md
+👉 Répété pour chaque fichier
+
+---
+
+## 🟢 Markdown
+
+```text
+
 ## 📄 chemin du fichier
 
 (contenu du fichier)
 
 ---
+
 ```
 
 ---
 
-### 🔁 Cohérence (v0.4.0)
+## 🔁 Cohérence
 
-- ✅ Le contenu affiché provient du Core (source unique)
-- ✅ Aucun recalcul côté UI
-- ✅ L’aperçu est strictement identique à l’export
+- Source unique : Core
+- Aucun recalcul UI
+- Aperçu = export
 
 ---
 
-### ⚡ Optimisations (v0.9.0)
+## ⚡ Optimisations
 
-- ✔ Mise à jour intelligente du preview
-  - Recalcul uniquement si la sélection change réellement
-  - Utilisation d’un cache interne (signature)
-
-- ✔ Protection contre les appels multiples
-  - Ajout d’un verrou (`_isPreviewLoading`)
-  - Empêche les refresh simultanés
+- Recalcul uniquement si nécessaire
+- Cache interne
+- Protection appels multiples
 
 👉 Résultat :
 
-- Moins de recalcul
-- UI plus fluide
-- Aucune surcharge inutile
-
----
-
-### 🔄 Améliorations (v0.9.0)
-
-- ✔ Gestion plus fiable du cycle Loading → Ready
-- ✔ Aucun état incohérent même en cas de refresh rapide
-- ✔ Protection contre les appels asynchrones multiples
-
-👉 Garantit :
-
-- Stabilité de l’interface
-- Expérience utilisateur fluide
+- UI fluide
+- Moins de charge
 
 ---
 
@@ -370,7 +324,7 @@ Chemin du fichier
 
 ## 🎯 Rôle
 
-Lancer l’export final
+Lancer l’export
 
 ---
 
@@ -383,52 +337,44 @@ Lancer l’export final
 ## ⚙️ Comportement
 
 - Génère le fichier final
-- Respecte le format sélectionné
-- Utilise les fichiers cochés
-- Affiche une confirmation
+- Respecte le format
+- Utilise les fichiers sélectionnés
+- Affiche confirmation
 
 ---
 
-## ⚠️ Cas erreurs
+## ⚠️ Erreurs
 
-- ❌ Aucun fichier sélectionné
-- ❌ Échec export → message
+- Aucun fichier sélectionné
+- Échec export
 
----
-
-### 🔒 Robustesse (v0.4.0)
-
-- ✅ Aucun crash en cas d’erreur d’export
-- ✅ Message d’erreur affiché à l’utilisateur
-- ✅ Comportement stable même en cas de problème disque ou accès refusé
+👉 Message utilisateur
 
 ---
 
-# 🧠 RÈGLE ALC (IMPORTANT)
+# 🧠 RÈGLE ALC
 
-- ❌ Aucune logique métier dans UI
-- ✅ UI = affichage uniquement
+- Aucune logique métier dans UI
+- UI = affichage uniquement
 
 ---
 
-# 🧠 RÈGLES UX IMPORTANTES
+# 🧠 RÈGLES UX
 
-- ✅ Une action = un rôle clair
-- ✅ Pas de surcharge visuelle
-- ✅ Sélection ≠ aperçu
-- ✅ Aperçu = résultat final
-- ✅ Feedback immédiat (non intrusif)
-- ✅ Le contenu affiché reflète exactement le résultat final exporté
-- ✅ Aucun recalcul inutile (optimisation v0.9.0)
+- Une action = un rôle clair
+- Pas de surcharge visuelle
+- Aperçu = résultat final
+- Feedback immédiat
+- Aucun recalcul inutile
 
 ---
 
 # ⚠️ INTERDIT
 
-- ❌ Pipeline complexe visible
-- ❌ Multiples écrans
-- ❌ Logique métier dans UI
-- ❌ Actions cachées
+- Pipeline visible
+- Multiples écrans
+- Logique métier UI
+- Actions cachées
 
 ---
 
@@ -436,9 +382,9 @@ Lancer l’export final
 
 Une interface :
 
-- ✅ Intuitive
-- ✅ Rapide
-- ✅ Sans confusion
-- ✅ Adaptée à un usage réel
+- Intuitive
+- Rapide
+- Sans confusion
+- Adaptée à un usage réel
 
 👉 L’utilisateur comprend immédiatement quoi faire

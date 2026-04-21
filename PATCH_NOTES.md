@@ -1079,6 +1079,93 @@ Cette version introduit :
 
 ---
 
+---
+
+# 🚀 VERSION 0.10.0
+
+## 📌 Statut
+
+🟡 En cours — Finalisation produit
+
+---
+
+## 🎯 Objectif
+
+Finaliser l’application pour une utilisation réelle, stable et cohérente.
+
+---
+
+## ✨ Améliorations
+
+### 🖥️ Interface utilisateur
+
+- ✅ Réorganisation du panneau Options :
+  - Interface simplifiée
+  - Meilleure lisibilité
+  - Séparation claire des actions
+
+- ✅ Ajout d’un bouton dédié :
+  - "📁 Dossiers exclus"
+  - Ouverture d’un dialog séparé
+
+- ✅ Amélioration de la zone basse :
+  - Meilleur positionnement des boutons
+  - Structure plus stable
+
+---
+
+### 🧑‍💻 Mode développeur
+
+- ✅ Activation via paramètres
+- ✅ Toggle fonctionnel (liaison ViewModel)
+- ✅ Aucun impact utilisateur standard
+
+---
+
+### 🧾 Logs
+
+- ✅ Accès aux logs stabilisé
+- ✅ Suppression des conflits entre dialogs
+- ✅ Correction du freeze lors de l’ouverture depuis les options
+
+---
+
+### 🛠️ Stabilité UI
+
+- ✅ Correction des freezes liés aux ContentDialog imbriqués
+- ✅ Amélioration de la gestion des ouvertures de fenêtres
+- ✅ Meilleure cohérence des interactions utilisateur
+
+---
+
+## 🧠 Résultat
+
+- ✔ Interface plus propre
+- ✔ Navigation plus claire
+- ✔ Moins de bugs UI
+- ✔ Base solide pour finalisation
+
+---
+
+## ⚠️ En cours
+
+- ⬜ Taille minimale fenêtre
+- ⬜ Réduction du flickering
+- ⬜ Améliorations UI finales
+- ⬜ Configuration persistée
+
+---
+
+## 🏁 Objectif
+
+👉 Préparer LatuCollect pour :
+
+- ✔ distribution
+- ✔ utilisation réelle
+- ✔ stabilité maximale
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

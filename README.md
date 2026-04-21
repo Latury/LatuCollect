@@ -4,13 +4,13 @@
 
 ### Collecte simple et rapide de contenu multi-fichiers
 
-🔹 Outil simple pour extraire, assembler et exporter du contenu de fichiers
+🔹 Extraction, assemblage et export de fichiers
 🔹 Pensé pour la lisibilité et l’usage avec des outils d’IA
-🔹 Assemble rapidement le contenu de plusieurs fichiers en un seul document propre et lisible
+🔹 Génération rapide d’un document propre et structuré
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.9.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.10.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -28,112 +28,94 @@ Auteur : Flo Latury
 
 LatuCollect permet de :
 
-- ✅ Charger un projet complet
-- ✅ Naviguer dans sa structure (dossiers / fichiers)
-- ✅ Rechercher rapidement des fichiers
-- ✅ Sélectionner les fichiers à collecter
-- ✅ Générer un aperçu du résultat final
-- ✅ Copier le contenu généré
-- ✅ Exporter un fichier structuré (.txt ou .md)
+- Charger un projet complet
+- Naviguer dans sa structure
+- Rechercher rapidement des fichiers
+- Sélectionner les fichiers à collecter
+- Générer un aperçu en temps réel
+- Copier le contenu généré
+- Exporter un document (.txt / .md)
 
 👉 Aucun fichier source n’est modifié
-👉 Lecture seule, aucune transformation du code
+👉 Lecture seule, aucune transformation
 
 ---
 
 # 🎯 2. Cas d’usage
 
-LatuCollect est utile pour :
+- Préparer du code pour une IA
+- Générer une documentation rapide
+- Partager du code proprement
+- Extraire des parties d’un projet
 
-- ✅ Préparer du code pour une IA (ChatGPT, Copilot…)
-- ✅ Générer une documentation rapide
-- ✅ Partager du code de manière lisible
-- ✅ Extraire des parties spécifiques d’un projet
-
-👉 Idéal pour les développeurs débutants
+👉 Compatible débutant et avancé
 
 ---
 
 # 🧠 3. Fonctionnement
 
-```text id="flowreadme"
+```text id="pipelinereadme"
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
 ---
 
-# 🖥️ 4. Interface (WinUI)
+# 🖥️ 4. Interface
 
-## 🟦 Gauche — Projet (CŒUR DE L’APP)
+## 🟦 Gauche — Projet (cœur de l’application)
 
-- Arborescence complète du projet
-- Navigation dans les dossiers
-- Barre de recherche dynamique
-- Sélection des fichiers via checkbox
-- Bouton "Tout sélectionner" (désactivé temporairement)
+- Arborescence complète
+- Navigation dossiers
+- Recherche dynamique
+- Sélection via checkbox
 
 ---
 
 ## 🟨 Centre — Options
 
-- Choix du format d’export :
-  - TXT
-  - Markdown
+- Choix du format (.txt / .md)
+- Copier le contenu
 
-- Bouton Copier
+Accès :
 
-- Accès :
-  - Options
-  - Statistiques
-  - Aide
-  - À propos
-  - Quitter
+- Paramètres
+- Statistiques
+- Aide
+- À propos
 
----
+### 🧑‍💻 Mode développeur
 
-- Bouton Statistiques
-
----
-
-### 📊 Statistiques (v0.8.0)
-
-- Nombre de fichiers sélectionnés
-- Nombre total de lignes
-- Nombre total de caractères
-- Taille totale
-
-👉 Mise à jour en temps réel
-👉 Calcul en arrière-plan (aucun freeze)
+- Activation via paramètres
+- Indicateur visuel actif
+- Aucun impact utilisateur normal
 
 ---
 
 ## 🟩 Droite — Aperçu
 
-- Affichage du document final
-- Mise à jour en temps réel
-- Affichage type éditeur (monospace)
+- Contenu final en temps réel
+- Affichage type code (monospace)
 
 ### États UI :
 
-- Message si aucun fichier sélectionné
-- Contenu affiché si sélection active
-- Loader pendant le chargement
-- Message d’erreur si problème
+- Aucun fichier sélectionné
+- Chargement
+- Erreur
 
 ---
 
-## 🔻 Bas — Action
+## 🔻 Bas — Actions
 
-- Bouton Exporter
-- Génération du fichier
-- Confirmation utilisateur
+- Export du fichier
+- Logs application
+- Simulation (mode développeur)
 
 ---
 
 # 📄 5. Format d’export
 
-```text id="formatreadme"
-C:\Projet\fichier.cs
+```text id="flowreadme"
+Chemin du fichier
 
 
 (contenu du fichier)
@@ -142,7 +124,7 @@ C:\Projet\fichier.cs
 ----------------------------------------
 ```
 
-👉 2 à 3 lignes vides entre chaque section
+👉 Aperçu = Export (strictement identique)
 
 ---
 
@@ -152,128 +134,89 @@ C:\Projet\fichier.cs
 Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
-👉 Aucun traitement complexe
+👉 Pipeline simple
 👉 Lecture uniquement
 
 ---
 
-# ⚡ 7. Performance & stabilité
+# ⚡ 7. Performance
 
-## v0.5.0
+### Optimisations
 
-- ✅ Chargement asynchrone (pas de blocage UI)
-- ✅ Indicateur de chargement (loader)
-- ✅ Protection contre les gros projets :
-  - MAX_NODES
-  - MAX_DEPTH
+- Cache des fichiers
+- Réduction des accès disque
+- Réduction des recalculs
+- Optimisation mémoire
 
-👉 Si le projet dépasse les limites définies :
+### Protection gros projets
+
+- MAX_NODES
+- MAX_DEPTH
+- Chargement partiel
+
+👉 Message :
 
 ⚠ Projet volumineux — affichage partiel
 
-👉 Cela signifie que seuls une partie des fichiers est chargée
-afin de garantir la fluidité de l’application
+---
+
+# 🧾 8. Logs
+
+- Système de logs intégré
+- Visualisation dans l’application
+- Export possible
+- Badge d’erreurs
+
+👉 Utile pour debug et analyse
 
 ---
 
-## v0.6.0
+# ⚠️ 9. Ce que l’application NE fait PAS
 
-- ✅ Optimisation de la recherche (debounce)
-- ✅ Réduction des recalculs inutiles
-- ✅ Amélioration de la fluidité lors de la saisie
+- Aucune analyse de code
+- Aucune modification
+- Aucun parsing complexe
 
-## v0.7.0
-
-- ✅ Ajout des statistiques en temps réel
-- ✅ Limitation de l’aperçu à 20 fichiers
-- ✅ Calcul en arrière-plan (Task.Run)
-- ✅ Réduction des freezes lors de grosses sélections
+👉 LatuCollect = copier intelligent
 
 ---
 
-## v0.9.0
+# ⚙️ 10. Fonctionnalités principales
 
-- ✅ Mise en cache des fichiers (lecture disque optimisée)
-- ✅ Réduction des recalculs inutiles (cache ViewModel)
-- ✅ Amélioration de la génération du preview
-- ✅ Réduction des allocations mémoire
-- ✅ Optimisation globale du pipeline
-
-- ✅ Interface plus fluide :
-  - Suppression des refresh multiples
-  - Meilleure gestion des états (Loading / Ready)
-
-👉 Résultat :
-
-- Génération plus rapide
-- Moins de charge CPU
-- UI plus stable
+- Import de dossier
+- Arborescence dynamique
+- Recherche optimisée (debounce)
+- Filtrage par extension
+- Exclusion dossiers (bin, obj, .git)
+- Aperçu temps réel
+- Export TXT / Markdown
+- Copie presse-papiers
+- Statistiques temps réel
+- Logs
+- Mode développeur
 
 ---
 
-# ⚠️ 8. Ce que l’application NE fait PAS
-
-- ❌ Aucune analyse de code
-- ❌ Aucune modification des fichiers
-- ❌ Aucun parsing complexe
-
-👉 LatuCollect est un outil de copie intelligente
-
----
-
-# ⚙️ 9. Fonctionnalités principales
-
-- ✅ Import de dossiers complets
-- ✅ Arborescence automatique
-- ✅ Recherche dynamique
-- ✅ Sélection manuelle + globale
-- ✅ Aperçu en temps réel
-- ✅ Copie presse-papiers
-- ✅ Export TXT / Markdown
-- ✅ Feedback utilisateur
-- ✅ États UI (Loading / Ready / Error)
-- ✅ Filtrage par extension (.cs, .xaml, etc.)
-- ✅ Gestion du cas "aucun résultat"
-- ✅ Recherche optimisée (debounce)
-- ✅ Exclusion de dossiers (bin, obj, .git)
-- ✅ Statistiques en temps réel
-- ✅ Limitation intelligente de l’aperçu
-
----
-
-# 🏗️ 10. Architecture
+# 🏗️ 11. Architecture
 
 ```text id="archreadme"
 Core = logique métier
-UI = affichage uniquement
+UI = affichage
 ```
 
-👉 Respect strict du modèle ALC
+### Services principaux
 
-## 🔍 Architecture actuelle (v0.9.0)
+- FileImportService
+- FileReaderService
+- FileCollectionService
+- FileExportService
+- FileStatisticsService
 
-Le projet est maintenant structuré en services distincts :
-
-- Import → FileImportService
-- Lecture → FileReaderService
-- Collection → FileCollectionService
-- Assemblage + Export → FileExportService
-
-👉 Le ViewModel agit uniquement comme orchestrateur UI
-👉 Le Core contient toute la logique métier
-
-👉 Objectif : séparation claire UI / Core
-
-### Améliorations 0.9.0
-
-- Séparation du calcul des statistiques (`FileStatisticsService`)
-- Allègement du `FileExportService`
-- Optimisation des services Core
-- Pipeline plus efficace (moins de doublons)
+👉 ViewModel = orchestrateur uniquement
 
 ---
 
-# 📦 11. Structure
+# 📦 12. Structure
 
 ```text id="structreadme"
 Core/
@@ -281,101 +224,76 @@ UI/WinUI/
 Resources/
 ```
 
-👉 Voir : DIRECTORY_STRUCTURE.md pour le détail complet
+👉 Voir DIRECTORY_STRUCTURE.md
 
 ---
 
-# 📌 12. État actuel (v0.9.0)
+# 📌 13. État actuel
 
-- ✅ Version 0.9.0 stable
-- ✅ Performance fortement améliorée
-- ✅ Preview optimisé (cache + anti recalcul)
-- ✅ Lecture fichiers optimisée (cache)
-- ✅ UI plus fluide et stable
-- ✅ Gestion des états améliorée
-- ✅ Architecture renforcée (séparation des responsabilités)
-- ✅ Pipeline optimisé (aucun doublon)
+- Application stable
+- UI fonctionnelle
+- Pipeline optimisé
+- Logs intégrés
+- Mode développeur actif
+- Architecture ALC respectée
 
-👉 Application prête pour la phase de finalisation (v0.10.0)
+👉 Phase de finalisation (0.10.0)
 
 ---
 
 # ⭐ Points forts
 
-- ✔ Très simple à utiliser
-- ✔ Aperçu en temps réel
-- ✔ Aucun risque (lecture seule)
-- ✔ Export propre et structuré
-- ✔ Performant même sur gros projets
-- ✔ Architecture claire (ALC)
+- Simple
+- Rapide
+- Stable
+- Lisible
+- Sans risque (lecture seule)
+- Optimisé pour IA
 
 ---
 
-# 🧠 13. Philosophie
+# 🧠 14. Philosophie
 
-LatuCollect est conçu pour être :
-
-- ✅ Simple
-- ✅ Rapide
-- ✅ Lisible
-
-👉 Un outil utile avant tout
+- Simplicité avant complexité
+- Lisibilité avant optimisation
+- Utilité avant fonctionnalité
 
 ---
 
-# 🧠 14. Pourquoi LatuCollect
+# 🧠 15. Pourquoi LatuCollect
 
-Beaucoup d’outils analysent ou modifient le code.
+Contrairement aux autres outils :
 
-LatuCollect fait un choix différent :
+- Pas d’analyse
+- Pas de transformation
+- Pas de complexité inutile
 
-- ✔ Simplicité maximale
-- ✔ Lecture uniquement
-- ✔ Aucun traitement complexe
-
-👉 Objectif :
-
-Fournir un outil rapide et fiable pour préparer du contenu,
-notamment pour une utilisation avec des IA
+👉 Juste l’essentiel
 
 ---
 
-👉 LatuCollect n’est pas un analyseur
+# 🧪 16. Exemple
 
-👉 C’est un outil de copie intelligente
+1. Import du dossier
+2. Sélection des fichiers
+3. Aperçu immédiat
+4. Export
 
----
-
-# 🧪 15. Exemple concret
-
-### Cas simple :
-
-Tu veux envoyer ton projet à une IA.
-
-Avec LatuCollect :
-
-1. Tu importes ton dossier
-2. Tu sélectionnes les fichiers utiles
-3. Tu vois immédiatement le rendu
-4. Tu exportes en .txt ou .md
-
-👉 Résultat :
-
-Un document propre, structuré et prêt à être utilisé
+👉 Résultat : document propre et exploitable
 
 ---
 
-# ⚠️ 16. Limites actuelles
+# ⚠️ 17. Limites
 
-- Chargement partiel sur les très gros projets
+- Pas de virtualisation avancée
 - Pas de lazy loading
-- Pas de virtualisation de l’arbre
+- Chargement partiel sur gros projets
 
-👉 Ces limites sont volontaires pour garder :
+👉 Choix volontaire pour garantir :
 
-- ✔ simplicité
-- ✔ stabilité
-- ✔ lisibilité du code
+- stabilité
+- simplicité
+- lisibilité
 
 ---
 
