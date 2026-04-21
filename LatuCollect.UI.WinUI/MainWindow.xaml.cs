@@ -37,26 +37,34 @@ using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 
-// ═════════════════════════════════════════════════════════════
-// 0. STRUCTURE GLOBALE DU FICHIER
-// ═════════════════════════════════════════════════════════════
-//
-// Contient :
-// 1. Champs privés / Services
-// 2. Popups UI (Dialogues)
-// 3. Actions principales utilisateur
-// 4. Statistiques (UI)
-// 5. Simulation (UI)
-// 6. Dialogs génériques
-// 7. Fermeture application
-// 8. Menus / Aide / Options / À propos
+        // ═════════════════════════════════════════════════════════════
+        // 1. INITIALISATION & CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Contient :
+        // - Initialisation de la fenêtre
+        // - Configuration de la taille minimale de la fenêtre
+        // - Association du ViewModel à la vue
+        // - Abonnement aux événements du ViewModel
+        // - Aucune logique métier, uniquement de l’orchestration UI
+        //
+        // Note : la logique métier est entièrement contenue dans le ViewModel et les services appelés par celui-ci.
+        // Cette séparation stricte garantit que la UI reste légère, réactive et facile à maintenir.
+        // Toute interaction utilisateur déclenche des appels au ViewModel, qui gère ensuite la logique métier et met à jour l’interface en conséquence.
+        // Cette approche respecte les principes de l’architecture ALC (Architecture LatuCollect) et du pattern MVVM, assurant une application robuste et évolutive.
+        // La UI est responsable de l’affichage et de l’orchestration, tandis que le ViewModel gère la logique métier et les données.
+        // Toute fonctionnalité liée à la manipulation de données, à la validation, à l’export ou à la gestion des erreurs doit être implémentée dans le ViewModel ou les services associés, jamais dans la code-behind de la fenêtre.
+        // Cette séparation claire permet de maintenir une architecture propre, facilite les tests unitaires et garantit que la UI reste réactive et facile à modifier sans risque d’introduire des bugs liés à la logique métier.
+        // En résumé : la MainWindow est le chef d’orchestre de l’interface, tandis que le ViewModel est le cerveau qui gère la logique métier. Toute interaction utilisateur doit passer par le ViewModel, et la MainWindow doit se contenter d’afficher les données et de réagir aux événements du ViewModel.
 
+// Note : pour les dialogues complexes (logs, options, à propos), la logique métier doit rester dans le ViewModel, même si le contenu est défini dans la fenêtre. Par exemple, le filtrage des logs doit être géré par le ViewModel, et la fenêtre doit simplement afficher les logs filtrés et envoyer les commandes de filtrage au ViewModel.
 namespace LatuCollect.UI.WinUI
 {
     public sealed partial class MainWindow : Window
@@ -77,29 +85,49 @@ namespace LatuCollect.UI.WinUI
             if (appWindow != null)
             {
                 appWindow.Resize(new Windows.Graphics.SizeInt32(1400, 850));
+
+                // 🔒 Taille minimale simulée
+                appWindow.Changed += (_, args) =>
+                {
+                    var size = appWindow.Size;
+
+                    int minWidth = 1200;
+                    int minHeight = 750;
+
+                    if (size.Width < minWidth || size.Height < minHeight)
+                    {
+                        appWindow.Resize(new Windows.Graphics.SizeInt32(
+                            Math.Max(size.Width, minWidth),
+                            Math.Max(size.Height, minHeight)
+                        ));
+                    }
+                };
             }
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS / SERVICES
+        // 2. CHAMPS PRIVÉS / SERVICES
         // ═════════════════════════════════════════════════════════════
         //
         // Contient :
-        // - ViewModel
-        // - Services utilisés uniquement côté UI
-        //
+        // - Instance du ViewModel
+        // - Services utilisés par la fenêtre (ex: export)
+        // - Aucune logique métier, uniquement des références aux composants nécessaires à l’affichage et à l’orchestration
 
+        // Instance du ViewModel (le cerveau de l’application, gère la logique métier et les données)
         private readonly MainViewModel _viewModel = new();
+
+        // Service d’export de fichiers (utilisé pour exporter le contenu dans un fichier choisi par l’utilisateur)
         private readonly FileExportService _exportService = new FileExportService();
 
         // ═════════════════════════════════════════════════════════════
         // 2. POPUPS UI (DIALOGUES)
         // ═════════════════════════════════════════════════════════════
-        //
-        // Dialogues affichés à l’utilisateur
-        // (aucune logique métier)
-        //
+        // Contient :
+        // - Dialogues d’information
+        // - Dialogues de confirmation
 
+        // Affiche un dialogue d’information lorsque la sélection globale est bloquée (UI uniquement, appelé par le ViewModel via l’événement OnSelectAllBlocked)
         private async void ShowSelectAllDialog()
         {
             var dialog = new ContentDialog
@@ -110,11 +138,18 @@ namespace LatuCollect.UI.WinUI
                 XamlRoot = this.Content.XamlRoot
             };
 
-            await dialog.ShowAsync();
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch
+            {
+                // évite crash si déjà ouvert
+            }
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 3. ACTIONS PRINCIPALES UTILISATEUR
+        // 4. ACTIONS PRINCIPALES UTILISATEUR
         // ═════════════════════════════════════════════════════════════
         //
         // Boutons principaux :
@@ -260,10 +295,132 @@ namespace LatuCollect.UI.WinUI
 
         private async void OnLogsClicked(object sender, RoutedEventArgs e)
         {
+            var vm = _viewModel;
+
+            // ─────────────────────────────────────────────
+            // 🧾 LISTE LOGS
+            // ─────────────────────────────────────────────
+
+            var listView = new ListView
+            {
+                ItemsSource = vm.FilteredLogs,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 400,
+                ItemTemplate = (DataTemplate)((FrameworkElement)this.Content).Resources["LogItemTemplate"]
+            };
+
+            // ─────────────────────────────────────────────
+            // 📦 CONTENU
+            // ─────────────────────────────────────────────
+
+            // Conteneur principal
+            var stack = new StackPanel { Spacing = 10 };
+
+            // Titre
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Logs en temps réel",
+                FontSize = 16
+            });
+
+            // Filtres
+            var filterPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 10
+            };
+
+            // Boutons de filtre (UI uniquement, modifie la propriété SelectedLogFilter du ViewModel)
+            var allBtn = new Button { Content = "Tout" };
+            allBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.All;
+
+            // Style simple pour indiquer le filtre actif
+            var infoBtn = new Button { Content = "Info" };
+            infoBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Info;
+
+            // (Le style de chaque bouton pourrait être amélioré pour refléter l’état actif, par exemple en changeant la couleur de fond)
+            var warnBtn = new Button { Content = "Warning" };
+            warnBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Warning;
+
+            // (Le style de chaque bouton pourrait être amélioré pour refléter l’état actif, par exemple en changeant la couleur de fond)
+            var errorBtn = new Button { Content = "Error" };
+            errorBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Error;
+
+            filterPanel.Children.Add(allBtn);
+            filterPanel.Children.Add(infoBtn);
+            filterPanel.Children.Add(warnBtn);
+            filterPanel.Children.Add(errorBtn);
+
+            stack.Children.Add(filterPanel);
+
+            // Liste logs
+            stack.Children.Add(listView);
+
+            // Export logs (UI uniquement, n’exporte rien pour l’instant)
+            var exportButton = new Button
+            {
+                Content = "📤 Exporter les logs",
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            stack.Children.Add(exportButton);
+
+            // Action export logs
+            exportButton.Click += async (_, __) =>
+            {
+                try
+                {
+                    if (!vm.FilteredLogs.Any())
+                    {
+                        _viewModel.ShowFeedback("⚠ Aucun log à exporter");
+                        return;
+                    }
+
+                    var lines = vm.FilteredLogs.Select(log =>
+                        $"[{log.Date}] [{log.Level}] {log.Message} {(string.IsNullOrEmpty(log.Context) ? "" : $"({log.Context})")}"
+                    );
+
+                    string content = string.Join(
+                        Environment.NewLine + "----------------------------------------" + Environment.NewLine,
+                        lines
+                    );
+
+                    FileSavePicker picker = new();
+
+                    IntPtr hwnd = WindowNative.GetWindowHandle(this);
+                    InitializeWithWindow.Initialize(picker, hwnd);
+
+                    picker.SuggestedFileName = "logs";
+                    picker.FileTypeChoices.Add("Text", new[] { ".txt" });
+
+                    StorageFile file = await picker.PickSaveFileAsync();
+
+                    if (file == null)
+                        return;
+
+                    await Windows.Storage.FileIO.WriteTextAsync(file, content);
+
+                    _viewModel.ShowFeedback("✔ Logs exportés");
+                }
+                catch (Exception ex)
+                {
+                    _viewModel.ShowFeedback("✖ Erreur export logs : " + ex.Message);
+                }
+            };
+
+            // ─────────────────────────────────────────────
+            // 🪟 DIALOG
+            // ─────────────────────────────────────────────
+
             var dialog = new ContentDialog
             {
-                Title = "Logs",
-                Content = "Affichage des logs à venir...",
+                Title = "🧾 Logs",
+                Content = new Grid
+                {
+                    Width = 900,
+                    MaxHeight = 600,
+                    Children = { stack }
+                },
                 CloseButtonText = "Fermer",
                 XamlRoot = this.Content.XamlRoot
             };
@@ -272,7 +429,7 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 4. STATISTIQUES (UI)
+        // 5. STATISTIQUES (UI)
         // ═════════════════════════════════════════════════════════════
         //
         // Affichage uniquement (les données viennent du ViewModel)
@@ -349,7 +506,7 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 5. SIMULATION (UI)
+        // 6. SIMULATION (UI)
         // ═════════════════════════════════════════════════════════════
         //
         // Configuration des scénarios de simulation
@@ -408,7 +565,7 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 6. DIALOGS GÉNÉRIQUES
+        // 7. DIALOGS GÉNÉRIQUES
         // ═════════════════════════════════════════════════════════════
         //
         // Helpers UI pour afficher des messages
@@ -465,7 +622,7 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 7. FERMETURE APPLICATION
+        // 8. FERMETURE APPLICATION
         // ═════════════════════════════════════════════════════════════
         //
         // Gestion de la fermeture avec confirmation
@@ -484,7 +641,7 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 8. MENUS / AIDE / OPTIONS / À PROPOS
+        // 9. MENUS / AIDE / OPTIONS / À PROPOS
         // ═════════════════════════════════════════════════════════════
         //
         // Écrans secondaires de l’application
@@ -534,6 +691,61 @@ namespace LatuCollect.UI.WinUI
         // Options : gestion des dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders) 
         private async void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
+            var stack = new StackPanel { Spacing = 12 };
+
+            // 👇 IMPORTANT : déclarer AVANT
+            ContentDialog dialog = new ContentDialog();
+
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Paramètres",
+                FontSize = 18
+            });
+
+            // 📁 EXCLUSIONS
+            var exclusionsButton = new Button
+            {
+                Content = "📁 Dossiers exclus"
+            };
+
+            exclusionsButton.Click += async (_, __) =>
+            {
+                dialog.Hide();
+
+                await Task.Delay(50);
+
+                ShowExclusionsDialog();
+            };
+
+            // 🧑🏻‍💻 MODE DEV
+            var devToggle = new ToggleSwitch
+            {
+                Header = "🧑🏻‍💻 Mode développeur",
+                IsOn = _viewModel.IsDeveloperMode,
+                OnContent = "Activé",
+                OffContent = "Désactivé"
+            };
+
+            devToggle.Toggled += (_, __) =>
+            {
+                _viewModel.IsDeveloperMode = devToggle.IsOn;
+            };
+
+            stack.Children.Add(exclusionsButton);
+            stack.Children.Add(devToggle);
+
+            // 👇 configuration APRÈS
+            dialog.Title = "⚙ Paramètres";
+            dialog.Content = stack;
+            dialog.CloseButtonText = "Fermer";
+            dialog.XamlRoot = this.Content.XamlRoot;
+
+            await dialog.ShowAsync();
+        }
+
+        // Affiche un dialogue pour gérer les dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders)
+        private async void ShowExclusionsDialog()
+        {
             var listView = new ListView
             {
                 ItemsSource = AppConfig.ExcludedFolders,
@@ -555,7 +767,6 @@ namespace LatuCollect.UI.WinUI
                 Content = "Supprimer sélection"
             };
 
-            // ➕ Ajouter
             addButton.Click += (_, __) =>
             {
                 var value = input.Text?.Trim();
@@ -572,7 +783,6 @@ namespace LatuCollect.UI.WinUI
                 }
             };
 
-            // ➖ Supprimer
             removeButton.Click += (_, __) =>
             {
                 if (listView.SelectedItem is string selected)
@@ -592,26 +802,30 @@ namespace LatuCollect.UI.WinUI
                 FontSize = 16
             });
 
-            stack.Children.Add(listView);
+            var scroll = new ScrollViewer
+            {
+                Content = listView,
+                MaxHeight = 250
+            };
+
+            stack.Children.Add(scroll);
             stack.Children.Add(input);
             stack.Children.Add(addButton);
             stack.Children.Add(removeButton);
 
             var dialog = new ContentDialog
             {
-                Title = "Options - Exclusions",
-                Content = stack,
-                PrimaryButtonText = "Fermer",
+                Title = "📁 Dossiers exclus",
+                Content = new Grid
+                {
+                    Width = 500,
+                    Children = { stack }
+                },
+                CloseButtonText = "Fermer",
                 XamlRoot = this.Content.XamlRoot
             };
 
             await dialog.ShowAsync();
-
-            // 🔄 Recharge l’arbre après fermeture
-            if (!string.IsNullOrWhiteSpace(_viewModel.CurrentFolderPath))
-            {
-                _viewModel.LoadTree(_viewModel.CurrentFolderPath);
-            }
         }
 
         // A propos : informations sur l'application, le développeur, la licence, etc. (UI uniquement) 

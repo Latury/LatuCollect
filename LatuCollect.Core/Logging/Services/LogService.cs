@@ -12,7 +12,7 @@
 ║  Responsabilités principales :                                       ║
 ║  - Créer des logs (Info, Warning, Error)                             ║
 ║  - Stocker les logs en mémoire                                       ║
-║  - Fournir les logs au reste de l’application                        ║
+║  - Notifier les changements                                          ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - ILogService                                                       ║
@@ -26,25 +26,35 @@
 
 using LatuCollect.Core.Logging.Interfaces;
 using LatuCollect.Core.Logging.Models;
-using System.Collections.Generic;
+using System;
+using System.Collections.ObjectModel;
 
 namespace LatuCollect.Core.Logging.Services
 {
     public class LogService : ILogService
     {
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 📌 CHAMPS PRIVÉS
+        // 📌 COLLECTION OBSERVABLE
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        private readonly List<LogEntry> _logs = new();
+        private readonly ObservableCollection<LogEntry> _logs = new();
 
+        public ReadOnlyObservableCollection<LogEntry> Logs { get; }
 
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 📌 PROPRIÉTÉS
+        // 🔔 ÉVÉNEMENT
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        public IReadOnlyList<LogEntry> Logs => _logs;
+        public event EventHandler? LogsUpdated;
 
+        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ⚙️ CONSTRUCTEUR
+        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        public LogService()
+        {
+            Logs = new ReadOnlyObservableCollection<LogEntry>(_logs);
+        }
 
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         // ⚙️ MÉTHODES PUBLIQUES
@@ -65,15 +75,18 @@ namespace LatuCollect.Core.Logging.Services
             Add(LogLevel.Error, message, context);
         }
 
-
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 🔧 MÉTHODES PRIVÉES
+        // 🔧 MÉTHODE PRIVÉE
         //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         private void Add(LogLevel level, string message, string? context)
         {
             var log = new LogEntry(level, message, context);
+
             _logs.Add(log);
+
+            // 🔥 NOTIFICATION
+            LogsUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

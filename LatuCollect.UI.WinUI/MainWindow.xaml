@@ -30,6 +30,54 @@
             <conv:BoolToIconConverter x:Key="BoolToIconConverter" />
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <conv:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
+
+            <!--  🧾 TEMPLATE LOGS  -->
+            <DataTemplate x:Key="LogItemTemplate">
+                <Border
+                    Margin="2"
+                    Padding="6"
+                    Background="#2D2D30"
+                    BorderBrush="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="4">
+
+                    <StackPanel Spacing="4">
+
+                        <!--  Ligne 1 : Date + Niveau  -->
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+
+                            <!--  Date  -->
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="#AAAAAA"
+                                Text="{Binding Date}" />
+
+                            <!--  Niveau (couleur dynamique)  -->
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                Text="{Binding Level}" />
+
+                        </StackPanel>
+
+                        <!--  Ligne 2 : Message  -->
+                        <TextBlock
+                            FontSize="13"
+                            Text="{Binding Message}"
+                            TextWrapping="Wrap" />
+
+                        <!--  Ligne 3 : Contexte  -->
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="#888888"
+                            Text="{Binding Context}"
+                            TextWrapping="Wrap" />
+
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+
         </Grid.Resources>
 
         <!--  =========================  -->
@@ -175,6 +223,18 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Spacing="22">
+
+                <!--  MODE DÉVELOPPEUR  -->
+                <StackPanel HorizontalAlignment="Center" Spacing="6">
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Foreground="Orange"
+                        Text="🧑🏻‍💻 Mode développeur activé"
+                        Visibility="{Binding IsDeveloperMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                </StackPanel>
 
                 <!--  TITRE  -->
                 <TextBlock
@@ -388,25 +448,33 @@
 
                     <Grid>
 
+                        <!--  🧱 NOUVELLE STRUCTURE  -->
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <!--  Gauche  -->
+                            <ColumnDefinition Width="*" />
+                            <!--  Espace  -->
+                            <ColumnDefinition Width="Auto" />
+                            <!--  Droite  -->
                         </Grid.ColumnDefinitions>
 
-                        <!--  GAUCHE : BOUTONS  -->
+                        <!--  =========================  -->
+                        <!--  GAUCHE : SIMULATION + LOGS  -->
+                        <!--  =========================  -->
                         <StackPanel
+                            Grid.Column="0"
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             Spacing="10">
 
-                            <!--  🧪 SIMULATION (futur : visible seulement en mode dev)  -->
+                            <!--  🧪 SIMULATION  -->
                             <Button
                                 Height="40"
                                 Padding="12,0"
                                 Click="OnSimulationClicked"
                                 Content="{Binding SimulationLabel}"
                                 ToolTipService.ToolTip="Simulation"
-                                Visibility="{Binding IsSimulationEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Visibility="{Binding IsSimulationVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <!--  🧾 LOGS  -->
                             <Grid>
@@ -418,23 +486,34 @@
                                     Content="🧾 Logs"
                                     ToolTipService.ToolTip="Afficher les logs" />
 
-                                <!--  🔴 BADGE ERREUR  -->
-                                <Ellipse
-                                    Width="10"
-                                    Height="10"
-                                    Margin="0,-2,-2,0"
+                                <!--  🔴 BADGE  -->
+                                <Border
+                                    Height="18"
+                                    MinWidth="18"
+                                    Margin="0,-4,-4,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Fill="Red"
-                                    Visibility="{Binding HasLogErrors, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    Background="Red"
+                                    CornerRadius="9"
+                                    Visibility="{Binding HasLogErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="White"
+                                        Text="{Binding LogErrorCount}" />
+                                </Border>
 
                             </Grid>
 
                         </StackPanel>
 
-                        <!--  EXPORT  -->
+                        <!--  =========================  -->
+                        <!--  DROITE : EXPORT  -->
+                        <!--  =========================  -->
                         <Button
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Height="40"
                             MinWidth="140"
                             Margin="10,0,10,0"

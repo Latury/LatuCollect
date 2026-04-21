@@ -451,17 +451,40 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ─────────────────────────────────────────────
+        // 🧑🏻‍💻 MODE DÉVELOPPEUR
+        // ─────────────────────────────────────────────
+
+        private bool _isDeveloperMode;
+
+        public bool IsDeveloperMode
+        {
+            get => _isDeveloperMode;
+            set
+            {
+                if (SetProperty(ref _isDeveloperMode, value))
+                {
+                    // UI dépendante
+                    OnPropertyChanged(nameof(IsSimulationVisible));
+                    OnPropertyChanged(nameof(IsDeveloperModeEnabled));
+                }
+            }
+        }
+
+        // 🧪 utilisé pour afficher le bouton simulation
+        public bool IsSimulationVisible => IsDeveloperMode;
+
+        // 👇 utilisé pour afficher le label 🧑🏻‍💻
+        public bool IsDeveloperModeEnabled => IsDeveloperMode;
+
+        // ─────────────────────────────────────────────
         // 🧾 LOGS (DEBUG / SUIVI)
         // ─────────────────────────────────────────────
 
-        public IReadOnlyList<LogEntry> Logs
+        public ReadOnlyObservableCollection<LogEntry> Logs
         {
             get
             {
-                if (_logger is LogService logService)
-                    return logService.Logs;
-
-                return new List<LogEntry>();
+                return (_logger as LogService)!.Logs;
             }
         }
 
@@ -469,6 +492,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 🧾 LOGS - INDICATEUR ERREUR
         // ─────────────────────────────────────────────
 
+        // Permet d’afficher un indicateur visuel si des erreurs sont présentes dans les logs
         public bool HasLogErrors
         {
             get
@@ -479,6 +503,65 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 return false;
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 🧾 LOGS - COMPTEUR ERREURS
+        // ─────────────────────────────────────────────
+        public int LogErrorCount
+        {
+            get
+            {
+                if (_logger is LogService logService)
+                {
+                    return logService.Logs.Count(l => l.Level == LogLevel.Error);
+                }
+
+                return 0;
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 🧾 FILTRE LOGS
+        // ─────────────────────────────────────────────
+
+        public enum LogFilter
+        {
+            All,
+            Info,
+            Warning,
+            Error
+        }
+
+        private LogFilter _selectedLogFilter = LogFilter.All;
+
+        public LogFilter SelectedLogFilter
+        {
+            get => _selectedLogFilter;
+            set
+            {
+                if (SetProperty(ref _selectedLogFilter, value))
+                {
+                    OnPropertyChanged(nameof(FilteredLogs));
+                }
+            }
+        }
+
+        public IEnumerable<LogEntry> FilteredLogs
+        {
+            get
+            {
+                if (_logger is not LogService logService)
+                    return Enumerable.Empty<LogEntry>();
+
+                return SelectedLogFilter switch
+                {
+                    LogFilter.Info => logService.Logs.Where(l => l.Level == LogLevel.Info),
+                    LogFilter.Warning => logService.Logs.Where(l => l.Level == LogLevel.Warning),
+                    LogFilter.Error => logService.Logs.Where(l => l.Level == LogLevel.Error),
+                    _ => logService.Logs
+                };
             }
         }
 
@@ -500,6 +583,18 @@ namespace LatuCollect.UI.WinUI.ViewModels
             // ─────────────────────────────────────────────
             _logger = new LogService();
             _logger.Info("MainViewModel initialisé");
+
+            // 🔥 AJOUT ICI (TRÈS IMPORTANT)
+            if (_logger is LogService logService)
+            {
+                logService.LogsUpdated += (s, e) =>
+                {
+                    OnPropertyChanged(nameof(HasLogErrors));
+                    OnPropertyChanged(nameof(Logs));
+                    OnPropertyChanged(nameof(LogErrorCount));
+                    OnPropertyChanged(nameof(FilteredLogs));
+                };
+            }
 
             // ─────────────────────────────────────────────
             // 🔧 SERVICES CORE
@@ -523,6 +618,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             CurrentFolderPath = string.Empty;
 
             SelectedFormat = null;
+
+            IsDeveloperMode = false;
 
             IsSimulationEnabled = false;
 
