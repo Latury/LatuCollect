@@ -45,6 +45,7 @@ Tests réalisés directement dans l’interface WinUI
 - Dossier invalide
 - Accès refusé
 - Sélection annulée
+- Annulation utilisateur (fermeture du sélecteur)
 
 👉 Résultat attendu :
 
@@ -128,6 +129,7 @@ Tests réalisés directement dans l’interface WinUI
 - Message affiché
 - Export bloqué
 - Copier désactivé
+- Clics rapides répétés (anti double clic)
 
 ---
 
@@ -186,6 +188,29 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
+## 💬 FEEDBACK UI
+
+### Vérifier :
+
+- Message affiché après action
+- Disparition automatique
+- Aucun blocage UI
+
+### Cas :
+
+- Export réussi
+- Erreur export
+- Copier
+- Sélection invalide
+
+👉 Résultat attendu :
+
+- Feedback visible
+- Compréhensible
+- Non intrusif
+
+---
+
 ## ⚠️ PROJETS VOLUMINEUX
 
 👉 Message :
@@ -219,6 +244,16 @@ Tests réalisés directement dans l’interface WinUI
 
 - Aucun ralentissement
 - Aucun bug visuel
+
+### 🖥️ Fenêtre
+
+- Impossible de réduire sous 1600 x 1000
+- Aucun flickering visible
+
+👉 Résultat :
+
+- UI stable
+- Aucun effet visuel parasite
 
 ---
 
@@ -278,6 +313,32 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
+## 🧾 LOGS
+
+### Vérifier :
+
+- Ouverture du dialog
+- Affichage des logs
+- Filtrage (Info / Warning / Error)
+
+### Export logs :
+
+- Fichier créé
+- Contenu correct
+- Format lisible
+
+### Badge erreurs :
+
+- Affichage si erreurs présentes
+- Compteur correct
+
+👉 Résultat attendu :
+
+- Aucun crash
+- Données cohérentes
+
+---
+
 ## 📊 STATISTIQUES
 
 ### Vérifier :
@@ -292,6 +353,48 @@ Tests réalisés directement dans l’interface WinUI
 - Temps réel
 - Aucun freeze
 - Cohérence
+
+---
+
+## 🧑‍💻 MODE DÉVELOPPEUR
+
+### Vérifier :
+
+- Activation via paramètres
+- Désactivation par défaut
+- Affichage du message d’avertissement
+
+### Comportement :
+
+- Aucun impact sur utilisateur normal
+- Activation immédiate
+- UI mise à jour correctement
+
+👉 Résultat attendu :
+
+- Bouton simulation visible uniquement si actif
+- Message affiché dans l’UI
+
+---
+
+## 🧪 SIMULATION
+
+### Vérifier :
+
+- Activation / désactivation
+- Changement de scénario
+- Effet immédiat
+
+### Scénarios UI :
+
+- Loader bloqué
+- Erreur UI
+
+### Résultat attendu :
+
+- Comportement simulé visible
+- Aucun impact réel sur les fichiers
+- Désactivation restaure un comportement normal
 
 ---
 
@@ -316,6 +419,7 @@ Chemin du fichier
 - Erreur lecture
 - Chemins longs
 - Échec export
+- Fermeture application pendant traitement
 
 👉 Résultat attendu :
 

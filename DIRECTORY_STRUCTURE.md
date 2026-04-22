@@ -102,7 +102,7 @@ Permet de simuler :
 - Cas extrêmes
 
 👉 Activé uniquement en mode développeur
-👉 Jamais en production
+👉 Jamais actif en production (désactivé par défaut)
 
 ---
 
@@ -269,6 +269,17 @@ LatuCollect/
 ---
 
 # 🔄 DIFFÉRENCES AVEC LA CIBLE
+
+## ✅ ÉLÉMENTS DÉJÀ EN PLACE
+
+✔ Services Core principaux (Import, Reader, Collection, Export, Statistics)
+✔ Simulation (structure initiale)
+✔ Logging centralisé
+✔ Configuration globale (AppConfig)
+✔ UI WinUI structurée (Views, ViewModels, Models)
+✔ Séparation stricte UI / Core
+
+👉 Base solide déjà fonctionnelle
 
 ❌ Non implémenté :
 

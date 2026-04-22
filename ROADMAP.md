@@ -504,8 +504,8 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 ## 🧪 UI Simulation
 
 - ✅ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
-- ⬜ Popup de sélection des scénarios
-- ⬜ Activation / désactivation en temps réel
+- ✅ Popup de sélection des scénarios
+- ✅ Activation / désactivation en temps réel
 
 ---
 
@@ -558,8 +558,8 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🖥️ UI
 
-- ⬜ Loader bloqué
-- ⬜ Erreur UI forcée
+- ✅ Loader bloqué
+- ✅ Erreur UI forcée
 - ⬜ État incohérent
 - ⬜ UI figée (simulation extrême)
 - ⬜ Affichage du chemin du dossier chargé
@@ -592,7 +592,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Arborescence profonde
 - ⬜ Sélection massive
 - ⬜ Export lourd
-- ⬜ Réduction du flickering lors du redimensionnement
+- ✅ Réduction du flickering lors du redimensionnement
 
 ---
 
@@ -728,8 +728,8 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🖥️ Fenêtre / Redimensionnement
 
-- ⬜ Définir taille minimale fenêtre (évite UI cassée)
-- ⬜ Réduction du flickering lors du resize
+- ✅ Définir taille minimale fenêtre (évite UI cassée)
+- ✅ Réduction du flickering lors du resize
 - ⬜ Optimisation du rendu (éviter refresh complet)
 
 ---

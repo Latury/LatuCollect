@@ -162,7 +162,7 @@ Le ViewModel ne contient plus de logique métier complexe.
 
 ### ❌ Il ne fait pas :
 
-- Lecture de fichiers
+- Lecture directe des fichiers
 - Assemblage de contenu
 - Calcul métier complexe
 
@@ -371,7 +371,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-# 6.1 STATISTIQUES (v0.7.0)
+# 📊 7. STATISTIQUES (v0.7.0)
 
 Les statistiques sont calculées à partir des fichiers sélectionnés :
 
@@ -393,7 +393,7 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 ---
 
-# 6.2 PERFORMANCE (v0.7.0)
+# ⚡ 8. PERFORMANCE (v0.7.0)
 
 - ✔ Limitation de l’aperçu à 20 fichiers
 - ✔ Calcul en arrière-plan (async)
@@ -425,7 +425,7 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 ---
 
-# 7. UI WINUI (STRUCTURE OFFICIELLE)
+# 9. UI WINUI (STRUCTURE OFFICIELLE)
 
 ```text
 Gauche → Projet (arborescence)
@@ -436,7 +436,7 @@ Bas → Export
 
 ---
 
-# 8. COMPORTEMENT UI
+# 10. COMPORTEMENT UI
 
 - ✔ Sélection via checkbox
 - ✔ Navigation dossiers
@@ -446,7 +446,59 @@ Bas → Export
 
 ---
 
-# 9. FORMAT D’EXPORT
+# 11. MODE DÉVELOPPEUR
+
+Le mode développeur permet d’activer des fonctionnalités avancées de test.
+
+### ✔ Règles
+
+- Désactivé par défaut
+- Activé uniquement via l’interface (Paramètres)
+- Aucun impact sur l’utilisateur standard
+
+### ✔ Comportement
+
+- Affichage d’un message dans l’UI (pas de popup bloquant)
+- Activation de fonctionnalités avancées non visibles en mode standard
+
+### ✔ Fonctionnalités activées
+
+- Mode simulation
+- Accès aux scénarios de test
+
+👉 Le mode développeur reste strictement isolé du comportement normal.
+
+---
+
+# 12. SIMULATION
+
+Le système de simulation permet de reproduire des comportements spécifiques pour les tests.
+
+### ✔ Accès
+
+- Disponible uniquement en mode développeur
+
+### ✔ Fonctionnement
+
+- Activation via l’UI
+- Choix d’un scénario
+- Effet immédiat sur le comportement de l’application
+
+### ✔ Objectif
+
+- Tester les erreurs
+- Simuler des cas extrêmes
+- Valider la robustesse de l’application
+
+### ⚠️ Règles
+
+- Aucun impact sur les fichiers réels
+- Doit rester isolé du Core réel
+- Activation explicite uniquement
+
+---
+
+# 13. FORMAT D’EXPORT
 
 ```text
 Chemin du fichier
@@ -460,7 +512,7 @@ Chemin du fichier
 
 ---
 
-# 10. STRUCTURE PROJET
+# 14. STRUCTURE PROJET
 
 ```text
 Core/
@@ -478,7 +530,7 @@ UI/
 
 ---
 
-# 11. RÈGLES STRICTES
+# 15. RÈGLES STRICTES
 
 - ✔ 1 classe = 1 responsabilité
 - ✔ Pas de code mort
@@ -488,14 +540,14 @@ UI/
 
 ---
 
-# 11.1 EMOJIS
+# 16. EMOJIS
 
 - ❌ Interdits dans le code en version finale
 - ✔ Autorisés dans la documentation
 
 ---
 
-# 12. COMMENTAIRES
+# 17. COMMENTAIRES
 
 Classe :
 
@@ -510,7 +562,7 @@ Méthode :
 
 ---
 
-# 13. ASYNCHRONE
+# 18. ASYNCHRONE
 
 - ✔ async / await
 - ❌ .Result / .Wait()
@@ -520,7 +572,30 @@ Méthode :
 
 ---
 
-# 14. JOURNALISATION
+# 19. STABILITÉ UI
+
+### ✔ Taille minimale
+
+- Définie à 1600 x 1000
+- Empêche la dégradation de l’interface
+
+### ✔ Redimensionnement
+
+- Gestion native (Win32)
+- Réduction du flickering
+- Pas de boucle de resize agressive
+
+### ✔ Dialogs
+
+- Aucun dialog imbriqué
+- Gestion contrôlée
+- Aucun blocage UI
+
+👉 Objectif : garantir une expérience fluide et stable
+
+---
+
+# 20. JOURNALISATION
 
 - ✔ Tracer actions
 - ✔ Tracer erreurs
@@ -529,7 +604,7 @@ Méthode :
 
 ---
 
-# 15. NOMMAGE
+# 21. NOMMAGE
 
 - ✔ PascalCase
 - ✔ Noms explicites
@@ -537,7 +612,7 @@ Méthode :
 
 ---
 
-# 16. INJECTION DE DÉPENDANCES
+# 22. INJECTION DE DÉPENDANCES
 
 Actuel :
 
@@ -549,7 +624,7 @@ Futur :
 
 ---
 
-# 17. ÉTAT ACTUEL
+# 23. ÉTAT ACTUEL
 
 - ✔ Core fonctionnel
 - ✔ Export opérationnel
@@ -566,7 +641,7 @@ Futur :
 
 ---
 
-# 18. ÉVOLUTIONS
+# 24. ÉVOLUTIONS
 
 - ✔ MVVM avancé
 - ✔ Refactor Core
@@ -589,7 +664,7 @@ LatuCollect est volontairement simplifié :
 
 ---
 
-# 19. OBJECTIF GLOBAL
+# 25. OBJECTIF GLOBAL
 
 - ✔ Simple
 - ✔ Structuré

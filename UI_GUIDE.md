@@ -44,6 +44,33 @@ Bas → Export
 
 ---
 
+# 💬 FEEDBACK UTILISATEUR
+
+## 🎯 Rôle
+
+Informer l’utilisateur des actions en cours ou terminées
+
+---
+
+## 📦 Exemples
+
+- ✔ Export réussi
+- ❌ Erreur export
+- ⚠ Aucun fichier sélectionné
+- ✔ Contenu copié
+
+---
+
+## ⚙️ Comportement
+
+- Affichage temporaire
+- Non bloquant
+- Affiché dans la zone aperçu (si actif)
+
+👉 Permet un retour immédiat sans interrompre l’utilisateur
+
+---
+
 # 🟦 ZONE GAUCHE — PROJET
 
 ## 🎯 Rôle
@@ -324,13 +351,15 @@ Chemin du fichier
 
 ## 🎯 Rôle
 
-Lancer l’export
+Actions finales de l’application
 
 ---
 
 ## 📦 Contenu
 
 - Bouton Exporter
+- Bouton Logs
+- Bouton Simulation (mode développeur uniquement)
 
 ---
 
@@ -349,6 +378,36 @@ Lancer l’export
 - Échec export
 
 👉 Message utilisateur
+
+---
+
+## 🧾 Logs
+
+- Accès via bouton dédié
+- Affichage dans un dialog
+- Filtrage (Info / Warning / Error)
+- Export possible
+
+👉 Utilisé pour debug et suivi application
+
+---
+
+# 🖥️ STABILITÉ UI
+
+## 📏 Fenêtre
+
+- Taille minimale : 1600 x 1000
+- Empêche la casse de l’interface
+
+---
+
+## ⚡ Redimensionnement
+
+- Gestion contrôlée
+- Réduction du flickering
+- UI toujours lisible
+
+👉 Objectif : stabilité visuelle
 
 ---
 

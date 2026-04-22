@@ -11,7 +11,7 @@
 <br>
 
 ![Version](https://img.shields.io/badge/Version-0.10.0-FFDF20?style=for-the-badge)
-![Statut](https://img.shields.io/badge/Statut-Stable-008000?style=for-the-badge)
+![Statut](https://img.shields.io/badge/Statut-En%20finalisation-FFA500?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -85,9 +85,30 @@ Accès :
 
 ### 🧑‍💻 Mode développeur
 
-- Activation via paramètres
-- Indicateur visuel actif
-- Aucun impact utilisateur normal
+- Activation via ⚙ Paramètres
+- Indicateur visuel intégré dans l’interface
+- Affichage d’un message d’avertissement
+- Déverrouille le mode simulation
+
+⚠️ Ce mode est destiné aux tests
+⚠️ Il peut provoquer des comportements instables
+
+---
+
+### 🧪 Mode simulation
+
+- Accessible uniquement en mode développeur
+- Permet de simuler des comportements spécifiques
+
+Exemples :
+
+- Erreurs UI
+- Loader bloqué
+- Problèmes d’export
+
+👉 Activation via popup dédiée
+👉 Effet immédiat sur l’application
+👉 Aucun impact sur les fichiers réels
 
 ---
 
@@ -160,7 +181,19 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
-# 🧾 8. Logs
+# 🛠️ 8. Stabilité UI
+
+- Taille minimale fenêtre : 1600 x 1000
+- Empêche la casse de l’interface
+- Réduction du flickering lors du redimensionnement
+- Gestion native du redimensionnement (Win32)
+- Gestion propre des dialogs (aucun conflit)
+
+👉 Objectif : expérience fluide et fiable
+
+---
+
+# 🧾 9. Logs
 
 - Système de logs intégré
 - Visualisation dans l’application
@@ -171,7 +204,7 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
-# ⚠️ 9. Ce que l’application NE fait PAS
+# ⚠️ 10. Ce que l’application NE fait PAS
 
 - Aucune analyse de code
 - Aucune modification
@@ -181,7 +214,7 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
-# ⚙️ 10. Fonctionnalités principales
+# ⚙️ 11. Fonctionnalités principales
 
 - Import de dossier
 - Arborescence dynamique
@@ -193,11 +226,11 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - Copie presse-papiers
 - Statistiques temps réel
 - Logs
-- Mode développeur
+- Mode développeur + simulation
 
 ---
 
-# 🏗️ 11. Architecture
+# 🏗️ 12. Architecture
 
 ```text id="archreadme"
 Core = logique métier
@@ -216,7 +249,7 @@ UI = affichage
 
 ---
 
-# 📦 12. Structure
+# 📦 13. Structure
 
 ```text id="structreadme"
 Core/
@@ -228,14 +261,15 @@ Resources/
 
 ---
 
-# 📌 13. État actuel
+# 📌 14. État actuel
 
-- Application stable
-- UI fonctionnelle
+- Application stable (phase finale)
+- UI stabilisée
 - Pipeline optimisé
 - Logs intégrés
-- Mode développeur actif
+- Mode développeur fonctionnel
 - Architecture ALC respectée
+- Taille minimale fenêtre définie
 
 👉 Phase de finalisation (0.10.0)
 
@@ -252,7 +286,7 @@ Resources/
 
 ---
 
-# 🧠 14. Philosophie
+# 🧠 15. Philosophie
 
 - Simplicité avant complexité
 - Lisibilité avant optimisation
@@ -260,7 +294,7 @@ Resources/
 
 ---
 
-# 🧠 15. Pourquoi LatuCollect
+# 🧠 16. Pourquoi LatuCollect
 
 Contrairement aux autres outils :
 
@@ -272,7 +306,7 @@ Contrairement aux autres outils :
 
 ---
 
-# 🧪 16. Exemple
+# 🧪 17. Exemple
 
 1. Import du dossier
 2. Sélection des fichiers
@@ -283,7 +317,7 @@ Contrairement aux autres outils :
 
 ---
 
-# ⚠️ 17. Limites
+# ⚠️ 18. Limites
 
 - Pas de virtualisation avancée
 - Pas de lazy loading

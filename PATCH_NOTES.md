@@ -1085,7 +1085,7 @@ Cette version introduit :
 
 ## 📌 Statut
 
-🟡 En cours — Finalisation produit
+🟡 En cours — Stabilisation avancée UI
 
 ---
 
@@ -1111,6 +1111,7 @@ Finaliser l’application pour une utilisation réelle, stable et cohérente.
 - ✅ Amélioration de la zone basse :
   - Meilleur positionnement des boutons
   - Structure plus stable
+  - Bouton export toujours visible
 
 ---
 
@@ -1118,7 +1119,18 @@ Finaliser l’application pour une utilisation réelle, stable et cohérente.
 
 - ✅ Activation via paramètres
 - ✅ Toggle fonctionnel (liaison ViewModel)
+- ✅ Affichage direct dans l’UI (suppression des dialogs bloquants)
+- ✅ Message d’avertissement intégré dans l’interface
 - ✅ Aucun impact utilisateur standard
+
+---
+
+### 🧪 Simulation (UI)
+
+- ✅ Bouton visible uniquement en mode développeur
+- ✅ Popup de configuration des scénarios
+- ✅ Activation / désactivation en temps réel
+- ✅ Nettoyage du comportement UI
 
 ---
 
@@ -1134,6 +1146,9 @@ Finaliser l’application pour une utilisation réelle, stable et cohérente.
 
 - ✅ Correction des freezes liés aux ContentDialog imbriqués
 - ✅ Amélioration de la gestion des ouvertures de fenêtres
+- ✅ Suppression du scintillement lors du redimensionnement
+- ✅ Implémentation d’un blocage natif de la taille minimum (Win32)
+- ✅ Définition d’une taille minimum stable : 1600 x 1000
 - ✅ Meilleure cohérence des interactions utilisateur
 
 ---
@@ -1142,17 +1157,19 @@ Finaliser l’application pour une utilisation réelle, stable et cohérente.
 
 - ✔ Interface plus propre
 - ✔ Navigation plus claire
-- ✔ Moins de bugs UI
-- ✔ Base solide pour finalisation
+- ✔ Expérience utilisateur plus fluide
+- ✔ Suppression des comportements instables (flicker / dialogs)
+- ✔ Base solide pour finalisation produit
 
 ---
 
 ## ⚠️ En cours
 
-- ⬜ Taille minimale fenêtre
-- ⬜ Réduction du flickering
-- ⬜ Améliorations UI finales
-- ⬜ Configuration persistée
+- ⬜ Refonte complète du système de simulation (Core)
+- ⬜ Améliorations UI finales (design global)
+- ⬜ Configuration utilisateur persistée (config.json)
+- ⬜ Gestion avancée des scénarios de simulation
+- ⬜ Paramètres avancés (niveau de logs, options)
 
 ---
 
