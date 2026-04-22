@@ -30,6 +30,7 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using LatuCollect.Core.Configuration;
 using LatuCollect.Core.Logging.Interfaces;
 using LatuCollect.Core.Logging.Models;
 using LatuCollect.Core.Logging.Services;
@@ -68,7 +69,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 📝 ÉTAT LOCAL (UI)
         // ─────────────────────────────────────────────
 
-        private string _previewText = "Aucun fichier sélectionné...";
+        private string _previewText = string.Empty;
         private string _currentFolderPath = string.Empty;
         private string _searchText = string.Empty;
         private string? _selectedFormat = null;
@@ -103,6 +104,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Évite plusieurs refresh preview simultanés
         private bool _isPreviewLoading = false;
 
+        // 🔒 Verrou global UI (anti double clic)
+        private bool _isBusy = false;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
         // ─────────────────────────────────────────────
         // 🔧 SERVICES CORE
         // ─────────────────────────────────────────────
@@ -115,6 +125,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly FileExportService _exportService;
         // Service de logging (pour les erreurs, warnings, infos)
         private readonly ILogService _logger;
+        // Configuration globale de l’application (ex: exclusions, limites)
+        private readonly AppConfig _config;
 
         // ═════════════════════════════════════════════════════════════════════
         // 2. CONSTANTES / LIMITES (PERFORMANCE & SÉCURITÉ)
@@ -161,6 +173,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             Loading,
             Ready,
+            Empty,
             Error
         }
 
@@ -182,6 +195,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     OnPropertyChanged(nameof(IsReady));
                     OnPropertyChanged(nameof(HasError));
                     OnPropertyChanged(nameof(IsPreviewEmpty));
+                    OnPropertyChanged(nameof(IsEmpty));
+                    OnPropertyChanged(nameof(CanExport));
+                    OnPropertyChanged(nameof(CanCopy));
                 }
             }
         }
@@ -193,6 +209,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public bool IsLoading => CurrentState == UiState.Loading;
         public bool IsReady => CurrentState == UiState.Ready;
         public bool HasError => CurrentState == UiState.Error;
+        public bool IsEmpty => CurrentState == UiState.Empty;
 
         // ─────────────────────────────────────────────
         // ❌ GESTION DES ERREURS
@@ -210,19 +227,23 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ═════════════════════════════════════════════════════════════════════
         // 4. PROPRIÉTÉS UI (BINDING)
         // ═════════════════════════════════════════════════════════════════════
-        //
-        // Données exposées à l’interface (XAML)
-        //
+
+        // 🔧 CONFIGURATION GLOBALE (exposée à la UI)
+        public AppConfig Config => _config;
+
+
         // ─────────────────────────────────────────────
         // 📝 APERÇU & DOSSIER
         // ─────────────────────────────────────────────
 
+        // Exposé à la UI pour affichage du preview
         public string PreviewText
         {
             get => _previewText;
             set => SetProperty(ref _previewText, value);
         }
 
+        // Exposé à la UI pour affichage du chemin du dossier chargé
         public string CurrentFolderPath
         {
             get => _currentFolderPath;
@@ -371,11 +392,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
 
-        public bool CanCopy => PreviewText != "Aucun fichier sélectionné...";
+        public bool CanCopy => !string.IsNullOrWhiteSpace(PreviewText);
 
-        public bool IsPreviewEmpty =>
-            CurrentState == UiState.Ready &&
-            PreviewText == "Aucun fichier sélectionné...";
+        public bool IsPreviewEmpty => CurrentState == UiState.Empty;
 
         public bool CanExport =>
             !IsPreviewEmpty &&
@@ -417,7 +436,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     SimulationConfig.IsEnabled = value;
                     OnPropertyChanged(nameof(SimulationLabel));
-                    RefreshPreview();
+                    _ = RefreshPreviewAsync();
                 }
             }
         }
@@ -431,7 +450,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     SimulationConfig.Scenario = value;
                     OnPropertyChanged(nameof(SimulationLabel));
-                    RefreshPreview();
+                    _ = RefreshPreviewAsync();
                 }
             }
         }
@@ -463,18 +482,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _isDeveloperMode, value))
                 {
-                    // UI dépendante
                     OnPropertyChanged(nameof(IsSimulationVisible));
                     OnPropertyChanged(nameof(IsDeveloperModeEnabled));
                 }
             }
         }
 
-        // 🧪 utilisé pour afficher le bouton simulation
+        // visibilité UI
         public bool IsSimulationVisible => IsDeveloperMode;
-
-        // 👇 utilisé pour afficher le label 🧑🏻‍💻
         public bool IsDeveloperModeEnabled => IsDeveloperMode;
+
+        // message UI
+        public string DeveloperWarningMessage =>
+            "⚠ Mode simulation\n\n" +
+            "Ce mode est destiné aux tests.\n" +
+            "Il peut provoquer des comportements instables.";
 
         // ─────────────────────────────────────────────
         // 🧾 LOGS (DEBUG / SUIVI)
@@ -600,20 +622,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
             // 🔧 SERVICES CORE
             // ─────────────────────────────────────────────
 
-            // Initialisation des services Core
-            _importService = new FileImportService();
+            // Configuration globale (ex: exclusions, limites)
+            _config = new AppConfig();
+            _importService = new FileImportService(_config);
             // Le FileCollectionService est léger et sans état, on peut l’instancier directement ici
             _collectionService = new FileCollectionService();
             // Le FileExportService est également léger, mais on peut le garder en champ pour une utilisation future (ex: export asynchrone)
             _exportService = new FileExportService();
 
+
             // ─────────────────────────────────────────────
             // ⚙️ ÉTAT INITIAL UI
             // ─────────────────────────────────────────────
 
-            CurrentState = UiState.Ready;
-
-            PreviewText = "Aucun fichier sélectionné...";
+            PreviewText = string.Empty;
+            CurrentState = UiState.Empty;
 
             CurrentFolderPath = string.Empty;
 
@@ -645,11 +668,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ─────────────────────────────────────────────
 
         // 🔥 VERSION CORE (ASYNCHRONE)
-        public async void LoadTree(string path)
+        public async Task LoadTreeAsync(string path)
         {
+            if (IsBusy) return; // 🔒 anti double clic
+
+            IsBusy = true;
+
             try
             {
-                // 🟢 LOG — DÉBUT
                 _logger.Info("Chargement du dossier lancé");
                 _logger.Info("Dossier sélectionné", path);
 
@@ -657,10 +683,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 await Task.Delay(100);
 
-                if (!UiSimulationService.ApplyUiSimulation(this))
+                if (!await UiSimulationService.ApplyUiSimulationAsync(this))
+                {
+                    CurrentState = UiState.Ready;
                     return;
+                }
 
-                // 🔥 UTILISATION DU CORE
                 var coreNodes = await _importService.LoadTreeAsync(path);
 
                 Tree.Clear();
@@ -674,24 +702,25 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     return;
                 }
 
-                // 🔁 CONVERSION CORE → UI
                 foreach (var coreNode in coreNodes)
                 {
                     Tree.Add(ConvertToUiNode(coreNode));
                 }
 
-                // 🟢 LOG — SUCCÈS
                 _logger.Info("Arborescence projet chargée", $"Nodes: {coreNodes.Count}");
 
                 CurrentState = UiState.Ready;
             }
             catch (Exception ex)
             {
-                // 🔴 LOG — ERREUR
                 _logger.Error("Erreur lors du chargement du dossier", ex.Message);
 
                 CurrentState = UiState.Error;
                 ErrorMessage = ex.Message;
+            }
+            finally
+            {
+                IsBusy = false; // 🔓 libération obligatoire
             }
         }
 
@@ -701,38 +730,45 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string GetExportContent()
         {
-            // 🟢 LOG — DÉBUT EXPORT
-            _logger.Info("Export lancé");
+            if (IsBusy) return string.Empty; // 🔒 protection
 
-            var files = GetSelectedFiles();
-
-            // 🟡 LOG — AUCUN FICHIER
-            if (files.Count == 0)
+            try
             {
-                _logger.Warning("Export annulé : aucun fichier sélectionné");
-                return string.Empty;
+                IsBusy = true;
+
+                _logger.Info("Export lancé");
+
+                var files = GetSelectedFiles();
+
+                if (files.Count == 0)
+                {
+                    _logger.Warning("Export annulé : aucun fichier sélectionné");
+                    return string.Empty;
+                }
+
+                const int MAX_FILES_EXPORT = 200;
+
+                if (files.Count > MAX_FILES_EXPORT)
+                {
+                    _logger.Warning("Export annulé : trop de fichiers", files.Count.ToString());
+
+                    return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
+                           $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
+                           $"Réduis la sélection.";
+                }
+
+                bool isMarkdown = SelectedFormat == ".md";
+
+                var data = _exportService.BuildContentWithStats(files, isMarkdown);
+
+                _logger.Info("Export généré avec succès");
+
+                return data.Content;
             }
-
-            const int MAX_FILES_EXPORT = 200;
-
-            // 🔴 LOG — TROP DE FICHIERS
-            if (files.Count > MAX_FILES_EXPORT)
+            finally
             {
-                _logger.Warning("Export annulé : trop de fichiers", files.Count.ToString());
-
-                return $"⚠ Trop de fichiers sélectionnés ({files.Count}).\n" +
-                       $"Limite actuelle : {MAX_FILES_EXPORT} fichiers.\n\n" +
-                       $"Réduis la sélection.";
+                IsBusy = false; // 🔓 libération obligatoire
             }
-
-            bool isMarkdown = SelectedFormat == ".md";
-
-            var data = _exportService.BuildContentWithStats(files, isMarkdown);
-
-            // 🟢 LOG — SUCCÈS
-            _logger.Info("Export généré avec succès");
-
-            return data.Content;
         }
 
         // ─────────────────────────────────────────────
@@ -768,14 +804,19 @@ namespace LatuCollect.UI.WinUI.ViewModels
             if (_isBatchUpdating)
                 return;
 
-            RefreshPreview();
+            _ = RefreshPreviewAsync();
         }
 
-        private async void RefreshPreview()
+        private async Task RefreshPreviewAsync()
         {
             // 🔒 Protection anti multi-appel
             if (_isPreviewLoading)
                 return;
+            // 🔥 sécurité cohérence
+            if (string.IsNullOrWhiteSpace(PreviewText))
+            {
+                CurrentState = UiState.Empty;
+            }
 
             // 🟢 LOG — DÉBUT PREVIEW
             _logger.Info("Génération du preview");
@@ -794,7 +835,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     _lastSelectionSignature = string.Empty;
                     _lastIsMarkdown = false;
 
-                    PreviewText = "Aucun fichier sélectionné...";
+                    PreviewText = string.Empty;
+                    CurrentState = UiState.Empty;
                     return;
                 }
 
@@ -803,6 +845,17 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 if (currentSignature == _lastSelectionSignature && isMarkdown == _lastIsMarkdown)
                 {
+                    // 🔥 IMPORTANT : garantir cohérence UI
+                    if (string.IsNullOrWhiteSpace(PreviewText) ||
+                        PreviewText == "Aucun fichier sélectionné...")
+                    {
+                        CurrentState = UiState.Empty;
+                    }
+                    else
+                    {
+                        CurrentState = UiState.Ready;
+                    }
+
                     return;
                 }
 
@@ -848,6 +901,13 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 OnPropertyChanged(nameof(CanExport));
                 OnPropertyChanged(nameof(HasEmptyFiles));
             }
+            catch (Exception ex) // 🔥 AJOUT ICI (IMPORTANT)
+            {
+                _logger.Error("Erreur preview", ex.Message);
+
+                CurrentState = UiState.Error;
+                ErrorMessage = ex.Message;
+            }
             finally
             {
                 _isPreviewLoading = false;
@@ -858,7 +918,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 💬 FEEDBACK UTILISATEUR
         // ─────────────────────────────────────────────
 
-        public async void ShowFeedback(string message)
+        public async Task ShowFeedbackAsync(string message)
         {
             if (string.IsNullOrWhiteSpace(message) || message == "Aucun fichier sélectionné.")
                 return;
@@ -886,7 +946,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             _isBatchUpdating = false;
 
-            RefreshPreview();
+            _ = RefreshPreviewAsync();
         }
 
         private void SetNodeSelection(UiFileNode node, bool isSelected)

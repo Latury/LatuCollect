@@ -26,6 +26,7 @@
 
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.ViewModels;
+using System.Threading.Tasks;
 
 namespace LatuCollect.UI.WinUI.Services
 {
@@ -61,13 +62,9 @@ namespace LatuCollect.UI.WinUI.Services
         // Applique les effets visuels sur le ViewModel
         //
 
-        public static bool ApplyUiSimulation(MainViewModel viewModel)
+        public static async Task<bool> ApplyUiSimulationAsync(MainViewModel viewModel)
         {
             var sim = GetState();
-
-            // ─────────────────────────────────────────────
-            // ❌ ERREUR SIMULÉE
-            // ─────────────────────────────────────────────
 
             if (sim == UiSimulationResult.Error)
             {
@@ -76,31 +73,27 @@ namespace LatuCollect.UI.WinUI.Services
                 return false;
             }
 
-            // ─────────────────────────────────────────────
-            // ⏳ LOADING SIMULÉ
-            // ─────────────────────────────────────────────
-
             if (sim == UiSimulationResult.Loading)
             {
-                System.Threading.Thread.Sleep(2000); // temporaire
+                await Task.Delay(2000); // ✅ non bloquant
             }
 
             return true;
         }
-    }
 
 
-    // ═════════════════════════════════════════════════════════════════════
-    // 3. RÉSULTAT SIMULATION
-    // ═════════════════════════════════════════════════════════════════════
-    //
-    // États possibles de simulation UI
-    //
+        // ═════════════════════════════════════════════════════════════════════
+        // 3. RÉSULTAT SIMULATION
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // États possibles de simulation UI
+        //
 
-    public enum UiSimulationResult
-    {
-        None,
-        Loading,
-        Error
+        public enum UiSimulationResult
+        {
+            None,
+            Loading,
+            Error
+        }
     }
 }

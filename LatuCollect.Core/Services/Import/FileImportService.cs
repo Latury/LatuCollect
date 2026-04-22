@@ -40,9 +40,31 @@ namespace LatuCollect.Core.Services.Import
         private const int MAX_NODES = 1000;
         private const int MAX_DEPTH = 10;
 
+        // ═════════════════════════════════════════════════════════════════════
+        // 2. CONFIGURATION
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Contient :
+        // - Instance de AppConfig
+        // - Permet d'accéder aux paramètres globaux
+        //
+
+        private readonly AppConfig _config;
 
         // ═════════════════════════════════════════════════════════════════════
-        // 2. MÉTHODE PUBLIQUE
+        // 3. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════════════
+        //
+        // Injection de la configuration globale
+        //
+
+        public FileImportService(AppConfig config)
+        {
+            _config = config;
+        }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // 4. MÉTHODE PUBLIQUE
         // ═════════════════════════════════════════════════════════════════════
         //
         // Point d’entrée principal :
@@ -70,7 +92,7 @@ namespace LatuCollect.Core.Services.Import
 
 
         // ═════════════════════════════════════════════════════════════════════
-        // 3. CONSTRUCTION DE L’ARBORESCENCE
+        // 5. CONSTRUCTION DE L’ARBORESCENCE
         // ═════════════════════════════════════════════════════════════════════
         //
         // Méthode récursive :
@@ -104,7 +126,7 @@ namespace LatuCollect.Core.Services.Import
                     {
                         string folderName = Path.GetFileName(dir);
 
-                        if (AppConfig.ExcludedFolders.Contains(folderName))
+                        if (_config.ExcludedFolders.Contains(folderName))
                             continue;
 
                         var child = CreateNode(dir, depth + 1, ref count);

@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace LatuCollect.Core.Configuration
 {
-    public static class AppConfig
+    public class AppConfig
     {
 
         // ═════════════════════════════════════════════════════════════════════
@@ -43,12 +43,30 @@ namespace LatuCollect.Core.Configuration
         // Liste des dossiers ignorés lors de la lecture du projet
         //
 
-        public static List<string> ExcludedFolders { get; } = new()
-        {
-            "bin",
-            "obj",
-            ".git"
-        };
+        public List<string> ExcludedFolders { get; set; } = new()
+    {
+        "bin",
+        "obj",
+        ".git"
+    };
 
+        // ─────────────────────────────────────────────
+        // 📁 PARAMÈTRES GLOBAUX
+        // ─────────────────────────────────────────────
+        //
+        // Paramètres globaux de l’application
+        //
+        // - Format de fichier par défaut
+        // - Mode développeur
+        // - Dernier dossier ouvert
+        // - Chargement automatique du dernier dossier
+
+        public string DefaultFormat { get; set; } = ".txt";
+
+        public bool IsDeveloperMode { get; set; } = false;
+
+        public string LastOpenedFolder { get; set; } = string.Empty;
+
+        public bool AutoLoadLastFolder { get; set; } = false;
     }
 }

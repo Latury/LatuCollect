@@ -30,7 +30,6 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Configuration;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.ViewModels;
@@ -39,30 +38,31 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 1. INITIALISATION & CONFIGURATION
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Contient :
-        // - Initialisation de la fenêtre
-        // - Configuration de la taille minimale de la fenêtre
-        // - Association du ViewModel à la vue
-        // - Abonnement aux événements du ViewModel
-        // - Aucune logique métier, uniquement de l’orchestration UI
-        //
-        // Note : la logique métier est entièrement contenue dans le ViewModel et les services appelés par celui-ci.
-        // Cette séparation stricte garantit que la UI reste légère, réactive et facile à maintenir.
-        // Toute interaction utilisateur déclenche des appels au ViewModel, qui gère ensuite la logique métier et met à jour l’interface en conséquence.
-        // Cette approche respecte les principes de l’architecture ALC (Architecture LatuCollect) et du pattern MVVM, assurant une application robuste et évolutive.
-        // La UI est responsable de l’affichage et de l’orchestration, tandis que le ViewModel gère la logique métier et les données.
-        // Toute fonctionnalité liée à la manipulation de données, à la validation, à l’export ou à la gestion des erreurs doit être implémentée dans le ViewModel ou les services associés, jamais dans la code-behind de la fenêtre.
-        // Cette séparation claire permet de maintenir une architecture propre, facilite les tests unitaires et garantit que la UI reste réactive et facile à modifier sans risque d’introduire des bugs liés à la logique métier.
-        // En résumé : la MainWindow est le chef d’orchestre de l’interface, tandis que le ViewModel est le cerveau qui gère la logique métier. Toute interaction utilisateur doit passer par le ViewModel, et la MainWindow doit se contenter d’afficher les données et de réagir aux événements du ViewModel.
+// ═════════════════════════════════════════════════════════════
+// 1. INITIALISATION & CONFIGURATION
+// ═════════════════════════════════════════════════════════════
+//
+// Contient :
+// - Initialisation de la fenêtre
+// - Configuration de la taille minimale de la fenêtre
+// - Association du ViewModel à la vue
+// - Abonnement aux événements du ViewModel
+// - Aucune logique métier, uniquement de l’orchestration UI
+//
+// Note : la logique métier est entièrement contenue dans le ViewModel et les services appelés par celui-ci.
+// Cette séparation stricte garantit que la UI reste légère, réactive et facile à maintenir.
+// Toute interaction utilisateur déclenche des appels au ViewModel, qui gère ensuite la logique métier et met à jour l’interface en conséquence.
+// Cette approche respecte les principes de l’architecture ALC (Architecture LatuCollect) et du pattern MVVM, assurant une application robuste et évolutive.
+// La UI est responsable de l’affichage et de l’orchestration, tandis que le ViewModel gère la logique métier et les données.
+// Toute fonctionnalité liée à la manipulation de données, à la validation, à l’export ou à la gestion des erreurs doit être implémentée dans le ViewModel ou les services associés, jamais dans la code-behind de la fenêtre.
+// Cette séparation claire permet de maintenir une architecture propre, facilite les tests unitaires et garantit que la UI reste réactive et facile à modifier sans risque d’introduire des bugs liés à la logique métier.
+// En résumé : la MainWindow est le chef d’orchestre de l’interface, tandis que le ViewModel est le cerveau qui gère la logique métier. Toute interaction utilisateur doit passer par le ViewModel, et la MainWindow doit se contenter d’afficher les données et de réagir aux événements du ViewModel.
 
 // Note : pour les dialogues complexes (logs, options, à propos), la logique métier doit rester dans le ViewModel, même si le contenu est défini dans la fenêtre. Par exemple, le filtrage des logs doit être géré par le ViewModel, et la fenêtre doit simplement afficher les logs filtrés et envoyer les commandes de filtrage au ViewModel.
 namespace LatuCollect.UI.WinUI
@@ -84,26 +84,90 @@ namespace LatuCollect.UI.WinUI
 
             if (appWindow != null)
             {
-                appWindow.Resize(new Windows.Graphics.SizeInt32(1400, 850));
+                int minWidth = 1600;
+                int minHeight = 1000;
 
-                // 🔒 Taille minimale simulée
-                appWindow.Changed += (_, args) =>
-                {
-                    var size = appWindow.Size;
+                var displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(
+                    windowId,
+                    Microsoft.UI.Windowing.DisplayAreaFallback.Primary);
 
-                    int minWidth = 1200;
-                    int minHeight = 750;
+                int centerX = displayArea.WorkArea.Width / 2 - minWidth / 2;
+                int centerY = displayArea.WorkArea.Height / 2 - minHeight / 2;
 
-                    if (size.Width < minWidth || size.Height < minHeight)
-                    {
-                        appWindow.Resize(new Windows.Graphics.SizeInt32(
-                            Math.Max(size.Width, minWidth),
-                            Math.Max(size.Height, minHeight)
-                        ));
-                    }
-                };
+                appWindow.MoveAndResize(new Windows.Graphics.RectInt32(
+                    centerX,
+                    centerY,
+                    minWidth,
+                    minHeight
+                ));
+                
+                SetupMinSize(minWidth, minHeight);
             }
         }
+        
+        // ─────────────────────────────────────────────
+        // 🧱 WIN32 - BLOQUER TAILLE MIN (ZERO FLICKER)
+        // ─────────────────────────────────────────────
+
+        private const int WM_GETMINMAXINFO = 0x0024;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        }
+
+        private delegate IntPtr WndProcDelegate(
+            IntPtr hWnd,
+            int msg,
+            IntPtr wParam,
+            IntPtr lParam);
+
+        private WndProcDelegate? _wndProc;
+        private IntPtr _hwnd;
+
+        // Configure la taille minimale de la fenêtre en utilisant une procédure Windows personnalisée (anti-flicker)
+        private void SetupMinSize(int minWidth, int minHeight)
+        {
+            _hwnd = WindowNative.GetWindowHandle(this);
+
+            _wndProc = new WndProcDelegate((hWnd, msg, wParam, lParam) =>
+            {
+                if (msg == WM_GETMINMAXINFO)
+                {
+                    var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+
+                    mmi.ptMinTrackSize.x = minWidth;
+                    mmi.ptMinTrackSize.y = minHeight;
+
+                    Marshal.StructureToPtr(mmi, lParam, true);
+                }
+
+                return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+            });
+
+            _oldWndProc = SetWindowLongPtr(_hwnd, -4, Marshal.GetFunctionPointerForDelegate(_wndProc));
+        }
+
+        private IntPtr _oldWndProc;
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr newProc);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
 
         // ═════════════════════════════════════════════════════════════
         // 2. CHAMPS PRIVÉS / SERVICES
@@ -176,11 +240,13 @@ namespace LatuCollect.UI.WinUI
             if (folder != null)
             {
                 _viewModel.CurrentFolderPath = folder.Path;
-                _viewModel.LoadTree(folder.Path);
+
+
+                await _viewModel.LoadTreeAsync(folder.Path);
             }
             else
             {
-                _viewModel.ShowFeedback("❌ Sélection annulée");
+                await _viewModel.ShowFeedbackAsync("❌ Sélection annulée");
             }
         }
 
@@ -207,7 +273,7 @@ namespace LatuCollect.UI.WinUI
         {
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
             {
-                _viewModel.ShowFeedback("✖ Sélectionne un format");
+                await _viewModel.ShowFeedbackAsync("✖ Sélectionne un format");
                 return;
             }
 
@@ -215,7 +281,7 @@ namespace LatuCollect.UI.WinUI
 
             if (content.StartsWith("⚠"))
             {
-                _viewModel.ShowFeedback(content);
+                await _viewModel.ShowFeedbackAsync(content);
                 return;
             }
 
@@ -253,7 +319,7 @@ namespace LatuCollect.UI.WinUI
 
             if (file == null)
             {
-                _viewModel.ShowFeedback("❌ Export annulé");
+                await _viewModel.ShowFeedbackAsync("❌ Export annulé");
                 return;
             }
 
@@ -263,16 +329,16 @@ namespace LatuCollect.UI.WinUI
 
                 if (result.IsSuccess)
                 {
-                    _viewModel.ShowFeedback("✔ Export réussi");
+                    await _viewModel.ShowFeedbackAsync("✔ Export réussi");
                 }
                 else
                 {
-                    _viewModel.ShowFeedback("✖ " + result.Message);
+                    await _viewModel.ShowFeedbackAsync("✖ " + result.Message);
                 }
             }
             catch (Exception ex)
             {
-                _viewModel.ShowFeedback("✖ " + ex.Message);
+                await _viewModel.ShowFeedbackAsync("✖ " + ex.Message);
             }
         }
 
@@ -286,7 +352,7 @@ namespace LatuCollect.UI.WinUI
 
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
 
-            _viewModel.ShowFeedback("✔ Contenu copié");
+            _ = _viewModel.ShowFeedbackAsync("✔ Contenu copié");
         }
 
         // ─────────────────────────────────────────────
@@ -372,7 +438,7 @@ namespace LatuCollect.UI.WinUI
                 {
                     if (!vm.FilteredLogs.Any())
                     {
-                        _viewModel.ShowFeedback("⚠ Aucun log à exporter");
+                        await _viewModel.ShowFeedbackAsync("⚠ Aucun log à exporter");
                         return;
                     }
 
@@ -400,11 +466,11 @@ namespace LatuCollect.UI.WinUI
 
                     await Windows.Storage.FileIO.WriteTextAsync(file, content);
 
-                    _viewModel.ShowFeedback("✔ Logs exportés");
+                    await _viewModel.ShowFeedbackAsync("✔ Logs exportés");
                 }
                 catch (Exception ex)
                 {
-                    _viewModel.ShowFeedback("✖ Erreur export logs : " + ex.Message);
+                    await _viewModel.ShowFeedbackAsync("✖ Erreur export logs : " + ex.Message);
                 }
             };
 
@@ -556,6 +622,8 @@ namespace LatuCollect.UI.WinUI
 
             if (result == ContentDialogResult.Primary)
             {
+                dialog.Hide();
+
                 _viewModel.IsSimulationEnabled = toggle.IsOn;
                 _viewModel.SelectedSimulationScenario = combo.SelectedItem?.ToString() ?? "Aucun";
 
@@ -693,7 +761,6 @@ namespace LatuCollect.UI.WinUI
         {
             var stack = new StackPanel { Spacing = 12 };
 
-            // 👇 IMPORTANT : déclarer AVANT
             ContentDialog dialog = new ContentDialog();
 
             stack.Children.Add(new TextBlock
@@ -702,7 +769,6 @@ namespace LatuCollect.UI.WinUI
                 FontSize = 18
             });
 
-            // 📁 EXCLUSIONS
             var exclusionsButton = new Button
             {
                 Content = "📁 Dossiers exclus"
@@ -711,13 +777,10 @@ namespace LatuCollect.UI.WinUI
             exclusionsButton.Click += async (_, __) =>
             {
                 dialog.Hide();
-
                 await Task.Delay(50);
-
                 ShowExclusionsDialog();
             };
 
-            // 🧑🏻‍💻 MODE DEV
             var devToggle = new ToggleSwitch
             {
                 Header = "🧑🏻‍💻 Mode développeur",
@@ -727,14 +790,14 @@ namespace LatuCollect.UI.WinUI
             };
 
             devToggle.Toggled += (_, __) =>
-            {
-                _viewModel.IsDeveloperMode = devToggle.IsOn;
-            };
+{
+    _viewModel.IsDeveloperMode = devToggle.IsOn;
+};
 
+            // ✅ AJOUT UNE SEULE FOIS
             stack.Children.Add(exclusionsButton);
             stack.Children.Add(devToggle);
 
-            // 👇 configuration APRÈS
             dialog.Title = "⚙ Paramètres";
             dialog.Content = stack;
             dialog.CloseButtonText = "Fermer";
@@ -748,7 +811,7 @@ namespace LatuCollect.UI.WinUI
         {
             var listView = new ListView
             {
-                ItemsSource = AppConfig.ExcludedFolders,
+                ItemsSource = _viewModel.Config.ExcludedFolders,
                 Height = 200
             };
 
@@ -772,12 +835,12 @@ namespace LatuCollect.UI.WinUI
                 var value = input.Text?.Trim();
 
                 if (!string.IsNullOrWhiteSpace(value) &&
-                    !AppConfig.ExcludedFolders.Contains(value))
+                    !_viewModel.Config.ExcludedFolders.Contains(value))
                 {
-                    AppConfig.ExcludedFolders.Add(value);
+                    _viewModel.Config.ExcludedFolders.Add(value);
 
                     listView.ItemsSource = null;
-                    listView.ItemsSource = AppConfig.ExcludedFolders;
+                    listView.ItemsSource = _viewModel.Config.ExcludedFolders;
 
                     input.Text = "";
                 }
@@ -787,10 +850,10 @@ namespace LatuCollect.UI.WinUI
             {
                 if (listView.SelectedItem is string selected)
                 {
-                    AppConfig.ExcludedFolders.Remove(selected);
+                    _viewModel.Config.ExcludedFolders.Remove(selected);
 
                     listView.ItemsSource = null;
-                    listView.ItemsSource = AppConfig.ExcludedFolders;
+                    listView.ItemsSource = _viewModel.Config.ExcludedFolders;
                 }
             };
 

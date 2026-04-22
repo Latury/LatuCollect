@@ -31,6 +31,8 @@
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
             <conv:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
+            <conv:PreviewVisibleConverter x:Key="PreviewVisibleConverter" />
+            <conv:PreviewEmptyConverter x:Key="PreviewEmptyConverter" />
 
             <!--  🧾 TEMPLATE LOGS  -->
             <DataTemplate x:Key="LogItemTemplate">
@@ -174,7 +176,7 @@
                         <TreeView.ItemTemplate>
                             <DataTemplate x:DataType="models:FileNode">
 
-                                <TreeViewItem ItemsSource="{Binding Children}" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TreeViewItem Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                     <StackPanel Orientation="Horizontal" Spacing="6">
 
@@ -232,7 +234,16 @@
                         FontWeight="SemiBold"
                         Foreground="Orange"
                         Text="🧑🏻‍💻 Mode développeur activé"
-                        Visibility="{Binding IsDeveloperMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="12"
+                        Foreground="Orange"
+                        Text="{Binding DeveloperWarningMessage}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 </StackPanel>
 
@@ -382,7 +393,7 @@
                         <ScrollViewer
                             HorizontalScrollBarVisibility="Auto"
                             VerticalScrollBarVisibility="Auto"
-                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            Visibility="{Binding CurrentState, Converter={StaticResource PreviewVisibleConverter}}">
 
                             <TextBlock
                                 Margin="20"
@@ -390,7 +401,7 @@
                                 FontSize="13"
                                 Foreground="White"
                                 Text="{Binding PreviewText}"
-                                TextWrapping="NoWrap" />
+                                TextWrapping="Wrap" />
                         </ScrollViewer>
 
                         <TextBlock
@@ -399,12 +410,17 @@
                             FontSize="16"
                             Foreground="White"
                             Text="Aucun fichier sélectionné..."
-                            Visibility="{Binding IsPreviewEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            TextAlignment="Center"
+                            TextWrapping="Wrap"
+                            Visibility="{Binding CurrentState, Converter={StaticResource PreviewEmptyConverter}}" />
 
                     </Grid>
 
                     <!--  LOADER OVERLAY  -->
-                    <Grid Background="#80000000" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid
+                        Background="#80000000"
+                        IsHitTestVisible="True"
+                        Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                         <StackPanel
                             HorizontalAlignment="Center"
@@ -428,10 +444,14 @@
                     <Grid Background="#CC000000" Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                         <TextBlock
+                            MaxWidth="400"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Foreground="Red"
-                            Text="{Binding ErrorMessage}" />
+                            FontSize="14"
+                            Foreground="White"
+                            Text="{Binding ErrorMessage}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
 
                     </Grid>
 
