@@ -825,9 +825,18 @@ namespace LatuCollect.UI.WinUI.ViewModels
             if (_isBatchUpdating)
                 return;
 
+            _isBatchUpdating = true;
+
+            // 🔥 PROPAGATION AUX ENFANTS
+            foreach (var child in node.Children)
+            {
+                SetNodeSelection(child, node.IsSelected);
+            }
+
+            _isBatchUpdating = false;
+
             _ = RefreshPreviewAsync();
         }
-
         private async Task RefreshPreviewAsync()
         {
             // 🔒 Protection anti multi-appel
