@@ -171,14 +171,14 @@
                 <Grid Grid.Row="2">
 
                     <!--  🌳 ARBRE  -->
-                    <TreeView ItemsSource="{Binding Tree}" Visibility="{Binding HasSearchResult, Converter={StaticResource BooleanToVisibilityConverter}}">
-
+                    <TreeView ItemsSource="{Binding Tree}">
                         <TreeView.ItemTemplate>
                             <DataTemplate x:DataType="models:FileNode">
-
-                                <TreeViewItem Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TreeViewItem ItemsSource="{Binding Children}">
+                                    <StackPanel
+                                        Orientation="Horizontal"
+                                        Spacing="6"
+                                        Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                         <TextBlock Foreground="White" Text="{Binding ., Converter={StaticResource BoolToIconConverter}}" />
 
@@ -188,12 +188,9 @@
                                             IsChecked="{Binding IsSelected, Mode=TwoWay}" />
 
                                     </StackPanel>
-
                                 </TreeViewItem>
-
                             </DataTemplate>
                         </TreeView.ItemTemplate>
-
                     </TreeView>
 
                     <!--  🚫 AUCUN RÉSULTAT  -->
