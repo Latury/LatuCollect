@@ -35,6 +35,7 @@ using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using LatuCollect.UI.WinUI.Dialogs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -353,6 +354,22 @@ namespace LatuCollect.UI.WinUI
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
 
             _ = _viewModel.ShowFeedbackAsync("✔ Contenu copié");
+        }
+
+        // Affiche un dialogue de confirmation avant de réinitialiser la configuration (UI uniquement, la réinitialisation est gérée par le ViewModel)
+        private async Task ExecuteResetAsync()
+        {
+            var dialog = new ConfirmResetDialog
+            {
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await _viewModel.ResetConfigurationAsync();
+            }
         }
 
         // ─────────────────────────────────────────────
@@ -759,132 +776,9 @@ namespace LatuCollect.UI.WinUI
         // Options : gestion des dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders) 
         private async void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
-            var stack = new StackPanel { Spacing = 12 };
-
-            ContentDialog dialog = new ContentDialog();
-
-            stack.Children.Add(new TextBlock
+            var dialog = new OptionsDialog
             {
-                Text = "Paramètres",
-                FontSize = 18
-            });
-
-            var exclusionsButton = new Button
-            {
-                Content = "📁 Dossiers exclus"
-            };
-
-            exclusionsButton.Click += async (_, __) =>
-            {
-                dialog.Hide();
-                await Task.Delay(50);
-                ShowExclusionsDialog();
-            };
-
-            var devToggle = new ToggleSwitch
-            {
-                Header = "🧑🏻‍💻 Mode développeur",
-                IsOn = _viewModel.IsDeveloperMode,
-                OnContent = "Activé",
-                OffContent = "Désactivé"
-            };
-
-            devToggle.Toggled += (_, __) =>
-{
-    _viewModel.IsDeveloperMode = devToggle.IsOn;
-};
-
-            // ✅ AJOUT UNE SEULE FOIS
-            stack.Children.Add(exclusionsButton);
-            stack.Children.Add(devToggle);
-
-            dialog.Title = "⚙ Paramètres";
-            dialog.Content = stack;
-            dialog.CloseButtonText = "Fermer";
-            dialog.XamlRoot = this.Content.XamlRoot;
-
-            await dialog.ShowAsync();
-        }
-
-        // Affiche un dialogue pour gérer les dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders)
-        private async void ShowExclusionsDialog()
-        {
-            var listView = new ListView
-            {
-                ItemsSource = _viewModel.Config.ExcludedFolders,
-                Height = 200
-            };
-
-            var input = new TextBox
-            {
-                PlaceholderText = "Nom du dossier (ex: node_modules)"
-            };
-
-            var addButton = new Button
-            {
-                Content = "Ajouter"
-            };
-
-            var removeButton = new Button
-            {
-                Content = "Supprimer sélection"
-            };
-
-            addButton.Click += (_, __) =>
-            {
-                var value = input.Text?.Trim();
-
-                if (!string.IsNullOrWhiteSpace(value) &&
-                    !_viewModel.Config.ExcludedFolders.Contains(value))
-                {
-                    _viewModel.Config.ExcludedFolders.Add(value);
-
-                    listView.ItemsSource = null;
-                    listView.ItemsSource = _viewModel.Config.ExcludedFolders;
-
-                    input.Text = "";
-                }
-            };
-
-            removeButton.Click += (_, __) =>
-            {
-                if (listView.SelectedItem is string selected)
-                {
-                    _viewModel.Config.ExcludedFolders.Remove(selected);
-
-                    listView.ItemsSource = null;
-                    listView.ItemsSource = _viewModel.Config.ExcludedFolders;
-                }
-            };
-
-            var stack = new StackPanel { Spacing = 10 };
-
-            stack.Children.Add(new TextBlock
-            {
-                Text = "Dossiers exclus",
-                FontSize = 16
-            });
-
-            var scroll = new ScrollViewer
-            {
-                Content = listView,
-                MaxHeight = 250
-            };
-
-            stack.Children.Add(scroll);
-            stack.Children.Add(input);
-            stack.Children.Add(addButton);
-            stack.Children.Add(removeButton);
-
-            var dialog = new ContentDialog
-            {
-                Title = "📁 Dossiers exclus",
-                Content = new Grid
-                {
-                    Width = 500,
-                    Children = { stack }
-                },
-                CloseButtonText = "Fermer",
+                DataContext = _viewModel, // 🔥 LIAISON MVVM
                 XamlRoot = this.Content.XamlRoot
             };
 

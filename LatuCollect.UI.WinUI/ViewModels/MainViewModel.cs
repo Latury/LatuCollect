@@ -38,6 +38,9 @@ using LatuCollect.Core.Services.Collection;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using LatuCollect.Core.Simulation;
+using LatuCollect.Core.Configuration.Interfaces;
+using LatuCollect.Core.Configuration.Models;
+using LatuCollect.Core.Configuration.Services;
 using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
@@ -76,6 +79,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Cache du dernier état utilisé pour le preview
         private string _lastSelectionSignature = string.Empty;
         private bool _lastIsMarkdown = false;
+        private bool _isInitializing = false; // Permet de différencier le chargement initial des changements utilisateur
 
         // ─────────────────────────────────────────────
         // 💬 FEEDBACK UTILISATEUR
@@ -127,6 +131,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly ILogService _logger;
         // Configuration globale de l’application (ex: exclusions, limites)
         private readonly AppConfig _config;
+        // Service de configuration utilisateur (JSON)
+        private readonly IConfigurationService _configurationService;
+        // Configuration utilisateur persistée
+        private UserConfig _userConfig;
 
         // ═════════════════════════════════════════════════════════════════════
         // 2. CONSTANTES / LIMITES (PERFORMANCE & SÉCURITÉ)
@@ -382,7 +390,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set
             {
                 if (SetProperty(ref _selectedFormat, value))
+                {
                     OnPropertyChanged(nameof(CanExport));
+
+                    if (!_isInitializing) // 🔥 IMPORTANT
+                    {
+                        _ = SaveConfigurationAsync();
+                    }
+                }
             }
         }
 
@@ -625,6 +640,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             // Configuration globale (ex: exclusions, limites)
             _config = new AppConfig();
             _importService = new FileImportService(_config);
+            // Configuration utilisateur (ex: préférences, derniers dossiers)
+            _configurationService = new ConfigurationService();
+            _userConfig = new UserConfig();
+            _ = LoadConfigurationAsync();
             // Le FileCollectionService est léger et sans état, on peut l’instancier directement ici
             _collectionService = new FileCollectionService();
             // Le FileExportService est également léger, mais on peut le garder en champ pour une utilisation future (ex: export asynchrone)
@@ -641,8 +660,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             CurrentFolderPath = string.Empty;
 
             SelectedFormat = null;
-
-            IsDeveloperMode = false;
 
             IsSimulationEnabled = false;
 
@@ -708,6 +725,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 _logger.Info("Arborescence projet chargée", $"Nodes: {coreNodes.Count}");
+
+                // 🔥 AJOUT ICI
+                CurrentFolderPath = path;
+                _ = SaveConfigurationAsync();
 
                 CurrentState = UiState.Ready;
             }
@@ -1076,6 +1097,121 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
 
             return result;
+        }
+
+        // ─────────────────────────────────────────────
+        // ⚙️ CHARGEMENT CONFIGURATION UTILISATEUR
+        // ─────────────────────────────────────────────
+
+        private async Task LoadConfigurationAsync()
+        {
+            try
+            {
+                _isInitializing = true; // 🔥 BLOQUE SAVE
+
+                _logger.Info("Chargement configuration utilisateur");
+
+                _userConfig = await _configurationService.LoadAsync() ?? new UserConfig();
+
+                // Sync Core
+                _config.DefaultFormat = _userConfig.DefaultFormat;
+                _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
+                _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
+                _config.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+
+                // Sync UI
+                SelectedFormat = _userConfig.DefaultFormat;
+                IsDeveloperMode = _userConfig.IsDeveloperMode;
+
+                _logger.Info("Configuration chargée avec succès");
+
+                if (_userConfig.AutoLoadLastFolder &&
+                    !string.IsNullOrWhiteSpace(_userConfig.LastOpenedFolder))
+                {
+                    await LoadTreeAsync(_userConfig.LastOpenedFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur chargement configuration", ex.Message);
+            }
+            finally
+            {
+                _isInitializing = false; // 🔓 réactive save
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 💾 SAUVEGARDE CONFIGURATION UTILISATEUR
+        // ─────────────────────────────────────────────
+
+        public async Task SaveConfigurationAsync()
+        {
+            try
+            {
+                if (_userConfig == null)
+                    _userConfig = new UserConfig();
+
+                _userConfig.DefaultFormat = SelectedFormat ?? ".txt";
+                _userConfig.IsDeveloperMode = IsDeveloperMode;
+                _userConfig.LastOpenedFolder = CurrentFolderPath;
+                _userConfig.AutoLoadLastFolder = _config.AutoLoadLastFolder;
+
+                await _configurationService.SaveAsync(_userConfig);
+
+                _logger.Info("Configuration sauvegardée");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur sauvegarde configuration", ex.Message);
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 🔄 RESET CONFIGURATION UTILISATEUR
+        // ─────────────────────────────────────────────
+
+        public async Task ResetConfigurationAsync()
+        {
+            if (IsBusy) return;
+
+            IsBusy = true;
+
+            try
+            {
+                _logger.Info("Reset configuration utilisateur");
+
+                // 🔥 Appel Core
+                _userConfig = await _configurationService.ResetAsync();
+
+                // 🔗 Synchronisation AppConfig
+                _config.DefaultFormat = _userConfig.DefaultFormat;
+                _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
+                _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
+                _config.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+
+                // 🔗 Synchronisation UI
+                SelectedFormat = _userConfig.DefaultFormat;
+                IsDeveloperMode = _userConfig.IsDeveloperMode;
+                CurrentFolderPath = _userConfig.LastOpenedFolder;
+
+                // 🔄 Reset UI logique
+                Tree.Clear();
+                PreviewText = string.Empty;
+                CurrentState = UiState.Empty;
+
+                await ShowFeedbackAsync("Configuration réinitialisée");
+
+                _logger.Info("Reset configuration terminé");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur reset configuration", ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         // ─────────────────────────────────────────────

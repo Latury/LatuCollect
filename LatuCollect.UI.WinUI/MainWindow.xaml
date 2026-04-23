@@ -247,7 +247,7 @@
 
                 </StackPanel>
 
-                <!--  TITRE  -->
+                <!--  Titre "Choix du format"  -->
                 <TextBlock
                     Margin="0,0,0,20"
                     HorizontalAlignment="Center"
@@ -278,7 +278,7 @@
 
                 </StackPanel>
 
-                <!--  COPIER  -->
+                <!--  Copier le contenu  -->
                 <Button
                     Width="180"
                     Height="44"
@@ -293,6 +293,7 @@
                 <!--  AUTRES  -->
                 <StackPanel HorizontalAlignment="Center" Spacing="14">
 
+                    <!--  PARAMÈTRES  -->
                     <Button
                         Width="180"
                         Height="44"
@@ -301,6 +302,7 @@
                         Content="⚙ Paramètres"
                         ToolTipService.ToolTip="Paramètres" />
 
+                    <!--  Statistiques  -->
                     <Button
                         Width="180"
                         Height="44"
@@ -309,6 +311,7 @@
                         Content="📊 Statistiques"
                         ToolTipService.ToolTip="Statistiques" />
 
+                    <!--  Aide  -->
                     <Button
                         Width="180"
                         Height="44"
@@ -317,6 +320,7 @@
                         Content="❓ Aide"
                         ToolTipService.ToolTip="Aide" />
 
+                    <!--  À propos  -->
                     <Button
                         Width="180"
                         Height="44"
@@ -326,6 +330,7 @@
                         ToolTipService.ToolTip="À propos" />
 
 
+                    <!--  Quitter  -->
                     <Button
                         Width="180"
                         Height="44"
