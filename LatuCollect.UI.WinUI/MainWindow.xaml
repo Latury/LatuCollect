@@ -33,6 +33,7 @@
             <conv:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
             <conv:PreviewVisibleConverter x:Key="PreviewVisibleConverter" />
             <conv:PreviewEmptyConverter x:Key="PreviewEmptyConverter" />
+            <conv:StringEqualsConverter x:Key="StringEqualsConverter" />
 
             <!--  🧾 TEMPLATE LOGS  -->
             <DataTemplate x:Key="LogItemTemplate">
@@ -261,17 +262,15 @@
 
                     <!--  TXT  -->
                     <RadioButton
-                        HorizontalAlignment="Center"
-                        Checked="OnTxtSelected"
                         Content="📄 Texte (.txt)"
-                        GroupName="Format" />
+                        GroupName="Format"
+                        IsChecked="{Binding SelectedFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.txt}" />
 
                     <!--  MD  -->
                     <RadioButton
-                        HorizontalAlignment="Center"
-                        Checked="OnMdSelected"
                         Content="📝 Markdown (.md)"
-                        GroupName="Format" />
+                        GroupName="Format"
+                        IsChecked="{Binding SelectedFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.md}" />
 
                 </StackPanel>
 
