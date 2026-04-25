@@ -16,8 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dialogs\ConfirmResetDialog.xaml" />
-    <None Remove="Dialogs\OptionsDialog.xaml" />
+    <None Remove="Settings\Pages\SettingsExclusionsPage.xaml" />
+    <None Remove="Settings\Pages\SettingsGeneralPage.xaml" />
+    <None Remove="Settings\Panels\SettingsPanel.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,15 +47,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Dialogs\OptionsDialog.xaml">
+    <Page Update="Settings\Pages\SettingsGeneralPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Dialogs\ConfirmResetDialog.xaml">
+    <Page Update="Settings\Panels\SettingsPanel.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Settings\Pages\SettingsExclusionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Settings\ViewModels\" />
   </ItemGroup>
 
 </Project>

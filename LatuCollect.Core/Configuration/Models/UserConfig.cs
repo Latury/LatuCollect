@@ -20,6 +20,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using System.Collections.Generic;
+
 namespace LatuCollect.Core.Configuration.Models
 {
     public class UserConfig
@@ -46,6 +48,12 @@ namespace LatuCollect.Core.Configuration.Models
 
         public bool IsDeveloperMode { get; set; } = false;
 
+
+        // ─────────────────────────────────────────────
+        // 📁 DOSSIERS EXCLUS
+        // ─────────────────────────────────────────────
+
+        public List<string> ExcludedFolders { get; set; } = new();
 
         // ─────────────────────────────────────────────
         // 📂 DERNIER DOSSIER

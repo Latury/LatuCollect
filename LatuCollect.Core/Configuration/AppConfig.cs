@@ -21,6 +21,7 @@
 */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace LatuCollect.Core.Configuration
 {
@@ -43,7 +44,7 @@ namespace LatuCollect.Core.Configuration
         // Liste des dossiers ignorés lors de la lecture du projet
         //
 
-        public List<string> ExcludedFolders { get; set; } = new()
+        public ObservableCollection<string> ExcludedFolders { get; set; } = new()
     {
         "bin",
         "obj",

@@ -32,14 +32,13 @@
 
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Simulation;
+using LatuCollect.UI.WinUI.Settings.Panels;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using LatuCollect.UI.WinUI.Dialogs;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
@@ -101,11 +100,11 @@ namespace LatuCollect.UI.WinUI
                     minWidth,
                     minHeight
                 ));
-                
+
                 SetupMinSize(minWidth, minHeight);
             }
         }
-        
+
         // ─────────────────────────────────────────────
         // 🧱 WIN32 - BLOQUER TAILLE MIN (ZERO FLICKER)
         // ─────────────────────────────────────────────
@@ -184,6 +183,9 @@ namespace LatuCollect.UI.WinUI
 
         // Service d’export de fichiers (utilisé pour exporter le contenu dans un fichier choisi par l’utilisateur)
         private readonly FileExportService _exportService = new FileExportService();
+
+        // 🔧 panneau paramètres (instance unique, contenu de la fenêtre de paramètres, gère la navigation interne des options)
+        private SettingsPanel? _settingsPanel;
 
         // ═════════════════════════════════════════════════════════════
         // 2. POPUPS UI (DIALOGUES)
@@ -356,76 +358,35 @@ namespace LatuCollect.UI.WinUI
             _ = _viewModel.ShowFeedbackAsync("✔ Contenu copié");
         }
 
-        // Affiche un dialogue de confirmation avant de réinitialiser la configuration (UI uniquement, la réinitialisation est gérée par le ViewModel)
-        private async Task ExecuteResetAsync()
-        {
-            var dialog = new ConfirmResetDialog
-            {
-                XamlRoot = this.Content.XamlRoot
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                await _viewModel.ResetConfigurationAsync();
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧾 LOGS
-        // ─────────────────────────────────────────────
-
         private async void OnLogsClicked(object sender, RoutedEventArgs e)
         {
             var vm = _viewModel;
 
-            // ─────────────────────────────────────────────
-            // 🧾 LISTE LOGS
-            // ─────────────────────────────────────────────
-
+            // 🧾 LISTVIEW (gère le scroll tout seul)
             var listView = new ListView
             {
                 ItemsSource = vm.FilteredLogs,
                 SelectionMode = ListViewSelectionMode.None,
-                Height = 400,
+                Height = 350,
                 ItemTemplate = (DataTemplate)((FrameworkElement)this.Content).Resources["LogItemTemplate"]
             };
 
-            // ─────────────────────────────────────────────
-            // 📦 CONTENU
-            // ─────────────────────────────────────────────
-
-            // Conteneur principal
-            var stack = new StackPanel { Spacing = 10 };
-
-            // Titre
-            stack.Children.Add(new TextBlock
-            {
-                Text = "Logs en temps réel",
-                FontSize = 16
-            });
-
-            // Filtres
+            // 🔎 FILTRES
             var filterPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Spacing = 10
             };
 
-            // Boutons de filtre (UI uniquement, modifie la propriété SelectedLogFilter du ViewModel)
             var allBtn = new Button { Content = "Tout" };
             allBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.All;
 
-            // Style simple pour indiquer le filtre actif
             var infoBtn = new Button { Content = "Info" };
             infoBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Info;
 
-            // (Le style de chaque bouton pourrait être amélioré pour refléter l’état actif, par exemple en changeant la couleur de fond)
             var warnBtn = new Button { Content = "Warning" };
             warnBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Warning;
 
-            // (Le style de chaque bouton pourrait être amélioré pour refléter l’état actif, par exemple en changeant la couleur de fond)
             var errorBtn = new Button { Content = "Error" };
             errorBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Error;
 
@@ -434,78 +395,129 @@ namespace LatuCollect.UI.WinUI
             filterPanel.Children.Add(warnBtn);
             filterPanel.Children.Add(errorBtn);
 
-            stack.Children.Add(filterPanel);
+            // 📋 COPY
+            var copyButton = new Button { Content = "📋 Copier" };
 
-            // Liste logs
-            stack.Children.Add(listView);
-
-            // Export logs (UI uniquement, n’exporte rien pour l’instant)
-            var exportButton = new Button
+            copyButton.Click += async (_, __) =>
             {
-                Content = "📤 Exporter les logs",
-                HorizontalAlignment = HorizontalAlignment.Right
+                string content = vm.GetLogsExportContent();
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    await vm.ShowFeedbackAsync("⚠ Aucun log à copier");
+                    return;
+                }
+
+                var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
+                package.SetText(content);
+                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+
+                await vm.ShowFeedbackAsync("✔ Logs copiés");
             };
 
-            stack.Children.Add(exportButton);
+            // 📤 EXPORT
+            var exportButton = new Button { Content = "📤 Exporter" };
 
-            // Action export logs
             exportButton.Click += async (_, __) =>
             {
-                try
+                string content = vm.GetLogsExportContent();
+
+                if (string.IsNullOrWhiteSpace(content))
                 {
-                    if (!vm.FilteredLogs.Any())
-                    {
-                        await _viewModel.ShowFeedbackAsync("⚠ Aucun log à exporter");
-                        return;
-                    }
-
-                    var lines = vm.FilteredLogs.Select(log =>
-                        $"[{log.Date}] [{log.Level}] {log.Message} {(string.IsNullOrEmpty(log.Context) ? "" : $"({log.Context})")}"
-                    );
-
-                    string content = string.Join(
-                        Environment.NewLine + "----------------------------------------" + Environment.NewLine,
-                        lines
-                    );
-
-                    FileSavePicker picker = new();
-
-                    IntPtr hwnd = WindowNative.GetWindowHandle(this);
-                    InitializeWithWindow.Initialize(picker, hwnd);
-
-                    picker.SuggestedFileName = "logs";
-                    picker.FileTypeChoices.Add("Text", new[] { ".txt" });
-
-                    StorageFile file = await picker.PickSaveFileAsync();
-
-                    if (file == null)
-                        return;
-
-                    await Windows.Storage.FileIO.WriteTextAsync(file, content);
-
-                    await _viewModel.ShowFeedbackAsync("✔ Logs exportés");
+                    await vm.ShowFeedbackAsync("⚠ Aucun log à exporter");
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    await _viewModel.ShowFeedbackAsync("✖ Erreur export logs : " + ex.Message);
-                }
+
+                FileSavePicker picker = new();
+
+                IntPtr hwnd = WindowNative.GetWindowHandle(this);
+                InitializeWithWindow.Initialize(picker, hwnd);
+
+                picker.SuggestedFileName = "logs";
+                picker.FileTypeChoices.Add("Text", new[] { ".txt" });
+
+                StorageFile file = await picker.PickSaveFileAsync();
+
+                if (file == null)
+                    return;
+
+                await Windows.Storage.FileIO.WriteTextAsync(file, content);
+
+                await vm.ShowFeedbackAsync("✔ Logs exportés");
             };
 
-            // ─────────────────────────────────────────────
-            // 🪟 DIALOG
-            // ─────────────────────────────────────────────
+            // 📦 CONTENU FINAL (simple = stable)
+            var content = new StackPanel
+            {
+                Spacing = 10,
+                Width = 900,
+                Children =
+        {
+            new TextBlock
+            {
+                Text = "Logs en temps réel",
+                FontSize = 16
+            },
+            filterPanel,
+            listView,
+        }
+            };
 
+            // 🪟 DIALOG
             var dialog = new ContentDialog
             {
                 Title = "🧾 Logs",
-                Content = new Grid
-                {
-                    Width = 900,
-                    MaxHeight = 600,
-                    Children = { stack }
-                },
+                Content = content,
                 CloseButtonText = "Fermer",
+
+                PrimaryButtonText = "📤 Exporter",
+                SecondaryButtonText = "📋 Copier",
+
                 XamlRoot = this.Content.XamlRoot
+            };
+            dialog.PrimaryButtonClick += async (_, __) =>
+            {
+                string content = vm.GetLogsExportContent();
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    await vm.ShowFeedbackAsync("⚠ Aucun log à exporter");
+                    return;
+                }
+
+                FileSavePicker picker = new();
+
+                IntPtr hwnd = WindowNative.GetWindowHandle(this);
+                InitializeWithWindow.Initialize(picker, hwnd);
+
+                picker.SuggestedFileName = "logs";
+                picker.FileTypeChoices.Add("Text", new[] { ".txt" });
+
+                StorageFile file = await picker.PickSaveFileAsync();
+
+                if (file == null)
+                    return;
+
+                await Windows.Storage.FileIO.WriteTextAsync(file, content);
+
+                await vm.ShowFeedbackAsync("✔ Logs exportés");
+            };
+            // 📋 COPY (aussi en bouton secondaire du dialogue)
+            dialog.SecondaryButtonClick += async (_, __) =>
+            {
+                string content = vm.GetLogsExportContent();
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    await vm.ShowFeedbackAsync("⚠ Aucun log à copier");
+                    return;
+                }
+
+                var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
+                package.SetText(content);
+                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+
+                await vm.ShowFeedbackAsync("✔ Logs copiés");
             };
 
             await dialog.ShowAsync();
@@ -586,7 +598,6 @@ namespace LatuCollect.UI.WinUI
 
             return $"{mb:F1} MB";
         }
-
 
         // ═════════════════════════════════════════════════════════════
         // 6. SIMULATION (UI)
@@ -721,6 +732,9 @@ namespace LatuCollect.UI.WinUI
 
             if (confirm)
             {
+                SettingsOverlay.Visibility = Visibility.Collapsed;
+                SettingsContainer.Children.Clear();
+                _settingsPanel = null;
                 Application.Current.Exit();
             }
         }
@@ -773,16 +787,33 @@ namespace LatuCollect.UI.WinUI
         "- Utilise .md pour structurer");
         }
 
-        // Options : gestion des dossiers exclus (UI uniquement, modifie la configuration globale AppConfig.ExcludedFolders) 
-        private async void OnOptionsClicked(object sender, RoutedEventArgs e)
+        // Options : configuration de l’application, gestion des exclusions, etc. (UI uniquement, la logique métier doit rester dans le ViewModel et les services associés)
+        private void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
-            var dialog = new OptionsDialog
+            // 🔒 déjà ouvert → ignore
+            if (_settingsPanel != null)
+                return;
+
+            // 🧱 création panel
+            _settingsPanel = new SettingsPanel();
+
+            // 🔥 injection ViewModel
+            _settingsPanel.Initialize(_viewModel);
+
+            // 🔴 gestion fermeture
+            _settingsPanel.OnCloseRequested += () =>
             {
-                DataContext = _viewModel, // 🔥 LIAISON MVVM
-                XamlRoot = this.Content.XamlRoot
+                SettingsOverlay.Visibility = Visibility.Collapsed;
+                SettingsContainer.Children.Clear();
+                _settingsPanel = null;
             };
 
-            await dialog.ShowAsync();
+            // 📦 injection dans le container
+            SettingsContainer.Children.Clear();
+            SettingsContainer.Children.Add(_settingsPanel);
+
+            // 👁 affichage overlay
+            SettingsOverlay.Visibility = Visibility.Visible;
         }
 
         // A propos : informations sur l'application, le développeur, la licence, etc. (UI uniquement) 

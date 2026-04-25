@@ -31,6 +31,9 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using LatuCollect.Core.Configuration;
+using LatuCollect.Core.Configuration.Interfaces;
+using LatuCollect.Core.Configuration.Models;
+using LatuCollect.Core.Configuration.Services;
 using LatuCollect.Core.Logging.Interfaces;
 using LatuCollect.Core.Logging.Models;
 using LatuCollect.Core.Logging.Services;
@@ -38,9 +41,6 @@ using LatuCollect.Core.Services.Collection;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using LatuCollect.Core.Simulation;
-using LatuCollect.Core.Configuration.Interfaces;
-using LatuCollect.Core.Configuration.Models;
-using LatuCollect.Core.Configuration.Services;
 using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
@@ -235,6 +235,56 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ═════════════════════════════════════════════════════════════════════
         // 4. PROPRIÉTÉS UI (BINDING)
         // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 🔗 SETTINGS - BINDING UI (WRAPPERS)
+        // ═════════════════════════════════════════════════════════════
+
+        // 🧑‍💻 Mode développeur (alias UI)
+        public bool IsDeveloperModeEnabled
+        {
+            get => IsDeveloperMode;
+            set
+            {
+                if (IsDeveloperMode != value)
+                {
+                    IsDeveloperMode = value;
+                    _ = SaveConfigurationAsync();
+                }
+            }
+        }
+
+        // 📂 Chargement automatique du dernier dossier
+        public bool AutoLoadLastFolder
+        {
+            get => _config.AutoLoadLastFolder;
+            set
+            {
+                if (_config.AutoLoadLastFolder != value)
+                {
+                    _config.AutoLoadLastFolder = value;
+                    _ = SaveConfigurationAsync();
+                }
+            }
+        }
+
+        // 📄 Format par défaut (différent du format courant)
+        public string DefaultFormat
+        {
+            get => _config.DefaultFormat;
+            set
+            {
+                if (_config.DefaultFormat != value)
+                {
+                    _config.DefaultFormat = value;
+
+                    // Synchronise aussi le format actuel
+                    SelectedFormat = value;
+
+                    _ = SaveConfigurationAsync();
+                }
+            }
+        }
 
         // 🔧 CONFIGURATION GLOBALE (exposée à la UI)
         public AppConfig Config => _config;
@@ -505,8 +555,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         // visibilité UI
         public bool IsSimulationVisible => IsDeveloperMode;
-        public bool IsDeveloperModeEnabled => IsDeveloperMode;
-
+      
         // message UI
         public string DeveloperWarningMessage =>
             "⚠ Mode simulation\n\n" +
@@ -1127,6 +1176,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
                 _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
                 _config.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+                _config.ExcludedFolders.Clear();
+
+                foreach (var item in _userConfig.ExcludedFolders)
+                {
+                    _config.ExcludedFolders.Add(item);
+                }
 
                 // Sync UI
                 SelectedFormat = _userConfig.DefaultFormat;
@@ -1165,6 +1220,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig.IsDeveloperMode = IsDeveloperMode;
                 _userConfig.LastOpenedFolder = CurrentFolderPath;
                 _userConfig.AutoLoadLastFolder = _config.AutoLoadLastFolder;
+                _userConfig.ExcludedFolders = _config.ExcludedFolders.ToList();
 
                 await _configurationService.SaveAsync(_userConfig);
 
@@ -1223,6 +1279,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        public async void ResetSettings()
+        {
+            await ResetConfigurationAsync();
+        }
+
         // ─────────────────────────────────────────────
         // 🌳 HELPER RÉCURSIF (VISIBILITÉ)
         // ─────────────────────────────────────────────
@@ -1262,6 +1323,31 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 // Normal → ignoré
             }
+        }
+
+        // ─────────────────────────────────────────────
+        // 🧾 EXPORT LOGS
+        // ─────────────────────────────────────────────
+
+        public string GetLogsExportContent()
+        {
+            if (_logger is not LogService logService)
+                return string.Empty;
+
+            var logs = FilteredLogs.ToList();
+
+            if (logs.Count == 0)
+                return string.Empty;
+
+            var lines = logs.Select(log =>
+                $"[{log.Date}] [{log.Level}] {log.Message}" +
+                (string.IsNullOrWhiteSpace(log.Context) ? "" : $" ({log.Context})")
+            );
+
+            return string.Join(
+                Environment.NewLine + "----------------------------------------" + Environment.NewLine,
+                lines
+            );
         }
     }
 }

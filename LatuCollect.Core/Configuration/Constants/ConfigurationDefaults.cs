@@ -39,7 +39,15 @@ namespace LatuCollect.Core.Configuration.Constants
             LastOpenedFolder = string.Empty,
             AutoLoadLastFolder = false,
             PreviewMaxFiles = 20,
-            Theme = "Light"
+            Theme = "Light",
+
+            // 🔥 IMPORTANT
+            ExcludedFolders = new()
+    {
+        "bin",
+        "obj",
+        ".git"
+    }
         };
     }
 }

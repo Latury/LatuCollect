@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                        LATUCOLLECT                                   ║
+    ║  Module : UI.WinUI.Settings.Pages                                    ║
+    ║  Fichier : SettingsExclusionsPage.xaml                               ║
+    ║                                                                      ║
+    ║  Rôle :                                                              ║
+    ║  Gestion des dossiers exclus                                         ║
+    ║                                                                      ║
+    ║  IMPORTANT (ALC) :                                                   ║
+    ║  - UI uniquement                                                     ║
+    ║  - Binding vers ViewModel uniquement                                 ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<Page
+    x:Class="LatuCollect.UI.WinUI.Settings.Pages.SettingsExclusionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Padding="20" Spacing="12">
+
+        <!--  TITRE  -->
+        <TextBlock FontSize="22" Text="📁 Dossiers exclus" />
+
+        <!--  LISTE  -->
+        <ListView
+            x:Name="ExclusionsList"
+            Height="200"
+            ItemsSource="{Binding Config.ExcludedFolders}"
+            SelectionMode="Single" />
+
+        <!--  AJOUT  -->
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+            <TextBox
+                x:Name="InputExclude"
+                Width="250"
+                PlaceholderText="Ex: node_modules" />
+
+            <Button Click="OnAddClicked" Content="➕ Ajouter" />
+
+        </StackPanel>
+
+        <!--  ACTIONS  -->
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+            <Button Click="OnRemoveClicked" Content="🗑 Supprimer" />
+
+        </StackPanel>
+
+    </StackPanel>
+</Page>
