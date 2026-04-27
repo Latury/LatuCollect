@@ -2,6 +2,18 @@
 
 Stratégie officielle de validation du projet LatuCollect
 
+## 📌 Résumé
+
+Ce document définit la stratégie de tests de LatuCollect, incluant les tests manuels actuels et les évolutions vers des tests automatisés.
+
+👉 Il permet de valider la stabilité, la fiabilité et la cohérence de l’application.
+
+## 📊 État des tests
+
+- ✔ Validé
+- 🔄 En cours
+- 🔮 À venir [ROADMAP](./ROADMAP.md)
+
 ---
 
 # 🎯 OBJECTIF
@@ -135,10 +147,14 @@ Tests réalisés directement dans l’interface WinUI
 
 ### ⚠️ Sélection globale
 
-- Désactivée volontairement
+- Désactivée (choix volontaire actuel)
 
-👉 Clic = popup explicatif
-👉 Aucun freeze
+👉 Pourquoi :
+
+- Éviter les ralentissements
+- Préserver la fluidité
+
+👉 Évolution possible dans les versions futures
 
 ---
 
@@ -167,6 +183,9 @@ Tests réalisés directement dans l’interface WinUI
 ```texte
 ⚠ Aperçu limité à 20 fichiers
 ```
+
+👉 Cette limitation concerne uniquement l’affichage.
+L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
@@ -428,12 +447,45 @@ Chemin du fichier
 
 ---
 
-# 🧠 TESTS UNITAIRES (À FAIRE)
+# 🧠 TESTS UNITAIRES (À VENIR)
 
-Cibles :
+Objectif :
+
+- Tester la logique métier indépendamment de l’UI
+- Garantir la fiabilité du Core
+
+---
+
+## 📦 Cibles principales
 
 - FileReaderService
 - FileExportService
+- FileStatisticsService (plus tard)
+
+---
+
+## 📋 Cas principaux
+
+### Lecture
+
+- Lecture valide
+- Gestion des erreurs (accès refusé, fichier inexistant)
+
+---
+
+### Export
+
+- Génération TXT
+- Génération Markdown
+- Respect du format
+
+---
+
+### Statistiques
+
+- Comptage lignes
+- Comptage caractères
+- Gestion fichiers vides
 
 ---
 
@@ -496,6 +548,17 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
+# 📌 ÉTAT ACTUEL
+
+- ✔ Tests manuels complets (UI)
+- ✔ Validation des cas principaux
+- ✔ Vérification des performances
+- 🔄 Tests unitaires en préparation
+
+👉 Base solide pour évolution vers tests automatisés
+
+---
+
 # 🏁 CONCLUSION
 
 Les tests garantissent :
@@ -509,3 +572,11 @@ Les tests garantissent :
 - Fiable
 - Stable
 - Prévisible
+
+---
+
+# 🔮 Évolutions des tests
+
+Les améliorations futures (tests unitaires, automatisation) sont définies dans la roadmap.
+
+👉 Voir : [ROADMAP](./ROADMAP.md)

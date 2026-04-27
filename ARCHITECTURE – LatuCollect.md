@@ -4,6 +4,12 @@ Projet : Application de collecte de contenu multi-fichiers
 
 Ce document définit le standard officiel d’architecture (ALC) du projet.
 
+## 📌 Résumé
+
+Ce document décrit l’architecture du projet LatuCollect, les règles de développement (ALC), et l’organisation interne du code.
+
+👉 Il sert de référence pour toute modification ou ajout de fonctionnalité.
+
 ---
 
 # 🔎 Référence rapide : ALC
@@ -371,7 +377,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-# 📊 7. STATISTIQUES (v0.7.0)
+# 📊 7. STATISTIQUES — COMPORTEMENT
 
 Les statistiques sont calculées à partir des fichiers sélectionnés :
 
@@ -393,35 +399,33 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 ---
 
-# ⚡ 8. PERFORMANCE (v0.7.0)
+# ⚡ 8. PERFORMANCE
 
-- ✔ Limitation de l’aperçu à 20 fichiers
-- ✔ Calcul en arrière-plan (async)
-- ✔ Réduction des recalculs inutiles
+## ✔ État actuel (v0.9.0)
 
-### ⚠️ Cas projet volumineux
-
-- Affichage partiel activé
-- Message utilisateur affiché
-
-👉 Objectif :
-
-- Éviter les freezes UI
-- Garantir la fluidité
-
-## ⚡ PERFORMANCE (v0.9.0)
-
-- ✔ Mise en cache des fichiers (FileReaderService)
-- ✔ Réduction des accès disque (I/O)
-- ✔ Réduction des recalculs inutiles (cache ViewModel)
-- ✔ Optimisation mémoire (moins d’allocations)
-- ✔ Amélioration du temps de génération du preview
+- Mise en cache des fichiers (FileReaderService)
+- Réduction des accès disque (I/O)
+- Réduction des recalculs inutiles
+- Optimisation mémoire
+- Amélioration du temps de génération du preview
 
 👉 Résultat :
 
 - Application plus rapide
 - UI plus fluide
 - Pipeline plus efficace
+
+---
+
+## 📜 Historique
+
+### v0.7.0
+
+- Limitation de l’aperçu à 20 fichiers
+- Calcul en arrière-plan (async)
+- Réduction des recalculs
+
+👉 Objectif : éviter les freezes UI
 
 ---
 
@@ -526,7 +530,7 @@ UI/
     ├── Converters/
 ```
 
-👉 Voir DIRECTORY_STRUCTURE.md pour le détail complet
+👉 Voir : [DIRECTORY_STRUCTURE](./DIRECTORY_STRUCTURE.md)
 
 ---
 
@@ -643,11 +647,15 @@ Futur :
 
 # 24. ÉVOLUTIONS
 
-- ✔ MVVM avancé
-- ✔ Refactor Core
-- ✔ Amélioration UI
-- 🔄 Persistance configuration (JSON)
-- 🔄 Filtrage avancé
+## 🔮 À venir
+
+- Injection de dépendances (interfaces)
+- Refactor avancé du Core
+- Amélioration UI
+- Persistance configuration (JSON)
+- Filtrage avancé
+
+👉 Voir [ROADMAP](./ROADMAP.md) pour le détail
 
 ---
 

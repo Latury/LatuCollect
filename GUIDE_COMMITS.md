@@ -271,7 +271,7 @@ Ajout de l’affichage des dossiers et fichiers du projet.
 
 ---
 
-🧑🏻‍💻 Description technique :
+👨🏻‍💻 Description technique :
 
 - Création vue XAML
 - Ajout navigation dossiers

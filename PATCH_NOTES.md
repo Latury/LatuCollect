@@ -1085,91 +1085,231 @@ Cette version introduit :
 
 ## 📌 Statut
 
-🟡 En cours — Stabilisation avancée UI
+🟡 En cours — Stabilisation avancée UI + structuration interne
 
 ---
 
 ## 🎯 Objectif
 
-Finaliser l’application pour une utilisation réelle, stable et cohérente.
+Finaliser l’application pour une utilisation réelle, stable, cohérente et maintenable.
 
 ---
 
-## ✨ Améliorations
+# ✨ Améliorations
 
-### 🖥️ Interface utilisateur
+---
+
+## 🖥️ Interface utilisateur
 
 - ✅ Réorganisation du panneau Options :
   - Interface simplifiée
   - Meilleure lisibilité
   - Séparation claire des actions
 
+- ✅ Ajout d’un panneau de paramètres complet :
+  - Navigation interne (menu + contenu)
+  - Structure modulaire (pages)
+
+- ✅ Gestion des dossiers exclus :
+  - Ajout / suppression dynamique
+  - Sauvegarde automatique
+
 - ✅ Ajout d’un bouton dédié :
   - "📁 Dossiers exclus"
-  - Ouverture d’un dialog séparé
+  - Accès direct depuis l’UI
 
 - ✅ Amélioration de la zone basse :
   - Meilleur positionnement des boutons
   - Structure plus stable
   - Bouton export toujours visible
 
+- ✅ Correction du TreeView :
+  - Navigation restaurée
+  - Expansion fonctionnelle
+  - Suppression du mauvais template
+
 ---
 
-### 🧑‍💻 Mode développeur
+## 🧠 Comportement utilisateur
+
+- ✅ Amélioration de la sélection :
+  - Sélection d’un dossier → sélection automatique des enfants
+  - Comportement plus logique et rapide
+
+- ✅ Recherche dynamique :
+  - Filtrage sans reload
+  - Mise à jour fluide
+
+---
+
+## ⚙️ Configuration utilisateur (NOUVEAU)
+
+- ✅ Mise en place d’un système complet de configuration persistée (JSON)
+
+- ✅ Sauvegarde automatique :
+  - Format sélectionné
+  - Mode développeur
+  - Dossier ouvert
+  - Dossiers exclus
+
+- ✅ Chargement au démarrage :
+  - Restauration automatique des paramètres
+
+- ✅ Correction critique :
+  - Suppression de l’écrasement de config au lancement
+
+- ✅ Synchronisation complète :
+  - UI ↔ ViewModel ↔ fichier config
+
+---
+
+## 🧑‍💻 Mode développeur
 
 - ✅ Activation via paramètres
 - ✅ Toggle fonctionnel (liaison ViewModel)
-- ✅ Affichage direct dans l’UI (suppression des dialogs bloquants)
-- ✅ Message d’avertissement intégré dans l’interface
+- ✅ Persistance entre sessions
+- ✅ Affichage direct dans l’UI
+- ✅ Message d’avertissement intégré
 - ✅ Aucun impact utilisateur standard
 
 ---
 
-### 🧪 Simulation (UI)
+## 🧪 Simulation (UI)
 
 - ✅ Bouton visible uniquement en mode développeur
-- ✅ Popup de configuration des scénarios
 - ✅ Activation / désactivation en temps réel
-- ✅ Nettoyage du comportement UI
+- ✅ Intégration propre avec le ViewModel
+- ✅ Comportement stabilisé
 
 ---
 
-### 🧾 Logs
+## 🧾 Logs
 
-- ✅ Accès aux logs stabilisé
-- ✅ Suppression des conflits entre dialogs
-- ✅ Correction du freeze lors de l’ouverture depuis les options
+- ✅ Système de logs structuré :
+  - Info / Warning / Error
+  - Format lisible
+
+- ✅ Mise à jour dynamique UI
+
+- ✅ Badge d’erreurs
+
+- ✅ Correction des conflits UI
 
 ---
 
-### 🛠️ Stabilité UI
+## 🔄 Pipeline interne (amélioré)
 
-- ✅ Correction des freezes liés aux ContentDialog imbriqués
-- ✅ Amélioration de la gestion des ouvertures de fenêtres
-- ✅ Suppression du scintillement lors du redimensionnement
-- ✅ Implémentation d’un blocage natif de la taille minimum (Win32)
-- ✅ Définition d’une taille minimum stable : 1600 x 1000
-- ✅ Meilleure cohérence des interactions utilisateur
+Flux complet stabilisé :
+
+👉 Import → Sélection → Lecture → Assemblage → Statistiques → Export
+
+- ✅ Comportement cohérent
+- ✅ Moins d’effets de bord
+- ✅ Meilleure lisibilité interne
+
+---
+
+## 🧱 Architecture (gros refactor)
+
+### Core
+
+- ✅ Refactor complet des services :
+  - FileImportService
+  - FileReaderService
+  - FileExportService
+  - FileCollectionService
+  - FileStatisticsService
+
+- ✅ Ajout cache mémoire (lecture fichiers)
+
+- ✅ Séparation stricte des responsabilités
+
+---
+
+### Configuration
+
+- ✅ Nouvelle architecture :
+  - Constants
+  - Interfaces
+  - Models
+  - Services
+
+- ✅ Ajout :
+  - UserConfig
+  - ConfigurationService
+  - ConfigurationDefaults
+
+---
+
+### Logging
+
+- ✅ Système centralisé :
+  - LogService
+  - LogEntry
+  - LogLevel
+
+---
+
+### UI
+
+- ✅ Nettoyage complet des converters :
+  - BooleanToVisibilityConverter
+  - InverseBooleanToVisibilityConverter
+  - StringEqualsConverter
+  - Preview converters
+  - LogLevelToColorConverter
+  - FolderFileIconConverter
+  - BoolToIconConverter
+
+- ✅ Structure homogène
+
+- ✅ Préparation thèmes futurs
+
+---
+
+### Mapping UI ↔ Core
+
+- ✅ Conversion propre des FileNode
+- ✅ Suppression dépendances ambiguës
+- ✅ Respect strict ALC
+
+---
+
+## 🛠️ Stabilité UI
+
+- ✅ Correction des freezes (ContentDialog)
+- ✅ Suppression conflits UI
+- ✅ Réduction flickering
+- ✅ Gestion taille minimum (1600 x 1000)
+- ✅ Amélioration du comportement global
 
 ---
 
 ## 🧠 Résultat
 
 - ✔ Interface plus propre
-- ✔ Navigation plus claire
-- ✔ Expérience utilisateur plus fluide
-- ✔ Suppression des comportements instables (flicker / dialogs)
-- ✔ Base solide pour finalisation produit
+- ✔ Navigation plus fluide
+- ✔ Sélection intuitive
+- ✔ Paramètres persistants
+- ✔ Architecture solide
+- ✔ Code maintenable
+- ✔ Base prête pour production
 
 ---
 
-## ⚠️ En cours
+# ⚠️ En cours
 
 - ⬜ Refonte complète du système de simulation (Core)
-- ⬜ Améliorations UI finales (design global)
-- ⬜ Configuration utilisateur persistée (config.json)
-- ⬜ Gestion avancée des scénarios de simulation
-- ⬜ Paramètres avancés (niveau de logs, options)
+- ⬜ Finalisation UI (design global)
+- ⬜ Paramètres avancés :
+  - niveau de logs
+  - options utilisateur étendues
+
+- ⬜ Optimisation performances (gros projets)
+- ⬜ Mode développeur avancé (outils internes)
+- ⬜ Thèmes (clair / sombre)
+
+---
 
 ---
 

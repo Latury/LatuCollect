@@ -11,7 +11,7 @@
 <br>
 
 ![Version](https://img.shields.io/badge/Version-0.10.0-FFDF20?style=for-the-badge)
-![Statut](https://img.shields.io/badge/Statut-En%20finalisation-FFA500?style=for-the-badge)
+![Statut](<https://img.shields.io/badge/Statut-Stable%20(0.10.0)-28A745?style=for-the-badge>)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -21,6 +21,19 @@
 Auteur : Flo Latury
 
 </div>
+
+---
+
+## 📌 Résumé
+
+LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusieurs fichiers en un seul document propre, sans modifier les fichiers d’origine.
+
+---
+
+## 📊 État des fonctionnalités
+
+- ✅ Implémenté
+- 🔮 À venir [ROADMAP](./ROADMAP.md)
 
 ---
 
@@ -41,7 +54,35 @@ LatuCollect permet de :
 
 ---
 
-# 🎯 2. Cas d’usage
+# 📦 2. Installation
+
+## 🔹 Prérequis
+
+- Windows 10 / 11
+- .NET 8
+
+## 🔹 Lancer l’application
+
+1. Télécharger la dernière version
+2. Lancer l’exécutable
+
+👉 Aucune installation complexe requise
+
+---
+
+# ⚡ 3. Démarrage rapide
+
+1. Ouvrir l’application
+2. Charger un dossier
+3. Sélectionner des fichiers
+4. Visualiser l’aperçu
+5. Exporter
+
+👉 Temps total : quelques secondes
+
+---
+
+# 🎯 4. Cas d’usage
 
 - Préparer du code pour une IA
 - Générer une documentation rapide
@@ -52,15 +93,23 @@ LatuCollect permet de :
 
 ---
 
-# 🧠 3. Fonctionnement
+# 🧠 5. Fonctionnement
 
-```text id="pipelinereadme"
+## 🧠 Fonctionnement utilisateur
+
+```text
 Importer → Sélectionner → Aperçu → Exporter
+```
+
+## ⚙️ Fonctionnement interne
+
+```text
+Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
 ---
 
-# 🖥️ 4. Interface
+# 🖥️ 6. Interface
 
 ## 🟦 Gauche — Projet (cœur de l’application)
 
@@ -86,19 +135,20 @@ Accès :
 ### 🧑‍💻 Mode développeur
 
 - Activation via ⚙ Paramètres
-- Indicateur visuel intégré dans l’interface
-- Affichage d’un message d’avertissement
-- Déverrouille le mode simulation
+- Indicateur visuel intégré
+- Message d’avertissement
 
-⚠️ Ce mode est destiné aux tests
-⚠️ Il peut provoquer des comportements instables
+👉 Déverrouille le mode simulation
+
+⚠️ Destiné aux tests
+⚠️ Peut provoquer des comportements instables
 
 ---
 
 ### 🧪 Mode simulation
 
 - Accessible uniquement en mode développeur
-- Permet de simuler des comportements spécifiques
+- Permet de simuler des comportements
 
 Exemples :
 
@@ -107,8 +157,8 @@ Exemples :
 - Problèmes d’export
 
 👉 Activation via popup dédiée
-👉 Effet immédiat sur l’application
-👉 Aucun impact sur les fichiers réels
+👉 Effet immédiat
+👉 Aucun impact sur les fichiers
 
 ---
 
@@ -133,9 +183,9 @@ Exemples :
 
 ---
 
-# 📄 5. Format d’export
+# 📄 7. Format d’export
 
-```text id="flowreadme"
+```text
 Chemin du fichier
 
 
@@ -145,28 +195,23 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-👉 Aperçu = Export (strictement identique)
+👉 Aperçu = Export
 
 ---
 
-# ⚙️ 6. Fonctionnement interne
-
-```text id="pipelinereadme"
-Import → Lecture → Collection → Assemblage → Statistiques → Export
-```
+# ⚙️ 8. Fonctionnement interne
 
 👉 Pipeline simple
 👉 Lecture uniquement
 
 ---
 
-# ⚡ 7. Performance
+# ⚡ 9. Performance
 
 ### Optimisations
 
-- Cache des fichiers
-- Réduction des accès disque
-- Réduction des recalculs
+- Cache fichiers
+- Réduction I/O
 - Optimisation mémoire
 
 ### Protection gros projets
@@ -181,30 +226,24 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
-# 🛠️ 8. Stabilité UI
+# 🛠️ 10. Stabilité UI
 
-- Taille minimale fenêtre : 1600 x 1000
-- Empêche la casse de l’interface
-- Réduction du flickering lors du redimensionnement
-- Gestion native du redimensionnement (Win32)
-- Gestion propre des dialogs (aucun conflit)
-
-👉 Objectif : expérience fluide et fiable
+- Taille minimale : 1600 x 1000
+- Réduction flickering
+- Gestion propre du resize
+- Dialogs stables
 
 ---
 
-# 🧾 9. Logs
+# 🧾 11. Logs
 
-- Système de logs intégré
-- Visualisation dans l’application
+- Logs intégrés
+- Visualisation UI
 - Export possible
-- Badge d’erreurs
-
-👉 Utile pour debug et analyse
 
 ---
 
-# ⚠️ 10. Ce que l’application NE fait PAS
+# ⚠️ 12. Ce que l’application NE fait PAS
 
 - Aucune analyse de code
 - Aucune modification
@@ -214,25 +253,32 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
-# ⚙️ 11. Fonctionnalités principales
+# ⚙️ 13. Fonctionnalités principales
+
+### ✅ Actuelles
 
 - Import de dossier
-- Arborescence dynamique
-- Recherche optimisée (debounce)
-- Filtrage par extension
-- Exclusion dossiers (bin, obj, .git)
+- Arborescence
+- Recherche (debounce)
+- Exclusion dossiers
 - Aperçu temps réel
 - Export TXT / Markdown
 - Copie presse-papiers
-- Statistiques temps réel
+- Statistiques
 - Logs
-- Mode développeur + simulation
+- Mode développeur
+
+### 🔮 À venir
+
+- Optimisation gros projets
+- Améliorations UX
+- Améliorations performance
 
 ---
 
-# 🏗️ 12. Architecture
+# 🏗️ 14. Architecture
 
-```text id="archreadme"
+```text
 Core = logique métier
 UI = affichage
 ```
@@ -245,33 +291,31 @@ UI = affichage
 - FileExportService
 - FileStatisticsService
 
-👉 ViewModel = orchestrateur uniquement
+👉 ViewModel = orchestrateur
 
 ---
 
-# 📦 13. Structure
+# 📦 15. Structure
 
-```text id="structreadme"
+```text
 Core/
 UI/WinUI/
 Resources/
 ```
 
-👉 Voir DIRECTORY_STRUCTURE.md
+👉 Voir : [DIRECTORY_STRUCTURE](./DIRECTORY_STRUCTURE.md)
 
 ---
 
-# 📌 14. État actuel
+# 📌 16. État actuel
 
-- Application stable (phase finale)
+- Application stable
 - UI stabilisée
 - Pipeline optimisé
 - Logs intégrés
-- Mode développeur fonctionnel
-- Architecture ALC respectée
-- Taille minimale fenêtre définie
+- Mode développeur actif
 
-👉 Phase de finalisation (0.10.0)
+👉 Phase finale (0.10.0)
 
 ---
 
@@ -281,66 +325,38 @@ Resources/
 - Rapide
 - Stable
 - Lisible
-- Sans risque (lecture seule)
-- Optimisé pour IA
+- Sans risque
 
 ---
 
-# 🧠 15. Philosophie
+# 🧠 17. Philosophie
 
-- Simplicité avant complexité
-- Lisibilité avant optimisation
-- Utilité avant fonctionnalité
-
----
-
-# 🧠 16. Pourquoi LatuCollect
-
-Contrairement aux autres outils :
-
-- Pas d’analyse
-- Pas de transformation
-- Pas de complexité inutile
-
-👉 Juste l’essentiel
+- Simplicité > complexité
+- Lisibilité > optimisation
+- Utilité > fonctionnalités
 
 ---
 
-# 🧪 17. Exemple
-
-1. Import du dossier
-2. Sélection des fichiers
-3. Aperçu immédiat
-4. Export
-
-👉 Résultat : document propre et exploitable
-
----
-
-# ⚠️ 18. Limites
+# ⚠️ 18. Limites (actuelles)
 
 - Pas de virtualisation avancée
 - Pas de lazy loading
-- Chargement partiel sur gros projets
+- Chargement partiel
 
-👉 Choix volontaire pour garantir :
-
-- stabilité
-- simplicité
-- lisibilité
+👉 Choix volontaire
 
 ---
 
-# 🔭 Évolutions
+# 🔮 Évolutions prévues
 
-Les prochaines améliorations et orientations du projet sont définies dans la feuille de route.
+- Lazy loading
+- Optimisation performance
+- Amélioration UX
 
 👉 Voir : [ROADMAP](./ROADMAP.md)
 
 ---
 
 # 📝 Versions
-
-L’historique des évolutions et des modifications du projet est disponible dans les notes de version.
 
 👉 Voir : [PATCH NOTES](./PATCH_NOTES.md)

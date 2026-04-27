@@ -478,48 +478,285 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ---
 
-# 🧪 Simulation (REFONTE COMPLÈTE)
+# ⚙️ CONFIGURATION UTILISATEUR (PRIORITÉ HAUTE)
 
-👉 À faire après discussion dédiée (architecture + implémentation)
+- ✅ Sauvegarde des préférences utilisateur (config.json)
+- ✅ Format par défaut (.txt / .md)
+- ✅ Gestion des exclusions persistées
+- ⬜ Thème sélectionné
+- ✅ Activation mode développeur
+- ✅ Sauvegarde du dernier dossier ouvert
+- ✅ Chargement automatique au démarrage
+- ✅ Option pour désactiver le chargement automatique
+- ⬜ Vérification validité du dossier au lancement
+- ✅ Bouton "Réinitialiser les paramètres"
+
+---
+
+# 🧠 CORE — STABILITÉ (PRIORITÉ CRITIQUE)
+
+## 🔹 FileReaderService
+
+- ⬜ Async (`ReadFileAsync`)
+- ⬜ `FileReadResult` (résultat structuré)
+
+## 🔹 FileStatisticsService
+
+- ⬜ Suppression `FileInfo`
+- ⬜ Passage `fileSize` en paramètre
+
+## 🔹 ImportService
+
+- ⬜ `EnumerateFiles`
+- ⬜ Tri fichiers + dossiers
+- ⬜ Support CancellationToken
+- ⬜ ImportResult
+- ⬜ Gestion affichage partiel
+
+## 🔹 ExportService
+
+- ⬜ Async export
+- ⬜ Gestion gros fichiers
+- ⬜ ExportResult structuré
+
+## 🔹 CollectionService
+
+- ⬜ Tri fichiers
+- ⬜ HashSet (doublons)
+- ⬜ Limite max fichiers
+
+---
+
+# ⚡ PERFORMANCE
+
+- ⬜ Limite cache
+- ⬜ Expiration cache
+- ⬜ Optimisation stats
+- ⬜ Limite export
+
+---
+
+# 🖥️ UI / UX
+
+## 🔧 Bugs
+
+- ⬜ Reset paramètres → vider dossier
+- ⬜ Message "Veuillez sélectionner un dossier"
+- ⬜ Supprimer sélection globale
+- ⬜ Améliorer section Aide
+
+## ✨ Améliorations
+
+- ⬜ Sélection dossier → inclure enfants
+- ⬜ Preview limité cohérent
+- ⬜ Message export partiel
+
+---
+
+# ⚠️ STABILITÉ UI
+
+- ✅ Taille minimale
+- ✅ Réduction flickering
+- ⬜ Optimisation rendu
+
+---
+
+# 🧾 LOGS
+
+- ✅ LogService en place
+- ⬜ Niveau de log configurable
+
+---
+
+# ⚙️ BUILD
+
+- ⬜ Build release propre
+- ⬜ Vérification stabilité
+
+---
+
+# 🧪 TESTS
+
+- ⬜ Tests FileReader
+- ⬜ Tests Export
+- ⬜ Tests Statistics
+
+---
+
+# 🚀 15. Version 0.11.0 — STABILITÉ CORE
+
+## 🎯 Objectif
+
+Rendre le Core fiable, testable et prévisible.
+
+---
+
+## 🧠 FileReader
+
+- ⬜ Stabilisation async
+- ⬜ Gestion complète des erreurs
+
+---
+
+## 📊 Statistics
+
+- ⬜ Suppression FileInfo
+- ⬜ Passage fileSize
+
+---
+
+## 📤 Export
+
+- ⬜ ExportResult structuré
+- ⬜ Async complet
+
+---
+
+## 📦 Collection
+
+- ⬜ Optimisation collection
+- ⬜ Gestion cas limites
+- ⬜ Limite fichiers
+- ⬜ Tri propre
+
+---
+
+# 🚀 16. Version 0.12.0 — PERFORMANCE
+
+## 🎯 Objectif
+
+Améliorer la fluidité et gérer les gros projets.
+
+---
+
+## 📂 Import
+
+- ⬜ EnumerateFiles
+- ⬜ Tri fichiers
+
+---
+
+## ⚡ Cache
+
+- ⬜ Limite cache
+- ⬜ Expiration
+
+---
+
+## 📊 Stats
+
+- ⬜ Optimisation lignes
+
+---
+
+## 📤 Export
+
+- ⬜ Limite export
+- ⬜ Gestion export massif
+
+---
+
+# 🚀 17. Version 0.13.0 — UX & COMPORTEMENT
+
+## 🎯 Objectif
+
+Améliorer l’expérience utilisateur.
+
+---
+
+## 📂 Import
+
+- ⬜ Lazy loading
+- ⬜ CancellationToken
+- ⬜ ImportResult
+- ⬜ Affichage partiel
+
+---
+
+## 🖥️ UI
+
+- ⬜ Reset dossier
+- ⬜ Message état vide
+
+---
+
+## ✨ UX
+
+- ⬜ Sélection dossier complète
+- ⬜ Preview limité
+- ⬜ Message export partiel
+
+---
+
+# 🚀 18. Version 0.14.0 — ARCHITECTURE
+
+## 🎯 Objectif
+
+Structurer le projet pour le futur.
+
+---
+
+## 🧠 Core
+
+- ⬜ IExportFormatter
+- ⬜ Séparer AppConfig / UserConfig
+- ⬜ Interfaces services
+- ⬜ Découpler Simulation
+
+---
+
+## 🧱 Modèles
+
+- ⬜ FileNode Parent
+- ⬜ Depth
+- ⬜ Id
+- ⬜ CacheEntry
+
+---
+
+# 🚀 19. Version 0.15.0 — LOGS
+
+## 🎯 Objectif
+
+Améliorer debug et stabilité.
+
+---
+
+## 🧾 Logs
+
+- ⬜ Limite mémoire
+- ⬜ Thread safety
+- ⬜ Export logs
+- ⬜ Debug level
+- ⬜ Filtrage
+
+---
+
+# 🧪 Simulation (TOUJOURS EN FIN)
+
+👉 À faire après discussion dédiée
 
 ---
 
 ## 🧱 Architecture
 
-- ⬜ Refonte complète du système de simulation
-- ⬜ Séparation stricte UI / Core
-- ⬜ Centralisation des scénarios
-- ⬜ Système extensible (ajout facile de scénarios)
-
----
-
-## 🧑‍💻 Mode développeur
-
-- ✅ Activation via Paramètres → Paramètres avancés
-- ✅ Désactivation par défaut
-- ✅ Aucun impact utilisateur normal
-
----
-
-## 🧪 UI Simulation
-
-- ✅ Bouton 🧪 existant rendu visible uniquement si mode développeur activé
-- ✅ Popup de sélection des scénarios
-- ✅ Activation / désactivation en temps réel
+- ⬜ Refonte complète
+- ⬜ Centralisation scénarios
+- ⬜ Système extensible
 
 ---
 
 ## 🛡️ Règles
 
-- ⬜ Aucun impact en production
-- ⬜ Simulation isolée du Core réel
-- ⬜ Activation explicite uniquement
+- ⬜ Aucun impact production
+- ⬜ Isolation complète
+- ⬜ Activation explicite
 
 ---
 
 # 🔬 Scénarios de simulation
 
-## 📂 Lecture (Reader)
+## 📂 Lecture
 
 - ⬜ Fichier introuvable
 - ⬜ Chemin invalide
@@ -527,7 +764,7 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ⬜ Accès refusé
 - ⬜ Fichier verrouillé
 - ⬜ Fichier vide
-- ⬜ Fichier très volumineux
+- ⬜ Fichier volumineux
 - ⬜ Fichier binaire
 - ⬜ Encodage spécial
 
@@ -536,53 +773,43 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 ## 📤 Export
 
 - ⬜ Accès refusé
-- ⬜ Fichier déjà ouvert
+- ⬜ Fichier ouvert
 - ⬜ Chemin invalide
-- ⬜ Disque plein (simulation)
+- ⬜ Disque plein
 - ⬜ Export vide
 - ⬜ Export massif
-- ⬜ Confirmation avant écrasement d’un fichier existant
+- ⬜ Confirmation overwrite
 
 ---
 
 ## 📦 Collection
 
-- ⬜ Aucun fichier sélectionné
+- ⬜ Aucun fichier
 - ⬜ Sélection partielle
-- ⬜ Sélection profonde
 - ⬜ Sélection massive
-- ⬜ Fichiers supprimés entre-temps
-- ⬜ Bouton “vider la sélection”
+- ⬜ Fichiers supprimés
+- ⬜ Vider sélection
 
 ---
 
 ## 🖥️ UI
 
-- ✅ Loader bloqué
-- ✅ Erreur UI forcée
 - ⬜ État incohérent
-- ⬜ UI figée (simulation extrême)
-- ⬜ Affichage du chemin du dossier chargé
-- ⬜ Blocage temporaire des actions (anti double clic)
+- ⬜ UI figée
+- ⬜ Affichage chemin dossier
 
 ---
 
 ## 👁️ Aperçu
 
-- ⬜ Aucun fichier sélectionné
-- ⬜ Limitation à 20 fichiers
-- ⬜ Contenu très long
-- ⬜ Fichiers vides
-- ⬜ Limitation configurable du nombre de fichiers
+- ⬜ Limitation configurable
 
 ---
 
 ## 🔍 Recherche
 
-- ⬜ Aucun résultat
-- ⬜ Recherche rapide (debounce)
-- ⬜ Recherche par extension
-- ⬜ Recherche sur gros projet
+- ⬜ Recherche extension
+- ⬜ Recherche gros projet
 
 ---
 
@@ -590,147 +817,25 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 - ⬜ Projet volumineux
 - ⬜ Arborescence profonde
-- ⬜ Sélection massive
 - ⬜ Export lourd
-- ✅ Réduction du flickering lors du redimensionnement
 
 ---
 
-## 👤 Utilisateur réel
+## 👤 Utilisateur
 
-- ⬜ Clics rapides répétés
-- ⬜ Changement dossier pendant chargement
+- ⬜ Clics rapides
+- ⬜ Changement dossier
 - ⬜ Fermeture pendant traitement
-- ⬜ Actions simultanées
 
 ---
 
-# 📜 Logs application
+# 📦 Distribution (TOUJOURS EN FIN)
 
-## 🧱 Core
-
-- ✅ Mise en place d’un LogService
-- ✅ Centralisation des logs
-
----
-
-## 📊 Types de logs
-
-- ✅ Chargement dossier
-- ✅ Lecture fichiers
-- ✅ Export
-- ✅ Erreurs
-- ✅ Actions utilisateur
-
----
-
-## 🖥️ UI
-
-- ✅ Accès aux logs via bouton principal
-- ✅ Visualisation dans l’application
-- ✅ Export des logs
-- ⬜ Niveau de log minimum configurable (Info / Warning / Error)
-
----
-
-## 🎯 Objectif
-
-- Faciliter le debug
-- Comprendre les erreurs
-- Aider à la maintenance
-
----
-
-# 🎨 Refonte UI
-
-- ⬜ Modernisation du design
-- ⬜ Amélioration des couleurs
-- ⬜ Amélioration lisibilité
-- ⬜ Cohérence visuelle globale
-- ⬜ Harmonisation des composants
-
----
-
-# 🌗 Thèmes
-
-- ⬜ Mode sombre
-- ⬜ Mode clair
-- ⬜ Système de couleurs centralisé
-
----
-
-# ⚙️ Configuration utilisateur
-
-- ⬜ Sauvegarde des préférences utilisateur (config.json)
-
-- ⬜ Format par défaut (.txt / .md)
-
-- ⬜ Gestion des exclusions persistées
-
-- ⬜ Thème sélectionné
-
-- ⬜ Activation mode développeur
-
-- ⬜ Sauvegarde du dernier dossier ouvert
-
-- ⬜ Chargement automatique au démarrage
-
-- ⬜ Option pour désactiver le chargement automatique
-
-- ⬜ Vérification validité du dossier au lancement
-
-- ⬜ Bouton "Réinitialiser les paramètres"
-
----
-
-# 🧾 Application
-
-- ⬜ Version affichée (À propos)
-- ⬜ Licence visible
-- ⬜ Informations application
-
----
-
-# 🖼️ Identité visuelle
-
-- ⬜ Création logo
-- ⬜ Icône .ico (exe + Windows)
-- ⬜ Icône barre des tâches
-
----
-
-# 🔄 Mise à jour
-
-- ⬜ Vérification de version
-- ⬜ Notification utilisateur
-
----
-
-# 📦 Distribution
-
-- ⬜ Création installateur
-- ⬜ Gestion dépendances
-- ⬜ Multi-architecture (x64 / x86)
-- ⬜ Choix dossier installation
-- ⬜ Création raccourcis
-
----
-
-# ⚙️ Build
-
-- ⬜ Build release propre
-- ⬜ Optimisation finale
-- ⬜ Vérification stabilité globale
-
----
-
-# ⚠️ STABILITÉ UI
-
-## 🖥️ Fenêtre / Redimensionnement
-
-- ✅ Définir taille minimale fenêtre (évite UI cassée)
-- ✅ Réduction du flickering lors du resize
-- ⬜ Optimisation du rendu (éviter refresh complet)
+- ⬜ Installateur
+- ⬜ Dépendances
+- ⬜ Multi-architecture
+- ⬜ Choix dossier
+- ⬜ Raccourcis
 
 ---
 

@@ -10,6 +10,17 @@ Ce document définit :
 
 👉 Document de référence pour toute l’interface utilisateur
 
+## 📌 Résumé
+
+Ce document décrit l’organisation de l’interface utilisateur, le comportement des différentes zones et les règles UX du projet LatuCollect.
+
+👉 Il sert de référence pour toute modification de l’interface.
+
+## 📊 État des fonctionnalités
+
+- ✅ Implémenté
+- 🔮 À venir [ROADMAP](./ROADMAP.md)
+
 ---
 
 # 🎯 OBJECTIF
@@ -114,7 +125,7 @@ Afficher la structure complète du projet
 - Insensible à la casse
 - Mise à jour rapide (debounce)
 
-### ✔ Améliorations
+### 🔮 Évolutions
 
 - Filtrage par extension :
   - .cs
@@ -143,12 +154,14 @@ Afficher la structure complète du projet
 
 ## ⚠️ Sélection globale
 
-- Désactivée temporairement
+- Désactivée (choix volontaire actuel)
 
 👉 Raison :
 
 - Éviter les ralentissements
 - Préserver la fluidité
+
+👉 Réintégration possible dans les versions futures
 
 ---
 
@@ -411,6 +424,20 @@ Actions finales de l’application
 
 ---
 
+# 📌 ÉTAT ACTUEL UI
+
+- ✔ Interface structurée en 4 zones (Gauche / Centre / Droite / Bas)
+- ✔ Chargement asynchrone du projet
+- ✔ Recherche dynamique avec debounce
+- ✔ Aperçu temps réel
+- ✔ Export fonctionnel
+- ✔ Mode développeur actif
+- ✔ Système de logs accessible
+
+👉 UI stable en version 0.10.0
+
+---
+
 # 🧠 RÈGLE ALC
 
 - Aucune logique métier dans UI
@@ -447,3 +474,11 @@ Une interface :
 - Adaptée à un usage réel
 
 👉 L’utilisateur comprend immédiatement quoi faire
+
+---
+
+# 🔮 Évolutions UI
+
+Les améliorations futures de l’interface sont définies dans la roadmap.
+
+👉 Voir : [ROADMAP](./ROADMAP.md)

@@ -13,6 +13,18 @@ LatuCollect est une application permettant de :
 👉 Aucun fichier source n’est modifié
 👉 Lecture seule, aucune transformation du code
 
+## 📌 Résumé
+
+Ce guide explique comment utiliser LatuCollect étape par étape, de l’import d’un projet jusqu’à l’export du contenu.
+
+👉 Il est destiné aux utilisateurs débutants comme avancés.
+
+## 📊 État des fonctionnalités
+
+- ✅ Disponible
+- 🔄 En cours / amélioration
+- 🔮 À venir [ROADMAP](./ROADMAP.md)
+
 ---
 
 # 🖥️ 1. Interface
@@ -78,7 +90,7 @@ Une barre de recherche permet de :
 
 ---
 
-## 🔎 Nouveautés (v0.6.0)
+## 🔎 Fonctionnalité actuelle
 
 - Il est maintenant possible de filtrer par extension :
   - .cs → fichiers C#
@@ -154,7 +166,17 @@ Ajouter "node_modules" pour ignorer ce dossier
 
 ### ⚠️ Sélection globale (v0.8.0)
 
-Le bouton "Tout sélectionner" est actuellement désactivé.
+Le bouton "Tout sélectionner" est désactivé (choix volontaire actuel).
+
+👉 Pourquoi :
+
+- Éviter les ralentissements sur les gros projets
+- Préserver la fluidité
+
+👉 Cette fonctionnalité pourra évoluer dans les versions futures
+
+👉 Cette limitation ne supprime aucun fichier :
+elle affecte uniquement l’affichage pour garantir les performances.
 
 ---
 
@@ -236,19 +258,18 @@ Chemin du fichier
 
 ---
 
-## ⚡ Améliorations (v0.9.0)
+## ⚡ Comportement
 
-L’aperçu a été optimisé pour améliorer la fluidité :
+L’aperçu est optimisé pour :
 
-- ✅ Mise à jour uniquement en cas de changement réel
-- ✅ Réduction des recalculs inutiles
-- ✅ Affichage plus rapide
+- Mise à jour uniquement en cas de changement réel
+- Réduction des recalculs inutiles
+- Affichage rapide
 
 👉 Résultat :
 
-- Interface plus fluide
-- Moins d’attente
-- Meilleure expérience utilisateur
+- Interface fluide
+- Réponse immédiate
 
 ---
 
@@ -302,10 +323,10 @@ sans impact sur la fluidité de l’application
 
 ## 📊 Informations affichées :
 
-- Nombre de fichiers sélectionnés
-- Nombre total de lignes
-- Nombre total de caractères
-- Taille totale des fichiers
+- ✅ Nombre de fichiers sélectionnés
+- ✅ Nombre total de lignes
+- ✅ Nombre total de caractères
+- ✅ Taille totale des fichiers
 
 ---
 
@@ -443,14 +464,21 @@ LatuCollect permet de :
 
 ---
 
-# ⚡ Améliorations globales (v0.9.0)
+# ⚡ Performances
 
-Cette version apporte une amélioration générale des performances :
+L’application est optimisée pour :
 
-- ✅ Application plus rapide
-- ✅ Interface plus fluide
-- ✅ Réduction des temps d’attente
-- ✅ Meilleure stabilité
+- ✅ Réduire les temps d’attente
+- ✅ Maintenir une interface fluide
+- ✅ Éviter les blocages
 
-👉 Aucun changement de fonctionnement :
-l’application reste simple et identique à utiliser
+👉 Aucun changement dans l’utilisation :
+l’application reste simple et identique à prendre en main
+
+---
+
+# 🔮 Évolutions
+
+Les améliorations futures sont définies dans la roadmap.
+
+👉 Voir : [ROADMAP](./ROADMAP.md)

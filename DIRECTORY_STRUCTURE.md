@@ -1,8 +1,14 @@
 # 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE)
 
-👉 ⚠️ Cette structure correspond à l’organisation cible (v1.0.0)
+👉 ⚠️ Cette structure correspond à l’organisation cible
 👉 Elle n’est pas entièrement implémentée actuellement
 👉 Voir ROADMAP pour l’évolution
+
+## 📌 Résumé
+
+Ce document décrit la structure du projet LatuCollect, la différence entre l’état actuel et la structure cible, ainsi que l’organisation des dossiers.
+
+👉 Il sert de guide pour maintenir une architecture cohérente.
 
 ---
 
@@ -19,7 +25,7 @@ Permettre :
 
 # 🧩 STRUCTURE PRINCIPALE (CIBLE)
 
-```texte
+```text
 LatuCollect/
 │
 ├── Core/
@@ -37,7 +43,11 @@ LatuCollect/
 │ ├── Configuration/
 │ ├── Logging/
 │ ├── Models/
-│ ├── Interfaces/
+│ ├── Interfaces/ (centralisation future)
+│ │👉 Certaines interfaces existent déjà dans :
+│ │   - Configuration/
+│ │   - Logging/
+│ │👉 Elles seront centralisées plus tard
 │ ├── Helpers/
 │ └── DTOs/
 │
@@ -90,6 +100,22 @@ Responsabilités :
 
 👉 Source unique de vérité
 👉 Aucune dépendance UI
+
+### Utils/
+
+Fonctions utilitaires simples (ex : helpers techniques)
+
+---
+
+### Helpers/
+
+Fonctions d’aide plus spécifiques au projet
+
+---
+
+### DTOs/
+
+Objets de transfert de données entre services
 
 ---
 
@@ -175,7 +201,7 @@ Responsabilités :
 
 # 🧠 ARCHITECTURE MVVM
 
-```texte
+```text
 View → ViewModel → Core
 ```
 
@@ -183,7 +209,7 @@ View → ViewModel → Core
 
 # 🧩 FONCTIONNEMENT GLOBAL
 
-```texte
+```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
@@ -191,7 +217,7 @@ Importer → Sélectionner → Aperçu → Exporter
 
 # 🖥️ UI STRUCTURE
 
-```texte
+```text
 Gauche → Arborescence
 Centre → Options
 Droite → Aperçu
@@ -202,7 +228,7 @@ Bas → Export
 
 # 🔄 COMMUNICATION
 
-```texte
+```text
 UI → ViewModel → Core
 ```
 
@@ -232,28 +258,24 @@ UI → ViewModel → Core
 # 🧩 STRUCTURE ACTUELLE (v0.10.0)
 
 ```text
-LatuCollect/
-│
-├── LatuCollect.Core/
-│ ├── Configuration/
-│ ├── Models/
-│ ├── Services/
-│ │ ├── Import/
-│ │ ├── Reader/
-│ │ ├── Collection/
-│ │ ├── Export/
-│ │ └── Statistics/
-│ │
-│ ├── Simulation/
-│ └── Logging/
-│
-├── LatuCollect.UI.WinUI/
-│ ├── Views/
-│ ├── ViewModels/
-│ ├── Models/
-│ ├── Services/
-│ ├── Converters/
-│ └── Assets/
+LatuCollect.Core/
+├── Configuration/
+│   ├── Constants/
+│   ├── Interfaces/
+│   ├── Models/
+│   └── Services/
+├── Logging/
+│   ├── Interfaces/
+│   ├── Models/
+│   └── Services/
+├── Services/
+│   ├── Import/
+│   ├── Reader/
+│   ├── Collection/
+│   ├── Export/
+│   └── Statistics/
+├── Models/
+├── Simulation/
 │
 ├── Documentation/
 │ ├── README.md
@@ -297,7 +319,7 @@ LatuCollect/
 
 # 🧠 ÉTAT DU PROJET
 
-```texte
+```text
 ✔ Architecture stabilisée
 ✔ Pipeline optimisé
 ✔ Cache actif
@@ -309,9 +331,22 @@ LatuCollect/
 
 ---
 
+# 📌 ÉTAT ACTUEL
+
+- ✔ Core structuré par services
+- ✔ Configuration organisée (Constants / Interfaces / Services)
+- ✔ Logging séparé et centralisé
+- ✔ UI WinUI structurée (Views / ViewModels / Models)
+- ✔ Séparation UI / Core respectée
+
+👉 Structure déjà stable en v0.10.0
+👉 Évolution progressive vers la structure cible
+
+---
+
 # 🎯 OBJECTIF SUIVANT
 
-```texte
+```text
 ➡ Finaliser la structure cible
 ➡ Continuer le découpage des services
 ➡ Stabiliser la version 1.0.0
