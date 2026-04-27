@@ -28,7 +28,15 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
     public sealed partial class SettingsExclusionsPage : Page
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CONSTRUCTEUR
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (aucun pour l’instant, section prête pour évolution)
+        //
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
         public SettingsExclusionsPage()
@@ -36,8 +44,24 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
             this.InitializeComponent();
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 2. ➕ AJOUT
+        // 3. NAVIGATION → RÉCEPTION DU VIEWMODEL
+        // ═════════════════════════════════════════════════════════════
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is MainViewModel vm)
+            {
+                DataContext = vm;
+            }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. ÉVÉNEMENTS UI — AJOUT
         // ═════════════════════════════════════════════════════════════
 
         private void OnAddClicked(object sender, RoutedEventArgs e)
@@ -59,8 +83,9 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
             InputExclude.Text = "";
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 3. 🗑 SUPPRESSION
+        // 5. ÉVÉNEMENTS UI — SUPPRESSION
         // ═════════════════════════════════════════════════════════════
 
         private void OnRemoveClicked(object sender, RoutedEventArgs e)

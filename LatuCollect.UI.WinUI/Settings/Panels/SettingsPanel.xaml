@@ -35,7 +35,7 @@
         <Border
             MaxWidth="1400"
             MaxHeight="900"
-            Margin="40"
+            Margin="20"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Background="#1E1E1E"

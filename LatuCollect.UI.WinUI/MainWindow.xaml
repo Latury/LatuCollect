@@ -1,15 +1,40 @@
 <!--
     ╔══════════════════════════════════════════════════════════════════════╗
     ║                        LATUCOLLECT                                   ║
-    ║  Module : UI                                                         ║
+    ║     Application de collecte et export de contenu multi-fichiers      ║
+    ║                                                                      ║
+    ║  Module : UI.WinUI                                                   ║
     ║  Fichier : MainWindow.xaml                                           ║
     ║                                                                      ║
-    ║  Rôle : Interface utilisateur principale                             ║
+    ║  Rôle :                                                              ║
+    ║  Fenêtre principale de l’application                                 ║
+    ║  - Affiche l’arborescence des fichiers (zone gauche)                 ║
+    ║  - Gère les options utilisateur (zone centrale)                      ║
+    ║  - Affiche l’aperçu en temps réel (zone droite)                      ║
+    ║  - Orchestration globale de l’interface                              ║
     ║                                                                      ║
-    ║  Respect ALC :                                                       ║
+    ║  Architecture :                                                      ║
+    ║  - Pattern MVVM                                                      ║
+    ║  - Binding vers MainViewModel                                        ║
     ║  - Aucune logique métier                                             ║
-    ║  - Binding uniquement                                                ║
-    ║  - Structure claire et maintenable                                   ║
+    ║                                                                      ║
+    ║  Responsabilités :                                                   ║
+    ║  - Affichage UI                                                      ║
+    ║  - Binding des données                                               ║
+    ║  - Déclenchement des actions utilisateur                             ║
+    ║                                                                      ║
+    ║  Interdictions (ALC) :                                               ║
+    ║  - Pas d’accès direct au Core                                        ║
+    ║  - Pas de logique métier                                             ║
+    ║  - Pas de traitement de données                                      ║
+    ║                                                                      ║
+    ║  Notes :                                                             ║
+    ║  - L’arborescence utilise FilteredTree (recherche dynamique)         ║
+    ║  - L’aperçu reflète exactement le contenu exporté                    ║
+    ║  - UI optimisée pour éviter blocage (async côté ViewModel)           ║
+    ║                                                                      ║
+    ║  Licence : MIT                                                       ║
+    ║  Copyright © 2026 Flo Latury                                         ║
     ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
@@ -167,23 +192,34 @@
                     <Grid Grid.Row="2">
 
                         <!--  🌳 ARBRE  -->
-                        <TreeView ItemsSource="{Binding Tree}">
+                        <TreeView ItemsSource="{Binding FilteredTree}">
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="models:FileNode">
                                     <TreeViewItem ItemsSource="{Binding Children}">
-                                        <StackPanel
-                                            Orientation="Horizontal"
-                                            Spacing="6"
-                                            Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid ColumnSpacing="6" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                                            <TextBlock Foreground="White" Text="{Binding ., Converter={StaticResource BoolToIconConverter}}" />
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
+                                            <!--  📁 / 📄  -->
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe UI Emoji"
+                                                Foreground="White"
+                                                Text="{Binding Children.Count, Converter={StaticResource FolderFileIconConverter}}" />
+
+                                            <!--  Nom  -->
                                             <CheckBox
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
                                                 Content="{Binding Name}"
                                                 Foreground="White"
                                                 IsChecked="{Binding IsSelected, Mode=TwoWay}" />
 
-                                        </StackPanel>
+                                        </Grid>
                                     </TreeViewItem>
                                 </DataTemplate>
                             </TreeView.ItemTemplate>

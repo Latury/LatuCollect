@@ -32,26 +32,35 @@ namespace LatuCollect.UI.WinUI.Converters
     public class StringEqualsConverter : IValueConverter
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CONVERT (VM → UI)
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (Aucun champ ici)
+        // Converter stateless → logique pure
+        //
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONVERT (VM → UI)
         // ═════════════════════════════════════════════════════════════
         //
         // Compare :
         // SelectedFormat == ".txt" ?
         //
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null || parameter == null)
-                return false;
-
-            return value.ToString() == parameter.ToString();
+            return value?.ToString() == parameter?.ToString();
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT BACK (UI → VM)
+        // 3. CONVERT BACK (UI → VM)
         // ═════════════════════════════════════════════════════════════
         //
         // Si RadioButton coché → retourne ".txt" ou ".md"
         //
+
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             if (value is bool isChecked && isChecked)

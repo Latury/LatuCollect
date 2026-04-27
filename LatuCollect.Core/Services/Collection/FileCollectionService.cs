@@ -35,18 +35,19 @@ namespace LatuCollect.Core.Services.Collection
 {
     public class FileCollectionService
     {
-
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
         // 1. MÉTHODE PUBLIQUE
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
         //
-        // Point d’entrée principal :
-        // - récupère tous les fichiers sélectionnés
+        // Récupère tous les fichiers sélectionnés
         //
 
-        public List<string> GetSelectedFiles(List<FileNode> roots)
+        public List<string> GetSelectedFiles(IEnumerable<FileNode> roots)
         {
-            List<string> files = new();
+            var files = new List<string>();
+
+            if (roots == null)
+                return files;
 
             foreach (var root in roots)
             {
@@ -57,28 +58,38 @@ namespace LatuCollect.Core.Services.Collection
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
         // 2. PARCOURS RÉCURSIF
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Parcourt l’arborescence :
-        // - ajoute les fichiers sélectionnés
-        // - descend dans les enfants
-        //
+        // ═════════════════════════════════════════════════════════════
 
         private void ProcessNode(FileNode node, List<string> files)
         {
-            // 📄 Si sélectionné et fichier réel
-            if (node.IsSelected && File.Exists(node.Path))
+            if (node == null)
+                return;
+
+            // 📄 Fichier sélectionné valide
+            if (IsValidSelectedFile(node))
             {
                 files.Add(node.Path);
             }
 
-            // 🔁 Parcours des enfants
+            // 🔁 Parcours enfants
             foreach (var child in node.Children)
             {
                 ProcessNode(child, files);
             }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. VALIDATION
+        // ═════════════════════════════════════════════════════════════
+
+        private bool IsValidSelectedFile(FileNode node)
+        {
+            return node.IsSelected &&
+                   !string.IsNullOrWhiteSpace(node.Path) &&
+                   File.Exists(node.Path);
         }
     }
 }

@@ -33,32 +33,52 @@ namespace LatuCollect.Core.Logging.Services
 {
     public class LogService : ILogService
     {
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 📌 COLLECTION OBSERVABLE
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS — STOCKAGE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Contient tous les logs en mémoire
+        //
 
         private readonly ObservableCollection<LogEntry> _logs = new();
 
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. PROPRIÉTÉS PUBLIQUES — EXPOSITION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Version lecture seule pour l’UI / autres services
+        //
+
         public ReadOnlyObservableCollection<LogEntry> Logs { get; }
 
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 🔔 ÉVÉNEMENT
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. ÉVÉNEMENTS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Notifie quand un log est ajouté
+        //
 
         public event EventHandler? LogsUpdated;
 
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // ⚙️ CONSTRUCTEUR
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════
 
         public LogService()
         {
             Logs = new ReadOnlyObservableCollection<LogEntry>(_logs);
         }
 
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // ⚙️ MÉTHODES PUBLIQUES
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. MÉTHODES PUBLIQUES — API LOGGING
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Points d’entrée principaux
+        //
 
         public void Info(string message, string? context = null)
         {
@@ -75,9 +95,13 @@ namespace LatuCollect.Core.Logging.Services
             Add(LogLevel.Error, message, context);
         }
 
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 🔧 MÉTHODE PRIVÉE
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. MÉTHODE INTERNE — AJOUT LOG
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Création + stockage + notification
+        //
 
         private void Add(LogLevel level, string message, string? context)
         {
@@ -85,7 +109,7 @@ namespace LatuCollect.Core.Logging.Services
 
             _logs.Add(log);
 
-            // 🔥 NOTIFICATION
+            // 🔔 Notification des abonnés
             LogsUpdated?.Invoke(this, EventArgs.Empty);
         }
     }

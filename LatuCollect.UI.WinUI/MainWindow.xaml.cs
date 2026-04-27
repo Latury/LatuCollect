@@ -44,31 +44,37 @@ using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 
-// ═════════════════════════════════════════════════════════════
-// 1. INITIALISATION & CONFIGURATION
-// ═════════════════════════════════════════════════════════════
-//
-// Contient :
-// - Initialisation de la fenêtre
-// - Configuration de la taille minimale de la fenêtre
-// - Association du ViewModel à la vue
-// - Abonnement aux événements du ViewModel
-// - Aucune logique métier, uniquement de l’orchestration UI
-//
-// Note : la logique métier est entièrement contenue dans le ViewModel et les services appelés par celui-ci.
-// Cette séparation stricte garantit que la UI reste légère, réactive et facile à maintenir.
-// Toute interaction utilisateur déclenche des appels au ViewModel, qui gère ensuite la logique métier et met à jour l’interface en conséquence.
-// Cette approche respecte les principes de l’architecture ALC (Architecture LatuCollect) et du pattern MVVM, assurant une application robuste et évolutive.
-// La UI est responsable de l’affichage et de l’orchestration, tandis que le ViewModel gère la logique métier et les données.
-// Toute fonctionnalité liée à la manipulation de données, à la validation, à l’export ou à la gestion des erreurs doit être implémentée dans le ViewModel ou les services associés, jamais dans la code-behind de la fenêtre.
-// Cette séparation claire permet de maintenir une architecture propre, facilite les tests unitaires et garantit que la UI reste réactive et facile à modifier sans risque d’introduire des bugs liés à la logique métier.
-// En résumé : la MainWindow est le chef d’orchestre de l’interface, tandis que le ViewModel est le cerveau qui gère la logique métier. Toute interaction utilisateur doit passer par le ViewModel, et la MainWindow doit se contenter d’afficher les données et de réagir aux événements du ViewModel.
-
-// Note : pour les dialogues complexes (logs, options, à propos), la logique métier doit rester dans le ViewModel, même si le contenu est défini dans la fenêtre. Par exemple, le filtrage des logs doit être géré par le ViewModel, et la fenêtre doit simplement afficher les logs filtrés et envoyer les commandes de filtrage au ViewModel.
 namespace LatuCollect.UI.WinUI
 {
     public sealed partial class MainWindow : Window
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS / SERVICES
+        // ═════════════════════════════════════════════════════════════
+
+        private readonly MainViewModel _viewModel = new();
+        private readonly FileExportService _exportService = new FileExportService();
+        private SettingsPanel? _settingsPanel;
+
+        // ───────────── WIN32 ─────────────
+
+        private const int WM_GETMINMAXINFO = 0x0024;
+
+        private delegate IntPtr WndProcDelegate(
+            IntPtr hWnd,
+            int msg,
+            IntPtr wParam,
+            IntPtr lParam);
+
+        private WndProcDelegate? _wndProc;
+        private IntPtr _hwnd;
+        private IntPtr _oldWndProc;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONSTRUCTEUR / INITIALISATION
+        // ═════════════════════════════════════════════════════════════
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -105,11 +111,10 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // ─────────────────────────────────────────────
-        // 🧱 WIN32 - BLOQUER TAILLE MIN (ZERO FLICKER)
-        // ─────────────────────────────────────────────
 
-        private const int WM_GETMINMAXINFO = 0x0024;
+        // ═════════════════════════════════════════════════════════════
+        // 3. WIN32 — TAILLE MIN
+        // ═════════════════════════════════════════════════════════════
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
@@ -128,16 +133,6 @@ namespace LatuCollect.UI.WinUI
             public POINT ptMaxTrackSize;
         }
 
-        private delegate IntPtr WndProcDelegate(
-            IntPtr hWnd,
-            int msg,
-            IntPtr wParam,
-            IntPtr lParam);
-
-        private WndProcDelegate? _wndProc;
-        private IntPtr _hwnd;
-
-        // Configure la taille minimale de la fenêtre en utilisant une procédure Windows personnalisée (anti-flicker)
         private void SetupMinSize(int minWidth, int minHeight)
         {
             _hwnd = WindowNative.GetWindowHandle(this);
@@ -160,8 +155,6 @@ namespace LatuCollect.UI.WinUI
             _oldWndProc = SetWindowLongPtr(_hwnd, -4, Marshal.GetFunctionPointerForDelegate(_wndProc));
         }
 
-        private IntPtr _oldWndProc;
-
         [DllImport("user32.dll")]
         private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr newProc);
 
@@ -170,65 +163,28 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. CHAMPS PRIVÉS / SERVICES
+        // 4. DIALOGS UI
         // ═════════════════════════════════════════════════════════════
-        //
-        // Contient :
-        // - Instance du ViewModel
-        // - Services utilisés par la fenêtre (ex: export)
-        // - Aucune logique métier, uniquement des références aux composants nécessaires à l’affichage et à l’orchestration
 
-        // Instance du ViewModel (le cerveau de l’application, gère la logique métier et les données)
-        private readonly MainViewModel _viewModel = new();
-
-        // Service d’export de fichiers (utilisé pour exporter le contenu dans un fichier choisi par l’utilisateur)
-        private readonly FileExportService _exportService = new FileExportService();
-
-        // 🔧 panneau paramètres (instance unique, contenu de la fenêtre de paramètres, gère la navigation interne des options)
-        private SettingsPanel? _settingsPanel;
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. POPUPS UI (DIALOGUES)
-        // ═════════════════════════════════════════════════════════════
-        // Contient :
-        // - Dialogues d’information
-        // - Dialogues de confirmation
-
-        // Affiche un dialogue d’information lorsque la sélection globale est bloquée (UI uniquement, appelé par le ViewModel via l’événement OnSelectAllBlocked)
         private async void ShowSelectAllDialog()
         {
             var dialog = new ContentDialog
             {
                 Title = "Sélection globale désactivée",
-                Content = "Pour éviter les ralentissements, la sélection de tous les fichiers est temporairement désactivée.\n\nVeuillez sélectionner les fichiers manuellement.",
+                Content = "Pour éviter les ralentissements...",
                 CloseButtonText = "Compris",
                 XamlRoot = this.Content.XamlRoot
             };
 
-            try
-            {
-                await dialog.ShowAsync();
-            }
-            catch
-            {
-                // évite crash si déjà ouvert
-            }
+            try { await dialog.ShowAsync(); }
+            catch { }
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 4. ACTIONS PRINCIPALES UTILISATEUR
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Boutons principaux :
-        // - Ouvrir un dossier
-        // - Toggle barre de recherche
-        // - Sélection format export
-        // - Exporter
-        // - Copier
-        // - Logs
-        //
 
-        // Ouvre un dialogue de sélection de dossier et charge l’arborescence
+        // ═════════════════════════════════════════════════════════════
+        // 5. ACTIONS PRINCIPALES
+        // ═════════════════════════════════════════════════════════════
+
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
             FolderPicker picker = new();
@@ -243,8 +199,6 @@ namespace LatuCollect.UI.WinUI
             if (folder != null)
             {
                 _viewModel.CurrentFolderPath = folder.Path;
-
-
                 await _viewModel.LoadTreeAsync(folder.Path);
             }
             else
@@ -253,25 +207,26 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        // Toggle de la barre de recherche (UI uniquement, le filtrage est géré par le ViewModel)
         private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
             _viewModel.ToggleSearch();
         }
 
-        // Sélection du format Texte
         private void OnTxtSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".txt";
         }
 
-        // Sélection du format Markdown
         private void OnMdSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".md";
         }
 
-        // Export le contenu dans un fichier choisi par l’utilisateur
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. EXPORT / COPY
+        // ═════════════════════════════════════════════════════════════
+
         private async void OnExportClicked(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
@@ -344,8 +299,7 @@ namespace LatuCollect.UI.WinUI
                 await _viewModel.ShowFeedbackAsync("✖ " + ex.Message);
             }
         }
-
-        // Copie le contenu dans le presse-papiers
+        
         private void OnCopyClicked(object sender, RoutedEventArgs e)
         {
             string content = _viewModel.GetExportContent();
@@ -358,11 +312,15 @@ namespace LatuCollect.UI.WinUI
             _ = _viewModel.ShowFeedbackAsync("✔ Contenu copié");
         }
 
+
+        // ═════════════════════════════════════════════════════════════
+        // 7. LOGS
+        // ═════════════════════════════════════════════════════════════
+
         private async void OnLogsClicked(object sender, RoutedEventArgs e)
         {
             var vm = _viewModel;
 
-            // 🧾 LISTVIEW (gère le scroll tout seul)
             var listView = new ListView
             {
                 ItemsSource = vm.FilteredLogs,
@@ -371,7 +329,6 @@ namespace LatuCollect.UI.WinUI
                 ItemTemplate = (DataTemplate)((FrameworkElement)this.Content).Resources["LogItemTemplate"]
             };
 
-            // 🔎 FILTRES
             var filterPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -395,7 +352,6 @@ namespace LatuCollect.UI.WinUI
             filterPanel.Children.Add(warnBtn);
             filterPanel.Children.Add(errorBtn);
 
-            // 📋 COPY
             var copyButton = new Button { Content = "📋 Copier" };
 
             copyButton.Click += async (_, __) =>
@@ -415,7 +371,6 @@ namespace LatuCollect.UI.WinUI
                 await vm.ShowFeedbackAsync("✔ Logs copiés");
             };
 
-            // 📤 EXPORT
             var exportButton = new Button { Content = "📤 Exporter" };
 
             exportButton.Click += async (_, __) =>
@@ -446,7 +401,6 @@ namespace LatuCollect.UI.WinUI
                 await vm.ShowFeedbackAsync("✔ Logs exportés");
             };
 
-            // 📦 CONTENU FINAL (simple = stable)
             var content = new StackPanel
             {
                 Spacing = 10,
@@ -463,7 +417,6 @@ namespace LatuCollect.UI.WinUI
         }
             };
 
-            // 🪟 DIALOG
             var dialog = new ContentDialog
             {
                 Title = "🧾 Logs",
@@ -502,7 +455,7 @@ namespace LatuCollect.UI.WinUI
 
                 await vm.ShowFeedbackAsync("✔ Logs exportés");
             };
-            // 📋 COPY (aussi en bouton secondaire du dialogue)
+
             dialog.SecondaryButtonClick += async (_, __) =>
             {
                 string content = vm.GetLogsExportContent();
@@ -523,12 +476,10 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 5. STATISTIQUES (UI)
+        // 8. STATISTIQUES
         // ═════════════════════════════════════════════════════════════
-        //
-        // Affichage uniquement (les données viennent du ViewModel)
-        //
 
         private async void OnStatsClicked(object sender, RoutedEventArgs e)
         {
@@ -583,29 +534,21 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-
         private string FormatSize(long bytes)
         {
-            if (bytes < 1024)
-                return $"{bytes} B";
+            if (bytes < 1024) return $"{bytes} B";
 
             double kb = bytes / 1024.0;
-
-            if (kb < 1024)
-                return $"{kb:F1} KB";
+            if (kb < 1024) return $"{kb:F1} KB";
 
             double mb = kb / 1024.0;
-
             return $"{mb:F1} MB";
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 6. SIMULATION (UI)
+        // 9. SIMULATION
         // ═════════════════════════════════════════════════════════════
-        //
-        // Configuration des scénarios de simulation
-        // (interaction UI uniquement)
-        //
 
         private async void OnSimulationClicked(object sender, RoutedEventArgs e)
         {
@@ -660,12 +603,10 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 7. DIALOGS GÉNÉRIQUES
+        // 10. DIALOG HELPERS
         // ═════════════════════════════════════════════════════════════
-        //
-        // Helpers UI pour afficher des messages
-        //
 
         private async Task ShowDialog(string title, string message)
         {
@@ -718,11 +659,8 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 8. FERMETURE APPLICATION
+        // 11. FERMETURE APP
         // ═════════════════════════════════════════════════════════════
-        //
-        // Gestion de la fermeture avec confirmation
-        //
 
         private async void OnQuitClicked(object sender, RoutedEventArgs e)
         {
@@ -739,12 +677,10 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 9. MENUS / AIDE / OPTIONS / À PROPOS
+        // 12. MENUS (HELP / OPTIONS / ABOUT)
         // ═════════════════════════════════════════════════════════════
-        //
-        // Écrans secondaires de l’application
-        //
 
         private async void OnHelpClicked(object sender, RoutedEventArgs e)
         {
@@ -787,20 +723,14 @@ namespace LatuCollect.UI.WinUI
         "- Utilise .md pour structurer");
         }
 
-        // Options : configuration de l’application, gestion des exclusions, etc. (UI uniquement, la logique métier doit rester dans le ViewModel et les services associés)
         private void OnOptionsClicked(object sender, RoutedEventArgs e)
         {
-            // 🔒 déjà ouvert → ignore
             if (_settingsPanel != null)
                 return;
 
-            // 🧱 création panel
             _settingsPanel = new SettingsPanel();
-
-            // 🔥 injection ViewModel
             _settingsPanel.Initialize(_viewModel);
 
-            // 🔴 gestion fermeture
             _settingsPanel.OnCloseRequested += () =>
             {
                 SettingsOverlay.Visibility = Visibility.Collapsed;
@@ -808,15 +738,12 @@ namespace LatuCollect.UI.WinUI
                 _settingsPanel = null;
             };
 
-            // 📦 injection dans le container
             SettingsContainer.Children.Clear();
             SettingsContainer.Children.Add(_settingsPanel);
 
-            // 👁 affichage overlay
             SettingsOverlay.Visibility = Visibility.Visible;
         }
 
-        // A propos : informations sur l'application, le développeur, la licence, etc. (UI uniquement) 
         private async void OnAboutClicked(object sender, RoutedEventArgs e)
         {
             await ShowDialog(

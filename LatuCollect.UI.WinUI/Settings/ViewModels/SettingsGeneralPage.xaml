@@ -20,11 +20,110 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <StackPanel Padding="20" Spacing="12">
+    <Grid>
 
-        <TextBlock FontSize="22" Text="Général" />
+        <!--  🔹 CONTENEUR CENTRÉ  -->
+        <Grid
+            MaxWidth="900"
+            Padding="20"
+            HorizontalAlignment="Center">
 
-        <ToggleSwitch Header="Mode développeur" IsOn="{Binding IsDeveloperMode, Mode=TwoWay}" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-    </StackPanel>
+                <StackPanel Spacing="20">
+
+                    <!--  🔹 APPLICATION  -->
+                    <Border
+                        Padding="20"
+                        Background="#2D2D30"
+                        CornerRadius="10">
+
+                        <StackPanel Spacing="10">
+
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="⚙ Application" />
+
+                            <!--  Auto load  -->
+                            <TextBlock Text="Charger le dernier dossier au démarrage" />
+
+                            <ToggleSwitch IsOn="{Binding AutoLoadLastFolder, Mode=TwoWay}" />
+
+                            <!--  🔥 AJOUT  -->
+                            <TextBlock Text="Dernier dossier ouvert :" />
+
+                            <TextBlock
+                                Opacity="0.6"
+                                Text="{Binding CurrentFolderPathDisplay}"
+                                TextWrapping="Wrap" />
+
+                            <!--  Mode dev  -->
+                            <TextBlock Text="Mode développeur" />
+
+                            <ToggleSwitch IsOn="{Binding IsDeveloperModeEnabled, Mode=TwoWay}" />
+
+                            <TextBlock Opacity="0.7" Text="Mode développeur (active les options avancées)" />
+
+                        </StackPanel>
+                    </Border>
+
+                    <!--  🔹 EXPORT  -->
+                    <Border
+                        Padding="20"
+                        Background="#2D2D30"
+                        CornerRadius="10">
+
+                        <StackPanel Spacing="10">
+
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="📤 Export" />
+
+                            <TextBlock Text="Format par défaut :" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="30">
+
+                                <RadioButton
+                                    Content=".txt"
+                                    GroupName="format"
+                                    IsChecked="{Binding DefaultFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.txt}" />
+
+                                <RadioButton
+                                    Content=".md"
+                                    GroupName="format"
+                                    IsChecked="{Binding DefaultFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.md}" />
+
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!--  🔹 RESET  -->
+                    <Border
+                        Padding="20"
+                        Background="#5A1E1E"
+                        CornerRadius="10">
+
+                        <StackPanel Spacing="10">
+
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="⚠ Réinitialisation" />
+
+                            <TextBlock Text="Remet tous les paramètres par défaut" />
+
+                            <Button Click="OnResetClicked" Content="Réinitialiser les paramètres" />
+
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+            </ScrollViewer>
+        </Grid>
+
+    </Grid>
 </Page>

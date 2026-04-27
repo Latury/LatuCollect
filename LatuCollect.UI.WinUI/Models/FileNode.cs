@@ -33,19 +33,26 @@ namespace LatuCollect.UI.WinUI.Models
 {
     public partial class FileNode : ObservableObject
     {
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. INFORMATIONS FICHIER / DOSSIER
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
 
         private string _name = "";
+        private string _path = "";
+        private bool _isSelected;
+        private bool _isVisible = true;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. INFORMATIONS FICHIER / DOSSIER
+        // ═════════════════════════════════════════════════════════════
+
         public string Name
         {
             get => _name;
             set => SetProperty(ref _name, value);
         }
 
-        private string _path = "";
         public string Path
         {
             get => _path;
@@ -53,11 +60,10 @@ namespace LatuCollect.UI.WinUI.Models
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. ÉTAT DE SÉLECTION (UI)
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 3. ÉTAT DE SÉLECTION (UI)
+        // ═════════════════════════════════════════════════════════════
 
-        private bool _isSelected;
         public bool IsSelected
         {
             get => _isSelected;
@@ -73,11 +79,10 @@ namespace LatuCollect.UI.WinUI.Models
         public event Action<FileNode>? SelectionChanged;
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 3. VISIBILITÉ (RECHERCHE)
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 4. VISIBILITÉ (RECHERCHE)
+        // ═════════════════════════════════════════════════════════════
 
-        private bool _isVisible = true;
         public bool IsVisible
         {
             get => _isVisible;
@@ -85,10 +90,10 @@ namespace LatuCollect.UI.WinUI.Models
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 4. STRUCTURE ARBORESCENTE
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 5. STRUCTURE ARBORESCENTE
+        // ═════════════════════════════════════════════════════════════
 
-        public ObservableCollection<FileNode> Children { get; set; } = new();
+        public ObservableCollection<FileNode> Children { get; } = new();
     }
 }

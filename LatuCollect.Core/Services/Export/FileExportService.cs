@@ -35,6 +35,10 @@ using System.Text;
 
 namespace LatuCollect.Core.Services.Export
 {
+    // ═════════════════════════════════════════════════════════════
+    // 1. MODÈLES
+    // ═════════════════════════════════════════════════════════════
+
     public class ExportResult
     {
         public bool IsSuccess { get; set; }
@@ -55,25 +59,29 @@ namespace LatuCollect.Core.Services.Export
         public StatisticsResult Stats { get; set; } = new();
     }
 
+
+    // ═════════════════════════════════════════════════════════════
+    // 2. SERVICE EXPORT
+    // ═════════════════════════════════════════════════════════════
+
     public class FileExportService
     {
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. EXPORT FICHIER
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Écrit le contenu dans un fichier
-        //
+        // ═════════════════════════════════════════════════════════════
+        // 2.1 EXPORT FICHIER
+        // ═════════════════════════════════════════════════════════════
 
         public ExportResult Export(string path, string content)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                return new ExportResult { IsSuccess = false, Message = "Chemin invalide" };
+
             try
             {
                 // 🧪 Simulation
                 SimulationService.SimulateExport();
 
-                // 📄 Écriture fichier
-                File.WriteAllText(path, content);
+                // 📄 Écriture
+                File.WriteAllText(path, content, Encoding.UTF8);
 
                 return new ExportResult
                 {
@@ -83,51 +91,30 @@ namespace LatuCollect.Core.Services.Export
             }
             catch (UnauthorizedAccessException)
             {
-                return new ExportResult
-                {
-                    IsSuccess = false,
-                    Message = "⛔ Accès refusé. Vérifie les permissions du dossier."
-                };
+                return Fail("⛔ Accès refusé. Vérifie les permissions.");
             }
             catch (IOException)
             {
-                return new ExportResult
-                {
-                    IsSuccess = false,
-                    Message = "📁 Impossible d'écrire le fichier. Il est peut-être ouvert dans un autre programme."
-                };
+                return Fail("📁 Fichier utilisé ou inaccessible.");
             }
             catch (ArgumentException)
             {
-                return new ExportResult
-                {
-                    IsSuccess = false,
-                    Message = "⚠ Chemin de fichier invalide."
-                };
+                return Fail("⚠ Chemin invalide.");
             }
             catch (Exception ex)
             {
-                return new ExportResult
-                {
-                    IsSuccess = false,
-                    Message = $"Erreur inattendue : {ex.Message}"
-                };
+                return Fail($"Erreur inattendue : {ex.Message}");
             }
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. CONSTRUCTION CONTENU + STATISTIQUES
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Assemble :
-        // - contenu des fichiers
-        // - statistiques
-        //
+        // ═════════════════════════════════════════════════════════════
+        // 2.2 BUILD CONTENU + STATS
+        // ═════════════════════════════════════════════════════════════
 
         public ExportData BuildContentWithStats(IEnumerable<string> filePaths, bool isMarkdown)
         {
-            var result = new StringBuilder();
+            var builder = new StringBuilder();
             var stats = new StatisticsResult();
 
             foreach (var path in filePaths)
@@ -135,47 +122,70 @@ namespace LatuCollect.Core.Services.Export
                 if (!File.Exists(path))
                     continue;
 
-                // 📄 Lecture fichier
-                string content = FileReaderService.ReadFile(path);
+                var content = ReadSafe(path);
 
-                if (string.IsNullOrWhiteSpace(content))
-                {
-                    content = "[Fichier vide ou erreur de lecture]";
-                }
-
-                // 📊 Statistiques (APRÈS avoir le contenu)
                 FileStatisticsService.UpdateStatistics(stats, content, path);
 
-                // 📦 Formatage
-                if (isMarkdown)
-                {
-                    result.AppendLine($"## 📄 {path}");
-                    result.AppendLine();
-                    result.AppendLine("```");
-                    result.AppendLine(content);
-                    result.AppendLine("```");
-                    result.AppendLine();
-                    result.AppendLine("---");
-                    result.AppendLine();
-                }
-                else
-                {
-                    result.AppendLine($"📄 {path}");
-                    result.AppendLine();
-                    result.AppendLine();
-                    result.AppendLine(content);
-                    result.AppendLine();
-                    result.AppendLine();
-                    result.AppendLine("----------------------------------------");
-                    result.AppendLine();
-                    result.AppendLine();
-                }
+                AppendFormatted(builder, path, content, isMarkdown);
             }
 
             return new ExportData
             {
-                Content = result.ToString(),
+                Content = builder.ToString(),
                 Stats = stats
+            };
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. MÉTHODES PRIVÉES
+        // ═════════════════════════════════════════════════════════════
+
+        private string ReadSafe(string path)
+        {
+            var content = FileReaderService.ReadFile(path);
+
+            if (string.IsNullOrWhiteSpace(content))
+                return "[Fichier vide ou erreur de lecture]";
+
+            return content;
+        }
+
+
+        private void AppendFormatted(StringBuilder builder, string path, string content, bool isMarkdown)
+        {
+            if (isMarkdown)
+            {
+                builder.AppendLine($"## 📄 {path}");
+                builder.AppendLine();
+                builder.AppendLine("```");
+                builder.AppendLine(content);
+                builder.AppendLine("```");
+                builder.AppendLine();
+                builder.AppendLine("---");
+                builder.AppendLine();
+            }
+            else
+            {
+                builder.AppendLine($"📄 {path}");
+                builder.AppendLine();
+                builder.AppendLine();
+                builder.AppendLine(content);
+                builder.AppendLine();
+                builder.AppendLine();
+                builder.AppendLine("----------------------------------------");
+                builder.AppendLine();
+                builder.AppendLine();
+            }
+        }
+
+
+        private ExportResult Fail(string message)
+        {
+            return new ExportResult
+            {
+                IsSuccess = false,
+                Message = message
             };
         }
     }

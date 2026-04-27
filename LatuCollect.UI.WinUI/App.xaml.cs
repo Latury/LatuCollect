@@ -25,29 +25,34 @@
 */
 
 using Microsoft.UI.Xaml;
-using LatuCollect.UI.WinUI;
 
 namespace LatuCollect.UI.WinUI
 {
     public partial class App : Application
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Fenêtre principale de l’application
+        //
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Initialise l’application WinUI
-        //
+        private Window? _mainWindow;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════
 
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. DÉMARRAGE APPLICATION
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 3. DÉMARRAGE APPLICATION
+        // ═════════════════════════════════════════════════════════════
         //
         // Point d’entrée après lancement
         // Crée et affiche la fenêtre principale
@@ -55,8 +60,21 @@ namespace LatuCollect.UI.WinUI
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            var window = new MainWindow();
-            window.Activate();
+            _mainWindow = CreateMainWindow();
+            _mainWindow.Activate();
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. CRÉATION FENÊTRE PRINCIPALE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Centralise la création de la fenêtre
+        //
+
+        private Window CreateMainWindow()
+        {
+            return new MainWindow();
         }
     }
 }

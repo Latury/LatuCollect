@@ -23,24 +23,33 @@ namespace LatuCollect.Core.Configuration.Interfaces
 {
     public interface IConfigurationService
     {
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CHARGEMENT
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHARGEMENT CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Charge la configuration utilisateur depuis le stockage
+        // Retourne toujours une configuration valide
+        //
 
         Task<UserConfig> LoadAsync();
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. SAUVEGARDE
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 2. SAUVEGARDE CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Sauvegarde la configuration utilisateur
+        //
 
         Task SaveAsync(UserConfig config);
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 3. RESET
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 3. RESET CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Réinitialise la configuration avec les valeurs par défaut
+        //
 
         Task<UserConfig> ResetAsync();
     }

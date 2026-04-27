@@ -31,10 +31,24 @@ namespace LatuCollect.UI.WinUI.Converters
 {
     public partial class BooleanToVisibilityConverter : IValueConverter
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (Aucun champ — converter stateless)
+        //
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CONVERSION → BOOL → VISIBILITY
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONVERT (VM → UI)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Transforme :
+        // bool → Visibility
+        //
+        // true  → Visible
+        // false → Collapsed
+        //
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -45,9 +59,13 @@ namespace LatuCollect.UI.WinUI.Converters
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. CONVERSION INVERSE (OPTIONNELLE)
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONVERT BACK (UI → VM)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Visibility.Visible   → true
+        // Visibility.Collapsed → false
+        //
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {

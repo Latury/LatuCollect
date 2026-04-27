@@ -37,31 +37,45 @@ namespace LatuCollect.UI.WinUI.Converters
     public class LogLevelToColorConverter : IValueConverter
     {
         // ═════════════════════════════════════════════════════════════
-        // 🎨 CONVERSION : LogLevel → Couleur
+        // 1. CHAMPS PRIVÉS
         // ═════════════════════════════════════════════════════════════
+        //
+        // Pré-création des brushes pour éviter de recréer à chaque conversion
+        //
 
-        // Convertit un LogLevel en une SolidColorBrush correspondante
+        private static readonly SolidColorBrush InfoBrush = new(Colors.LightGray);
+        private static readonly SolidColorBrush WarningBrush = new(Colors.Orange);
+        private static readonly SolidColorBrush ErrorBrush = new(Colors.Red);
+        private static readonly SolidColorBrush DefaultBrush = new(Colors.White);
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONVERT (VM → UI)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Convertit un LogLevel en couleur UI
+        //
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is LogLevel level)
             {
                 return level switch
                 {
-                    LogLevel.Info => new SolidColorBrush(Colors.LightGray),
-                    LogLevel.Warning => new SolidColorBrush(Colors.Orange),
-                    LogLevel.Error => new SolidColorBrush(Colors.Red),
-                    _ => new SolidColorBrush(Colors.White)
+                    LogLevel.Info => InfoBrush,
+                    LogLevel.Warning => WarningBrush,
+                    LogLevel.Error => ErrorBrush,
+                    _ => DefaultBrush
                 };
             }
 
             return new SolidColorBrush(Colors.White);
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 🔁 NON UTILISÉ
+        // 3. CONVERT BACK (NON UTILISÉ)
         // ═════════════════════════════════════════════════════════════
 
-        // La conversion inverse n'est pas implémentée car elle n'est pas nécessaire pour l'affichage des logs
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

@@ -7,13 +7,14 @@
 ║  Fichier : LogLevel.cs                                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Définit les niveaux de gravité des logs.                            ║
+║  Définit les niveaux de gravité des logs                             ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Identifier le type de log (Info, Warning, Error)                  ║
 ║                                                                      ║
-║  Dépendances :                                                       ║
-║  - Aucune                                                            ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Modèle Core pur                                                   ║
+║  - Aucune dépendance UI                                              ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -22,10 +23,22 @@
 
 namespace LatuCollect.Core.Logging.Models
 {
+    // ═════════════════════════════════════════════════════════════
+    // 1. NIVEAUX DE LOG
+    // ═════════════════════════════════════════════════════════════
+    //
+    // Définit les niveaux de gravité utilisés dans l’application
+    //
+
     public enum LogLevel
     {
+        // ℹ️ Information générale (fonctionnement normal)
         Info,
+
+        // ⚠️ Avertissement (problème non bloquant)
         Warning,
+
+        // ❌ Erreur (échec ou comportement inattendu)
         Error
     }
 }

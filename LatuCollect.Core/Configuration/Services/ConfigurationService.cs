@@ -23,7 +23,6 @@
 using LatuCollect.Core.Configuration.Constants;
 using LatuCollect.Core.Configuration.Interfaces;
 using LatuCollect.Core.Configuration.Models;
-using LatuCollect.Core.Configuration.Services;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -33,17 +32,26 @@ namespace LatuCollect.Core.Configuration.Services
 {
     public class ConfigurationService : IConfigurationService
     {
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
         // 1. CONSTANTES
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
 
         private const string CONFIG_FILE_NAME = "config.json";
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. CHEMIN CONFIGURATION
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Chemin complet du fichier de configuration
+        //
 
         private readonly string _configPath;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════
 
         public ConfigurationService()
         {
@@ -57,9 +65,15 @@ namespace LatuCollect.Core.Configuration.Services
             _configPath = Path.Combine(folder, CONFIG_FILE_NAME);
         }
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 3. CHARGEMENT
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. CHARGEMENT CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+        //
+        // - Charge depuis JSON
+        // - Crée le fichier si absent
+        // - Retourne toujours une config valide
+        //
 
         public async Task<UserConfig> LoadAsync()
         {
@@ -67,9 +81,8 @@ namespace LatuCollect.Core.Configuration.Services
             {
                 if (!File.Exists(_configPath))
                 {
-                    var defaultConfig = ConfigurationDefaults.Default;
+                    var defaultConfig = GetDefaultConfig();
 
-                    // 🔥 CRÉE le fichier au premier lancement
                     await SaveAsync(defaultConfig);
 
                     return defaultConfig;
@@ -79,47 +92,43 @@ namespace LatuCollect.Core.Configuration.Services
 
                 var config = JsonSerializer.Deserialize<UserConfig>(json);
 
-                return config ?? ConfigurationDefaults.Default;
+                return config ?? GetDefaultConfig();
             }
             catch
             {
-                return ConfigurationDefaults.Default;
+                return GetDefaultConfig();
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 4. SAUVEGARDE
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. SAUVEGARDE CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
 
         public async Task SaveAsync(UserConfig config)
         {
             try
             {
-                var json = JsonSerializer.Serialize(config, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
+                var json = Serialize(config);
 
                 await File.WriteAllTextAsync(_configPath, json);
             }
             catch
             {
-                // volontairement silencieux (logs plus tard si besoin)
+                // silencieux volontairement
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 5. RESET CONFIGURATION
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Remet la configuration à zéro (valeurs par défaut)
-        //
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. RESET CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
 
         public async Task<UserConfig> ResetAsync()
         {
             try
             {
-                var defaultConfig = ConfigurationDefaults.Default;
+                var defaultConfig = GetDefaultConfig();
 
                 await SaveAsync(defaultConfig);
 
@@ -127,8 +136,26 @@ namespace LatuCollect.Core.Configuration.Services
             }
             catch
             {
-                return ConfigurationDefaults.Default;
+                return GetDefaultConfig();
             }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 7. MÉTHODES UTILITAIRES
+        // ═════════════════════════════════════════════════════════════
+
+        private static string Serialize(UserConfig config)
+        {
+            return JsonSerializer.Serialize(config, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+        }
+
+        private static UserConfig GetDefaultConfig()
+        {
+            return ConfigurationDefaults.Default;
         }
     }
 }

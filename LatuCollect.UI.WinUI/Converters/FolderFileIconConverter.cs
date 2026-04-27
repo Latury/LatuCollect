@@ -1,22 +1,32 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
+║     Application de collecte et export de contenu multi-fichiers      ║
+║                                                                      ║
 ║  Module : UI.WinUI.Converters                                        ║
-║  Fichier : BoolToIconConverter.cs                                    ║
+║  Fichier : FolderFileIconConverter.cs                                ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Convertir un booléen en icône UI                                    ║
+║  Fournir une icône visuelle (emoji) selon le type de node            ║
 ║                                                                      ║
-║  Responsabilités principales :                                       ║
-║  - true  → icône active                                              ║
-║  - false → icône inactive                                            ║
+║  Fonctionnement :                                                    ║
+║  - Si le node possède des enfants ---- (dossier)                     ║
+║  - Sinon --- (fichier)                                               ║
+║                                                                      ║
+║  Entrée :                                                            ║
+║  - int (nombre d’enfants du node)                                    ║
+║                                                                      ║
+║  Sortie :                                                            ║
+║  - string (emoji)                                                    ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Utilisé uniquement dans l’UI                                      ║
-║  - Aucune logique métier                                             ║
+║   - UI uniquement                                                    ║
+║   - Aucune logique métier                                            ║
+║   - Aucune dépendance Core                                           ║
 ║                                                                      ║
-║  Dépendances :                                                       ║
-║  - Microsoft.UI.Xaml                                                 ║
+║  Notes :                                                             ║
+║  - Converter utilisé uniquement dans le TreeView                     ║
+║  - Ne doit contenir AUCUNE logique autre que visuelle                ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -28,7 +38,7 @@ using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
-    public partial class BoolToIconConverter : IValueConverter
+    public class FolderFileIconConverter : IValueConverter
     {
         // ═════════════════════════════════════════════════════════════
         // 1. CHAMPS PRIVÉS
@@ -43,20 +53,21 @@ namespace LatuCollect.UI.WinUI.Converters
         // ═════════════════════════════════════════════════════════════
         //
         // Transforme :
-        // bool → icône (string)
+        // int (nombre d’enfants) → emoji
         //
-        // true  → ✔ (actif)
-        // false → "" (inactif)
+        // - > 0 → 📁 (dossier)
+        // - 0   → 📄 (fichier)
         //
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool isChecked && isChecked)
+            if (value is int childrenCount)
             {
-                return "✔";
+                return childrenCount > 0 ? "📁" : "📄";
             }
 
-            return "";
+            // fallback sécurité
+            return "📄";
         }
 
 

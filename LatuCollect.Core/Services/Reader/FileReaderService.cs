@@ -34,33 +34,31 @@ namespace LatuCollect.Core.Services.Reader
 {
     public static class FileReaderService
     {
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CHAMPS STATIQUES (CACHE)
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS — CACHE
+        // ═════════════════════════════════════════════════════════════
         //
-        // Cache mémoire des fichiers déjà lus
-        // Clé   = chemin du fichier
-        // Valeur = contenu du fichier
-        //
-        // Objectif :
-        // - éviter les lectures disque répétées
-        // - améliorer les performances
+        // Cache mémoire :
+        // clé   → chemin fichier
+        // valeur → contenu fichier
         //
 
         private static readonly Dictionary<string, string> _fileCache = new();
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. MÉTHODE PUBLIQUE
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Lit le contenu d’un fichier :
-        // - applique la simulation si activée
-        // - gère les erreurs
-        // - retourne toujours une string
 
-        
+        // ═════════════════════════════════════════════════════════════
+        // 2. MÉTHODE PUBLIQUE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Lecture sécurisée d’un fichier texte
+        //
+
         public static string ReadFile(string path)
         {
+            // 🔹 Sécurité minimale
+            if (string.IsNullOrWhiteSpace(path))
+                return "[Chemin invalide]";
+
             try
             {
                 // 📄 Vérification existence
@@ -68,20 +66,20 @@ namespace LatuCollect.Core.Services.Reader
                     return "[Fichier introuvable]";
 
                 // 🧪 Simulation (prioritaire)
-                string simulated = SimulationService.SimulateRead(path);
+                var simulated = SimulationService.SimulateRead(path);
                 if (simulated != null)
                     return simulated;
 
-                // 🔁 Vérifie le cache
+                // 🔁 Cache
                 if (_fileCache.TryGetValue(path, out var cachedContent))
                 {
                     return cachedContent;
                 }
 
-                // ✔ Lecture normale
-                string content = File.ReadAllText(path);
+                // 📖 Lecture fichier
+                var content = File.ReadAllText(path);
 
-                // 💾 Stocke en cache
+                // 💾 Mise en cache
                 _fileCache[path] = content;
 
                 return content;
@@ -89,6 +87,10 @@ namespace LatuCollect.Core.Services.Reader
             catch (PathTooLongException)
             {
                 return "[Chemin trop long]";
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return "[Accès refusé]";
             }
             catch (IOException)
             {
@@ -98,6 +100,25 @@ namespace LatuCollect.Core.Services.Reader
             {
                 return "[Erreur inconnue]";
             }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. MÉTHODES UTILITAIRES (CACHE)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gestion du cache mémoire
+        //
+
+        public static void ClearCache()
+        {
+            _fileCache.Clear();
+        }
+
+        public static void RemoveFromCache(string path)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+                _fileCache.Remove(path);
         }
     }
 }

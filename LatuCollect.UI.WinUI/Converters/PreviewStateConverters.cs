@@ -32,22 +32,41 @@ using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
-
+    // ═════════════════════════════════════════════════════════════
+    // 1. PREVIEW VISIBLE CONVERTER
+    // ═════════════════════════════════════════════════════════════
+    //
     // Affiche le contenu du preview uniquement si l’état est Ready
+    //
 
     public class PreviewVisibleConverter : IValueConverter
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (Aucun champ — converter stateless)
+        //
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONVERT (VM → UI)
+        // ═════════════════════════════════════════════════════════════
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null)
                 return Visibility.Collapsed;
 
-            // On compare le nom de l'état (évite dépendance forte)
+            // Comparaison par string (découplage du ViewModel)
             if (value.ToString() == "Ready")
                 return Visibility.Visible;
 
             return Visibility.Collapsed;
         }
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONVERT BACK (NON UTILISÉ)
+        // ═════════════════════════════════════════════════════════════
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
@@ -56,11 +75,27 @@ namespace LatuCollect.UI.WinUI.Converters
     }
 
 
+    // ═════════════════════════════════════════════════════════════
+    // 2. PREVIEW EMPTY CONVERTER
+    // ═════════════════════════════════════════════════════════════
+    //
     // Affiche le message "Aucun fichier sélectionné"
     // uniquement si l’état est Empty
+    //
 
     public class PreviewEmptyConverter : IValueConverter
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (Aucun champ — converter stateless)
+        //
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONVERT (VM → UI)
+        // ═════════════════════════════════════════════════════════════
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value == null)
@@ -71,6 +106,10 @@ namespace LatuCollect.UI.WinUI.Converters
 
             return Visibility.Collapsed;
         }
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONVERT BACK (NON UTILISÉ)
+        // ═════════════════════════════════════════════════════════════
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {

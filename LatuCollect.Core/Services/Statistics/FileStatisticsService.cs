@@ -34,13 +34,20 @@ namespace LatuCollect.Core.Services.Statistics
 {
     public static class FileStatisticsService
     {
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS / CONSTANTES
+        // ═════════════════════════════════════════════════════════════
+        //
+        // (Aucun champ — service stateless)
+        //
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. MÉTHODE PUBLIQUE
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. MÉTHODE PUBLIQUE
+        // ═════════════════════════════════════════════════════════════
         //
         // Met à jour les statistiques globales
-        // à partir du contenu d’un fichier
+        // à partir d’un fichier (contenu + chemin)
         //
 
         public static void UpdateStatistics(
@@ -48,22 +55,34 @@ namespace LatuCollect.Core.Services.Statistics
             string content,
             string path)
         {
+            // 🔹 Sécurité minimale
+            if (stats == null)
+                return;
+
             stats.FileCount++;
 
-            stats.TotalCharacters += content.Length;
+            stats.TotalCharacters += content?.Length ?? 0;
             stats.TotalLines += CountLines(content);
 
-            var fileInfo = new FileInfo(path);
-            stats.TotalSizeBytes += fileInfo.Length;
+            // ⚠ accès disque → peut échouer
+            try
+            {
+                var fileInfo = new FileInfo(path);
+                stats.TotalSizeBytes += fileInfo.Length;
+            }
+            catch
+            {
+                // volontairement ignoré (pas critique)
+            }
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. MÉTHODES PRIVÉES
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 3. MÉTHODES PRIVÉES
+        // ═════════════════════════════════════════════════════════════
         //
-        // Méthodes internes :
-        // - calcul rapide du nombre de lignes
+        // Calcul interne :
+        // - nombre de lignes
         //
 
         private static int CountLines(string text)

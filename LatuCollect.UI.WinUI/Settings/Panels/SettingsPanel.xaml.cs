@@ -41,7 +41,20 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. CONSTRUCTEUR
+        // 2. CHAMPS PRIVÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // État interne UI (navigation + ViewModel)
+        //
+
+        private MainViewModel? _vm;
+
+        // 🔥 Page actuelle (évite re-navigation inutile)
+        private Type? _currentPage;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
         public SettingsPanel()
@@ -51,7 +64,7 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. INITIALISATION
+        // 4. INITIALISATION
         // ═════════════════════════════════════════════════════════════
         //
         // Injection du ViewModel
@@ -59,28 +72,49 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
 
         public void Initialize(MainViewModel vm)
         {
+            _vm = vm;
             this.DataContext = vm;
-            ContentFrame.Navigate(typeof(SettingsGeneralPage));
+
+            Navigate(typeof(SettingsGeneralPage));
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 4. NAVIGATION
+        // 5. NAVIGATION INTERNE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gère le changement de page dans le panneau
+        //
+
+        private void Navigate(Type page)
+        {
+            // 🔥 évite reload inutile
+            if (_currentPage == page)
+                return;
+
+            _currentPage = page;
+
+            ContentFrame.Navigate(page, _vm);
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. ACTIONS NAVIGATION (UI)
         // ═════════════════════════════════════════════════════════════
 
         private void OnGeneralClicked(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(typeof(SettingsGeneralPage), DataContext);
+            Navigate(typeof(SettingsGeneralPage));
         }
 
         private void OnExclusionsClicked(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(typeof(SettingsExclusionsPage), DataContext);
+            Navigate(typeof(SettingsExclusionsPage));
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 5. FERMETURE
+        // 7. FERMETURE
         // ═════════════════════════════════════════════════════════════
 
         private void OnCloseClicked(object sender, RoutedEventArgs e)

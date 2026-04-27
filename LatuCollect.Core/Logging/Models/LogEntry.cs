@@ -13,6 +13,10 @@
 ║  - Stocker les informations d’un log                                 ║
 ║  - Fournir une structure claire et exploitable                       ║
 ║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Modèle Core pur                                                   ║
+║  - Aucune dépendance UI                                              ║
+║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - LogLevel                                                          ║
 ║                                                                      ║
@@ -27,13 +31,14 @@ namespace LatuCollect.Core.Logging.Models
 {
     public class LogEntry
     {
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 📌 PROPRIÉTÉS
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ═════════════════════════════════════════════════════════════
+        // 1. PROPRIÉTÉS PRINCIPALES
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Données brutes du log
+        //
 
         public DateTime Timestamp { get; }
-
-        public string Date { get; }
 
         public LogLevel Level { get; }
 
@@ -42,9 +47,19 @@ namespace LatuCollect.Core.Logging.Models
         public string? Context { get; }
 
 
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // ⚙️ CONSTRUCTEUR
-        //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // ═════════════════════════════════════════════════════════════
+        // 2. PROPRIÉTÉS FORMATÉES (AFFICHAGE)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Données prêtes pour l’UI
+        //
+
+        public string Date { get; }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════
 
         public LogEntry(LogLevel level, string message, string? context = null)
         {

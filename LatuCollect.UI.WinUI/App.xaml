@@ -71,6 +71,9 @@
             <!--  Comparaison string  -->
             <conv:StringEqualsConverter x:Key="StringEqualsConverter" />
 
+            <!--  Comparaison string insensible à la casse  -->
+            <conv:FolderFileIconConverter x:Key="FolderFileIconConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

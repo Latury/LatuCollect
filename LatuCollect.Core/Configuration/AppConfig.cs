@@ -20,53 +20,71 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace LatuCollect.Core.Configuration
 {
     public class AppConfig
     {
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CONFIGURATION GLOBALE
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 1. DOSSIERS EXCLUS
+        // ═════════════════════════════════════════════════════════════
         //
-        // Contient :
-        // - Paramètres globaux
-        // - Données modifiables à chaud
+        // Liste des dossiers ignorés lors de l’import
         //
-
-        // ─────────────────────────────────────────────
-        // 📁 DOSSIERS EXCLUS
-        // ─────────────────────────────────────────────
-        //
-        // Liste des dossiers ignorés lors de la lecture du projet
+        // Exemple :
+        // - bin
+        // - obj
+        // - .git
         //
 
         public ObservableCollection<string> ExcludedFolders { get; set; } = new()
-    {
-        "bin",
-        "obj",
-        ".git"
-    };
+        {
+            "bin",
+            "obj",
+            ".git"
+        };
 
-        // ─────────────────────────────────────────────
-        // 📁 PARAMÈTRES GLOBAUX
-        // ─────────────────────────────────────────────
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. FORMAT PAR DÉFAUT
+        // ═════════════════════════════════════════════════════════════
         //
-        // Paramètres globaux de l’application
+        // Format utilisé pour l’export si non défini par l’utilisateur
         //
-        // - Format de fichier par défaut
-        // - Mode développeur
-        // - Dernier dossier ouvert
-        // - Chargement automatique du dernier dossier
 
         public string DefaultFormat { get; set; } = ".txt";
 
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. MODE DÉVELOPPEUR
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Active les fonctionnalités avancées :
+        // - Simulation
+        // - Debug UI
+        //
+
         public bool IsDeveloperMode { get; set; } = false;
 
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. DERNIER DOSSIER OUVERT
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Utilisé pour recharger automatiquement le dernier projet
+        //
+
         public string LastOpenedFolder { get; set; } = string.Empty;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. AUTO-CHARGEMENT
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Si activé :
+        // → recharge automatiquement LastOpenedFolder au démarrage
+        //
 
         public bool AutoLoadLastFolder { get; set; } = false;
     }

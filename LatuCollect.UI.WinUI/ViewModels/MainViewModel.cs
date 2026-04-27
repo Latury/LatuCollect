@@ -48,134 +48,71 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CoreFileNode = LatuCollect.Core.Models.FileNode;
 using UiFileNode = LatuCollect.UI.WinUI.Models.FileNode;
+using CoreFileNode = LatuCollect.Core.Models.FileNode;
 
 namespace LatuCollect.UI.WinUI.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS - ÉTAT INTERNE DU VIEWMODEL
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Contient :
-        // - État local (texte, recherche, sélection)
-        // - Flags UI (feedback, simulation, batch)
-        // - Services Core
-        // - Outils techniques (async, debounce)
-        // - Cache pour optimisation (preview)
-        //
-
-        // ─────────────────────────────────────────────
-        // 📝 ÉTAT LOCAL (UI)
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 1. CHAMPS PRIVÉS — ÉTAT UI
+        // ═════════════════════════════════════════════════════════════
 
         private string _previewText = string.Empty;
         private string _currentFolderPath = string.Empty;
         private string _searchText = string.Empty;
         private string? _selectedFormat = null;
-        // Cache du dernier état utilisé pour le preview
+
         private string _lastSelectionSignature = string.Empty;
         private bool _lastIsMarkdown = false;
-        private bool _isInitializing = false; // Permet de différencier le chargement initial des changements utilisateur
-
-        // ─────────────────────────────────────────────
-        // 💬 FEEDBACK UTILISATEUR
-        // ─────────────────────────────────────────────
+        private bool _isInitializing = false;
 
         private string _feedbackMessage = "";
         private bool _isFeedbackVisible;
 
-        // ─────────────────────────────────────────────
-        // 🧪 SIMULATION
-        // ─────────────────────────────────────────────
-
         private bool _isSimulationEnabled = false;
         private string _selectedSimulationScenario = "Aucun";
 
-        // ─────────────────────────────────────────────
-        // ⚙️ FLAGS TECHNIQUES
-        // ─────────────────────────────────────────────
-
-        // Évite les refresh multiples lors des sélections massives
         private bool _isBatchUpdating = false;
-
-        // Permet d’annuler une recherche en cours (debounce)
         private CancellationTokenSource? _searchCts;
-
-        // Évite plusieurs refresh preview simultanés
         private bool _isPreviewLoading = false;
-
-        // 🔒 Verrou global UI (anti double clic)
         private bool _isBusy = false;
 
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
-        }
+        private bool _isAllSelected;
+        private bool _isSearchVisible;
+        private bool _hasSearchResult = true;
+        private bool _isLimitReached;
 
-        // ─────────────────────────────────────────────
-        // 🔧 SERVICES CORE
-        // ─────────────────────────────────────────────
+        private bool _isDeveloperMode;
 
-        // Service de chargement de l’arborescence
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. SERVICES & CONFIGURATION
+        // ═════════════════════════════════════════════════════════════
+
         private readonly FileImportService _importService;
-        // Service de collecte des fichiers sélectionnés
         private readonly FileCollectionService _collectionService;
-        // Service de génération du contenu exporté
         private readonly FileExportService _exportService;
-        // Service de logging (pour les erreurs, warnings, infos)
         private readonly ILogService _logger;
-        // Configuration globale de l’application (ex: exclusions, limites)
+
         private readonly AppConfig _config;
-        // Service de configuration utilisateur (JSON)
         private readonly IConfigurationService _configurationService;
-        // Configuration utilisateur persistée
+
         private UserConfig _userConfig;
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 2. CONSTANTES / LIMITES (PERFORMANCE & SÉCURITÉ)
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Objectif :
-        // - Éviter les freezes UI sur gros projets
-        // - Limiter la charge mémoire
-        // - Contrôler la profondeur de l’arborescence
-        //
-        // IMPORTANT :
-        // Ces valeurs sont utilisées lors du chargement des fichiers
-        // (CreateNode / LoadTree)
-        //
-        // ─────────────────────────────────────────────
 
-        // Nombre maximum de nodes (fichiers + dossiers)
+        // ═════════════════════════════════════════════════════════════
+        // 3. CONSTANTES
+        // ═════════════════════════════════════════════════════════════
+
         private const int MAX_NODES = 1000;
-
-        // Profondeur maximale de l’arborescence
         private const int MAX_DEPTH = 10;
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 3. ÉTATS UI (GLOBAL)
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Gestion de l’état global de l’application :
-        // - Chargement (Loading)
-        // - Prêt (Ready)
-        // - Erreur (Error)
-        //
-        // Permet à l’UI de s’adapter automatiquement :
-        // - Afficher un loader
-        // - Afficher le contenu
-        // - Afficher un message d’erreur
-        //
-
-        // ─────────────────────────────────────────────
-        // 📊 ENUM DES ÉTATS
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 4. ÉTAT GLOBAL UI
+        // ═════════════════════════════════════════════════════════════
 
         public enum UiState
         {
@@ -184,10 +121,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             Empty,
             Error
         }
-
-        // ─────────────────────────────────────────────
-        // 🔄 ÉTAT ACTUEL
-        // ─────────────────────────────────────────────
 
         private UiState _currentState = UiState.Ready;
 
@@ -198,7 +131,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _currentState, value))
                 {
-                    // 🔁 Notifie les propriétés dépendantes
                     OnPropertyChanged(nameof(IsLoading));
                     OnPropertyChanged(nameof(IsReady));
                     OnPropertyChanged(nameof(HasError));
@@ -210,18 +142,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────
-        // 🔎 HELPERS POUR LE BINDING UI
-        // ─────────────────────────────────────────────
-
         public bool IsLoading => CurrentState == UiState.Loading;
         public bool IsReady => CurrentState == UiState.Ready;
         public bool HasError => CurrentState == UiState.Error;
         public bool IsEmpty => CurrentState == UiState.Empty;
-
-        // ─────────────────────────────────────────────
-        // ❌ GESTION DES ERREURS
-        // ─────────────────────────────────────────────
 
         private string _errorMessage = string.Empty;
 
@@ -231,16 +155,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 4. PROPRIÉTÉS UI (BINDING)
-        // ═════════════════════════════════════════════════════════════════════
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // 🔗 SETTINGS - BINDING UI (WRAPPERS)
+        // 5. PROPRIÉTÉS UI — SETTINGS
         // ═════════════════════════════════════════════════════════════
 
-        // 🧑‍💻 Mode développeur (alias UI)
         public bool IsDeveloperModeEnabled
         {
             get => IsDeveloperMode;
@@ -254,7 +178,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // 📂 Chargement automatique du dernier dossier
         public bool AutoLoadLastFolder
         {
             get => _config.AutoLoadLastFolder;
@@ -268,7 +191,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // 📄 Format par défaut (différent du format courant)
         public string DefaultFormat
         {
             get => _config.DefaultFormat;
@@ -277,62 +199,46 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 if (_config.DefaultFormat != value)
                 {
                     _config.DefaultFormat = value;
-
-                    // Synchronise aussi le format actuel
                     SelectedFormat = value;
-
                     _ = SaveConfigurationAsync();
                 }
             }
         }
 
-        // 🔧 CONFIGURATION GLOBALE (exposée à la UI)
         public AppConfig Config => _config;
 
 
-        // ─────────────────────────────────────────────
-        // 📝 APERÇU & DOSSIER
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 6. PROPRIÉTÉS UI — DONNÉES
+        // ═════════════════════════════════════════════════════════════
 
-        // Exposé à la UI pour affichage du preview
         public string PreviewText
         {
             get => _previewText;
             set => SetProperty(ref _previewText, value);
         }
 
-        // Exposé à la UI pour affichage du chemin du dossier chargé
         public string CurrentFolderPath
         {
             get => _currentFolderPath;
-            set => SetProperty(ref _currentFolderPath, value);
+            set
+            {
+                if (SetProperty(ref _currentFolderPath, value))
+                {
+                    OnPropertyChanged(nameof(CurrentFolderPathDisplay));
+                }
+            }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 📊 EXPORT - VÉRIFICATIONS AVANT EXPORT
-        // ═════════════════════════════════════════════════════════════════════
+        public string CurrentFolderPathDisplay =>
+            string.IsNullOrWhiteSpace(CurrentFolderPath)
+                ? "Aucun dossier"
+                : CurrentFolderPath;
 
-        public enum ExportCheckResult
-        {
-            Ok,
-            NoSelection,
-            EmptyFiles
-        }
 
-        public ExportCheckResult CheckExportState()
-        {
-            if (IsPreviewEmpty)
-                return ExportCheckResult.NoSelection;
-
-            if (HasEmptyFiles)
-                return ExportCheckResult.EmptyFiles;
-
-            return ExportCheckResult.Ok;
-        }
-
-        // ─────────────────────────────────────────────
-        // 📊 STATISTIQUES
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 7. STATISTIQUES
+        // ═════════════════════════════════════════════════════════════
 
         private int _fileCount;
         public int FileCount
@@ -362,15 +268,13 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _totalSize, value);
         }
 
-        // ─────────────────────────────────────────────
-        // 🌳 ARBORESCENCE
-        // ─────────────────────────────────────────────
+
+        // ═════════════════════════════════════════════════════════════
+        // 8. ARBORESCENCE & RECHERCHE
+        // ═════════════════════════════════════════════════════════════
 
         public ObservableCollection<UiFileNode> Tree { get; } = new();
-
-        // ─────────────────────────────────────────────
-        // 🔍 RECHERCHE
-        // ─────────────────────────────────────────────
+        public ObservableCollection<UiFileNode> FilteredTree { get; } = new();
 
         public string SearchText
         {
@@ -384,27 +288,27 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        private bool _hasSearchResult = true;
         public bool HasSearchResult
         {
             get => _hasSearchResult;
             set => SetProperty(ref _hasSearchResult, value);
         }
 
-        // ─────────────────────────────────────────────
-        // 🔍 VISIBILITÉ UI (RECHERCHE)
-        // ─────────────────────────────────────────────
-
-        private bool _isSearchVisible;
         public bool IsSearchVisible
         {
             get => _isSearchVisible;
             set => SetProperty(ref _isSearchVisible, value);
         }
 
-        // ─────────────────────────────────────────────
-        // 💬 FEEDBACK UTILISATEUR
-        // ─────────────────────────────────────────────
+        public bool IsLimitReached
+        {
+            get => _isLimitReached;
+            set => SetProperty(ref _isLimitReached, value);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 9. FEEDBACK
+        // ═════════════════════════════════════════════════════════════
 
         public string FeedbackMessage
         {
@@ -418,21 +322,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _isFeedbackVisible, value);
         }
 
-        // ─────────────────────────────────────────────
-        // ⚠️ ÉTAT LIMITE PROJET (GROS DOSSIERS)
-        // ─────────────────────────────────────────────
 
-        private bool _isLimitReached;
-
-        public bool IsLimitReached
-        {
-            get => _isLimitReached;
-            set => SetProperty(ref _isLimitReached, value);
-        }
-
-        // ─────────────────────────────────────────────
-        // 📄 FORMAT EXPORT
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 10. EXPORT & FORMAT
+        // ═════════════════════════════════════════════════════════════
 
         public string SelectedFormat
         {
@@ -443,54 +336,56 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     OnPropertyChanged(nameof(CanExport));
 
-                    if (!_isInitializing) // 🔥 IMPORTANT
-                    {
+                    if (!_isInitializing)
                         _ = SaveConfigurationAsync();
-                    }
                 }
             }
         }
 
-        // ─────────────────────────────────────────────
-        // ⚙️ ÉTATS DÉRIVÉS (LOGIQUE UI)
-        // ─────────────────────────────────────────────
-
         public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
-
         public bool CanCopy => !string.IsNullOrWhiteSpace(PreviewText);
-
         public bool IsPreviewEmpty => CurrentState == UiState.Empty;
 
         public bool CanExport =>
             !IsPreviewEmpty &&
             SelectedFormat != null;
 
-        // ─────────────────────────────────────────────
-        // ☑ SÉLECTION GLOBALE (UI)
-        // ─────────────────────────────────────────────
-
-        private bool _isAllSelected;
-
-        public bool IsAllSelected
+        public enum ExportCheckResult
         {
-            get => _isAllSelected;
+            Ok,
+            NoSelection,
+            EmptyFiles
+        }
+
+        public ExportCheckResult CheckExportState()
+        {
+            if (IsPreviewEmpty)
+                return ExportCheckResult.NoSelection;
+
+            if (HasEmptyFiles)
+                return ExportCheckResult.EmptyFiles;
+
+            return ExportCheckResult.Ok;
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 11. MODE DEV & SIMULATION
+        // ═════════════════════════════════════════════════════════════
+
+        public bool IsDeveloperMode
+        {
+            get => _isDeveloperMode;
             set
             {
-                if (SetProperty(ref _isAllSelected, value))
+                if (SetProperty(ref _isDeveloperMode, value))
                 {
-                    OnSelectAllBlocked?.Invoke();
-
-                    _isAllSelected = false;
-                    OnPropertyChanged(nameof(IsAllSelected));
+                    OnPropertyChanged(nameof(IsSimulationVisible));
+                    OnPropertyChanged(nameof(IsDeveloperModeEnabled));
                 }
             }
         }
 
-        public event Action? OnSelectAllBlocked;
-
-        // ─────────────────────────────────────────────
-        // 🧪 SIMULATION
-        // ─────────────────────────────────────────────
+        public bool IsSimulationVisible => IsDeveloperMode;
 
         public bool IsSimulationEnabled
         {
@@ -520,157 +415,27 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        public string SimulationLabel
-        {
-            get
-            {
-                if (!IsSimulationEnabled)
-                    return "🧪 Simulation : Désactivé";
+        public string SimulationLabel =>
+            !IsSimulationEnabled
+                ? "🧪 Simulation : Désactivé"
+                : SelectedSimulationScenario == "Aucun"
+                    ? "🧪 Simulation : Activé"
+                    : $"🧪 Simulation : {SelectedSimulationScenario}";
 
-                if (SelectedSimulationScenario == "Aucun")
-                    return "🧪 Simulation : Activé";
-
-                return $"🧪 Simulation : {SelectedSimulationScenario}";
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧑🏻‍💻 MODE DÉVELOPPEUR
-        // ─────────────────────────────────────────────
-
-        private bool _isDeveloperMode;
-
-        public bool IsDeveloperMode
-        {
-            get => _isDeveloperMode;
-            set
-            {
-                if (SetProperty(ref _isDeveloperMode, value))
-                {
-                    OnPropertyChanged(nameof(IsSimulationVisible));
-                    OnPropertyChanged(nameof(IsDeveloperModeEnabled));
-                }
-            }
-        }
-
-        // visibilité UI
-        public bool IsSimulationVisible => IsDeveloperMode;
-      
-        // message UI
         public string DeveloperWarningMessage =>
-            "⚠ Mode simulation\n\n" +
-            "Ce mode est destiné aux tests.\n" +
-            "Il peut provoquer des comportements instables.";
+    "⚠ Mode simulation\n\n" +
+    "Ce mode est destiné aux tests.\n" +
+    "Il peut provoquer des comportements instables.";
 
-        // ─────────────────────────────────────────────
-        // 🧾 LOGS (DEBUG / SUIVI)
-        // ─────────────────────────────────────────────
-
-        public ReadOnlyObservableCollection<LogEntry> Logs
-        {
-            get
-            {
-                return (_logger as LogService)!.Logs;
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧾 LOGS - INDICATEUR ERREUR
-        // ─────────────────────────────────────────────
-
-        // Permet d’afficher un indicateur visuel si des erreurs sont présentes dans les logs
-        public bool HasLogErrors
-        {
-            get
-            {
-                if (_logger is LogService logService)
-                {
-                    return logService.Logs.Any(l => l.Level == LogLevel.Error);
-                }
-
-                return false;
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧾 LOGS - COMPTEUR ERREURS
-        // ─────────────────────────────────────────────
-        public int LogErrorCount
-        {
-            get
-            {
-                if (_logger is LogService logService)
-                {
-                    return logService.Logs.Count(l => l.Level == LogLevel.Error);
-                }
-
-                return 0;
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧾 FILTRE LOGS
-        // ─────────────────────────────────────────────
-
-        public enum LogFilter
-        {
-            All,
-            Info,
-            Warning,
-            Error
-        }
-
-        private LogFilter _selectedLogFilter = LogFilter.All;
-
-        public LogFilter SelectedLogFilter
-        {
-            get => _selectedLogFilter;
-            set
-            {
-                if (SetProperty(ref _selectedLogFilter, value))
-                {
-                    OnPropertyChanged(nameof(FilteredLogs));
-                }
-            }
-        }
-
-        public IEnumerable<LogEntry> FilteredLogs
-        {
-            get
-            {
-                if (_logger is not LogService logService)
-                    return Enumerable.Empty<LogEntry>();
-
-                return SelectedLogFilter switch
-                {
-                    LogFilter.Info => logService.Logs.Where(l => l.Level == LogLevel.Info),
-                    LogFilter.Warning => logService.Logs.Where(l => l.Level == LogLevel.Warning),
-                    LogFilter.Error => logService.Logs.Where(l => l.Level == LogLevel.Error),
-                    _ => logService.Logs
-                };
-            }
-        }
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 5. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Initialisation du ViewModel :
-        // - Configuration du logging
-        // - Création des services Core
-        // - Initialisation des valeurs par défaut
-        // - Configuration de la simulation
-        //
+        // ═════════════════════════════════════════════════════════════
+        // 12. CONSTRUCTEUR
+        // ═════════════════════════════════════════════════════════════
 
         public MainViewModel()
         {
-            // ─────────────────────────────────────────────
-            // 🧾 LOGGING
-            // ─────────────────────────────────────────────
             _logger = new LogService();
             _logger.Info("MainViewModel initialisé");
 
-            // 🔥 AJOUT ICI (TRÈS IMPORTANT)
             if (_logger is LogService logService)
             {
                 logService.LogsUpdated += (s, e) =>
@@ -682,58 +447,36 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 };
             }
 
-            // ─────────────────────────────────────────────
-            // 🔧 SERVICES CORE
-            // ─────────────────────────────────────────────
-
-            // Configuration globale (ex: exclusions, limites)
             _config = new AppConfig();
             _importService = new FileImportService(_config);
-            // Configuration utilisateur (ex: préférences, derniers dossiers)
+
             _configurationService = new ConfigurationService();
             _userConfig = new UserConfig();
             _ = LoadConfigurationAsync();
-            // Le FileCollectionService est léger et sans état, on peut l’instancier directement ici
+
             _collectionService = new FileCollectionService();
-            // Le FileExportService est également léger, mais on peut le garder en champ pour une utilisation future (ex: export asynchrone)
             _exportService = new FileExportService();
-
-
-            // ─────────────────────────────────────────────
-            // ⚙️ ÉTAT INITIAL UI
-            // ─────────────────────────────────────────────
 
             PreviewText = string.Empty;
             CurrentState = UiState.Empty;
-
             CurrentFolderPath = string.Empty;
-
             SelectedFormat = null;
-
             IsSimulationEnabled = false;
-
             SelectedSimulationScenario = "Aucun";
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 6. COMMANDES UI
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 13. COMMANDES UI
+        // ═════════════════════════════════════════════════════════════
         //
         // Actions déclenchées par l’utilisateur :
         // - Charger un dossier
-        // - Exporter le contenu
-        // - Copier le contenu (via Preview)
-        // - Activer / désactiver la recherche
-        //
-        // 👉 Correspond aux interactions utilisateur (boutons UI)
-        //
+        // - Exporter
+        // - Copier
+        // - Recherche
 
-        // ─────────────────────────────────────────────
-        // 📂 CHARGER UN DOSSIER
-        // ─────────────────────────────────────────────
-
-        // 🔥 VERSION CORE (ASYNCHRONE)
+        // 👉 COLLE ICI : LoadTreeAsync, GetExportContent, ToggleSearch
         public async Task LoadTreeAsync(string path)
         {
             if (IsBusy) return; // 🔒 anti double clic
@@ -773,9 +516,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     Tree.Add(ConvertToUiNode(coreNode));
                 }
 
+                ApplyFilter();
+
                 _logger.Info("Arborescence projet chargée", $"Nodes: {coreNodes.Count}");
 
-                // 🔥 AJOUT ICI
                 CurrentFolderPath = path;
                 _ = SaveConfigurationAsync();
 
@@ -790,17 +534,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             finally
             {
-                IsBusy = false; // 🔓 libération obligatoire
+                IsBusy = false;
             }
         }
 
-        // ─────────────────────────────────────────────
-        // 📦 EXPORTER LE CONTENU
-        // ─────────────────────────────────────────────
 
         public string GetExportContent()
         {
-            if (IsBusy) return string.Empty; // 🔒 protection
+            if (IsBusy) return string.Empty;
 
             try
             {
@@ -837,55 +578,26 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             finally
             {
-                IsBusy = false; // 🔓 libération obligatoire
+                IsBusy = false;
             }
         }
-
-        // ─────────────────────────────────────────────
-        // 🔍 TOGGLE RECHERCHE
-        // ─────────────────────────────────────────────
 
         public void ToggleSearch()
         {
             IsSearchVisible = !IsSearchVisible;
         }
 
-
-        // ═════════════════════════════════════════════════════════════════════
-        // 7. LOGIQUE UI (AUTORISÉE)
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
+        // 14. LOGIQUE UI
+        // ═════════════════════════════════════════════════════════════
         //
-        // Gestion de l’interface utilisateur :
-        // - Mise à jour de l’aperçu
-        // - Feedback utilisateur
-        // - Réactions aux actions UI
-        // - Synchronisation avec le Core
-        //
-        // ⚠️ IMPORTANT :
-        // Ne doit PAS contenir de logique métier complexe
-        //
+        // Gestion dynamique de l’interface :
+        // - Preview
+        // - Sélection
+        // - Feedback
 
-        // ─────────────────────────────────────────────
-        // 🔄 APERÇU DYNAMIQUE
-        // ─────────────────────────────────────────────
+        // 👉 COLLE ICI : RefreshPreviewAsync, OnNodeSelectionChanged, ShowFeedbackAsync
 
-        private void OnNodeSelectionChanged(UiFileNode node)
-        {
-            if (_isBatchUpdating)
-                return;
-
-            _isBatchUpdating = true;
-
-            // 🔥 PROPAGATION AUX ENFANTS
-            foreach (var child in node.Children)
-            {
-                SetNodeSelection(child, node.IsSelected);
-            }
-
-            _isBatchUpdating = false;
-
-            _ = RefreshPreviewAsync();
-        }
         private async Task RefreshPreviewAsync()
         {
             // 🔒 Protection anti multi-appel
@@ -955,6 +667,17 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 });
 
                 var content = data.Content;
+
+                const int MAX_CHARACTERS = 20000;
+
+                if (content.Length > MAX_CHARACTERS)
+                {
+                    content = content.Substring(0, MAX_CHARACTERS);
+
+                    content += "\n\n----------------------------------------\n";
+                    content += "⚠ Aperçu limité à 20 000 caractères...";
+                }
+
                 var stats = data.Stats;
 
                 if (files.Count > MAX_FILES_PREVIEW)
@@ -993,9 +716,23 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────
-        // 💬 FEEDBACK UTILISATEUR
-        // ─────────────────────────────────────────────
+        private void OnNodeSelectionChanged(UiFileNode node)
+        {
+            if (_isBatchUpdating)
+                return;
+
+            _isBatchUpdating = true;
+
+            // 🔥 PROPAGATION AUX ENFANTS
+            foreach (var child in node.Children)
+            {
+                SetNodeSelection(child, node.IsSelected);
+            }
+
+            _isBatchUpdating = false;
+
+            _ = RefreshPreviewAsync();
+        }
 
         public async Task ShowFeedbackAsync(string message)
         {
@@ -1010,9 +747,25 @@ namespace LatuCollect.UI.WinUI.ViewModels
             IsFeedbackVisible = false;
         }
 
-        // ─────────────────────────────────────────────
-        // ☑ SÉLECTION GLOBALE (LOGIQUE)
-        // ─────────────────────────────────────────────
+        private string BuildSelectionSignature(List<string> filePaths)
+        {
+            if (filePaths == null || filePaths.Count == 0)
+                return string.Empty;
+
+            var ordered = filePaths.OrderBy(p => p);
+
+            return string.Join("|", ordered);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 15. SÉLECTION & ARBORESCENCE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gestion des sélections utilisateur :
+        // - Select all
+        // - Propagation enfants
+
+        // 👉 COLLE ICI : SetAllSelection, SetNodeSelection
 
         private void SetAllSelection(bool isSelected)
         {
@@ -1038,79 +791,119 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 8. MÉTHODES PRIVÉES (UTILITAIRES)
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Méthodes internes au ViewModel :
-        // - Filtrage de l’arborescence (recherche)
-        // - Helpers récursifs
-        // - Gestion du debounce (optimisation UI)
-        //
-        // ⚠️ Doivent rester simples (pas de logique métier complexe)
-        //
-
-        // ─────────────────────────────────────────────
-        // 🧠 CACHE / SIGNATURE (OPTIMISATION PREVIEW)
-        // ─────────────────────────────────────────────
-
-        // Génère une signature unique basée sur les fichiers sélectionnés
-        // Permet de détecter si l'état a changé
-        private string BuildSelectionSignature(List<string> filePaths)
+        public bool IsAllSelected
         {
-            if (filePaths == null || filePaths.Count == 0)
-                return string.Empty;
+            get => _isAllSelected;
+            set
+            {
+                if (SetProperty(ref _isAllSelected, value))
+                {
+                    OnSelectAllBlocked?.Invoke();
 
-            // Ordre stable pour éviter faux changements
-            var ordered = filePaths.OrderBy(p => p);
-
-            return string.Join("|", ordered);
+                    _isAllSelected = false;
+                    OnPropertyChanged(nameof(IsAllSelected));
+                }
+            }
         }
 
-        // ─────────────────────────────────────────────
-        // 🔍 FILTRE DE RECHERCHE
-        // ─────────────────────────────────────────────
+        public event Action? OnSelectAllBlocked;
+
+        // ═════════════════════════════════════════════════════════════
+        // 16. FILTRAGE & RECHERCHE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Recherche dynamique dans l’arborescence
+
+        // 👉 COLLE ICI : ApplyFilter, FilterNode, DebounceFilter
 
         private void ApplyFilter()
         {
+            FilteredTree.Clear();
+
+            // 🔹 Pas de recherche → copie complète
             if (string.IsNullOrWhiteSpace(SearchText))
             {
-                foreach (var root in Tree)
+                foreach (var node in Tree)
                 {
-                    SetAllVisible(root);
+                    FilteredTree.Add(node);
                 }
 
                 HasSearchResult = true;
                 return;
             }
 
-            bool hasVisible = false;
+            bool hasResult = false;
 
-            foreach (var root in Tree)
+            foreach (var node in Tree)
             {
-                if (ApplyFilterToNode(root))
-                    hasVisible = true;
+                var filtered = FilterNode(node);
+
+                if (filtered != null)
+                {
+                    FilteredTree.Add(filtered);
+                    hasResult = true;
+                }
             }
 
-            HasSearchResult = hasVisible;
+            HasSearchResult = hasResult;
         }
 
-        private bool ApplyFilterToNode(UiFileNode node)
+        private UiFileNode? FilterNode(UiFileNode node)
         {
             bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
 
-            bool hasChildMatch = false;
+            var newNode = new UiFileNode
+            {
+                Name = node.Name,
+                Path = node.Path,
+                IsSelected = node.IsSelected
+            };
 
             foreach (var child in node.Children)
             {
-                if (ApplyFilterToNode(child))
-                    hasChildMatch = true;
+                var filteredChild = FilterNode(child);
+
+                if (filteredChild != null)
+                {
+                    newNode.Children.Add(filteredChild);
+                }
             }
 
-            node.IsVisible = match || hasChildMatch;
+            if (match || newNode.Children.Count > 0)
+                return newNode;
 
-            return node.IsVisible;
+            return null;
         }
+
+        private async void DebounceFilter()
+        {
+            _searchCts?.Cancel();
+
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+
+            try
+            {
+                await Task.Delay(300, token);
+
+                if (!token.IsCancellationRequested)
+                {
+                    ApplyFilter();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Normal → ignoré
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 17. CONVERSION UI ↔ CORE
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Transformation des données UI vers Core
+
+        // 👉 COLLE ICI : ConvertToUiNode, ConvertToCoreNodes, GetSelectedFiles
 
         private UiFileNode ConvertToUiNode(CoreFileNode coreNode)
         {
@@ -1130,12 +923,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return uiNode;
         }
 
-        private List<string> GetSelectedFiles()
-        {
-            var coreNodes = ConvertToCoreNodes(Tree);
-            return _collectionService.GetSelectedFiles(coreNodes);
-        }
-
         private List<CoreFileNode> ConvertToCoreNodes(IEnumerable<UiFileNode> uiNodes)
         {
             var result = new List<CoreFileNode>();
@@ -1149,7 +936,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     IsSelected = uiNode.IsSelected
                 };
 
-                coreNode.Children = ConvertToCoreNodes(uiNode.Children);
+                foreach (var child in ConvertToCoreNodes(uiNode.Children))
+                {
+                    coreNode.Children.Add(child);
+                }
 
                 result.Add(coreNode);
             }
@@ -1157,21 +947,32 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return result;
         }
 
-        // ─────────────────────────────────────────────
-        // ⚙️ CHARGEMENT CONFIGURATION UTILISATEUR
-        // ─────────────────────────────────────────────
+        private List<string> GetSelectedFiles()
+        {
+            var coreNodes = ConvertToCoreNodes(Tree);
+            return _collectionService.GetSelectedFiles(coreNodes);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 18. CONFIGURATION UTILISATEUR
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gestion JSON :
+        // - Load
+        // - Save
+        // - Reset
+
+        // 👉 COLLE ICI : LoadConfigurationAsync, SaveConfigurationAsync, ResetConfigurationAsync
 
         private async Task LoadConfigurationAsync()
         {
             try
             {
-                _isInitializing = true; // 🔥 BLOQUE SAVE
-
+                _isInitializing = true;
                 _logger.Info("Chargement configuration utilisateur");
 
                 _userConfig = await _configurationService.LoadAsync() ?? new UserConfig();
 
-                // Sync Core
                 _config.DefaultFormat = _userConfig.DefaultFormat;
                 _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
                 _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
@@ -1183,7 +984,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     _config.ExcludedFolders.Add(item);
                 }
 
-                // Sync UI
                 SelectedFormat = _userConfig.DefaultFormat;
                 IsDeveloperMode = _userConfig.IsDeveloperMode;
 
@@ -1201,13 +1001,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             finally
             {
-                _isInitializing = false; // 🔓 réactive save
+                _isInitializing = false;
             }
         }
-
-        // ─────────────────────────────────────────────
-        // 💾 SAUVEGARDE CONFIGURATION UTILISATEUR
-        // ─────────────────────────────────────────────
 
         public async Task SaveConfigurationAsync()
         {
@@ -1232,10 +1028,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // ─────────────────────────────────────────────
-        // 🔄 RESET CONFIGURATION UTILISATEUR
-        // ─────────────────────────────────────────────
-
         public async Task ResetConfigurationAsync()
         {
             if (IsBusy) return;
@@ -1246,21 +1038,24 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 _logger.Info("Reset configuration utilisateur");
 
-                // 🔥 Appel Core
                 _userConfig = await _configurationService.ResetAsync();
 
-                // 🔗 Synchronisation AppConfig
                 _config.DefaultFormat = _userConfig.DefaultFormat;
                 _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
                 _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
                 _config.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
 
-                // 🔗 Synchronisation UI
+                _config.ExcludedFolders.Clear();
+
+                foreach (var item in _userConfig.ExcludedFolders)
+                {
+                    _config.ExcludedFolders.Add(item);
+                }
+
                 SelectedFormat = _userConfig.DefaultFormat;
                 IsDeveloperMode = _userConfig.IsDeveloperMode;
                 CurrentFolderPath = _userConfig.LastOpenedFolder;
 
-                // 🔄 Reset UI logique
                 Tree.Clear();
                 PreviewText = string.Empty;
                 CurrentState = UiState.Empty;
@@ -1284,50 +1079,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
             await ResetConfigurationAsync();
         }
 
-        // ─────────────────────────────────────────────
-        // 🌳 HELPER RÉCURSIF (VISIBILITÉ)
-        // ─────────────────────────────────────────────
-
-        private void SetAllVisible(UiFileNode node)
-        {
-            node.IsVisible = true;
-
-            foreach (var child in node.Children)
-            {
-                SetAllVisible(child);
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // ⏱ DEBOUNCE RECHERCHE
-        // ─────────────────────────────────────────────
-
-        // Permet d’attendre que l’utilisateur ait fini de taper avant d’appliquer le filtre
-        private async void DebounceFilter()
-        {
-            _searchCts?.Cancel();
-
-            _searchCts = new CancellationTokenSource();
-            var token = _searchCts.Token;
-
-            try
-            {
-                await Task.Delay(300, token);
-
-                if (!token.IsCancellationRequested)
-                {
-                    ApplyFilter();
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // Normal → ignoré
-            }
-        }
-
-        // ─────────────────────────────────────────────
-        // 🧾 EXPORT LOGS
-        // ─────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════
+        // 19. LOGS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Export / filtrage des logs
 
         public string GetLogsExportContent()
         {
@@ -1348,6 +1104,80 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 Environment.NewLine + "----------------------------------------" + Environment.NewLine,
                 lines
             );
+        }
+
+
+        public ReadOnlyObservableCollection<LogEntry> Logs
+        {
+            get
+            {
+                return (_logger as LogService)!.Logs;
+            }
+        }
+
+        public bool HasLogErrors
+        {
+            get
+            {
+                if (_logger is LogService logService)
+                {
+                    return logService.Logs.Any(l => l.Level == LogLevel.Error);
+                }
+
+                return false;
+            }
+        }
+
+        public int LogErrorCount
+        {
+            get
+            {
+                if (_logger is LogService logService)
+                {
+                    return logService.Logs.Count(l => l.Level == LogLevel.Error);
+                }
+
+                return 0;
+            }
+        }
+
+        public enum LogFilter
+        {
+            All,
+            Info,
+            Warning,
+            Error
+        }
+
+        private LogFilter _selectedLogFilter = LogFilter.All;
+
+        public LogFilter SelectedLogFilter
+        {
+            get => _selectedLogFilter;
+            set
+            {
+                if (SetProperty(ref _selectedLogFilter, value))
+                {
+                    OnPropertyChanged(nameof(FilteredLogs));
+                }
+            }
+        }
+
+        public IEnumerable<LogEntry> FilteredLogs
+        {
+            get
+            {
+                if (_logger is not LogService logService)
+                    return Enumerable.Empty<LogEntry>();
+
+                return SelectedLogFilter switch
+                {
+                    LogFilter.Info => logService.Logs.Where(l => l.Level == LogLevel.Info),
+                    LogFilter.Warning => logService.Logs.Where(l => l.Level == LogLevel.Warning),
+                    LogFilter.Error => logService.Logs.Where(l => l.Level == LogLevel.Error),
+                    _ => logService.Logs
+                };
+            }
         }
     }
 }

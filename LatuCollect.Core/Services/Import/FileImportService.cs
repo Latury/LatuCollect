@@ -32,54 +32,47 @@ namespace LatuCollect.Core.Services.Import
 {
     public class FileImportService
     {
-
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
         // 1. CONSTANTES / LIMITES
-        // ═════════════════════════════════════════════════════════════════════
+        // ═════════════════════════════════════════════════════════════
 
         private const int MAX_NODES = 1000;
         private const int MAX_DEPTH = 10;
 
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
         // 2. CONFIGURATION
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Contient :
-        // - Instance de AppConfig
-        // - Permet d'accéder aux paramètres globaux
-        //
+        // ═════════════════════════════════════════════════════════════
 
         private readonly AppConfig _config;
 
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
         // 3. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Injection de la configuration globale
-        //
+        // ═════════════════════════════════════════════════════════════
 
         public FileImportService(AppConfig config)
         {
             _config = config;
         }
 
-        // ═════════════════════════════════════════════════════════════════════
+
+        // ═════════════════════════════════════════════════════════════
         // 4. MÉTHODE PUBLIQUE
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Point d’entrée principal :
-        // - charge toute l’arborescence
-        //
+        // ═════════════════════════════════════════════════════════════
 
         public async Task<List<FileNode>> LoadTreeAsync(string rootPath)
         {
+            if (string.IsNullOrWhiteSpace(rootPath))
+                return new List<FileNode>();
+
+            if (!Directory.Exists(rootPath))
+                return new List<FileNode>();
+
             return await Task.Run(() =>
             {
                 var result = new List<FileNode>();
                 int count = 0;
-
-                if (!Directory.Exists(rootPath))
-                    return result;
 
                 var rootNode = CreateNode(rootPath, 0, ref count);
 
@@ -91,79 +84,116 @@ namespace LatuCollect.Core.Services.Import
         }
 
 
-        // ═════════════════════════════════════════════════════════════════════
-        // 5. CONSTRUCTION DE L’ARBORESCENCE
-        // ═════════════════════════════════════════════════════════════════════
-        //
-        // Méthode récursive :
-        // - crée les nodes
-        // - applique les limites
-        // - applique les exclusions
-        //
+        // ═════════════════════════════════════════════════════════════
+        // 5. CONSTRUCTION ARBORESCENCE (RÉCURSIVE)
+        // ═════════════════════════════════════════════════════════════
 
         private FileNode CreateNode(string path, int depth, ref int count)
         {
-            if (depth > MAX_DEPTH || count > MAX_NODES)
+            // 🔒 Limites globales
+            if (depth > MAX_DEPTH || count >= MAX_NODES)
                 return null;
 
             var node = new FileNode
             {
-                Name = Path.GetFileName(path),
-                Path = path
+                Name = GetSafeName(path),
+                Path = path,
+                IsDirectory = Directory.Exists(path)
             };
 
             count++;
 
-            if (Directory.Exists(path))
-            {
-                // 📁 Dossiers
-                foreach (var dir in Directory.GetDirectories(path))
-                {
-                    if (count > MAX_NODES)
-                        break;
+            if (!Directory.Exists(path))
+                return node;
 
-                    try
-                    {
-                        string folderName = Path.GetFileName(dir);
+            // 📁 Dossiers
+            TryAddDirectories(node, path, depth, ref count);
 
-                        if (_config.ExcludedFolders.Contains(folderName))
-                            continue;
-
-                        var child = CreateNode(dir, depth + 1, ref count);
-
-                        if (child != null)
-                            node.Children.Add(child);
-                    }
-                    catch
-                    {
-                        // Ignoré volontairement (accès refusé etc.)
-                    }
-                }
-
-                // 📄 Fichiers
-                foreach (var file in Directory.GetFiles(path))
-                {
-                    if (count > MAX_NODES)
-                        break;
-
-                    try
-                    {
-                        node.Children.Add(new FileNode
-                        {
-                            Name = Path.GetFileName(file),
-                            Path = file
-                        });
-
-                        count++;
-                    }
-                    catch
-                    {
-                        // Ignoré volontairement
-                    }
-                }
-            }
+            // 📄 Fichiers
+            TryAddFiles(node, path, ref count);
 
             return node;
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. DOSSIERS
+        // ═════════════════════════════════════════════════════════════
+
+        private void TryAddDirectories(FileNode parent, string path, int depth, ref int count)
+        {
+            try
+            {
+                foreach (var dir in Directory.GetDirectories(path))
+                {
+                    if (count >= MAX_NODES)
+                        break;
+
+                    var folderName = Path.GetFileName(dir);
+
+                    if (IsExcluded(folderName))
+                        continue;
+
+                    var child = CreateNode(dir, depth + 1, ref count);
+
+                    if (child != null)
+                        parent.Children.Add(child);
+                }
+            }
+            catch
+            {
+                // accès refusé, ignoré volontairement
+            }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 7. FICHIERS
+        // ═════════════════════════════════════════════════════════════
+
+        private void TryAddFiles(FileNode parent, string path, ref int count)
+        {
+            try
+            {
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    if (count >= MAX_NODES)
+                        break;
+
+                    parent.Children.Add(new FileNode
+                    {
+                        Name = GetSafeName(file),
+                        Path = file,
+                        IsDirectory = false
+                    });
+
+                    count++;
+                }
+            }
+            catch
+            {
+                // ignoré volontairement
+            }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 8. MÉTHODES UTILITAIRES
+        // ═════════════════════════════════════════════════════════════
+
+        private bool IsExcluded(string folderName)
+        {
+            return _config.ExcludedFolders.Contains(folderName);
+        }
+
+        private string GetSafeName(string path)
+        {
+            var name = Path.GetFileName(path);
+
+            if (string.IsNullOrWhiteSpace(name))
+                return path;
+
+            return name;
         }
     }
 }
