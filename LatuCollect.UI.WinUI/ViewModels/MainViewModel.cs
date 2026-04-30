@@ -223,12 +223,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public bool AutoLoadLastFolder
         {
-            get => _config.AutoLoadLastFolder;
+            get => _userConfig.AutoLoadLastFolder;
             set
             {
-                if (_config.AutoLoadLastFolder != value)
+                if (_userConfig.AutoLoadLastFolder != value)
                 {
-                    _config.AutoLoadLastFolder = value;
+                    _userConfig.AutoLoadLastFolder = value;
                     _ = SaveConfigurationAsync();
                 }
             }
@@ -236,12 +236,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string DefaultFormat
         {
-            get => _config.DefaultFormat;
+            get => _userConfig.DefaultFormat;
             set
             {
-                if (_config.DefaultFormat != value)
+                if (_userConfig.DefaultFormat != value)
                 {
-                    _config.DefaultFormat = value;
+                    _userConfig.DefaultFormat = value;
                     SelectedFormat = value;
                     _ = SaveConfigurationAsync();
                 }
@@ -577,7 +577,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _exportMode, value))
                 {
-                    _config.ExportMode = value;
+                    _userConfig.ExportMode = value;
                     _ = SaveConfigurationAsync();
                 }
             }
@@ -838,7 +838,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 _lastSelectionSignature = currentSignature;
                 _lastIsMarkdown = isMarkdown;
-               
+
                 // 🔥 RESET message partiel si nouvelle sélection
                 _hasShownPartialWarning = false;
 
@@ -1151,10 +1151,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 ThemeChanged?.Invoke(SelectedTheme);
                 ApplyLogLevel(_userConfig.LogLevel);
                 SelectedLogLevel = _userConfig.LogLevel;
-                _config.DefaultFormat = _userConfig.DefaultFormat;
-                _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
-                _config.LastOpenedFolder = _userConfig.LastOpenedFolder;
-                _config.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+                _userConfig.DefaultFormat = _userConfig.DefaultFormat;
+                _userConfig.IsDeveloperMode = _userConfig.IsDeveloperMode;
+                _userConfig.LastOpenedFolder = _userConfig.LastOpenedFolder;
+                _userConfig.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
                 ExportMode = _userConfig.ExportMode ?? "normal";
                 _config.ExcludedFolders.Clear();
 
@@ -1181,7 +1181,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                         // Reset propre
                         _userConfig.LastOpenedFolder = string.Empty;
-                        _config.LastOpenedFolder = string.Empty;
+                        _userConfig.LastOpenedFolder = string.Empty;
 
                         await ShowFeedbackAsync("⚠ Le dernier dossier n'existe plus");
 
@@ -1212,7 +1212,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig.DefaultFormat = SelectedFormat ?? ".txt";
                 _userConfig.IsDeveloperMode = IsDeveloperMode;
                 _userConfig.LastOpenedFolder = CurrentFolderPath;
-                _userConfig.AutoLoadLastFolder = _config.AutoLoadLastFolder;
+                _userConfig.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
                 _userConfig.ExportMode = ExportMode;
                 _userConfig.ExcludedFolders = _config.ExcludedFolders.ToList();
                 _userConfig.LogLevel = GetCurrentLogLevel();
@@ -1241,12 +1241,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig = await _configurationService.ResetAsync();
 
                 // 🔧 CONFIG
-                _config.DefaultFormat = _userConfig.DefaultFormat;
-                _config.IsDeveloperMode = _userConfig.IsDeveloperMode;
+                _userConfig.DefaultFormat = _userConfig.DefaultFormat;
+                _userConfig.IsDeveloperMode = _userConfig.IsDeveloperMode;
 
                 // 🔥 IMPORTANT : on vide complètement
-                _config.LastOpenedFolder = string.Empty;
-                _config.AutoLoadLastFolder = false;
+                _userConfig.LastOpenedFolder = string.Empty;
+                _userConfig.AutoLoadLastFolder = false;
 
                 _config.ExcludedFolders.Clear();
 

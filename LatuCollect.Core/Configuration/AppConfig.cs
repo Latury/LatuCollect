@@ -44,57 +44,5 @@ namespace LatuCollect.Core.Configuration
             "obj",
             ".git"
         };
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. FORMAT PAR DÉFAUT
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Format utilisé pour l’export si non défini par l’utilisateur
-        //
-
-        public string DefaultFormat { get; set; } = ".txt";
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 3. MODE DÉVELOPPEUR
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Active les fonctionnalités avancées :
-        // - Simulation
-        // - Debug UI
-        //
-
-        public bool IsDeveloperMode { get; set; } = false;
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 4. DERNIER DOSSIER OUVERT
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Utilisé pour recharger automatiquement le dernier projet
-        //
-
-        public string LastOpenedFolder { get; set; } = string.Empty;
-
-        // ═════════════════════════════════════════════════════════════
-        // 5. MODE D’EXPORT
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Permet de choisir entre différents modes d’export (ex : Normal, Fast, Custom)
-        //
-        //
-
-        public string ExportMode { get; set; } = "normal";
-
-        // ═════════════════════════════════════════════════════════════
-        // 6. AUTO-CHARGEMENT
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Si activé :
-        // → recharge automatiquement LastOpenedFolder au démarrage
-        //
-
-        public bool AutoLoadLastFolder { get; set; } = false;
     }
 }
