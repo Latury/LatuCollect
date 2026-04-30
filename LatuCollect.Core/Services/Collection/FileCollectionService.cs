@@ -40,58 +40,57 @@ namespace LatuCollect.Core.Services.Collection
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. MÉTHODE PUBLIQUE
+        // 2. API PUBLIQUE
         // ═════════════════════════════════════════════════════════════
+        //
+        // Point d’entrée principal
+        //
 
         public List<string> GetSelectedFiles(IEnumerable<FileNode> roots)
         {
-            var files = new HashSet<string>();
-
+            // 🔒 sécurité
             if (roots == null)
                 return new List<string>();
 
+            var files = new HashSet<string>();
+
+            // 🔁 parcours des racines
             foreach (var root in roots)
             {
-                ProcessNode(root, files);
+                TraverseNode(root, files);
 
-                // 🔥 STOP si limite atteinte
-                if (files.Count >= MAX_FILES)
+                if (IsLimitReached(files))
                     break;
             }
 
-            // 🔹 conversion + tri
-            var result = files.ToList();
-            result.Sort();
-
-            return result;
+            return BuildResult(files);
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. PARCOURS RÉCURSIF
+        // 3. PARCOURS ARBORESCENCE
         // ═════════════════════════════════════════════════════════════
+        //
+        // Exploration récursive des nodes
+        //
 
-        private void ProcessNode(FileNode node, HashSet<string> files)
+        private void TraverseNode(FileNode node, HashSet<string> files)
         {
-            if (node == null)
+            if (node == null || IsLimitReached(files))
                 return;
 
-            // 🔥 STOP si limite atteinte
-            if (files.Count >= MAX_FILES)
-                return;
-
-            // 📄 Fichier sélectionné valide
+            // 📄 Ajout fichier valide
             if (IsValidSelectedFile(node))
             {
                 files.Add(node.Path);
             }
 
-            // 🔁 Parcours enfants
+            // 🔁 enfants
             foreach (var child in node.Children)
             {
-                ProcessNode(child, files);
+                TraverseNode(child, files);
 
-                if (files.Count >= MAX_FILES)
+                if (IsLimitReached(files))
                     return;
             }
         }
@@ -100,12 +99,43 @@ namespace LatuCollect.Core.Services.Collection
         // ═════════════════════════════════════════════════════════════
         // 4. VALIDATION
         // ═════════════════════════════════════════════════════════════
+        //
+        // Vérifie si un node représente un fichier valide
+        //
 
         private bool IsValidSelectedFile(FileNode node)
         {
             return node.IsSelected &&
                    !string.IsNullOrWhiteSpace(node.Path) &&
                    File.Exists(node.Path);
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. RÈGLES / LIMITES
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Gestion des contraintes de performance
+        //
+
+        private bool IsLimitReached(HashSet<string> files)
+        {
+            return files.Count >= MAX_FILES;
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. BUILD RÉSULTAT
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Transformation finale (tri + liste)
+        //
+
+        private List<string> BuildResult(HashSet<string> files)
+        {
+            var result = files.ToList();
+            result.Sort();
+            return result;
         }
     }
 }
