@@ -3,7 +3,7 @@
 ║                        LATUCOLLECT                                   ║
 ║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
-║  Module : Logging                                                    ║
+║  Module : Core.Logging.Interfaces                                    ║
 ║  Fichier : ILogService.cs                                            ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
@@ -34,16 +34,22 @@ namespace LatuCollect.Core.Logging.Interfaces
     public interface ILogService
     {
         // ═════════════════════════════════════════════════════════════
-        // 2. MÉTHODES DE LOG
+        // 2. MÉTHODES DE LOG — API PUBLIQUE
         // ═════════════════════════════════════════════════════════════
         //
-        // API principale utilisée par l’application
+        // Utilisées dans toute l’application pour tracer :
+        // - Informations
+        // - Avertissements
+        // - Erreurs
         //
 
+        // Log une information générale
         void Info(string message, string? context = null);
 
+        // Log un avertissement
         void Warning(string message, string? context = null);
 
+        // Log une erreur
         void Error(string message, string? context = null);
     }
 }
