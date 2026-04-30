@@ -3,7 +3,7 @@
 ║                        LATUCOLLECT                                   ║
 ║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
-║  Module : Logging.Services                                           ║
+║  Module : Core.Logging.Services                                      ║
 ║  Fichier : LogService.cs                                             ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
@@ -36,20 +36,15 @@ namespace LatuCollect.Core.Logging.Services
         // ═════════════════════════════════════════════════════════════
         // 1. CHAMPS PRIVÉS — STOCKAGE
         // ═════════════════════════════════════════════════════════════
-        //
-        // Contient tous les logs en mémoire
-        //
 
         private readonly ObservableCollection<LogEntry> _logs = new();
 
         private LogLevel _minimumLevel = LogLevel.Info;
 
+
         // ═════════════════════════════════════════════════════════════
-        // 2. PROPRIÉTÉS PUBLIQUES — EXPOSITION
+        // 2. PROPRIÉTÉS PUBLIQUES
         // ═════════════════════════════════════════════════════════════
-        //
-        // Version lecture seule pour l’UI / autres services
-        //
 
         public ReadOnlyObservableCollection<LogEntry> Logs { get; }
 
@@ -59,12 +54,10 @@ namespace LatuCollect.Core.Logging.Services
             set => _minimumLevel = value;
         }
 
+
         // ═════════════════════════════════════════════════════════════
         // 3. ÉVÉNEMENTS
         // ═════════════════════════════════════════════════════════════
-        //
-        // Notifie quand un log est ajouté
-        //
 
         public event EventHandler? LogsUpdated;
 
@@ -80,11 +73,8 @@ namespace LatuCollect.Core.Logging.Services
 
 
         // ═════════════════════════════════════════════════════════════
-        // 5. MÉTHODES PUBLIQUES — API LOGGING
+        // 5. API PUBLIQUE — LOGGING
         // ═════════════════════════════════════════════════════════════
-        //
-        // Points d’entrée principaux
-        //
 
         public void Info(string message, string? context = null)
         {
@@ -103,22 +93,40 @@ namespace LatuCollect.Core.Logging.Services
 
 
         // ═════════════════════════════════════════════════════════════
-        // 6. MÉTHODE INTERNE — AJOUT LOG
+        // 6. MÉTHODES PRIVÉES
         // ═════════════════════════════════════════════════════════════
-        //
-        // Création + stockage + notification
-        //
 
+        // Ajoute un log après filtrage
         private void Add(LogLevel level, string message, string? context)
         {
-            // 🔴 FILTRAGE
-            if (level < _minimumLevel)
+            if (!ShouldLog(level))
                 return;
 
-            var log = new LogEntry(level, message, context);
+            var log = CreateEntry(level, message, context);
 
             _logs.Add(log);
 
+            NotifyUpdated();
+        }
+
+
+        // Vérifie si le niveau est autorisé
+        private bool ShouldLog(LogLevel level)
+        {
+            return level >= _minimumLevel;
+        }
+
+
+        // Crée une entrée de log
+        private LogEntry CreateEntry(LogLevel level, string message, string? context)
+        {
+            return new LogEntry(level, message, context);
+        }
+
+
+        // Notifie les abonnés
+        private void NotifyUpdated()
+        {
             LogsUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
