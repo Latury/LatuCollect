@@ -27,8 +27,11 @@ namespace LatuCollect.Core.Models
     public class FileNode
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. PROPRIÉTÉS PRINCIPALES
+        // 1. IDENTITÉ DU NODE
         // ═════════════════════════════════════════════════════════════
+        //
+        // Informations de base du fichier / dossier
+        //
 
         public string Name { get; set; } = string.Empty;
 
@@ -39,7 +42,8 @@ namespace LatuCollect.Core.Models
         // 2. TYPE DU NODE
         // ═════════════════════════════════════════════════════════════
         //
-        // Permet de savoir si c’est un fichier ou un dossier
+        // true = dossier
+        // false = fichier
         //
 
         public bool IsDirectory { get; set; }
@@ -48,6 +52,10 @@ namespace LatuCollect.Core.Models
         // ═════════════════════════════════════════════════════════════
         // 3. ÉTAT DE SÉLECTION
         // ═════════════════════════════════════════════════════════════
+        //
+        // ⚠ Utilisé par la couche UI
+        // TODO (refactor futur) : déplacer dans le modèle UI
+        //
 
         public bool IsSelected { get; set; }
 
@@ -55,6 +63,9 @@ namespace LatuCollect.Core.Models
         // ═════════════════════════════════════════════════════════════
         // 4. STRUCTURE ARBORESCENTE
         // ═════════════════════════════════════════════════════════════
+        //
+        // Enfants du node (si dossier)
+        //
 
         public List<FileNode> Children { get; set; } = new();
 
@@ -62,10 +73,8 @@ namespace LatuCollect.Core.Models
         // ═════════════════════════════════════════════════════════════
         // 5. PROPRIÉTÉS CALCULÉES
         // ═════════════════════════════════════════════════════════════
-        //
-        // Aide pour éviter des erreurs ailleurs
-        //
 
+        // Indique si le node contient des enfants
         public bool HasChildren => Children.Count > 0;
     }
 }
