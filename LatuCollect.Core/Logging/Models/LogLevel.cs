@@ -3,7 +3,7 @@
 ║                        LATUCOLLECT                                   ║
 ║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
-║  Module : Logging                                                    ║
+║  Module : Core.Logging.Models                                        ║
 ║  Fichier : LogLevel.cs                                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
@@ -32,13 +32,13 @@ namespace LatuCollect.Core.Logging.Models
 
     public enum LogLevel
     {
-        // ℹ️ Information générale (fonctionnement normal)
+        // Information générale (fonctionnement normal)
         Info,
 
-        // ⚠️ Avertissement (problème non bloquant)
+        // Avertissement (problème non bloquant)
         Warning,
 
-        // ❌ Erreur (échec ou comportement inattendu)
+        // Erreur (échec ou comportement inattendu)
         Error
     }
 }
