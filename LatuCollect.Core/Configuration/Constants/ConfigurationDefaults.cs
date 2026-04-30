@@ -8,7 +8,8 @@
 ║  Centraliser les valeurs par défaut de la configuration              ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Fournir une configuration par défaut                              ║
+║  - Fournir des constantes de configuration par défaut                ║
+║  - Fournir une instance UserConfig initialisée                       ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Données uniquement                                                ║
@@ -28,9 +29,6 @@ namespace LatuCollect.Core.Configuration.Constants
         // ═════════════════════════════════════════════════════════════
         // 1. CONSTANTES PAR DÉFAUT
         // ═════════════════════════════════════════════════════════════
-        //
-        // Toutes les valeurs par défaut sont centralisées ici
-        //
 
         public const string DEFAULT_FORMAT = ".txt";
         public const bool DEFAULT_DEV_MODE = false;
@@ -40,10 +38,14 @@ namespace LatuCollect.Core.Configuration.Constants
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. DOSSIERS EXCLUS PAR DÉFAUT
+        // 2. DOSSIERS EXCLUS PAR DÉFAUT (IMMUTABLES)
         // ═════════════════════════════════════════════════════════════
+        //
+        // ⚠️ Retourne une nouvelle instance à chaque appel
+        // pour éviter toute modification globale
+        //
 
-        public static List<string> DefaultExcludedFolders => new()
+        public static IReadOnlyList<string> DefaultExcludedFolders => new List<string>
         {
             "bin",
             "obj",
@@ -52,21 +54,23 @@ namespace LatuCollect.Core.Configuration.Constants
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. CONFIGURATION COMPLÈTE
+        // 3. CONFIGURATION COMPLÈTE PAR DÉFAUT
         // ═════════════════════════════════════════════════════════════
-        //
-        // Crée une instance complète avec toutes les valeurs par défaut
-        //
 
-        public static UserConfig Default => new()
+        public static UserConfig CreateDefault()
         {
-            DefaultFormat = DEFAULT_FORMAT,
-            IsDeveloperMode = DEFAULT_DEV_MODE,
-            LastOpenedFolder = string.Empty,
-            AutoLoadLastFolder = DEFAULT_AUTO_LOAD,
-            PreviewMaxFiles = DEFAULT_PREVIEW_MAX_FILES,
-            Theme = DEFAULT_THEME,
-            ExcludedFolders = new List<string>(DefaultExcludedFolders)
-        };
+            return new UserConfig
+            {
+                DefaultFormat = DEFAULT_FORMAT,
+                IsDeveloperMode = DEFAULT_DEV_MODE,
+                LastOpenedFolder = string.Empty,
+                AutoLoadLastFolder = DEFAULT_AUTO_LOAD,
+                PreviewMaxFiles = DEFAULT_PREVIEW_MAX_FILES,
+                Theme = DEFAULT_THEME,
+
+                // Copie défensive pour éviter toute mutation externe
+                ExcludedFolders = new List<string>(DefaultExcludedFolders)
+            };
+        }
     }
 }
