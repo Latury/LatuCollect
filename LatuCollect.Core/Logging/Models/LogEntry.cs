@@ -3,7 +3,7 @@
 ║                        LATUCOLLECT                                   ║
 ║     Application de collecte et export de contenu multi-fichiers      ║
 ║                                                                      ║
-║  Module : Logging.Models                                             ║
+║  Module : Core.Logging.Models                                        ║
 ║  Fichier : LogEntry.cs                                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
@@ -32,10 +32,10 @@ namespace LatuCollect.Core.Logging.Models
     public class LogEntry
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. PROPRIÉTÉS PRINCIPALES
+        // 1. DONNÉES BRUTES (CORE)
         // ═════════════════════════════════════════════════════════════
         //
-        // Données brutes du log
+        // Informations fondamentales du log
         //
 
         public DateTime Timestamp { get; }
@@ -48,10 +48,11 @@ namespace LatuCollect.Core.Logging.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. PROPRIÉTÉS FORMATÉES (AFFICHAGE)
+        // 2. DONNÉES FORMATÉES
         // ═════════════════════════════════════════════════════════════
         //
-        // Données prêtes pour l’UI
+        // ⚠ Préparé pour affichage (UI)
+        // TODO (refactor futur) : déplacer le formatage côté UI
         //
 
         public string Date { get; }
