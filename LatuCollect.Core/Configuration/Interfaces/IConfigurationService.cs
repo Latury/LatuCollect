@@ -8,9 +8,13 @@
 ║  Définir le contrat du service de configuration                      ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Charger la configuration                                          ║
+║  - Charger la configuration utilisateur                              ║
 ║  - Sauvegarder la configuration                                      ║
 ║  - Réinitialiser la configuration                                    ║
+║                                                                      ║
+║  IMPORTANT (ALC) :                                                   ║
+║  - Contrat uniquement                                                ║
+║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ╚══════════════════════════════════════════════════════════════════════╝
@@ -28,7 +32,11 @@ namespace LatuCollect.Core.Configuration.Interfaces
         // ═════════════════════════════════════════════════════════════
         //
         // Charge la configuration utilisateur depuis le stockage
-        // Retourne toujours une configuration valide
+        //
+        // CONTRAT :
+        // - Ne retourne jamais null
+        // - Retourne toujours une configuration valide
+        // - Peut retourner une configuration par défaut si échec
         //
 
         Task<UserConfig> LoadAsync();
@@ -40,6 +48,10 @@ namespace LatuCollect.Core.Configuration.Interfaces
         //
         // Sauvegarde la configuration utilisateur
         //
+        // CONTRAT :
+        // - config ne doit jamais être null
+        // - Doit gérer les erreurs (I/O, accès disque, etc.)
+        //
 
         Task SaveAsync(UserConfig config);
 
@@ -49,6 +61,11 @@ namespace LatuCollect.Core.Configuration.Interfaces
         // ═════════════════════════════════════════════════════════════
         //
         // Réinitialise la configuration avec les valeurs par défaut
+        //
+        // CONTRAT :
+        // - Remplace la configuration actuelle
+        // - Sauvegarde immédiatement la nouvelle configuration
+        // - Retourne la configuration réinitialisée
         //
 
         Task<UserConfig> ResetAsync();
