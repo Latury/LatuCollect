@@ -28,21 +28,43 @@ namespace LatuCollect.Core.Models
     public class FileReadResult
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. PROPRIÉTÉS
+        // 1. ÉTAT DU RÉSULTAT
         // ═════════════════════════════════════════════════════════════
+        //
+        // Indique si la lecture a réussi ou échoué
+        //
 
         public bool IsSuccess { get; set; }
 
-        public string Content { get; set; } = string.Empty;
 
-        public string ErrorMessage { get; set; } = string.Empty;
+        // ═════════════════════════════════════════════════════════════
+        // 2. DONNÉES DU FICHIER
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Contenu et taille du fichier
+        //
+
+        public string Content { get; set; } = string.Empty;
 
         public long FileSize { get; set; }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. MÉTHODES STATIQUES (FACILITATEURS)
+        // 3. ERREUR
         // ═════════════════════════════════════════════════════════════
+        //
+        // Message présent uniquement si IsSuccess = false
+        //
+
+        public string ErrorMessage { get; set; } = string.Empty;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. FACTORY METHODS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Méthodes utilitaires pour créer un résultat valide
+        //
 
         public static FileReadResult Success(string content, long fileSize)
         {
