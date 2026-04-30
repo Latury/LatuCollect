@@ -25,90 +25,155 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Models;
 using LatuCollect.Core.Simulation;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LatuCollect.Core.Services.Reader
 {
     public static class FileReaderService
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS — CACHE
+        // 1. CACHE
         // ═════════════════════════════════════════════════════════════
-        //
-        // Cache mémoire :
-        // clé   → chemin fichier
-        // valeur → contenu fichier
-        //
 
-        private static readonly Dictionary<string, string> _fileCache = new();
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. MÉTHODE PUBLIQUE
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Lecture sécurisée d’un fichier texte
-        //
-
-        public static string ReadFile(string path)
+        private const int MAX_CACHE_ITEMS = 100;
+        private static readonly TimeSpan CACHE_DURATION = TimeSpan.FromMinutes(5);
+        private class CacheItem
         {
-            // 🔹 Sécurité minimale
+            public FileReadResult Result { get; set; }
+            public DateTime Timestamp { get; set; }
+        }
+
+        private static readonly ConcurrentDictionary<string, CacheItem> _fileCache = new();
+
+        private const long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. LECTURE FICHIER (ASYNC)
+        // ═════════════════════════════════════════════════════════════
+
+        public static async Task<FileReadResult> ReadFileAsync(string path)
+        {
+            // 🔹 Validation
             if (string.IsNullOrWhiteSpace(path))
-                return "[Chemin invalide]";
+                return FileReadResult.Fail("Chemin invalide");
 
             try
             {
-                // 📄 Vérification existence
+                // 🔹 Existence fichier
                 if (!File.Exists(path))
-                    return "[Fichier introuvable]";
+                    return FileReadResult.Fail("Fichier introuvable");
 
-                // 🧪 Simulation (prioritaire)
+                // 🧪 Simulation
                 var simulated = SimulationService.SimulateRead(path);
                 if (simulated != null)
-                    return simulated;
+                    return FileReadResult.Success(simulated, 0);
 
                 // 🔁 Cache
-                if (_fileCache.TryGetValue(path, out var cachedContent))
+                if (_fileCache.TryGetValue(path, out var cachedItem))
                 {
-                    return cachedContent;
+                    if (DateTime.Now - cachedItem.Timestamp < CACHE_DURATION)
+                    {
+                        return cachedItem.Result;
+                    }
+                    else
+                    {
+                        _fileCache.TryRemove(path, out _);
+                    }
                 }
 
-                // 📖 Lecture fichier
-                var content = File.ReadAllText(path);
+                // 🔥 Limitation taille fichier (ex: 10 Mo)
+                string content;
 
-                // 💾 Mise en cache
-                _fileCache[path] = content;
+                long fileSize = 0;
 
-                return content;
+                try
+                {
+                    fileSize = new FileInfo(path).Length;
+                }
+                catch
+                {
+                    // ignoré
+                }
+
+                // 🔥 GROS FICHIER → lecture partielle
+                if (fileSize > MAX_FILE_SIZE)
+                {
+                    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    using var reader = new StreamReader(stream);
+
+                    char[] buffer = new char[MAX_FILE_SIZE];
+                    int read = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
+
+                    content = new string(buffer, 0, read);
+
+                    content += "\n\n----------------------------------------\n";
+                    content += "⚠ Fichier tronqué (trop volumineux)";
+                }
+                else
+                {
+                    content = await File.ReadAllTextAsync(path);
+                }
+
+                // 📦 Résultat
+                var result = FileReadResult.Success(content, fileSize);
+
+                // 💾 Cache
+                _fileCache[path] = new CacheItem
+                {
+                    Result = result,
+                    Timestamp = DateTime.Now
+                };
+
+                // 🔥 LIMITATION CACHE (ICI EXACTEMENT)
+                if (_fileCache.Count > MAX_CACHE_ITEMS)
+                {
+                    CleanOldestCacheItem();
+                }
+
+                return result;
             }
             catch (PathTooLongException)
             {
-                return "[Chemin trop long]";
+                return FileReadResult.Fail("Chemin trop long");
             }
             catch (UnauthorizedAccessException)
             {
-                return "[Accès refusé]";
+                return FileReadResult.Fail("Accès refusé");
             }
             catch (IOException)
             {
-                return "[Erreur de lecture]";
+                return FileReadResult.Fail("Erreur de lecture");
             }
             catch (Exception)
             {
-                return "[Erreur inconnue]";
+                return FileReadResult.Fail("Erreur inconnue");
             }
         }
 
+        private static void CleanOldestCacheItem()
+        {
+            if (_fileCache.IsEmpty)
+                return;
+
+            var oldest = _fileCache
+                .OrderBy(kvp => kvp.Value.Timestamp)
+                .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(oldest.Key))
+            {
+                _fileCache.TryRemove(oldest.Key, out _);
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // 3. MÉTHODES UTILITAIRES (CACHE)
+        // 3. CACHE UTILITAIRE
         // ═════════════════════════════════════════════════════════════
-        //
-        // Gestion du cache mémoire
-        //
 
         public static void ClearCache()
         {
@@ -118,7 +183,7 @@ namespace LatuCollect.Core.Services.Reader
         public static void RemoveFromCache(string path)
         {
             if (!string.IsNullOrWhiteSpace(path))
-                _fileCache.Remove(path);
+                _fileCache.TryRemove(path, out _);
         }
     }
 }

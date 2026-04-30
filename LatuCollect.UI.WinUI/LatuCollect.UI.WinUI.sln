@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatuCollect.UI.WinUI", "Lat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatuCollect.Core", "..\LatuCollect.Core\LatuCollect.Core.csproj", "{E7CCF23F-E4FB-426E-9749-97AAC0B7E00E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatuCollect.Tests", "..\LatuCollect.Tests\LatuCollect.Tests.csproj", "{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -47,6 +49,18 @@ Global
 		{E7CCF23F-E4FB-426E-9749-97AAC0B7E00E}.Release|x64.Build.0 = Release|x64
 		{E7CCF23F-E4FB-426E-9749-97AAC0B7E00E}.Release|x86.ActiveCfg = Release|Any CPU
 		{E7CCF23F-E4FB-426E-9749-97AAC0B7E00E}.Release|x86.Build.0 = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|x64.ActiveCfg = Debug|x64
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|x64.Build.0 = Debug|x64
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Debug|x86.Build.0 = Debug|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|ARM64.Build.0 = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|x64.ActiveCfg = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|x64.Build.0 = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|x86.ActiveCfg = Release|Any CPU
+		{5375BD2B-5D49-4542-8D63-C7EF7D9ADED1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

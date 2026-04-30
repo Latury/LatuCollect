@@ -69,17 +69,29 @@ namespace LatuCollect.Core.Configuration.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 5. CONFIGURATION APERÇU
+        // 5. MODE D’EXPORT
         // ═════════════════════════════════════════════════════════════
         //
         // Limites pour éviter surcharge UI
+        // - Nombre maximal de fichiers affichés dans l’aperçu
+        // - Mode d’export (ex : Normal, Fast, Custom)
         //
 
         public int PreviewMaxFiles { get; set; } = 20;
 
+        public string ExportMode { get; set; } = "normal";
 
         // ═════════════════════════════════════════════════════════════
-        // 6. THÈME (FUTUR)
+        // 6. LOGS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Niveau minimal des logs affichés
+        //
+
+        public string LogLevel { get; set; } = "Info";
+
+        // ═════════════════════════════════════════════════════════════
+        // 7. THÈME (FUTUR)
         // ═════════════════════════════════════════════════════════════
         //
         // Thème UI (Light / Dark)

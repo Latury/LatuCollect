@@ -65,7 +65,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Themes\" />
     <Folder Include="Settings\ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Settings\Pages\SettingsExportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
 </Project>

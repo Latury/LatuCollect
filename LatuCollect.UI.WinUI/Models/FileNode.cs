@@ -69,16 +69,13 @@ namespace LatuCollect.UI.WinUI.Models
             get => _isSelected;
             set
             {
-                if (SetProperty(ref _isSelected, value))
-                {
-                    SelectionChanged?.Invoke(this);
-                }
+                if (_isSelected == value)
+                    return;
+
+                SetProperty(ref _isSelected, value);
             }
         }
-
-        public event Action<FileNode>? SelectionChanged;
-
-
+        
         // ═════════════════════════════════════════════════════════════
         // 4. VISIBILITÉ (RECHERCHE)
         // ═════════════════════════════════════════════════════════════
@@ -95,5 +92,7 @@ namespace LatuCollect.UI.WinUI.Models
         // ═════════════════════════════════════════════════════════════
 
         public ObservableCollection<FileNode> Children { get; } = new();
+
+        public FileNode? Parent { get; set; }
     }
 }

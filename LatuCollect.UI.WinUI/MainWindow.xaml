@@ -53,56 +53,6 @@
         <!--  =========================  -->
         <Grid x:Name="MainContent">
 
-            <Grid.Resources>
-
-                <!--  🧾 TEMPLATE LOGS  -->
-                <DataTemplate x:Key="LogItemTemplate">
-                    <Border
-                        Margin="2"
-                        Padding="6"
-                        Background="#2D2D30"
-                        BorderBrush="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
-                        BorderThickness="0,0,0,1"
-                        CornerRadius="4">
-
-                        <StackPanel Spacing="4">
-
-                            <!--  Ligne 1 : Date + Niveau  -->
-                            <StackPanel Orientation="Horizontal" Spacing="14">
-
-                                <!--  Date  -->
-                                <TextBlock
-                                    FontSize="12"
-                                    Foreground="#AAAAAA"
-                                    Text="{Binding Date}" />
-
-                                <!--  Niveau (couleur dynamique)  -->
-                                <TextBlock
-                                    FontWeight="SemiBold"
-                                    Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
-                                    Text="{Binding Level}" />
-
-                            </StackPanel>
-
-                            <!--  Ligne 2 : Message  -->
-                            <TextBlock
-                                FontSize="13"
-                                Text="{Binding Message}"
-                                TextWrapping="Wrap" />
-
-                            <!--  Ligne 3 : Contexte  -->
-                            <TextBlock
-                                FontSize="11"
-                                Foreground="#888888"
-                                Text="{Binding Context}"
-                                TextWrapping="Wrap" />
-
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-
-            </Grid.Resources>
-
             <!--  =========================  -->
             <!--  STRUCTURE PRINCIPALE  -->
             <!--  =========================  -->
@@ -129,70 +79,56 @@
 
                 <Grid>
 
-                    <!--  STRUCTURE GAUCHE  -->
+                    <!--  STRUCTURE IDENTIQUE À LA DROITE  -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <!--  barre du haut  -->
+                        <!--  header  -->
                         <RowDefinition Height="Auto" />
-                        <!--  recherche  -->
+                        <!--  search  -->
                         <RowDefinition Height="*" />
-                        <!--  tree  -->
+                        <!--  contenu  -->
+                        <RowDefinition Height="Auto" />
+                        <!--  faux footer  -->
                     </Grid.RowDefinitions>
 
-                    <!--  CHARGEUR DE DOSSIER + BARRE RECHERCHE  -->
+                    <!--  HEADER  -->
                     <Grid Grid.Row="0" Margin="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <!--  📂  -->
                             <ColumnDefinition Width="Auto" />
-                            <!--  ☑  -->
                             <ColumnDefinition Width="*" />
-                            <!--  espace  -->
                             <ColumnDefinition Width="Auto" />
-                            <!--  🔍  -->
                         </Grid.ColumnDefinitions>
-                        <!--  📂  -->
+
                         <Button
                             Width="40"
                             Height="40"
                             Click="OnPickFolderClicked"
-                            Content="📂"
-                            ToolTipService.ToolTip="Ouvrir un dossier" />
+                            Content="📂" />
 
-                        <!--  ☑ Sélection globale  -->
-                        <CheckBox
-                            Grid.Column="1"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Content="Tout sélectionner"
-                            IsChecked="{Binding IsAllSelected, Mode=TwoWay}"
-                            Opacity="0.6"
-                            ToolTipService.ToolTip="Désactivé temporairement pour performance" />
-
-                        <!--  🔍  -->
                         <Button
                             Grid.Column="3"
                             Width="40"
                             Height="40"
                             Click="OnSearchClicked"
-                            Content="🔍"
-                            ToolTipService.ToolTip="Rechercher un fichier" />
+                            Content="🔍" />
                     </Grid>
 
-                    <!--  BARRE DE RECHERCHE  -->
+                    <!--  SEARCH  -->
                     <TextBox
                         Grid.Row="1"
                         MinHeight="40"
                         Margin="10,0,10,5"
                         PlaceholderText="Rechercher un fichier..."
-                        Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding SearchText, Mode=TwoWay}"
                         Visibility="{Binding IsSearchVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <!--  ARBORESCENCE  -->
+                    <!--  CONTENU (TREE + OVERLAY)  -->
                     <Grid Grid.Row="2">
 
-                        <!--  🌳 ARBRE  -->
-                        <TreeView ItemsSource="{Binding FilteredTree}">
+                        <!--  TREE  -->
+                        <TreeView ItemsSource="{Binding FilteredTree}" Visibility="{Binding IsTreeEmpty, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="models:FileNode">
                                     <TreeViewItem ItemsSource="{Binding Children}">
@@ -203,41 +139,66 @@
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!--  📁 / 📄  -->
                                             <TextBlock
                                                 Grid.Column="0"
+                                                Width="24"
+                                                HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 FontFamily="Segoe UI Emoji"
+                                                FontSize="16"
                                                 Foreground="White"
                                                 Text="{Binding Children.Count, Converter={StaticResource FolderFileIconConverter}}" />
 
-                                            <!--  Nom  -->
                                             <CheckBox
                                                 Grid.Column="1"
+                                                HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 Content="{Binding Name}"
                                                 Foreground="White"
-                                                IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-
+                                                IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                                Tapped="OnNodeTapped" />
                                         </Grid>
                                     </TreeViewItem>
                                 </DataTemplate>
                             </TreeView.ItemTemplate>
                         </TreeView>
 
-                        <!--  🚫 AUCUN RÉSULTAT  -->
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Opacity="0.6"
-                            Text="Aucun résultat"
-                            Visibility="{Binding HasSearchResult, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <!--  OVERLAY  -->
+                        <Grid IsHitTestVisible="False">
+
+                            <!--  PAS DE DOSSIER  -->
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="White"
+                                Opacity="0.6"
+                                Text="Veuillez sélectionner un dossier"
+                                TextAlignment="Center"
+                                Visibility="{Binding IsTreeEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <!--  AUCUN RÉSULTAT  -->
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="White"
+                                Opacity="0.6"
+                                Text="Aucun résultat"
+                                TextAlignment="Center"
+                                Visibility="{Binding HasSearchResult, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                        </Grid>
 
                     </Grid>
 
-                </Grid>
+                    <!--  FAUX FOOTER  -->
+                    <Border
+                        Grid.Row="3"
+                        Height="60"
+                        Opacity="0" />
 
+                </Grid>
             </Border>
 
             <!--  ======================================================  -->
@@ -420,31 +381,38 @@
                     <Grid Grid.Row="1">
 
                         <!--  CONTENU  -->
-                        <Grid>
+                        <ScrollViewer
+                            Grid.Row="1"
+                            Margin="20"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto"
+                            Visibility="{Binding CurrentState, Converter={StaticResource PreviewVisibleConverter}}">
 
-                            <ScrollViewer
-                                HorizontalScrollBarVisibility="Auto"
-                                VerticalScrollBarVisibility="Auto"
-                                Visibility="{Binding CurrentState, Converter={StaticResource PreviewVisibleConverter}}">
+                            <TextBox
+                                AcceptsReturn="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontFamily="Cascadia Code"
+                                FontSize="13"
+                                Foreground="White"
+                                IsReadOnly="True"
+                                IsTabStop="False"
+                                Text="{Binding PreviewText}"
+                                TextWrapping="Wrap" />
 
-                                <TextBlock
-                                    Margin="20"
-                                    FontFamily="Cascadia Code"
-                                    FontSize="13"
-                                    Foreground="White"
-                                    Text="{Binding PreviewText}"
-                                    TextWrapping="Wrap" />
-                            </ScrollViewer>
+                        </ScrollViewer>
+
+                        <Grid IsHitTestVisible="False" Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="16"
                                 Foreground="White"
+                                Opacity="0.6"
                                 Text="Aucun fichier sélectionné..."
                                 TextAlignment="Center"
-                                TextWrapping="Wrap"
-                                Visibility="{Binding CurrentState, Converter={StaticResource PreviewEmptyConverter}}" />
+                                TextWrapping="Wrap" />
 
                         </Grid>
 

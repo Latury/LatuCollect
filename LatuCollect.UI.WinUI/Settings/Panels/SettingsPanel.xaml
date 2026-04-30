@@ -103,6 +103,12 @@
                             Click="OnGeneralClicked"
                             Content="⚙ Général" />
 
+                        <!--  Export mode  -->
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Click="OnExportModeClicked"
+                            Content="📤 Mode d’export" />
+
                         <!--  Exclusions  -->
                         <Button
                             HorizontalAlignment="Stretch"

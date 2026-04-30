@@ -57,8 +57,10 @@ namespace LatuCollect.UI.WinUI.Converters
             if (value == null)
                 return Visibility.Collapsed;
 
-            // Comparaison par string (découplage du ViewModel)
-            if (value.ToString() == "Ready")
+            var state = value.ToString();
+
+            // Visible en Ready ET Empty
+            if (state == "Ready")
                 return Visibility.Visible;
 
             return Visibility.Collapsed;
@@ -101,7 +103,7 @@ namespace LatuCollect.UI.WinUI.Converters
             if (value == null)
                 return Visibility.Collapsed;
 
-            if (value.ToString() == "Empty")
+            if (value.ToString() == "Ready")
                 return Visibility.Visible;
 
             return Visibility.Collapsed;

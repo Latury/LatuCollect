@@ -11,6 +11,8 @@
 ║  - Lire les dossiers et fichiers                                     ║
 ║  - Construire les FileNode                                           ║
 ║  - Appliquer les exclusions                                          ║
+║  - Gérer les limites (performance)                                   ║
+║  - Retourner un résultat structuré                                   ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Aucune dépendance UI                                              ║
@@ -26,29 +28,41 @@ using LatuCollect.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LatuCollect.Core.Services.Import
 {
+    // ═════════════════════════════════════════════════════════════
+    // 1. MODÈLE RÉSULTAT
+    // ═════════════════════════════════════════════════════════════
+
+    public class ImportResult
+    {
+        public List<FileNode> Nodes { get; set; } = new();
+        public int TotalNodes { get; set; }
+        public bool IsPartial { get; set; }
+        public string Message { get; set; } = "";
+    }
+
+    // ═════════════════════════════════════════════════════════════
+    // 2. SERVICE IMPORT
+    // ═════════════════════════════════════════════════════════════
+
     public class FileImportService
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CONSTANTES / LIMITES
+        // 2.1 LIMITES
         // ═════════════════════════════════════════════════════════════
 
         private const int MAX_NODES = 1000;
         private const int MAX_DEPTH = 10;
 
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONFIGURATION
-        // ═════════════════════════════════════════════════════════════
-
         private readonly AppConfig _config;
 
-
         // ═════════════════════════════════════════════════════════════
-        // 3. CONSTRUCTEUR
+        // 2.2 CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
         public FileImportService(AppConfig config)
@@ -56,43 +70,61 @@ namespace LatuCollect.Core.Services.Import
             _config = config;
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 4. MÉTHODE PUBLIQUE
+        // 2.3 MÉTHODE PUBLIQUE
         // ═════════════════════════════════════════════════════════════
 
-        public async Task<List<FileNode>> LoadTreeAsync(string rootPath)
+        public async Task<ImportResult> LoadTreeAsync(
+    string rootPath,
+    CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(rootPath))
-                return new List<FileNode>();
+            var result = new ImportResult();
 
-            if (!Directory.Exists(rootPath))
-                return new List<FileNode>();
+            if (string.IsNullOrWhiteSpace(rootPath) || !Directory.Exists(rootPath))
+                return result;
 
             return await Task.Run(() =>
             {
-                var result = new List<FileNode>();
                 int count = 0;
 
-                var rootNode = CreateNode(rootPath, 0, ref count);
+                var rootNode = CreateNode(
+    rootPath,
+    depth: 0,
+    ref count,
+    result,
+    cancellationToken
+);
 
                 if (rootNode != null)
-                    result.Add(rootNode);
+                    result.Nodes.Add(rootNode);
+
+                result.TotalNodes = count;
 
                 return result;
-            });
+
+            }, cancellationToken);
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 5. CONSTRUCTION ARBORESCENCE (RÉCURSIVE)
+        // 2.4 CRÉATION NODE
         // ═════════════════════════════════════════════════════════════
 
-        private FileNode CreateNode(string path, int depth, ref int count)
+        private FileNode? CreateNode(
+            string path,
+            int depth,
+            ref int count,
+            ImportResult result,
+            CancellationToken token)
         {
-            // 🔒 Limites globales
-            if (depth > MAX_DEPTH || count >= MAX_NODES)
+            if (token.IsCancellationRequested)
                 return null;
+
+            if (depth > MAX_DEPTH || count >= MAX_NODES)
+            {
+                result.IsPartial = true;
+                result.Message = "⚠ Projet volumineux — affichage partiel";
+                return null;
+            }
 
             var node = new FileNode
             {
@@ -103,38 +135,53 @@ namespace LatuCollect.Core.Services.Import
 
             count++;
 
-            if (!Directory.Exists(path))
+            if (!node.IsDirectory)
                 return node;
 
-            // 📁 Dossiers
-            TryAddDirectories(node, path, depth, ref count);
+            // 📁 DOSSIERS (triés)
+            TryAddDirectories(node, path, depth, ref count, result, token);
 
-            // 📄 Fichiers
-            TryAddFiles(node, path, ref count);
+            // 📄 FICHIERS (triés)
+            TryAddFiles(node, path, ref count, result, token);
 
             return node;
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 6. DOSSIERS
+        // 2.5 DOSSIERS
         // ═════════════════════════════════════════════════════════════
 
-        private void TryAddDirectories(FileNode parent, string path, int depth, ref int count)
+        private void TryAddDirectories(
+            FileNode parent,
+            string path,
+            int depth,
+            ref int count,
+            ImportResult result,
+            CancellationToken token)
         {
             try
             {
-                foreach (var dir in Directory.GetDirectories(path))
+                var directories = Directory
+                    .EnumerateDirectories(path)
+                    .OrderBy(d => d);
+
+                foreach (var dir in directories)
                 {
+                    if (token.IsCancellationRequested)
+                        return;
+
                     if (count >= MAX_NODES)
-                        break;
+                    {
+                        result.IsPartial = true;
+                        return;
+                    }
 
                     var folderName = Path.GetFileName(dir);
 
                     if (IsExcluded(folderName))
                         continue;
 
-                    var child = CreateNode(dir, depth + 1, ref count);
+                    var child = CreateNode(dir, depth + 1, ref count, result, token);
 
                     if (child != null)
                         parent.Children.Add(child);
@@ -142,23 +189,37 @@ namespace LatuCollect.Core.Services.Import
             }
             catch
             {
-                // accès refusé, ignoré volontairement
+                // ignoré volontairement
             }
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 7. FICHIERS
+        // 2.6 FICHIERS
         // ═════════════════════════════════════════════════════════════
 
-        private void TryAddFiles(FileNode parent, string path, ref int count)
+        private void TryAddFiles(
+            FileNode parent,
+            string path,
+            ref int count,
+            ImportResult result,
+            CancellationToken token)
         {
             try
             {
-                foreach (var file in Directory.GetFiles(path))
+                var files = Directory
+                    .EnumerateFiles(path)
+                    .OrderBy(f => f);
+
+                foreach (var file in files)
                 {
+                    if (token.IsCancellationRequested)
+                        return;
+
                     if (count >= MAX_NODES)
-                        break;
+                    {
+                        result.IsPartial = true;
+                        return;
+                    }
 
                     parent.Children.Add(new FileNode
                     {
@@ -176,9 +237,8 @@ namespace LatuCollect.Core.Services.Import
             }
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 8. MÉTHODES UTILITAIRES
+        // 2.7 UTILITAIRES
         // ═════════════════════════════════════════════════════════════
 
         private bool IsExcluded(string folderName)
@@ -189,11 +249,7 @@ namespace LatuCollect.Core.Services.Import
         private string GetSafeName(string path)
         {
             var name = Path.GetFileName(path);
-
-            if (string.IsNullOrWhiteSpace(name))
-                return path;
-
-            return name;
+            return string.IsNullOrWhiteSpace(name) ? path : name;
         }
     }
 }

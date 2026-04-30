@@ -18,10 +18,6 @@
 ║  - Ne dépend PAS de l’UI                                             ║
 ║  - Travaille uniquement avec Core.Models.FileNode                    ║
 ║                                                                      ║
-║  Dépendances :                                                       ║
-║  - System.IO                                                         ║
-║  - Core.Models.FileNode                                              ║
-║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
@@ -30,41 +26,58 @@
 using LatuCollect.Core.Models;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LatuCollect.Core.Services.Collection
 {
     public class FileCollectionService
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. MÉTHODE PUBLIQUE
+        // 1. CONSTANTES
         // ═════════════════════════════════════════════════════════════
-        //
-        // Récupère tous les fichiers sélectionnés
-        //
+
+        private const int MAX_FILES = 5000;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. MÉTHODE PUBLIQUE
+        // ═════════════════════════════════════════════════════════════
 
         public List<string> GetSelectedFiles(IEnumerable<FileNode> roots)
         {
-            var files = new List<string>();
+            var files = new HashSet<string>();
 
             if (roots == null)
-                return files;
+                return new List<string>();
 
             foreach (var root in roots)
             {
                 ProcessNode(root, files);
+
+                // 🔥 STOP si limite atteinte
+                if (files.Count >= MAX_FILES)
+                    break;
             }
 
-            return files;
+            // 🔹 conversion + tri
+            var result = files.ToList();
+            result.Sort();
+
+            return result;
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. PARCOURS RÉCURSIF
+        // 3. PARCOURS RÉCURSIF
         // ═════════════════════════════════════════════════════════════
 
-        private void ProcessNode(FileNode node, List<string> files)
+        private void ProcessNode(FileNode node, HashSet<string> files)
         {
             if (node == null)
+                return;
+
+            // 🔥 STOP si limite atteinte
+            if (files.Count >= MAX_FILES)
                 return;
 
             // 📄 Fichier sélectionné valide
@@ -77,12 +90,15 @@ namespace LatuCollect.Core.Services.Collection
             foreach (var child in node.Children)
             {
                 ProcessNode(child, files);
+
+                if (files.Count >= MAX_FILES)
+                    return;
             }
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. VALIDATION
+        // 4. VALIDATION
         // ═════════════════════════════════════════════════════════════
 
         private bool IsValidSelectedFile(FileNode node)

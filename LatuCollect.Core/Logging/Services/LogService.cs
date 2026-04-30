@@ -42,6 +42,7 @@ namespace LatuCollect.Core.Logging.Services
 
         private readonly ObservableCollection<LogEntry> _logs = new();
 
+        private LogLevel _minimumLevel = LogLevel.Info;
 
         // ═════════════════════════════════════════════════════════════
         // 2. PROPRIÉTÉS PUBLIQUES — EXPOSITION
@@ -52,6 +53,11 @@ namespace LatuCollect.Core.Logging.Services
 
         public ReadOnlyObservableCollection<LogEntry> Logs { get; }
 
+        public LogLevel MinimumLevel
+        {
+            get => _minimumLevel;
+            set => _minimumLevel = value;
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 3. ÉVÉNEMENTS
@@ -105,11 +111,14 @@ namespace LatuCollect.Core.Logging.Services
 
         private void Add(LogLevel level, string message, string? context)
         {
+            // 🔴 FILTRAGE
+            if (level < _minimumLevel)
+                return;
+
             var log = new LogEntry(level, message, context);
 
             _logs.Add(log);
 
-            // 🔔 Notification des abonnés
             LogsUpdated?.Invoke(this, EventArgs.Empty);
         }
     }

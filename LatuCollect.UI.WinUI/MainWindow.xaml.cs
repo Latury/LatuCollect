@@ -81,9 +81,9 @@ namespace LatuCollect.UI.WinUI
 
             if (this.Content is FrameworkElement root)
                 root.DataContext = _viewModel;
-
-            _viewModel.OnSelectAllBlocked += ShowSelectAllDialog;
-
+           
+            _viewModel.ThemeChanged += ApplyTheme;
+           
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
@@ -110,6 +110,7 @@ namespace LatuCollect.UI.WinUI
                 SetupMinSize(minWidth, minHeight);
             }
         }
+
 
 
         // ═════════════════════════════════════════════════════════════
@@ -222,6 +223,27 @@ namespace LatuCollect.UI.WinUI
             _viewModel.SelectedFormat = ".md";
         }
 
+        private void OnNodeTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            if (sender is FrameworkElement element &&
+                element.DataContext is LatuCollect.UI.WinUI.Models.FileNode node)
+            {
+                _viewModel.HandleNodeClick(node);
+            }
+        }
+
+        private void ApplyTheme(string theme)
+        {
+            if (this.Content is FrameworkElement root)
+            {
+                root.RequestedTheme =
+                    theme == "Light"
+                    ? ElementTheme.Light
+                    : ElementTheme.Dark;
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 6. EXPORT / COPY
@@ -235,7 +257,7 @@ namespace LatuCollect.UI.WinUI
                 return;
             }
 
-            string content = _viewModel.GetExportContent();
+            string content = await _viewModel.GetExportContentAsync();
 
             if (content.StartsWith("⚠"))
             {
@@ -299,17 +321,17 @@ namespace LatuCollect.UI.WinUI
                 await _viewModel.ShowFeedbackAsync("✖ " + ex.Message);
             }
         }
-        
-        private void OnCopyClicked(object sender, RoutedEventArgs e)
+
+        private async void OnCopyClicked(object sender, RoutedEventArgs e)
         {
-            string content = _viewModel.GetExportContent();
+            string content = await _viewModel.GetExportContentAsync();
 
             var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
             package.SetText(content);
 
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
 
-            _ = _viewModel.ShowFeedbackAsync("✔ Contenu copié");
+            await _viewModel.ShowFeedbackAsync("✔ Contenu copié");
         }
 
 
@@ -321,12 +343,16 @@ namespace LatuCollect.UI.WinUI
         {
             var vm = _viewModel;
 
+            var root = this.Content as FrameworkElement;
+
+            var template = Application.Current.Resources["LogItemTemplate"] as DataTemplate;
+
             var listView = new ListView
             {
                 ItemsSource = vm.FilteredLogs,
                 SelectionMode = ListViewSelectionMode.None,
                 Height = 350,
-                ItemTemplate = (DataTemplate)((FrameworkElement)this.Content).Resources["LogItemTemplate"]
+                ItemTemplate = template
             };
 
             var filterPanel = new StackPanel

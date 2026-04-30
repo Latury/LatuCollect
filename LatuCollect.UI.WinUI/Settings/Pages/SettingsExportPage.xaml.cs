@@ -1,80 +1,54 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core.Services.Statistics                                   ║
-║  Fichier : FileStatisticsService.cs                                  ║
+║  Module : UI.WinUI.Settings.Pages                                    ║
+║  Fichier : SettingsExportPage.xaml.cs                                ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Calculer les statistiques des fichiers                              ║
+║  Code-behind de la page mode d’export                                ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Compter les fichiers traités                                      ║
-║  - Calculer le nombre de lignes                                      ║
-║  - Calculer le nombre de caractères                                  ║
-║  - Calculer la taille totale                                         ║
-║                                                                      ║
-║  Dépendances :                                                       ║
-║  - System.IO                                                         ║
+║  - Initialisation UI                                                 ║
+║  - Réception du ViewModel                                            ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Service Core pur                                                  ║
-║  - Aucune dépendance UI                                              ║
-║  - Ne contient aucune logique d’export                               ║
-║  - Ne lit pas les fichiers (responsabilité du Reader)                ║
+║  - Aucune logique métier                                             ║
+║  - Binding uniquement                                                ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Services.Export;
+using LatuCollect.UI.WinUI.ViewModels;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
-namespace LatuCollect.Core.Services.Statistics
+namespace LatuCollect.UI.WinUI.Settings.Pages
 {
-    public static class FileStatisticsService
+    public sealed partial class SettingsExportPage : Page
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. MÉTHODE PUBLIQUE
+        // 1. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
-        public static void UpdateStatistics(
-            StatisticsResult stats,
-            string content,
-            long fileSize)
+        public SettingsExportPage()
         {
-            if (stats == null)
-                return;
-
-            // 🔹 Sécurisation contenu
-            content ??= string.Empty;
-
-            stats.FileCount++;
-
-            stats.TotalCharacters += content.Length;
-            stats.TotalLines += CountLines(content);
-            stats.TotalSizeBytes += fileSize;
+            this.InitializeComponent();
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 2. MÉTHODES PRIVÉES
+        // 2. NAVIGATION → RÉCEPTION DU VIEWMODEL
         // ═════════════════════════════════════════════════════════════
 
-        private static int CountLines(string text)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (string.IsNullOrEmpty(text))
-                return 0;
+            base.OnNavigatedTo(e);
 
-            int count = 0;
-
-            foreach (char c in text)
+            if (e.Parameter is MainViewModel vm)
             {
-                if (c == '\n')
-                    count++;
+                DataContext = vm;
             }
-
-            // 🔹 Si texte non vide → au moins 1 ligne
-            return count + 1;
         }
     }
 }

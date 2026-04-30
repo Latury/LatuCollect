@@ -74,6 +74,52 @@
             <!--  Comparaison string insensible à la casse  -->
             <conv:FolderFileIconConverter x:Key="FolderFileIconConverter" />
 
+            <!--  🧾 TEMPLATE LOGS  -->
+            <DataTemplate x:Key="LogItemTemplate">
+                <Border
+                    Margin="2"
+                    Padding="6"
+                    Background="#2D2D30"
+                    BorderBrush="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="4">
+
+                    <StackPanel Spacing="4">
+
+                        <!--  Ligne 1 : Date + Niveau  -->
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+
+                            <!--  Date  -->
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="#AAAAAA"
+                                Text="{Binding Date}" />
+
+                            <!--  Niveau (couleur dynamique)  -->
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                Text="{Binding Level}" />
+
+                        </StackPanel>
+
+                        <!--  Ligne 2 : Message  -->
+                        <TextBlock
+                            FontSize="13"
+                            Text="{Binding Message}"
+                            TextWrapping="Wrap" />
+
+                        <!--  Ligne 3 : Contexte  -->
+                        <TextBlock
+                            FontSize="11"
+                            Foreground="#888888"
+                            Text="{Binding Context}"
+                            TextWrapping="Wrap" />
+
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

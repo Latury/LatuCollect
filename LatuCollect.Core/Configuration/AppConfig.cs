@@ -77,9 +77,18 @@ namespace LatuCollect.Core.Configuration
 
         public string LastOpenedFolder { get; set; } = string.Empty;
 
+        // ═════════════════════════════════════════════════════════════
+        // 5. MODE D’EXPORT
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Permet de choisir entre différents modes d’export (ex : Normal, Fast, Custom)
+        //
+        //
+
+        public string ExportMode { get; set; } = "normal";
 
         // ═════════════════════════════════════════════════════════════
-        // 5. AUTO-CHARGEMENT
+        // 6. AUTO-CHARGEMENT
         // ═════════════════════════════════════════════════════════════
         //
         // Si activé :

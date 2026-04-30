@@ -65,10 +65,26 @@
 
                             <TextBlock Opacity="0.7" Text="Mode développeur (active les options avancées)" />
 
+                            <TextBlock Text="Mode développeur" />
+
+                            <ToggleSwitch IsOn="{Binding IsDeveloperModeEnabled, Mode=TwoWay}" />
+
+                            <TextBlock Opacity="0.7" Text="Mode développeur (active les options avancées)" />
+
+                            <!--  🔹 THÈME  -->
+                            <TextBlock Text="Thème de l'application" />
+
+                            <ComboBox
+                                Width="200"
+                                ItemsSource="{Binding Themes}"
+                                SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
+
+                            <TextBlock Opacity="0.7" Text="Choisir entre thème clair et sombre" />
+
                         </StackPanel>
                     </Border>
 
-                    <!--  🔹 EXPORT  -->
+                    <!--  🔹 LOGS  -->
                     <Border
                         Padding="20"
                         Background="#2D2D30"
@@ -79,23 +95,16 @@
                             <TextBlock
                                 FontSize="18"
                                 FontWeight="SemiBold"
-                                Text="📤 Export" />
+                                Text="🧾 Logs" />
 
-                            <TextBlock Text="Format par défaut :" />
+                            <TextBlock Text="Niveau de log :" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="30">
+                            <ComboBox
+                                Width="200"
+                                ItemsSource="{Binding LogLevels}"
+                                SelectedItem="{Binding SelectedLogLevel, Mode=TwoWay}" />
 
-                                <RadioButton
-                                    Content=".txt"
-                                    GroupName="format"
-                                    IsChecked="{Binding DefaultFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.txt}" />
-
-                                <RadioButton
-                                    Content=".md"
-                                    GroupName="format"
-                                    IsChecked="{Binding DefaultFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.md}" />
-
-                            </StackPanel>
+                            <TextBlock Opacity="0.7" Text="Définit quels logs sont affichés dans l'application" />
 
                         </StackPanel>
                     </Border>

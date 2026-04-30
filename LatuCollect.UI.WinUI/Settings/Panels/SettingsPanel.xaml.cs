@@ -112,9 +112,17 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
             Navigate(typeof(SettingsExclusionsPage));
         }
 
+        // ═════════════════════════════════════════════════════════════
+        // 7. ACTIONS NAVIGATION (UI) - EXPORT
+        // ═════════════════════════════════════════════════════════════
+
+        private void OnExportModeClicked(object sender, RoutedEventArgs e)
+        {
+            Navigate(typeof(SettingsExportPage));
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // 7. FERMETURE
+        // 8. FERMETURE
         // ═════════════════════════════════════════════════════════════
 
         private void OnCloseClicked(object sender, RoutedEventArgs e)
