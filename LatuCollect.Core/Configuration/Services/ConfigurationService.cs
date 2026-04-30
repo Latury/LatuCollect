@@ -155,7 +155,7 @@ namespace LatuCollect.Core.Configuration.Services
 
         private static UserConfig GetDefaultConfig()
         {
-            return ConfigurationDefaults.Default;
+            return ConfigurationDefaults.CreateDefault();
         }
     }
 }
