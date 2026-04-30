@@ -42,9 +42,6 @@ namespace LatuCollect.Core.Configuration.Services
         // ═════════════════════════════════════════════════════════════
         // 2. CHAMPS PRIVÉS
         // ═════════════════════════════════════════════════════════════
-        //
-        // Chemin complet du fichier de configuration
-        //
 
         private readonly string _configPath;
 
@@ -69,11 +66,6 @@ namespace LatuCollect.Core.Configuration.Services
         // ═════════════════════════════════════════════════════════════
         // 4. CHARGEMENT CONFIGURATION
         // ═════════════════════════════════════════════════════════════
-        //
-        // - Charge depuis JSON
-        // - Crée le fichier si absent
-        // - Retourne toujours une config valide
-        //
 
         public async Task<UserConfig> LoadAsync()
         {
@@ -92,7 +84,10 @@ namespace LatuCollect.Core.Configuration.Services
 
                 var config = JsonSerializer.Deserialize<UserConfig>(json);
 
-                return config ?? GetDefaultConfig();
+                if (config == null)
+                    return GetDefaultConfig();
+
+                return Sanitize(config);
             }
             catch
             {
@@ -113,9 +108,10 @@ namespace LatuCollect.Core.Configuration.Services
 
                 await File.WriteAllTextAsync(_configPath, json);
             }
-            catch
+            catch (Exception ex)
             {
-                // silencieux volontairement
+                // Non bloquant mais visible en debug
+                Console.WriteLine($"Erreur sauvegarde config : {ex.Message}");
             }
         }
 
@@ -156,6 +152,24 @@ namespace LatuCollect.Core.Configuration.Services
         private static UserConfig GetDefaultConfig()
         {
             return ConfigurationDefaults.CreateDefault();
+        }
+
+        // Sécurise les données chargées depuis le JSON
+        // pour éviter les valeurs null ou invalides.
+        private static UserConfig Sanitize(UserConfig config)
+        {
+            return new UserConfig
+            {
+                DefaultFormat = string.IsNullOrWhiteSpace(config.DefaultFormat) ? ".txt" : config.DefaultFormat,
+                IsDeveloperMode = config.IsDeveloperMode,
+                ExcludedFolders = config.ExcludedFolders ?? new(),
+                LastOpenedFolder = config.LastOpenedFolder ?? string.Empty,
+                AutoLoadLastFolder = config.AutoLoadLastFolder,
+                PreviewMaxFiles = config.PreviewMaxFiles <= 0 ? 20 : config.PreviewMaxFiles,
+                ExportMode = string.IsNullOrWhiteSpace(config.ExportMode) ? "normal" : config.ExportMode,
+                LogLevel = string.IsNullOrWhiteSpace(config.LogLevel) ? "Info" : config.LogLevel,
+                Theme = string.IsNullOrWhiteSpace(config.Theme) ? "Light" : config.Theme
+            };
         }
     }
 }
