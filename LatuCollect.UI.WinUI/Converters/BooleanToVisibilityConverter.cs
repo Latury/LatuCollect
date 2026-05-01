@@ -29,27 +29,41 @@ using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Convertit un booléen en visibilité UI
+    // true  → Visible
+    // false → Collapsed
+    //
+    // Converter stateless (aucun état interne)
+
+
     public partial class BooleanToVisibilityConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // (Aucun champ — converter stateless)
-        //
+        // ==========================================
+        // 🔒 CHAMPS PRIVÉS
+        // ==========================================
+        // Aucun champ (converter stateless)
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Transforme :
-        // bool → Visibility
-        //
-        // true  → Visible
-        // false → Collapsed
-        //
+        // ==========================================
+        // 🌐 PROPRIÉTÉS
+        // ==========================================
+        // Aucune propriété
 
+
+        // ==========================================
+        // 🏗️ CONSTRUCTEUR
+        // ==========================================
+        // Aucun constructeur spécifique
+
+
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
+
+        // Convertit bool → Visibility
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is bool isVisible && isVisible)
@@ -59,14 +73,7 @@ namespace LatuCollect.UI.WinUI.Converters
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (UI → VM)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Visibility.Visible   → true
-        // Visibility.Collapsed → false
-        //
-
+        // Convertit Visibility → bool
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             if (value is Visibility visibility)
@@ -74,5 +81,11 @@ namespace LatuCollect.UI.WinUI.Converters
 
             return false;
         }
+
+
+        // ==========================================
+        // 🔧 MÉTHODES PRIVÉES
+        // ==========================================
+        // Aucune
     }
 }
