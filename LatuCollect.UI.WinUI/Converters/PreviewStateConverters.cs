@@ -1,8 +1,6 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║     Application de collecte et export de contenu multi-fichiers      ║
-║                                                                      ║
 ║  Module : UI.WinUI.Converters                                        ║
 ║  Fichier : PreviewStateConverters.cs                                 ║
 ║                                                                      ║
@@ -10,112 +8,87 @@
 ║  Convertir l’état du preview (UiState) en visibilité UI              ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Afficher le preview uniquement en état Ready                      ║
-║  - Afficher le message vide uniquement en état Empty                 ║
+║  - Preview visible uniquement en Ready                               ║
+║  - Message vide uniquement en Empty                                  ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
+║  - UI uniquement                                                     ║
 ║  - Aucune logique métier                                             ║
-║  - Transformation UI uniquement                                      ║
-║                                                                      ║
-║  Dépendances :                                                       ║
-║  - Microsoft.UI.Xaml                                                 ║
-║  - MainViewModel.UiState                                             ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
-    // ═════════════════════════════════════════════════════════════
-    // 1. PREVIEW VISIBLE CONVERTER
-    // ═════════════════════════════════════════════════════════════
-    //
-    // Affiche le contenu du preview uniquement si l’état est Ready
-    //
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Gestion de la visibilité du preview selon UiState
+
+
+    // ==========================================
+    // 📄 PREVIEW VISIBLE CONVERTER
+    // ==========================================
+    // Visible uniquement en état Ready
 
     public class PreviewVisibleConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // (Aucun champ — converter stateless)
-        //
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null)
-                return Visibility.Collapsed;
-
-            var state = value.ToString();
-
-            // Visible en Ready ET Empty
-            if (state == "Ready")
-                return Visibility.Visible;
+            if (value is MainViewModel.UiState state)
+            {
+                return state == MainViewModel.UiState.Ready
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
 
             return Visibility.Collapsed;
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (NON UTILISÉ)
-        // ═════════════════════════════════════════════════════════════
-
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return MainViewModel.UiState.Empty;
         }
     }
 
 
-    // ═════════════════════════════════════════════════════════════
-    // 2. PREVIEW EMPTY CONVERTER
-    // ═════════════════════════════════════════════════════════════
-    //
-    // Affiche le message "Aucun fichier sélectionné"
-    // uniquement si l’état est Empty
-    //
+    // ==========================================
+    // 📄 PREVIEW EMPTY CONVERTER
+    // ==========================================
+    // Visible uniquement en état Empty
 
     public class PreviewEmptyConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // (Aucun champ — converter stateless)
-        //
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null)
-                return Visibility.Collapsed;
-
-            if (value.ToString() == "Ready")
-                return Visibility.Visible;
+            if (value is MainViewModel.UiState state)
+            {
+                return state == MainViewModel.UiState.Empty
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
 
             return Visibility.Collapsed;
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (NON UTILISÉ)
-        // ═════════════════════════════════════════════════════════════
-
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return MainViewModel.UiState.Empty;
         }
     }
 }
