@@ -6,7 +6,14 @@
     ║  Fichier : SettingsGeneralPage.xaml                                  ║
     ║                                                                      ║
     ║  Rôle :                                                              ║
-    ║  Page des paramètres généraux                                        ║
+    ║  Page de configuration des paramètres généraux de l’application      ║
+    ║                                                                      ║
+    ║  Contenu :                                                           ║
+    ║  - Paramètres application (chargement automatique, mode développeur) ║
+    ║  - Informations sur le dossier courant                               ║
+    ║  - Gestion du thème                                                  ║
+    ║  - Configuration du niveau de log                                    ║
+    ║  - Réinitialisation des paramètres                                   ║
     ║                                                                      ║
     ║  IMPORTANT (ALC) :                                                   ║
     ║  - UI uniquement                                                     ║
@@ -20,9 +27,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--  CONTENEUR GLOBAL  -->
     <Grid>
 
-        <!--  🔹 CONTENEUR CENTRÉ  -->
+        <!--  CONTENEUR CENTRÉ  -->
         <Grid
             MaxWidth="900"
             Padding="20"
@@ -32,7 +40,7 @@
 
                 <StackPanel Spacing="20">
 
-                    <!--  🔹 APPLICATION  -->
+                    <!--  APPLICATION  -->
                     <Border
                         Padding="20"
                         Background="#2D2D30"
@@ -47,44 +55,32 @@
 
                             <!--  Auto load  -->
                             <TextBlock Text="Charger le dernier dossier au démarrage" />
-
                             <ToggleSwitch IsOn="{Binding AutoLoadLastFolder, Mode=TwoWay}" />
 
-                            <!--  🔥 AJOUT  -->
+                            <!--  Dernier dossier  -->
                             <TextBlock Text="Dernier dossier ouvert :" />
-
                             <TextBlock
                                 Opacity="0.6"
                                 Text="{Binding CurrentFolderPathDisplay}"
                                 TextWrapping="Wrap" />
 
-                            <!--  Mode dev  -->
+                            <!--  Mode développeur  -->
                             <TextBlock Text="Mode développeur" />
-
                             <ToggleSwitch IsOn="{Binding IsDeveloperModeEnabled, Mode=TwoWay}" />
-
                             <TextBlock Opacity="0.7" Text="Mode développeur (active les options avancées)" />
 
-                            <TextBlock Text="Mode développeur" />
-
-                            <ToggleSwitch IsOn="{Binding IsDeveloperModeEnabled, Mode=TwoWay}" />
-
-                            <TextBlock Opacity="0.7" Text="Mode développeur (active les options avancées)" />
-
-                            <!--  🔹 THÈME  -->
+                            <!--  Thème  -->
                             <TextBlock Text="Thème de l'application" />
-
                             <ComboBox
                                 Width="200"
                                 ItemsSource="{Binding Themes}"
                                 SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
-
                             <TextBlock Opacity="0.7" Text="Choisir entre thème clair et sombre" />
 
                         </StackPanel>
                     </Border>
 
-                    <!--  🔹 LOGS  -->
+                    <!--  LOGS  -->
                     <Border
                         Padding="20"
                         Background="#2D2D30"
@@ -98,7 +94,6 @@
                                 Text="🧾 Logs" />
 
                             <TextBlock Text="Niveau de log :" />
-
                             <ComboBox
                                 Width="200"
                                 ItemsSource="{Binding LogLevels}"
@@ -109,7 +104,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!--  🔹 RESET  -->
+                    <!--  RESET  -->
                     <Border
                         Padding="20"
                         Background="#5A1E1E"
