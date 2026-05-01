@@ -38,13 +38,6 @@ namespace LatuCollect.Core.Services.Import
     // 1. MODÈLE RÉSULTAT
     // ═════════════════════════════════════════════════════════════
 
-    public class ImportResult
-    {
-        public List<FileNode> Nodes { get; set; } = new();
-        public int TotalNodes { get; set; }
-        public bool IsPartial { get; set; }
-        public string Message { get; set; } = "";
-    }
 
     // ═════════════════════════════════════════════════════════════
     // 2. SERVICE IMPORT
