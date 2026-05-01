@@ -16,9 +16,6 @@
 ║  - Logique UI uniquement                                             ║
 ║  - Aucun accès Core                                                  ║
 ║                                                                      ║
-║  Utilisation :                                                       ║
-║  - Binding RadioButton <-> SelectedFormat                            ║
-║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
@@ -29,38 +26,50 @@ using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Compare une string avec un paramètre
+    // Utilisé pour binding RadioButton
+
+
     public class StringEqualsConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // (Aucun champ ici)
-        // Converter stateless → logique pure
-        //
+        // ==========================================
+        // 🔒 CHAMPS PRIVÉS
+        // ==========================================
+        // Aucun (stateless)
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Compare :
-        // SelectedFormat == ".txt" ?
-        //
+        // ==========================================
+        // 🌐 PROPRIÉTÉS
+        // ==========================================
+        // Aucune
 
+
+        // ==========================================
+        // 🏗️ CONSTRUCTEUR
+        // ==========================================
+        // Aucun
+
+
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
+
+        // VM → UI
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return value?.ToString() == parameter?.ToString();
+            if (value is string str && parameter is string param)
+            {
+                return string.Equals(str, param, StringComparison.Ordinal);
+            }
+
+            return false;
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (UI → VM)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Si RadioButton coché → retourne ".txt" ou ".md"
-        //
-
+        // UI → VM
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             if (value is bool isChecked && isChecked)
@@ -68,8 +77,14 @@ namespace LatuCollect.UI.WinUI.Converters
                 return parameter?.ToString();
             }
 
-            // 🔥 WinUI : on ne retourne RIEN
+            // Ne pas modifier la source si décoché
             return null;
         }
+
+
+        // ==========================================
+        // 🔧 MÉTHODES PRIVÉES
+        // ==========================================
+        // Aucune
     }
 }
