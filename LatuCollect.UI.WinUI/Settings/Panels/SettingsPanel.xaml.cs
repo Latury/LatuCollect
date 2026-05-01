@@ -30,9 +30,9 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
 {
     public sealed partial class SettingsPanel : UserControl
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. ÉVÉNEMENTS
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // ÉVÉNEMENTS
+        // ==========================================
         //
         // Permet à la MainWindow de réagir (fermeture panel)
         //
@@ -40,22 +40,22 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
         public event Action? OnCloseRequested;
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // CHAMPS PRIVÉS
+        // ==========================================
         //
         // État interne UI (navigation + ViewModel)
         //
 
         private MainViewModel? _vm;
 
-        // 🔥 Page actuelle (évite re-navigation inutile)
+        // Page actuelle (évite re-navigation inutile)
         private Type? _currentPage;
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // CONSTRUCTEUR
+        // ==========================================
 
         public SettingsPanel()
         {
@@ -63,9 +63,9 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 4. INITIALISATION
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // INITIALISATION
+        // ==========================================
         //
         // Injection du ViewModel
         //
@@ -79,16 +79,16 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 5. NAVIGATION INTERNE
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // NAVIGATION INTERNE
+        // ==========================================
         //
         // Gère le changement de page dans le panneau
         //
 
         private void Navigate(Type page)
         {
-            // 🔥 évite reload inutile
+            // Évite reload inutile
             if (_currentPage == page)
                 return;
 
@@ -98,9 +98,9 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 6. ACTIONS NAVIGATION (UI)
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // ACTIONS NAVIGATION (UI)
+        // ==========================================
 
         private void OnGeneralClicked(object sender, RoutedEventArgs e)
         {
@@ -112,18 +112,20 @@ namespace LatuCollect.UI.WinUI.Settings.Panels
             Navigate(typeof(SettingsExclusionsPage));
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 7. ACTIONS NAVIGATION (UI) - EXPORT
-        // ═════════════════════════════════════════════════════════════
+
+        // ==========================================
+        // ACTION NAVIGATION EXPORT
+        // ==========================================
 
         private void OnExportModeClicked(object sender, RoutedEventArgs e)
         {
             Navigate(typeof(SettingsExportPage));
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 8. FERMETURE
-        // ═════════════════════════════════════════════════════════════
+
+        // ==========================================
+        // FERMETURE
+        // ==========================================
 
         private void OnCloseClicked(object sender, RoutedEventArgs e)
         {
