@@ -38,6 +38,10 @@
     ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
+<!--  =========================  -->
+<!--  🧱 ROOT WINDOW  -->
+<!--  =========================  -->
+
 <Window
     x:Class="LatuCollect.UI.WinUI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -45,17 +49,15 @@
     xmlns:conv="using:LatuCollect.UI.WinUI.Converters"
     xmlns:models="using:LatuCollect.UI.WinUI.Models">
 
-    <!--  ROOT GLOBAL  -->
+    <!--  =========================  -->
+    <!--  🧱 ROOT GRID  -->
+    <!--  =========================  -->
     <Grid>
 
-        <!--  =========================  -->
-        <!--  TON APP ACTUELLE  -->
-        <!--  =========================  -->
+        <!--  ======================================================  -->
+        <!--  🧱 MAIN CONTENT  -->
+        <!--  ======================================================  -->
         <Grid x:Name="MainContent">
-
-            <!--  =========================  -->
-            <!--  STRUCTURE PRINCIPALE  -->
-            <!--  =========================  -->
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -69,9 +71,8 @@
             </Grid.ColumnDefinitions>
 
             <!--  ======================================================  -->
-            <!--  ZONE GAUCHE : ARBORESCENCE PROJET (COEUR APP)  -->
+            <!--  📁 ZONE GAUCHE  -->
             <!--  ======================================================  -->
-
             <Border
                 Grid.Column="0"
                 Margin="5"
@@ -79,20 +80,16 @@
 
                 <Grid>
 
-                    <!--  STRUCTURE IDENTIQUE À LA DROITE  -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <!--  header  -->
                         <RowDefinition Height="Auto" />
-                        <!--  search  -->
                         <RowDefinition Height="*" />
-                        <!--  contenu  -->
                         <RowDefinition Height="Auto" />
-                        <!--  faux footer  -->
                     </Grid.RowDefinitions>
 
                     <!--  HEADER  -->
                     <Grid Grid.Row="0" Margin="10">
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -105,13 +102,13 @@
                             Height="40"
                             Click="OnPickFolderClicked"
                             Content="📂" />
-
                         <Button
                             Grid.Column="3"
                             Width="40"
                             Height="40"
                             Click="OnSearchClicked"
                             Content="🔍" />
+
                     </Grid>
 
                     <!--  SEARCH  -->
@@ -123,76 +120,21 @@
                         Text="{Binding SearchText, Mode=TwoWay}"
                         Visibility="{Binding IsSearchVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <!--  CONTENU (TREE + OVERLAY)  -->
+                    <!--  TREE  -->
                     <Grid Grid.Row="2">
 
-                        <!--  TREE  -->
-                        <TreeView ItemsSource="{Binding FilteredTree}" Visibility="{Binding IsTreeEmpty, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <TreeView ItemsSource="{Binding FilteredTree}" Visibility="{Binding IsTreeEmpty, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
 
-                            <TreeView.ItemTemplate>
-                                <DataTemplate x:DataType="models:FileNode">
-                                    <TreeViewItem ItemsSource="{Binding Children}">
-                                        <Grid ColumnSpacing="6" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                Grid.Column="0"
-                                                Width="24"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe UI Emoji"
-                                                FontSize="16"
-                                                Foreground="White"
-                                                Text="{Binding Children.Count, Converter={StaticResource FolderFileIconConverter}}" />
-
-                                            <CheckBox
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                Content="{Binding Name}"
-                                                Foreground="White"
-                                                IsChecked="{Binding IsSelected, Mode=OneWay}"
-                                                Tapped="OnNodeTapped" />
-                                        </Grid>
-                                    </TreeViewItem>
-                                </DataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
-
-                        <!--  OVERLAY  -->
                         <Grid IsHitTestVisible="False">
-
-                            <!--  PAS DE DOSSIER  -->
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Opacity="0.6"
                                 Text="Veuillez sélectionner un dossier"
-                                TextAlignment="Center"
                                 Visibility="{Binding IsTreeEmpty, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                            <!--  AUCUN RÉSULTAT  -->
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Opacity="0.6"
-                                Text="Aucun résultat"
-                                TextAlignment="Center"
-                                Visibility="{Binding HasSearchResult, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-
                         </Grid>
 
                     </Grid>
 
-                    <!--  FAUX FOOTER  -->
                     <Border
                         Grid.Row="3"
                         Height="60"
@@ -202,141 +144,28 @@
             </Border>
 
             <!--  ======================================================  -->
-            <!--  ZONE CENTRE : OPTIONS UTILISATEUR  -->
+            <!--  ⚙️ ZONE CENTRE  -->
             <!--  ======================================================  -->
-
             <Border
                 Grid.Column="1"
                 Margin="5"
                 Background="#2D2D30">
 
-                <StackPanel
-                    Width="220"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="22">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                    <!--  MODE DÉVELOPPEUR  -->
-                    <StackPanel HorizontalAlignment="Center" Spacing="6">
+                    <TextBlock Text="Choix du format" />
 
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            FontWeight="SemiBold"
-                            Foreground="Orange"
-                            Text="🧑🏻‍💻 Mode développeur activé"
-                            Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <RadioButton Content="TXT" IsChecked="{Binding SelectedFormat, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.txt}" />
 
-                        <TextBlock
-                            Margin="0,4,0,0"
-                            FontSize="12"
-                            Foreground="Orange"
-                            Text="{Binding DeveloperWarningMessage}"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                    </StackPanel>
-
-                    <!--  Titre "Choix du format"  -->
-                    <TextBlock
-                        Margin="0,0,0,20"
-                        HorizontalAlignment="Center"
-                        FontSize="20"
-                        Foreground="White"
-                        Text="Choix du format"
-                        TextAlignment="Center" />
-
-                    <!--  FORMATS  -->
-                    <StackPanel
-                        Margin="0,0,0,25"
-                        HorizontalAlignment="Center"
-                        Spacing="14">
-
-                        <!--  TXT  -->
-                        <RadioButton
-                            Content="📄 Texte (.txt)"
-                            GroupName="Format"
-                            IsChecked="{Binding SelectedFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.txt}" />
-
-                        <!--  MD  -->
-                        <RadioButton
-                            Content="📝 Markdown (.md)"
-                            GroupName="Format"
-                            IsChecked="{Binding SelectedFormat, Mode=TwoWay, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.md}" />
-
-                    </StackPanel>
-
-                    <!--  Copier le contenu  -->
-                    <Button
-                        Width="180"
-                        Height="44"
-                        Margin="0,10,0,20"
-                        Padding="12,0"
-                        HorizontalAlignment="Center"
-                        Click="OnCopyClicked"
-                        Content="📋 Copier le contenu"
-                        IsEnabled="{Binding CanCopy}"
-                        ToolTipService.ToolTip="Copier le contenu" />
-
-                    <!--  AUTRES  -->
-                    <StackPanel HorizontalAlignment="Center" Spacing="14">
-
-                        <!--  PARAMÈTRES  -->
-                        <Button
-                            Width="180"
-                            Height="44"
-                            Padding="12,0"
-                            Click="OnOptionsClicked"
-                            Content="⚙ Paramètres"
-                            ToolTipService.ToolTip="Paramètres" />
-
-                        <!--  Statistiques  -->
-                        <Button
-                            Width="180"
-                            Height="44"
-                            Padding="12,0"
-                            Click="OnStatsClicked"
-                            Content="📊 Statistiques"
-                            ToolTipService.ToolTip="Statistiques" />
-
-                        <!--  Aide  -->
-                        <Button
-                            Width="180"
-                            Height="44"
-                            Padding="12,0"
-                            Click="OnHelpClicked"
-                            Content="❓ Aide"
-                            ToolTipService.ToolTip="Aide" />
-
-                        <!--  À propos  -->
-                        <Button
-                            Width="180"
-                            Height="44"
-                            Padding="12,0"
-                            Click="OnAboutClicked"
-                            Content="ℹ À propos"
-                            ToolTipService.ToolTip="À propos" />
-
-
-                        <!--  Quitter  -->
-                        <Button
-                            Width="180"
-                            Height="44"
-                            Padding="12,0"
-                            Click="OnQuitClicked"
-                            Content="🚪 Quitter"
-                            ToolTipService.ToolTip="Quitter" />
-
-                    </StackPanel>
+                    <RadioButton Content="MD" IsChecked="{Binding SelectedFormat, Converter={StaticResource StringEqualsConverter}, ConverterParameter=.md}" />
 
                 </StackPanel>
 
             </Border>
 
             <!--  ======================================================  -->
-            <!--  ZONE DROITE : APERÇU  -->
+            <!--  👁️ ZONE DROITE  -->
             <!--  ======================================================  -->
-
             <Border
                 Grid.Column="2"
                 Margin="5"
@@ -344,217 +173,44 @@
 
                 <Grid>
 
-                    <!--  STRUCTURE EN 2 LIGNES  -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <!--  ======================================================  -->
                     <!--  FEEDBACK  -->
-                    <!--  ======================================================  -->
+                    <Border Grid.Row="0" />
 
-                    <Border
-                        Grid.Row="0"
-                        Margin="10,10,10,0"
-                        Padding="10,6"
-                        HorizontalAlignment="Right"
-                        Background="#3A3A3A"
-                        CornerRadius="6"
-                        Visibility="{Binding IsFeedbackVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                        <TextBlock
-                            MaxWidth="240"
-                            FontSize="13"
-                            FontWeight="SemiBold"
-                            Foreground="White"
-                            Text="{Binding FeedbackMessage}"
-                            TextWrapping="Wrap" />
-
-                    </Border>
-
-                    <!--  ======================================================  -->
-                    <!--  CONTENU + OVERLAY  -->
-                    <!--  ======================================================  -->
-
+                    <!--  CONTENU  -->
                     <Grid Grid.Row="1">
 
-                        <!--  CONTENU  -->
-                        <ScrollViewer
-                            Grid.Row="1"
-                            Margin="20"
-                            HorizontalScrollBarVisibility="Auto"
-                            VerticalScrollBarVisibility="Auto"
-                            Visibility="{Binding CurrentState, Converter={StaticResource PreviewVisibleConverter}}">
-
-                            <TextBox
-                                AcceptsReturn="True"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontFamily="Cascadia Code"
-                                FontSize="13"
-                                Foreground="White"
-                                IsReadOnly="True"
-                                IsTabStop="False"
-                                Text="{Binding PreviewText}"
-                                TextWrapping="Wrap" />
-
+                        <ScrollViewer>
+                            <TextBox Text="{Binding PreviewText}" />
                         </ScrollViewer>
 
-                        <Grid IsHitTestVisible="False" Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Opacity="0.6"
-                                Text="Aucun fichier sélectionné..."
-                                TextAlignment="Center"
-                                TextWrapping="Wrap" />
-
+                        <Grid Visibility="{Binding IsEmpty}">
+                            <TextBlock Text="Aucun fichier sélectionné..." />
                         </Grid>
 
-                        <!--  LOADER OVERLAY  -->
-                        <Grid
-                            Background="#80000000"
-                            IsHitTestVisible="True"
-                            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <!--  LOADER  -->
+                        <Grid Visibility="{Binding IsLoading}" />
 
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Spacing="10">
-
-                                <ProgressRing
-                                    Width="50"
-                                    Height="50"
-                                    IsActive="True" />
-
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    Foreground="White"
-                                    Text="Chargement..." />
-                            </StackPanel>
-
-                        </Grid>
-
-                        <!--  ERREUR OVERLAY  -->
-                        <Grid Background="#CC000000" Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <TextBlock
-                                MaxWidth="400"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                Foreground="White"
-                                Text="{Binding ErrorMessage}"
-                                TextAlignment="Center"
-                                TextWrapping="Wrap" />
-
-                        </Grid>
+                        <!--  ERROR  -->
+                        <Grid Visibility="{Binding HasError}" />
 
                     </Grid>
-
-                    <!--  ======================================================  -->
-                    <!--  ZONE BASSE : EXPORT  -->
-                    <!--  ======================================================  -->
-
-                    <Border
-                        Grid.Row="2"
-                        Padding="10"
-                        Background="#333333">
-
-                        <Grid>
-
-                            <!--  🧱 NOUVELLE STRUCTURE  -->
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <!--  Gauche  -->
-                                <ColumnDefinition Width="*" />
-                                <!--  Espace  -->
-                                <ColumnDefinition Width="Auto" />
-                                <!--  Droite  -->
-                            </Grid.ColumnDefinitions>
-
-                            <!--  =========================  -->
-                            <!--  GAUCHE : SIMULATION + LOGS  -->
-                            <!--  =========================  -->
-                            <StackPanel
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal"
-                                Spacing="10">
-
-                                <!--  🧪 SIMULATION  -->
-                                <Button
-                                    Height="40"
-                                    Padding="12,0"
-                                    Click="OnSimulationClicked"
-                                    Content="{Binding SimulationLabel}"
-                                    ToolTipService.ToolTip="Simulation"
-                                    Visibility="{Binding IsSimulationVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                                <!--  🧾 LOGS  -->
-                                <Grid>
-
-                                    <Button
-                                        Height="40"
-                                        Padding="12,0"
-                                        Click="OnLogsClicked"
-                                        Content="🧾 Logs"
-                                        ToolTipService.ToolTip="Afficher les logs" />
-
-                                    <!--  🔴 BADGE  -->
-                                    <Border
-                                        Height="18"
-                                        MinWidth="18"
-                                        Margin="0,-4,-4,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Background="Red"
-                                        CornerRadius="9"
-                                        Visibility="{Binding HasLogErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontSize="11"
-                                            Foreground="White"
-                                            Text="{Binding LogErrorCount}" />
-                                    </Border>
-
-                                </Grid>
-
-                            </StackPanel>
-
-                            <!--  =========================  -->
-                            <!--  DROITE : EXPORT  -->
-                            <!--  =========================  -->
-                            <Button
-                                Grid.Column="2"
-                                Height="40"
-                                MinWidth="140"
-                                Margin="10,0,10,0"
-                                HorizontalAlignment="Right"
-                                Click="OnExportClicked"
-                                Content="📤 Exporter le fichier"
-                                IsEnabled="{Binding CanExport}"
-                                ToolTipService.ToolTip="Exporter le fichier" />
-
-                        </Grid>
-
-                    </Border>
 
                 </Grid>
 
             </Border>
-        </Grid>
 
-        <!--  =========================  -->
-        <!--  OVERLAY PARAMÈTRES  -->
-        <!--  =========================  -->
+        </Grid>
+        <!--  FIN MainContent  -->
+
+        <!--  ======================================================  -->
+        <!--  ⚙️ OVERLAY PARAMÈTRES  -->
+        <!--  ======================================================  -->
         <Grid
             x:Name="SettingsOverlay"
             Background="#AA000000"
@@ -569,11 +225,13 @@
                 Background="#1E1E1E"
                 CornerRadius="8">
 
-                <!--  CONTENU PARAMÈTRES  -->
                 <Grid x:Name="SettingsContainer" />
 
             </Border>
+
         </Grid>
 
     </Grid>
-</Window>
+    <!--  FIN ROOT  -->
+
+</Window>   
