@@ -32,8 +32,12 @@ using System.Threading.Tasks;
 namespace LatuCollect.Core.Services.Export
 {
     // ═════════════════════════════════════════════════════════════
-    // 1. MODÈLES
+    // 1. MODÈLES (À EXTRAIRE PLUS TARD)
     // ═════════════════════════════════════════════════════════════
+    //
+    // ➜ FUTUR :
+    // Core/Models/Export/
+    //
 
     public class ExportResult
     {
@@ -54,10 +58,10 @@ namespace LatuCollect.Core.Services.Export
         public string Content { get; set; } = "";
         public StatisticsResult Stats { get; set; } = new();
 
-        // Indique si le contenu est partiel (limite atteinte)
         public bool IsPartial { get; set; }
         public string PartialMessage { get; set; } = "";
     }
+
 
     // ═════════════════════════════════════════════════════════════
     // 2. SERVICE EXPORT
@@ -66,75 +70,37 @@ namespace LatuCollect.Core.Services.Export
     public class FileExportService
     {
         // ═════════════════════════════════════════════════════════════
-        // 2.1 EXPORT SYNC
+        // 2.1 CONSTANTES
+        // ═════════════════════════════════════════════════════════════
+
+        private const int MAX_FILES_AI = 20;
+        private const int MAX_CHARACTERS_AI = 20000;
+        private const int MAX_CHARACTERS_NORMAL = 1_000_000;
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2.2 EXPORT FICHIER
         // ═════════════════════════════════════════════════════════════
 
         public ExportResult Export(string path, string content)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return Fail("Chemin invalide");
-
-            try
+            return ExecuteExport(() =>
             {
-                SimulationService.SimulateExport();
                 File.WriteAllText(path, content, Encoding.UTF8);
-
-                return Success("Export réussi");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Fail("Accès refusé");
-            }
-            catch (IOException)
-            {
-                return Fail("Fichier utilisé ou inaccessible");
-            }
-            catch (ArgumentException)
-            {
-                return Fail("Chemin invalide");
-            }
-            catch (Exception ex)
-            {
-                return Fail($"Erreur : {ex.Message}");
-            }
+            });
         }
-
-        // ═════════════════════════════════════════════════════════════
-        // 2.2 EXPORT ASYNC
-        // ═════════════════════════════════════════════════════════════
 
         public async Task<ExportResult> ExportAsync(string path, string content)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return Fail("Chemin invalide");
-
-            try
+            return await ExecuteExportAsync(async () =>
             {
-                SimulationService.SimulateExport();
                 await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-
-                return Success("Export réussi");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Fail("Accès refusé");
-            }
-            catch (IOException)
-            {
-                return Fail("Fichier utilisé ou inaccessible");
-            }
-            catch (ArgumentException)
-            {
-                return Fail("Chemin invalide");
-            }
-            catch (Exception ex)
-            {
-                return Fail($"Erreur : {ex.Message}");
-            }
+            });
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 2.3 BUILD CONTENU + STATS (SYNC)
+        // 2.3 BUILD CONTENU (SYNC)
         // ═════════════════════════════════════════════════════════════
 
         public ExportData BuildContentWithStats(IEnumerable<string> filePaths, bool isMarkdown)
@@ -144,22 +110,7 @@ namespace LatuCollect.Core.Services.Export
 
             foreach (var path in filePaths)
             {
-                if (!File.Exists(path))
-                {
-                    AppendFormatted(builder, path, "[Erreur : fichier introuvable]", isMarkdown);
-                    continue;
-                }
-
-                var result = FileReaderService.ReadFileAsync(path).GetAwaiter().GetResult();
-
-                if (!result.IsSuccess)
-                {
-                    AppendFormatted(builder, path, $"[Erreur : {result.ErrorMessage}]", isMarkdown);
-                    continue;
-                }
-
-                FileStatisticsService.UpdateStatistics(stats, result.Content, result.FileSize);
-                AppendFormatted(builder, path, result.Content, isMarkdown);
+                ProcessFileSync(path, builder, stats, isMarkdown);
             }
 
             return new ExportData
@@ -171,94 +122,40 @@ namespace LatuCollect.Core.Services.Export
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2.4 BUILD CONTENU + STATS (ASYNC)
+        // 2.4 BUILD CONTENU (ASYNC)
         // ═════════════════════════════════════════════════════════════
 
         public async Task<ExportData> BuildContentWithStatsAsync(
-    IEnumerable<string> filePaths,
-    bool isMarkdown,
-    string exportMode)
+            IEnumerable<string> filePaths,
+            bool isMarkdown,
+            string exportMode)
         {
             var builder = new StringBuilder();
             var stats = new StatisticsResult();
 
             bool isPartial = false;
             string partialMessage = "";
-
             int fileCount = 0;
-
-            const int MAX_FILES_AI = 20;
-            const int MAX_CHARACTERS_AI = 20000;
-            const int MAX_CHARACTERS_NORMAL = 1_000_000;
 
             foreach (var path in filePaths)
             {
-                // 🔥 LIMITE FICHIERS (MODE IA)
-                if (exportMode?.ToLower() == "ai" && fileCount >= MAX_FILES_AI)
+                if (IsFileLimitReached(exportMode, fileCount))
                 {
-                    isPartial = true;
-                    partialMessage = $"⚠ Limite atteinte : {MAX_FILES_AI} fichiers maximum (mode IA)";
-                    partialMessage += "\nLe contenu a été tronqué.";
-
-                    builder.AppendLine();
-                    builder.AppendLine("----------------------------------------");
-                    builder.AppendLine(partialMessage);
-
+                    SetPartial(ref isPartial, ref partialMessage, builder,
+                        $"⚠ Limite atteinte : {MAX_FILES_AI} fichiers maximum (mode IA)");
                     break;
                 }
 
-                // ❌ Fichier introuvable
-                if (!File.Exists(path))
-                {
-                    AppendFormatted(builder, path, "[Erreur : fichier introuvable]", isMarkdown);
-                    continue;
-                }
-
-                var result = await FileReaderService.ReadFileAsync(path);
-
-                // ❌ Erreur lecture
-                if (!result.IsSuccess)
-                {
-                    AppendFormatted(builder, path, $"[Erreur : {result.ErrorMessage}]", isMarkdown);
-                    continue;
-                }
-
-                FileStatisticsService.UpdateStatistics(stats, result.Content, result.FileSize);
-                AppendFormatted(builder, path, result.Content, isMarkdown);
+                await ProcessFileAsync(path, builder, stats, isMarkdown);
 
                 fileCount++;
 
-                // 🔥 LIMITE CARACTÈRES (MODE IA)
-                if (exportMode?.ToLower() == "ai" && builder.Length > MAX_CHARACTERS_AI)
+                if (IsCharLimitReached(exportMode, builder))
                 {
-                    isPartial = true;
-
-                    partialMessage = $"⚠ Limite atteinte : {MAX_CHARACTERS_AI:N0} caractères (mode IA)";
-                    partialMessage += "\nLe contenu a été tronqué.";
-
-                    builder.Length = MAX_CHARACTERS_AI;
-
-                    builder.AppendLine();
-                    builder.AppendLine("----------------------------------------");
-                    builder.AppendLine(partialMessage);
-
-                    break;
-                }
-
-                // 🔥 LIMITE MODE NORMAL
-                if (exportMode?.ToLower() != "ai" && builder.Length > MAX_CHARACTERS_NORMAL)
-                {
-                    isPartial = true;
-
-                    partialMessage = $"⚠ Limite atteinte : {MAX_CHARACTERS_NORMAL:N0} caractères";
-                    partialMessage += "\nLe contenu a été tronqué.";
-
-                    builder.Length = MAX_CHARACTERS_NORMAL;
-
-                    builder.AppendLine();
-                    builder.AppendLine("----------------------------------------");
-                    builder.AppendLine(partialMessage);
-
+                    SetPartial(ref isPartial, ref partialMessage, builder,
+                        exportMode?.ToLower() == "ai"
+                            ? $"⚠ Limite atteinte : {MAX_CHARACTERS_AI:N0} caractères (mode IA)"
+                            : $"⚠ Limite atteinte : {MAX_CHARACTERS_NORMAL:N0} caractères");
                     break;
                 }
             }
@@ -272,15 +169,85 @@ namespace LatuCollect.Core.Services.Export
             };
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 3. FORMAT
+        // 2.5 TRAITEMENT FICHIER
         // ═════════════════════════════════════════════════════════════
 
-        private void AppendFormatted(
-            StringBuilder builder,
-            string path,
-            string content,
-            bool isMarkdown)
+        private void ProcessFileSync(string path, StringBuilder builder, StatisticsResult stats, bool isMarkdown)
+        {
+            if (!File.Exists(path))
+            {
+                AppendFormatted(builder, path, "[Erreur : fichier introuvable]", isMarkdown);
+                return;
+            }
+
+            var result = FileReaderService.ReadFileAsync(path).GetAwaiter().GetResult();
+
+            if (!result.IsSuccess)
+            {
+                AppendFormatted(builder, path, $"[Erreur : {result.ErrorMessage}]", isMarkdown);
+                return;
+            }
+
+            FileStatisticsService.UpdateStatistics(stats, result.Content, result.FileSize);
+            AppendFormatted(builder, path, result.Content, isMarkdown);
+        }
+
+        private async Task ProcessFileAsync(string path, StringBuilder builder, StatisticsResult stats, bool isMarkdown)
+        {
+            if (!File.Exists(path))
+            {
+                AppendFormatted(builder, path, "[Erreur : fichier introuvable]", isMarkdown);
+                return;
+            }
+
+            var result = await FileReaderService.ReadFileAsync(path);
+
+            if (!result.IsSuccess)
+            {
+                AppendFormatted(builder, path, $"[Erreur : {result.ErrorMessage}]", isMarkdown);
+                return;
+            }
+
+            FileStatisticsService.UpdateStatistics(stats, result.Content, result.FileSize);
+            AppendFormatted(builder, path, result.Content, isMarkdown);
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2.6 LIMITES
+        // ═════════════════════════════════════════════════════════════
+
+        private bool IsFileLimitReached(string exportMode, int fileCount)
+        {
+            return exportMode?.ToLower() == "ai" && fileCount >= MAX_FILES_AI;
+        }
+
+        private bool IsCharLimitReached(string exportMode, StringBuilder builder)
+        {
+            return exportMode?.ToLower() == "ai"
+                ? builder.Length > MAX_CHARACTERS_AI
+                : builder.Length > MAX_CHARACTERS_NORMAL;
+        }
+
+        private void SetPartial(ref bool isPartial, ref string message, StringBuilder builder, string text)
+        {
+            isPartial = true;
+
+            message = text + "\nLe contenu a été tronqué.";
+
+            builder.AppendLine();
+            builder.AppendLine("----------------------------------------");
+            builder.AppendLine(message);
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2.7 FORMAT
+        // ═════════════════════════════════════════════════════════════
+
+        private void AppendFormatted(StringBuilder builder, string path, string content, bool isMarkdown)
         {
             if (isMarkdown)
             {
@@ -307,26 +274,67 @@ namespace LatuCollect.Core.Services.Export
             }
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 4. HELPERS
+        // 2.8 HELPERS EXPORT
         // ═════════════════════════════════════════════════════════════
+
+        private ExportResult ExecuteExport(Action action)
+        {
+            try
+            {
+                SimulationService.SimulateExport();
+                action();
+                return Success("Export réussi");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Fail("Accès refusé");
+            }
+            catch (IOException)
+            {
+                return Fail("Fichier utilisé ou inaccessible");
+            }
+            catch (ArgumentException)
+            {
+                return Fail("Chemin invalide");
+            }
+            catch (Exception ex)
+            {
+                return Fail($"Erreur : {ex.Message}");
+            }
+        }
+
+        private async Task<ExportResult> ExecuteExportAsync(Func<Task> action)
+        {
+            try
+            {
+                SimulationService.SimulateExport();
+                await action();
+                return Success("Export réussi");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Fail("Accès refusé");
+            }
+            catch (IOException)
+            {
+                return Fail("Fichier utilisé ou inaccessible");
+            }
+            catch (ArgumentException)
+            {
+                return Fail("Chemin invalide");
+            }
+            catch (Exception ex)
+            {
+                return Fail($"Erreur : {ex.Message}");
+            }
+        }
 
         private ExportResult Success(string message)
-        {
-            return new ExportResult
-            {
-                IsSuccess = true,
-                Message = message
-            };
-        }
+            => new() { IsSuccess = true, Message = message };
 
         private ExportResult Fail(string message)
-        {
-            return new ExportResult
-            {
-                IsSuccess = false,
-                Message = message
-            };
-        }
+            => new() { IsSuccess = false, Message = message };
     }
 }
