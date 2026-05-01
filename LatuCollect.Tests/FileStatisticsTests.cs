@@ -22,6 +22,7 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Models;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Statistics;
 using Xunit;

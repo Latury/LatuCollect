@@ -20,6 +20,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Models;
+using LatuCollect.Core.Models.Export;
 using LatuCollect.Core.Services.Reader;
 using LatuCollect.Core.Services.Statistics;
 using LatuCollect.Core.Simulation;
@@ -39,28 +41,6 @@ namespace LatuCollect.Core.Services.Export
     // Core/Models/Export/
     //
 
-    public class ExportResult
-    {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; } = "";
-    }
-
-    public class StatisticsResult
-    {
-        public int FileCount { get; set; }
-        public int TotalLines { get; set; }
-        public int TotalCharacters { get; set; }
-        public long TotalSizeBytes { get; set; }
-    }
-
-    public class ExportData
-    {
-        public string Content { get; set; } = "";
-        public StatisticsResult Stats { get; set; } = new();
-
-        public bool IsPartial { get; set; }
-        public string PartialMessage { get; set; } = "";
-    }
 
 
     // ═════════════════════════════════════════════════════════════

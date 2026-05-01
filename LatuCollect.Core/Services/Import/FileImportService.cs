@@ -35,18 +35,13 @@ using System.Threading.Tasks;
 namespace LatuCollect.Core.Services.Import
 {
     // ═════════════════════════════════════════════════════════════
-    // 1. MODÈLE RÉSULTAT
-    // ═════════════════════════════════════════════════════════════
-
-
-    // ═════════════════════════════════════════════════════════════
-    // 2. SERVICE IMPORT
+    // 1. SERVICE IMPORT
     // ═════════════════════════════════════════════════════════════
 
     public class FileImportService
     {
         // ═════════════════════════════════════════════════════════════
-        // 2.1 LIMITES
+        // 1.1 LIMITES
         // ═════════════════════════════════════════════════════════════
 
         private const int MAX_NODES = 1000;
@@ -55,7 +50,7 @@ namespace LatuCollect.Core.Services.Import
         private readonly AppConfig _config;
 
         // ═════════════════════════════════════════════════════════════
-        // 2.2 CONSTRUCTEUR
+        // 1.2 CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
         public FileImportService(AppConfig config)
@@ -64,7 +59,7 @@ namespace LatuCollect.Core.Services.Import
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2.3 MÉTHODE PUBLIQUE
+        // 1.3 MÉTHODE PUBLIQUE
         // ═════════════════════════════════════════════════════════════
 
         public async Task<ImportResult> LoadTreeAsync(
@@ -99,7 +94,7 @@ namespace LatuCollect.Core.Services.Import
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2.4 CRÉATION NODE
+        // 1.4 CRÉATION NODE
         // ═════════════════════════════════════════════════════════════
 
         private FileNode? CreateNode(
@@ -141,7 +136,7 @@ namespace LatuCollect.Core.Services.Import
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2.5 DOSSIERS
+        // 1.5 DOSSIERS
         // ═════════════════════════════════════════════════════════════
 
         private void TryAddDirectories(
@@ -187,7 +182,7 @@ namespace LatuCollect.Core.Services.Import
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2.6 FICHIERS
+        // 1.6 FICHIERS
         // ═════════════════════════════════════════════════════════════
 
         private void TryAddFiles(
@@ -231,7 +226,7 @@ namespace LatuCollect.Core.Services.Import
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2.7 UTILITAIRES
+        // 1.7 UTILITAIRES
         // ═════════════════════════════════════════════════════════════
 
         private bool IsExcluded(string folderName)
