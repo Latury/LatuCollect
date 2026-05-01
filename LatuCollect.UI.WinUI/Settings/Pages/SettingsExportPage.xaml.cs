@@ -28,18 +28,19 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
 {
     public sealed partial class SettingsExportPage : Page
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // CONSTRUCTEUR
+        // ==========================================
 
         public SettingsExportPage()
         {
             this.InitializeComponent();
         }
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. NAVIGATION → RÉCEPTION DU VIEWMODEL
-        // ═════════════════════════════════════════════════════════════
+
+        // ==========================================
+        // NAVIGATION → RÉCEPTION DU VIEWMODEL
+        // ==========================================
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
