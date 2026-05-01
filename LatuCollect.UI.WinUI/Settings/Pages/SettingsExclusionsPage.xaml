@@ -29,6 +29,7 @@
             x:Name="ExclusionsList"
             Height="200"
             ItemsSource="{Binding Config.ExcludedFolders}"
+            SelectedItem="{Binding SelectedExclusion, Mode=TwoWay}"
             SelectionMode="Single" />
 
         <!--  AJOUT  -->
@@ -39,14 +40,14 @@
                 Width="250"
                 PlaceholderText="Ex: node_modules" />
 
-            <Button Click="OnAddClicked" Content="➕ Ajouter" />
+            <Button Command="{Binding AddExclusionCommand}" Content="➕ Ajouter" />
 
         </StackPanel>
 
         <!--  ACTIONS  -->
         <StackPanel Orientation="Horizontal" Spacing="10">
 
-            <Button Click="OnRemoveClicked" Content="🗑 Supprimer" />
+            <Button Command="{Binding RemoveExclusionCommand}" Content="🗑 Supprimer" />
 
         </StackPanel>
 
