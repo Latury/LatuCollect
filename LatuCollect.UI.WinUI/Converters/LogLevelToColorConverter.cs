@@ -34,27 +34,48 @@ using LatuCollect.Core.Logging.Models;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Convertit un LogLevel en couleur UI :
+    // Info    → gris clair
+    // Warning → orange
+    // Error   → rouge
+    //
+    // Optimisation :
+    // - Brushes statiques (évite allocations répétées)
+
+
     public class LogLevelToColorConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Pré-création des brushes pour éviter de recréer à chaque conversion
-        //
+        // ==========================================
+        // 🔒 CHAMPS PRIVÉS
+        // ==========================================
+        // Brushes pré-créés pour performance
 
         private static readonly SolidColorBrush InfoBrush = new(Colors.LightGray);
         private static readonly SolidColorBrush WarningBrush = new(Colors.Orange);
         private static readonly SolidColorBrush ErrorBrush = new(Colors.Red);
         private static readonly SolidColorBrush DefaultBrush = new(Colors.White);
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Convertit un LogLevel en couleur UI
-        //
 
+        // ==========================================
+        // 🌐 PROPRIÉTÉS
+        // ==========================================
+        // Aucune
+
+
+        // ==========================================
+        // 🏗️ CONSTRUCTEUR
+        // ==========================================
+        // Aucun
+
+
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
+
+        // Convertit LogLevel → Brush
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is LogLevel level)
@@ -68,17 +89,22 @@ namespace LatuCollect.UI.WinUI.Converters
                 };
             }
 
-            return new SolidColorBrush(Colors.White);
+            // Sécurité : valeur invalide
+            return DefaultBrush;
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (NON UTILISÉ)
-        // ═════════════════════════════════════════════════════════════
-
+        // ConvertBack non utilisé
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            // Sécurité : éviter crash UI
+            return LogLevel.Info;
         }
+
+
+        // ==========================================
+        // 🔧 MÉTHODES PRIVÉES
+        // ==========================================
+        // Aucune
     }
 }
