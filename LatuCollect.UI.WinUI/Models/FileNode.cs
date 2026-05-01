@@ -11,14 +11,11 @@
 ║  - Gérer l’affichage (Name, Path)                                    ║
 ║  - Gérer la sélection utilisateur                                    ║
 ║  - Gérer la visibilité (recherche)                                   ║
-║  - Notifier l’UI (binding)                                           ║
+║  - Représenter une structure arborescente                            ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Contient de la logique UI (autorisé)                              ║
-║  - Ne doit PAS contenir de logique métier                            ║
-║                                                                      ║
-║  Dépendances :                                                       ║
-║  - CommunityToolkit.Mvvm                                             ║
+║  - Logique UI uniquement                                             ║
+║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -26,16 +23,21 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.ObjectModel;
 
 namespace LatuCollect.UI.WinUI.Models
 {
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Représente un node UI (fichier ou dossier)
+
+
     public partial class FileNode : ObservableObject
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // 🔒 CHAMPS PRIVÉS
+        // ==========================================
 
         private string _name = "";
         private string _path = "";
@@ -43,43 +45,32 @@ namespace LatuCollect.UI.WinUI.Models
         private bool _isVisible = true;
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. INFORMATIONS FICHIER / DOSSIER
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // 🌐 PROPRIÉTÉS
+        // ==========================================
 
+        // Nom affiché
         public string Name
         {
             get => _name;
             set => SetProperty(ref _name, value);
         }
 
+        // Chemin complet
         public string Path
         {
             get => _path;
             set => SetProperty(ref _path, value);
         }
 
-
-        // ═════════════════════════════════════════════════════════════
-        // 3. ÉTAT DE SÉLECTION (UI)
-        // ═════════════════════════════════════════════════════════════
-
+        // Sélection utilisateur
         public bool IsSelected
         {
             get => _isSelected;
-            set
-            {
-                if (_isSelected == value)
-                    return;
-
-                SetProperty(ref _isSelected, value);
-            }
+            set => SetProperty(ref _isSelected, value);
         }
-        
-        // ═════════════════════════════════════════════════════════════
-        // 4. VISIBILITÉ (RECHERCHE)
-        // ═════════════════════════════════════════════════════════════
 
+        // Visibilité (recherche)
         public bool IsVisible
         {
             get => _isVisible;
@@ -87,12 +78,27 @@ namespace LatuCollect.UI.WinUI.Models
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 5. STRUCTURE ARBORESCENTE
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // 🌳 STRUCTURE ARBORESCENTE
+        // ==========================================
 
         public ObservableCollection<FileNode> Children { get; } = new();
 
-        public FileNode? Parent { get; set; }
+        // Parent (assigné uniquement lors de la construction)
+        public FileNode? Parent { get; internal set; }
+
+
+        // ==========================================
+        // ⚙️ PROPRIÉTÉS CALCULÉES
+        // ==========================================
+
+        // Indique si c'est un dossier
+        public bool IsFolder => Children.Count > 0;
+
+
+        // ==========================================
+        // 🔧 MÉTHODES PRIVÉES
+        // ==========================================
+        // Aucune
     }
 }
