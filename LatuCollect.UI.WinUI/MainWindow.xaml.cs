@@ -52,11 +52,21 @@ namespace LatuCollect.UI.WinUI
         // 1. CHAMPS PRIVÉS / SERVICES
         // ═════════════════════════════════════════════════════════════
 
+        // ViewModel principal
         private readonly MainViewModel _viewModel = new();
+
+        // Service export (⚠️ UI appelle → OK)
         private readonly FileExportService _exportService = new FileExportService();
+
+        // Panel paramètres
         private SettingsPanel? _settingsPanel;
 
-        // ───────────── WIN32 ─────────────
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. WIN32 (TAILLE MIN)
+        // ═════════════════════════════════════════════════════════════
+
+        // ⚠️ Code bas niveau → isolé ici
 
         private const int WM_GETMINMAXINFO = 0x0024;
 
@@ -72,8 +82,14 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 2. CONSTRUCTEUR / INITIALISATION
+        // 3. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
+
+        // 🧑🏻‍💻 Description technique
+        // - Initialise UI
+        // - Attache ViewModel
+        // - Centre fenêtre
+        // - Définit taille minimale
 
         public MainWindow()
         {
@@ -81,10 +97,11 @@ namespace LatuCollect.UI.WinUI
 
             if (this.Content is FrameworkElement root)
                 root.DataContext = _viewModel;
-           
+
             _viewModel.ThemeChanged += ApplyTheme;
-           
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+            // ⚠️ WIN32 / fenêtre
+            var hwnd = WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
@@ -111,18 +128,33 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // ═════════════════════════════════════════════════════════════
+        // 3.1 GESTION DU THÈME
+        // ═════════════════════════════════════════════════════════════
 
+        // 🧑🏻‍💻 Description technique
+        // Applique le thème Light / Dark sur toute l'UI
+
+        private void ApplyTheme(string theme)
+        {
+            if (this.Content is FrameworkElement root)
+            {
+                root.RequestedTheme =
+                    theme == "Light"
+                    ? ElementTheme.Light
+                    : ElementTheme.Dark;
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // 3. WIN32 — TAILLE MIN
+        // 4. WIN32 LOGIC
         // ═════════════════════════════════════════════════════════════
+
+        // 🧑🏻‍💻 Description technique
+        // Gestion taille minimale fenêtre (hook Windows)
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            public int x;
-            public int y;
-        }
+        public struct POINT { public int x; public int y; }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MINMAXINFO
@@ -164,28 +196,10 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 4. DIALOGS UI
+        // 5. ACTIONS UI PRINCIPALES
         // ═════════════════════════════════════════════════════════════
 
-        private async void ShowSelectAllDialog()
-        {
-            var dialog = new ContentDialog
-            {
-                Title = "Sélection globale désactivée",
-                Content = "Pour éviter les ralentissements...",
-                CloseButtonText = "Compris",
-                XamlRoot = this.Content.XamlRoot
-            };
-
-            try { await dialog.ShowAsync(); }
-            catch { }
-        }
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 5. ACTIONS PRINCIPALES
-        // ═════════════════════════════════════════════════════════════
-
+        // 📂 Chargement dossier
         private async void OnPickFolderClicked(object _, RoutedEventArgs __)
         {
             FolderPicker picker = new();
@@ -208,21 +222,25 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // 🔍 Recherche
         private void OnSearchClicked(object sender, RoutedEventArgs e)
         {
             _viewModel.ToggleSearch();
         }
 
+        // 📄 Format TXT
         private void OnTxtSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".txt";
         }
 
+        // 📝 Format MD
         private void OnMdSelected(object sender, RoutedEventArgs e)
         {
             _viewModel.SelectedFormat = ".md";
         }
 
+        // 🖱️ Click node
         private void OnNodeTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -234,21 +252,11 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
-        private void ApplyTheme(string theme)
-        {
-            if (this.Content is FrameworkElement root)
-            {
-                root.RequestedTheme =
-                    theme == "Light"
-                    ? ElementTheme.Light
-                    : ElementTheme.Dark;
-            }
-        }
-
         // ═════════════════════════════════════════════════════════════
         // 6. EXPORT / COPY
         // ═════════════════════════════════════════════════════════════
 
+        // 📤 Export
         private async void OnExportClicked(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(_viewModel.SelectedFormat))
@@ -322,6 +330,7 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // 📋 Copier
         private async void OnCopyClicked(object sender, RoutedEventArgs e)
         {
             string content = await _viewModel.GetExportContentAsync();
@@ -336,8 +345,13 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 7. LOGS
+        // 7. LOGS UI
         // ═════════════════════════════════════════════════════════════
+
+        // 🧑🏻‍💻 Description technique
+        // - Affiche logs
+        // - Filtrage
+        // - Export / copy
 
         private async void OnLogsClicked(object sender, RoutedEventArgs e)
         {
@@ -560,17 +574,6 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-        private string FormatSize(long bytes)
-        {
-            if (bytes < 1024) return $"{bytes} B";
-
-            double kb = bytes / 1024.0;
-            if (kb < 1024) return $"{kb:F1} KB";
-
-            double mb = kb / 1024.0;
-            return $"{mb:F1} MB";
-        }
-
 
         // ═════════════════════════════════════════════════════════════
         // 9. SIMULATION
@@ -683,29 +686,22 @@ namespace LatuCollect.UI.WinUI
             return await dialog.ShowAsync() == ContentDialogResult.Primary;
         }
 
-
-        // ═════════════════════════════════════════════════════════════
-        // 11. FERMETURE APP
-        // ═════════════════════════════════════════════════════════════
-
-        private async void OnQuitClicked(object sender, RoutedEventArgs e)
+        private async void ShowSelectAllDialog()
         {
-            bool confirm = await ShowConfirm(
-                "Quitter",
-                "Voulez-vous vraiment quitter l'application ?");
-
-            if (confirm)
+            var dialog = new ContentDialog
             {
-                SettingsOverlay.Visibility = Visibility.Collapsed;
-                SettingsContainer.Children.Clear();
-                _settingsPanel = null;
-                Application.Current.Exit();
-            }
+                Title = "Sélection globale désactivée",
+                Content = "Pour éviter les ralentissements...",
+                CloseButtonText = "Compris",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            try { await dialog.ShowAsync(); }
+            catch { }
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 12. MENUS (HELP / OPTIONS / ABOUT)
+        // 11. NAVIGATION / MENUS
         // ═════════════════════════════════════════════════════════════
 
         private async void OnHelpClicked(object sender, RoutedEventArgs e)
@@ -808,6 +804,44 @@ namespace LatuCollect.UI.WinUI
 
         "📜 LICENCE\n\n" +
         "MIT");
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 12. FERMETURE APP
+        // ═════════════════════════════════════════════════════════════
+
+        private async void OnQuitClicked(object sender, RoutedEventArgs e)
+        {
+            bool confirm = await ShowConfirm(
+                "Quitter",
+                "Voulez-vous vraiment quitter l'application ?");
+
+            if (confirm)
+            {
+                SettingsOverlay.Visibility = Visibility.Collapsed;
+                SettingsContainer.Children.Clear();
+                _settingsPanel = null;
+                Application.Current.Exit();
+            }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 13. UTILITAIRES
+        // ═════════════════════════════════════════════════════════════
+
+        // 🧑🏻‍💻 Description technique
+        // Format taille fichier
+
+        private string FormatSize(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes} B";
+
+            double kb = bytes / 1024.0;
+            if (kb < 1024) return $"{kb:F1} KB";
+
+            double mb = kb / 1024.0;
+            return $"{mb:F1} MB";
         }
     }
 }
