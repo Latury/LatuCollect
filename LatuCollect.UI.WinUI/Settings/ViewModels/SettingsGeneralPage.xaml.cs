@@ -28,32 +28,31 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
 {
     public sealed partial class SettingsGeneralPage : Page
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // CHAMPS PRIVÉS
+        // ==========================================
         //
-        // (aucun pour l’instant, mais section prête pour évolution)
+        // (aucun pour l’instant, section conservée)
         //
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // CONSTRUCTEUR
+        // ==========================================
 
-        
         public SettingsGeneralPage()
         {
             this.InitializeComponent();
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. NAVIGATION → RÉCEPTION DU VIEWMODEL
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // NAVIGATION → RÉCEPTION DU VIEWMODEL
+        // ==========================================
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e); // 🔥 IMPORTANT
+            base.OnNavigatedTo(e); // IMPORTANT
 
             if (e.Parameter is MainViewModel vm)
             {
@@ -62,16 +61,17 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 4. ÉVÉNEMENTS UI
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
+        // ÉVÉNEMENTS UI
+        // ==========================================
 
-        
         private async void OnResetClicked(object sender, RoutedEventArgs e)
         {
+            // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
                 return;
 
+            // Création dialog de confirmation
             var dialog = new ContentDialog
             {
                 Title = "Confirmation",
@@ -81,8 +81,10 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
                 XamlRoot = this.XamlRoot
             };
 
+            // Affichage dialog
             var result = await dialog.ShowAsync();
 
+            // Action confirmée
             if (result == ContentDialogResult.Primary)
             {
                 await vm.ResetConfigurationAsync();
