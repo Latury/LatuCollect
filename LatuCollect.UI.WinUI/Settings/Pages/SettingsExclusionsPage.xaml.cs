@@ -7,14 +7,9 @@
 ║  Rôle :                                                              ║
 ║  Gestion UI des dossiers exclus                                      ║
 ║                                                                      ║
-║  Responsabilités :                                                   ║
-║  - Réception du ViewModel                                            ║
-║  - Interaction utilisateur                                           ║
-║  - Modification simple de la configuration                           ║
-║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
-║  - Pas de logique métier complexe                                    ║
-║                                                                      ║
+║  - UI uniquement                                                     ║
+║  - Aucune logique métier                                             ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
@@ -27,17 +22,17 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
 {
     public sealed partial class SettingsExclusionsPage : Page
     {
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         //
-        // (aucun pour l’instant, section prête pour évolution)
+        // (aucun pour l’instant — section conservée volontairement)
         //
 
 
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         // 2. CONSTRUCTEUR
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
 
         public SettingsExclusionsPage()
         {
@@ -45,9 +40,9 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
         }
 
 
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         // 3. NAVIGATION → RÉCEPTION DU VIEWMODEL
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -60,42 +55,53 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
         }
 
 
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         // 4. ÉVÉNEMENTS UI — AJOUT
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
 
         private void OnAddClicked(object sender, RoutedEventArgs e)
         {
+            // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
                 return;
 
+            // Lecture valeur utilisateur
             var value = InputExclude.Text?.Trim();
 
+            // Validation : vide
             if (string.IsNullOrWhiteSpace(value))
                 return;
 
+            // Vérification doublon
             if (!vm.Config.ExcludedFolders.Contains(value))
             {
                 vm.Config.ExcludedFolders.Add(value);
+
+                // Sauvegarde configuration
                 _ = vm.SaveConfigurationAsync();
             }
 
+            // Reset champ input
             InputExclude.Text = "";
         }
 
 
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
         // 5. ÉVÉNEMENTS UI — SUPPRESSION
-        // ═════════════════════════════════════════════════════════════
+        // ==========================================
 
         private void OnRemoveClicked(object sender, RoutedEventArgs e)
         {
+            // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
                 return;
 
+            // Récupération sélection
             if (ExclusionsList.SelectedItem is string selected)
             {
                 vm.Config.ExcludedFolders.Remove(selected);
+
+                // Sauvegarde configuration
                 _ = vm.SaveConfigurationAsync();
             }
         }
