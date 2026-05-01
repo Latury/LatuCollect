@@ -10,8 +10,8 @@
 ║  Fournir une icône visuelle (emoji) selon le type de node            ║
 ║                                                                      ║
 ║  Fonctionnement :                                                    ║
-║  - Si le node possède des enfants ---- (dossier)                     ║
-║  - Sinon --- (fichier)                                               ║
+║  - Si le node possède des enfants → dossier                          ║
+║  - Sinon → fichier                                                   ║
 ║                                                                      ║
 ║  Entrée :                                                            ║
 ║  - int (nombre d’enfants du node)                                    ║
@@ -25,8 +25,8 @@
 ║   - Aucune dépendance Core                                           ║
 ║                                                                      ║
 ║  Notes :                                                             ║
-║  - Converter utilisé uniquement dans le TreeView                     ║
-║  - Ne doit contenir AUCUNE logique autre que visuelle                ║
+║  - Utilisé dans le TreeView                                          ║
+║  - Logique strictement visuelle                                      ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
 ║  Copyright © 2026 Flo Latury                                         ║
@@ -38,27 +38,41 @@ using System;
 
 namespace LatuCollect.UI.WinUI.Converters
 {
+    // ==========================================
+    // 🧠 DESCRIPTION
+    // ==========================================
+    // Convertit un nombre d’enfants en icône :
+    // > 0 → 📁 (dossier)
+    // 0   → 📄 (fichier)
+    //
+    // Converter stateless
+
+
     public class FolderFileIconConverter : IValueConverter
     {
-        // ═════════════════════════════════════════════════════════════
-        // 1. CHAMPS PRIVÉS
-        // ═════════════════════════════════════════════════════════════
-        //
-        // (Aucun champ — converter stateless)
-        //
+        // ==========================================
+        // 🔒 CHAMPS PRIVÉS
+        // ==========================================
+        // Aucun champ
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 2. CONVERT (VM → UI)
-        // ═════════════════════════════════════════════════════════════
-        //
-        // Transforme :
-        // int (nombre d’enfants) → emoji
-        //
-        // - > 0 → 📁 (dossier)
-        // - 0   → 📄 (fichier)
-        //
+        // ==========================================
+        // 🌐 PROPRIÉTÉS
+        // ==========================================
+        // Aucune propriété
 
+
+        // ==========================================
+        // 🏗️ CONSTRUCTEUR
+        // ==========================================
+        // Aucun constructeur spécifique
+
+
+        // ==========================================
+        // ⚙️ MÉTHODES PUBLIQUES
+        // ==========================================
+
+        // Convertit int → icône (string)
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is int childrenCount)
@@ -66,18 +80,22 @@ namespace LatuCollect.UI.WinUI.Converters
                 return childrenCount > 0 ? "📁" : "📄";
             }
 
-            // fallback sécurité
+            // Sécurité : valeur inattendue → fichier par défaut
             return "📄";
         }
 
 
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONVERT BACK (NON UTILISÉ)
-        // ═════════════════════════════════════════════════════════════
-
+        // ConvertBack non utilisé
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            // Sécurité : éviter crash si utilisé par erreur
+            return 0;
         }
+
+
+        // ==========================================
+        // 🔧 MÉTHODES PRIVÉES
+        // ==========================================
+        // Aucune
     }
 }
