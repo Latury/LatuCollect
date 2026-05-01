@@ -132,33 +132,20 @@ Accès :
 - Aide
 - À propos
 
+---
+
 ### 🧑‍💻 Mode développeur
 
 - Activation via ⚙ Paramètres
 - Indicateur visuel intégré
-- Message d’avertissement
 
-👉 Déverrouille le mode simulation
+👉 Rôle :
 
-⚠️ Destiné aux tests
-⚠️ Peut provoquer des comportements instables
+- Debug
+- Analyse
+- Outils internes
 
----
-
-### 🧪 Mode simulation
-
-- Accessible uniquement en mode développeur
-- Permet de simuler des comportements
-
-Exemples :
-
-- Erreurs UI
-- Loader bloqué
-- Problèmes d’export
-
-👉 Activation via popup dédiée
-👉 Effet immédiat
-👉 Aucun impact sur les fichiers
+👉 Aucun impact sur l’utilisateur standard
 
 ---
 
@@ -179,7 +166,6 @@ Exemples :
 
 - Export du fichier
 - Logs application
-- Simulation (mode développeur)
 
 ---
 
@@ -267,6 +253,8 @@ Chemin du fichier
 - Statistiques
 - Logs
 - Mode développeur
+
+---
 
 ### 🔮 À venir
 

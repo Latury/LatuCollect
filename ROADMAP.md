@@ -483,13 +483,18 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 - ✅ Sauvegarde des préférences utilisateur (config.json)
 - ✅ Format par défaut (.txt / .md)
 - ✅ Gestion des exclusions persistées
-- ⬜ Thème sélectionné
+- ✅ Thème sélectionné
 - ✅ Activation mode développeur
 - ✅ Sauvegarde du dernier dossier ouvert
 - ✅ Chargement automatique au démarrage
 - ✅ Option pour désactiver le chargement automatique
-- ⬜ Vérification validité du dossier au lancement
+- ✅ Vérification validité du dossier au lancement
 - ✅ Bouton "Réinitialiser les paramètres"
+
+## 🔹 Export
+
+- ✅ Mode d’export (Normal / Compatible IA)
+- ✅ Persistance du mode dans config.json
 
 ---
 
@@ -497,42 +502,43 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🔹 FileReaderService
 
-- ⬜ Async (`ReadFileAsync`)
-- ⬜ `FileReadResult` (résultat structuré)
+- ✅ Async (`ReadFileAsync`)
+- ✅ `FileReadResult` (résultat structuré)
 
 ## 🔹 FileStatisticsService
 
-- ⬜ Suppression `FileInfo`
-- ⬜ Passage `fileSize` en paramètre
+- ✅ Suppression `FileInfo`
+- ✅ Passage `fileSize` en paramètre
 
 ## 🔹 ImportService
 
-- ⬜ `EnumerateFiles`
-- ⬜ Tri fichiers + dossiers
-- ⬜ Support CancellationToken
-- ⬜ ImportResult
-- ⬜ Gestion affichage partiel
+- ✅ `EnumerateFiles`
+- ✅ Tri fichiers + dossiers
+- ✅ Support CancellationToken
+- ✅ ImportResult
+- ✅ Gestion affichage partiel
 
 ## 🔹 ExportService
 
-- ⬜ Async export
-- ⬜ Gestion gros fichiers
-- ⬜ ExportResult structuré
+- ✅ Async export
+- ✅ Gestion gros fichiers
+- ✅ ExportResult structuré
+- ✅ Support du mode d’export (Normal / IA)
 
 ## 🔹 CollectionService
 
-- ⬜ Tri fichiers
-- ⬜ HashSet (doublons)
-- ⬜ Limite max fichiers
+- ✅ Tri fichiers
+- ✅ HashSet (doublons)
+- ✅ Limite max fichiers
 
 ---
 
 # ⚡ PERFORMANCE
 
-- ⬜ Limite cache
-- ⬜ Expiration cache
-- ⬜ Optimisation stats
-- ⬜ Limite export
+- ✅ Limite cache
+- ✅ Expiration cache
+- ✅ Optimisation stats
+- ✅ Limite export
 
 ---
 
@@ -540,16 +546,16 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🔧 Bugs
 
-- ⬜ Reset paramètres → vider dossier
-- ⬜ Message "Veuillez sélectionner un dossier"
-- ⬜ Supprimer sélection globale
-- ⬜ Améliorer section Aide
+- ✅ Reset paramètres
+- ✅ Message "Veuillez sélectionner un dossier"
+- ✅ Supprimer sélection globale
 
 ## ✨ Améliorations
 
-- ⬜ Sélection dossier → inclure enfants
-- ⬜ Preview limité cohérent
-- ⬜ Message export partiel
+- ✅ Sélection dossier → inclure enfants
+- ✅ Preview limité cohérent
+- ✅ Message export partiel
+- ✅ Preview = Export (corrigé)
 
 ---
 
@@ -557,29 +563,22 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 - ✅ Taille minimale
 - ✅ Réduction flickering
-- ⬜ Optimisation rendu
+- ✅ Optimisation rendu
 
 ---
 
 # 🧾 LOGS
 
 - ✅ LogService en place
-- ⬜ Niveau de log configurable
-
----
-
-# ⚙️ BUILD
-
-- ⬜ Build release propre
-- ⬜ Vérification stabilité
+- ✅ Niveau de log configurable
 
 ---
 
 # 🧪 TESTS
 
-- ⬜ Tests FileReader
-- ⬜ Tests Export
-- ⬜ Tests Statistics
+- ✅ Tests FileReader
+- ✅ Tests Export
+- ✅ Tests Statistics
 
 ---
 
@@ -587,74 +586,79 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ## 🎯 Objectif
 
-Rendre le Core fiable, testable et prévisible.
+Rendre le Core prévisible, testable et sans effets de bord.
+
+---
+
+## 🐞 Bugs critiques (PRIORITÉ HAUTE)
+
+- ⬜ Correction reset incomplet
+- ⬜ Correction sélection TreeView :
+  - décocher un fichier ne doit pas recocher le parent
+  - propagation correcte parent ↔ enfants
 
 ---
 
 ## 🧠 FileReader
 
-- ⬜ Stabilisation async
-- ⬜ Gestion complète des erreurs
+- ⬜ Gestion erreurs complète (cas extrêmes manquants)
+- ⬜ Validation fichiers (null, accès, encodage)
 
 ---
 
 ## 📊 Statistics
 
-- ⬜ Suppression FileInfo
-- ⬜ Passage fileSize
+- ⬜ Suppression dépendance FileInfo
+- ⬜ Utilisation fileSize uniquement
+- ⬜ Fiabilisation calcul
 
 ---
 
 ## 📤 Export
 
-- ⬜ ExportResult structuré
-- ⬜ Async complet
+- ⬜ Validation stricte des entrées
+- ⬜ Robustesse export massif
 
 ---
 
 ## 📦 Collection
 
-- ⬜ Optimisation collection
 - ⬜ Gestion cas limites
-- ⬜ Limite fichiers
-- ⬜ Tri propre
-
----
+- ⬜ Tri stable
+- ⬜ Limite sécurité
 
 # 🚀 16. Version 0.12.0 — PERFORMANCE
 
 ## 🎯 Objectif
 
-Améliorer la fluidité et gérer les gros projets.
+Améliorer la gestion des gros projets.
 
 ---
 
 ## 📂 Import
 
-- ⬜ EnumerateFiles
-- ⬜ Tri fichiers
+- ⬜ EnumerateFiles (streaming)
+- ⬜ Tri optimisé
 
 ---
 
 ## ⚡ Cache
 
-- ⬜ Limite cache
-- ⬜ Expiration
+- ⬜ Limite mémoire
+- ⬜ Expiration cache
 
 ---
 
 ## 📊 Stats
 
-- ⬜ Optimisation lignes
+- ⬜ Optimisation calcul lignes
 
 ---
 
 ## 📤 Export
 
-- ⬜ Limite export
 - ⬜ Gestion export massif
-
----
+- ⬜ Protection mémoire
 
 # 🚀 17. Version 0.13.0 — UX & COMPORTEMENT
 
@@ -675,44 +679,52 @@ Améliorer l’expérience utilisateur.
 
 ## 🖥️ UI
 
-- ⬜ Reset dossier
+- ⬜ Reset dossier propre
 - ⬜ Message état vide
 
 ---
 
 ## ✨ UX
 
-- ⬜ Sélection dossier complète
-- ⬜ Preview limité
+- ⬜ Sélection dossier fiable
+- ⬜ Preview limité configurable
 - ⬜ Message export partiel
-
----
 
 # 🚀 18. Version 0.14.0 — ARCHITECTURE
 
 ## 🎯 Objectif
 
-Structurer le projet pour le futur.
+Corriger les écarts ALC restants.
 
 ---
 
 ## 🧠 Core
 
-- ⬜ IExportFormatter
-- ⬜ Séparer AppConfig / UserConfig
 - ⬜ Interfaces services
-- ⬜ Découpler Simulation
+- ⬜ Séparer AppConfig / UserConfig
 
 ---
 
-## 🧱 Modèles
+## 📦 Modèles
 
-- ⬜ FileNode Parent
-- ⬜ Depth
-- ⬜ Id
-- ⬜ CacheEntry
+- ⬜ Déplacer :
+  - ExportResult
+  - ExportData
+  - StatisticsResult
+    👉 vers Core/Models/Export/
 
 ---
+
+## 🧱 FileNode
+
+- ⬜ Supprimer IsSelected du Core
+- ⬜ Ajouter IsFolder réel
+
+---
+
+## 🧾 Logging
+
+- ⬜ Déplacer formatage Date côté UI
 
 # 🚀 19. Version 0.15.0 — LOGS
 
@@ -727,124 +739,277 @@ Améliorer debug et stabilité.
 - ⬜ Limite mémoire
 - ⬜ Thread safety
 - ⬜ Export logs
-- ⬜ Debug level
+- ⬜ Niveaux de logs
 - ⬜ Filtrage
 
----
+# 🚀 20. Version 0.16.0 — SUPPRESSION SIMULATION
 
-# 🧪 Simulation (TOUJOURS EN FIN)
+## 🎯 Objectif
 
-👉 À faire après discussion dédiée
-
----
-
-## 🧱 Architecture
-
-- ⬜ Refonte complète
-- ⬜ Centralisation scénarios
-- ⬜ Système extensible
+Supprimer complètement le système de simulation.
 
 ---
 
-## 🛡️ Règles
+## 🧠 Core
 
-- ⬜ Aucun impact production
-- ⬜ Isolation complète
-- ⬜ Activation explicite
-
----
-
-# 🔬 Scénarios de simulation
-
-## 📂 Lecture
-
-- ⬜ Fichier introuvable
-- ⬜ Chemin invalide
-- ⬜ Chemin trop long
-- ⬜ Accès refusé
-- ⬜ Fichier verrouillé
-- ⬜ Fichier vide
-- ⬜ Fichier volumineux
-- ⬜ Fichier binaire
-- ⬜ Encodage spécial
-
----
-
-## 📤 Export
-
-- ⬜ Accès refusé
-- ⬜ Fichier ouvert
-- ⬜ Chemin invalide
-- ⬜ Disque plein
-- ⬜ Export vide
-- ⬜ Export massif
-- ⬜ Confirmation overwrite
-
----
-
-## 📦 Collection
-
-- ⬜ Aucun fichier
-- ⬜ Sélection partielle
-- ⬜ Sélection massive
-- ⬜ Fichiers supprimés
-- ⬜ Vider sélection
+- ⬜ Supprimer dossier Simulation/
+- ⬜ Supprimer SimulationService
+- ⬜ Supprimer tous les scénarios
+- ⬜ Nettoyer dépendances dans :
+  - FileReaderService
+  - FileExportService
 
 ---
 
 ## 🖥️ UI
 
-- ⬜ État incohérent
-- ⬜ UI figée
-- ⬜ Affichage chemin dossier
+- ⬜ Supprimer bouton Simulation
+- ⬜ Supprimer logique ViewModel liée
+- ⬜ Supprimer activation mode simulation
 
 ---
 
-## 👁️ Aperçu
+## ⚙️ Configuration
 
-- ⬜ Limitation configurable
-
----
-
-## 🔍 Recherche
-
-- ⬜ Recherche extension
-- ⬜ Recherche gros projet
+- ⬜ Supprimer SimulationConfig
+- ⬜ Nettoyer config utilisateur
 
 ---
 
-## ⚡ Performance
+## 🧹 Nettoyage global
 
-- ⬜ Projet volumineux
-- ⬜ Arborescence profonde
-- ⬜ Export lourd
-
----
-
-## 👤 Utilisateur
-
-- ⬜ Clics rapides
-- ⬜ Changement dossier
-- ⬜ Fermeture pendant traitement
+- ⬜ Supprimer code mort
+- ⬜ Supprimer flags inutiles
+- ⬜ Vérifier qu’aucune référence ne reste
 
 ---
 
-# 📦 Distribution (TOUJOURS EN FIN)
+## 🧪 Validation
 
+- ⬜ Vérifier :
+  - lecture OK
+  - export OK
+  - aucun comportement cassé
+
+# 🎨 🚀 21. Version 0.17.0 — UI / THÈMES / AUDIT COMPLET
+
+## 🎯 Objectif
+
+Transformer l’application en produit propre, agréable et cohérent visuellement.
+
+👉 Sans casser :
+
+- simplicité
+- lisibilité
+- structure actuelle (gauche / centre / droite / bas)
+
+---
+
+## 🧱 1. BASE THÈME (OBLIGATOIRE)
+
+- ⬜ Mode clair / sombre
+- ⬜ Centralisation couleurs (DynamicResource)
+- ⬜ Suppression couleurs en dur
+- ⬜ Palette cohérente :
+  - primaire
+  - secondaire
+  - erreur
+  - succès
+
+---
+
+## 🎨 2. AMÉLIORATION VISUELLE
+
+- ⬜ Espacements homogènes
+- ⬜ Alignements propres
+- ⬜ Hiérarchie visuelle claire
+- ⬜ Amélioration typographie
+- ⬜ Uniformisation des icônes
+
+---
+
+## 🧩 3. COHÉRENCE UI
+
+- ⬜ Harmonisation boutons
+- ⬜ Harmonisation dialogs
+- ⬜ Harmonisation états :
+  - loading
+  - error
+  - empty
+- ⬜ Feedback utilisateur plus clair
+
+---
+
+## 🖥️ 4. ZONES UI (IMPORTANT)
+
+👉 On garde STRICTEMENT :
+
+- Gauche → Arborescence
+- Centre → Options
+- Droite → Aperçu
+- Bas → Actions
+
+---
+
+👉 Améliorations :
+
+- ⬜ Lisibilité zone gauche (cœur app)
+- ⬜ Clarté des actions centre
+- ⬜ Confort lecture preview
+- ⬜ Visibilité actions bas
+
+---
+
+## 🔍 5. AUDIT UX/UI GUIDÉ (TRÈS IMPORTANT)
+
+### Objectif
+
+- choix guidé
+- visuel obligatoire
+- décisions UX claires
+
+---
+
+## 🧠 FORMAT DE L’AUDIT
+
+### 1️⃣ Question claire
+
+Ex :
+👉 “Quel style de boutons veux-tu ?”
+
+---
+
+### 2️⃣ 5 solutions minimum
+
+- Style plat
+- Style arrondi
+- Style outline
+- Style glass
+- Style minimal
+
+---
+
+### 3️⃣ Analyse par solution
+
+- ✔ explication simple
+- ✔ avantages
+- ✔ inconvénients
+- ✔ cas d’usage
+
+---
+
+### 4️⃣ VISUELS
+
+- minimum 5 images par solution
+- comparables
+- claires
+- réalistes
+
+👉 Objectif : choix visuel
+
+---
+
+## 🎯 SUJETS AUDITÉS
+
+### 🎨 Thème global
+
+- sombre / clair / hybride
+- contraste fort vs doux
+
+### 🔘 Boutons
+
+- formes
+- styles
+- hover
+- feedback
+
+### 📦 Cartes / blocs UI
+
+- plats
+- ombrés
+- bordures
+- séparation
+
+### 🌳 Arborescence
+
+- indentation
+- lignes
+- icônes
+- sélection
+
+### 👁️ Preview
+
+- fond
+- police
+- contraste
+- espacement
+
+### 📊 Feedback utilisateur
+
+- toast
+- inline
+- badges
+- couleurs
+
+### 🧾 Logs UI
+
+- couleurs
+- lisibilité
+- hiérarchie
+
+### ⚙️ Paramètres
+
+- navigation
+- layout gauche/droite
+- lisibilité
+
+### 🎨 Couleurs
+
+- palette
+- accent
+- danger / warning
+
+### 🔤 Typographie
+
+- police
+- taille
+- espacement
+
+---
+
+## ⚠️ RÈGLES
+
+- ✔ simple
+- ✔ lisible
+- ✔ ALC respectée
+- ✔ utile uniquement
+
+# 🚀 22. Version 0.18.0 — FINALISATION & DISTRIBUTION
+
+## 🎯 Objectif
+
+Transformer l’application en produit final.
+
+---
+
+## ⚙️ BUILD
+
+- ⬜ Build release propre
+- ⬜ Tests complets
+- ⬜ Vérification stabilité
 - ⬜ Installateur
 - ⬜ Dépendances
 - ⬜ Multi-architecture
 - ⬜ Choix dossier
 - ⬜ Raccourcis
 
----
-
-# 🏁 Objectif final
+# 🏁 OBJECTIF FINAL
 
 👉 LatuCollect devient :
 
 - ✔ Stable
-- ✔ Testé en profondeur
-- ✔ Robuste face aux erreurs
-- ✔ Maintenable
-- ✔ Distribuable proprement
+- ✔ Rapide
+- ✔ Prévisible
+- ✔ Lisible
+- ✔ Agréable visuellement
+- ✔ Distribuable

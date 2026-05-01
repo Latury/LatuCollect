@@ -129,6 +129,8 @@ Dans la classe :
 
 # 3. SÉPARATION DES RESPONSABILITÉS
 
+# 3. SÉPARATION DES RESPONSABILITÉS
+
 | Couche | Rôle           |
 | ------ | -------------- |
 | Core   | Logique métier |
@@ -417,25 +419,13 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 ---
 
-## 📜 Historique
-
-### v0.7.0
-
-- Limitation de l’aperçu à 20 fichiers
-- Calcul en arrière-plan (async)
-- Réduction des recalculs
-
-👉 Objectif : éviter les freezes UI
-
----
-
 # 9. UI WINUI (STRUCTURE OFFICIELLE)
 
-```text
+```text id="fix-structure-ui"
 Gauche → Projet (arborescence)
 Centre → Options (format + actions)
 Droite → Aperçu
-Bas → Export
+Bas → Actions
 ```
 
 ---
@@ -452,7 +442,7 @@ Bas → Export
 
 # 11. MODE DÉVELOPPEUR
 
-Le mode développeur permet d’activer des fonctionnalités avancées de test.
+Le mode développeur permet d’activer des fonctionnalités internes de debug.
 
 ### ✔ Règles
 
@@ -463,46 +453,19 @@ Le mode développeur permet d’activer des fonctionnalités avancées de test.
 ### ✔ Comportement
 
 - Affichage d’un message dans l’UI (pas de popup bloquant)
-- Activation de fonctionnalités avancées non visibles en mode standard
+- Activation de fonctionnalités internes non visibles en mode standard
 
-### ✔ Fonctionnalités activées
+### ✔ Objectif
 
-- Mode simulation
-- Accès aux scénarios de test
+- Debug
+- Analyse
+- Aide au développement
 
 👉 Le mode développeur reste strictement isolé du comportement normal.
 
 ---
 
-# 12. SIMULATION
-
-Le système de simulation permet de reproduire des comportements spécifiques pour les tests.
-
-### ✔ Accès
-
-- Disponible uniquement en mode développeur
-
-### ✔ Fonctionnement
-
-- Activation via l’UI
-- Choix d’un scénario
-- Effet immédiat sur le comportement de l’application
-
-### ✔ Objectif
-
-- Tester les erreurs
-- Simuler des cas extrêmes
-- Valider la robustesse de l’application
-
-### ⚠️ Règles
-
-- Aucun impact sur les fichiers réels
-- Doit rester isolé du Core réel
-- Activation explicite uniquement
-
----
-
-# 13. FORMAT D’EXPORT
+# 12. FORMAT D’EXPORT
 
 ```text
 Chemin du fichier
@@ -516,7 +479,57 @@ Chemin du fichier
 
 ---
 
-# 14. STRUCTURE PROJET
+## 🎯 Règle
+
+- Chaque fichier est affiché avec son chemin complet
+- Le contenu est affiché tel quel (aucune modification)
+- Un séparateur est ajouté entre chaque fichier
+
+---
+
+## ⚠️ IMPORTANT
+
+- ✔ Aucun traitement du contenu
+- ✔ Aucun parsing
+- ✔ Aucun formatage complexe
+
+👉 LatuCollect = copier intelligent uniquement
+
+---
+
+## 🔁 Cohérence
+
+👉 Le format d’export doit être :
+
+- Identique à l’aperçu
+- Généré par le Core uniquement
+- Indépendant de l’UI
+
+---
+
+## 📄 Format Markdown
+
+```text
+## 📄 Chemin du fichier
+
+(contenu du fichier)
+
+---
+```
+
+---
+
+## 📌 Objectif
+
+- Lisible
+- Structuré
+- Prévisible
+
+👉 Utilisable directement (copie / export)
+
+---
+
+# 13. STRUCTURE PROJET
 
 ```text
 Core/
@@ -534,7 +547,7 @@ UI/
 
 ---
 
-# 15. RÈGLES STRICTES
+# 14. RÈGLES STRICTES
 
 - ✔ 1 classe = 1 responsabilité
 - ✔ Pas de code mort
@@ -544,14 +557,14 @@ UI/
 
 ---
 
-# 16. EMOJIS
+# 15. EMOJIS
 
 - ❌ Interdits dans le code en version finale
 - ✔ Autorisés dans la documentation
 
 ---
 
-# 17. COMMENTAIRES
+# 16. COMMENTAIRES
 
 Classe :
 
@@ -566,7 +579,7 @@ Méthode :
 
 ---
 
-# 18. ASYNCHRONE
+# 17. ASYNCHRONE
 
 - ✔ async / await
 - ❌ .Result / .Wait()
@@ -576,7 +589,7 @@ Méthode :
 
 ---
 
-# 19. STABILITÉ UI
+# 18. STABILITÉ UI
 
 ### ✔ Taille minimale
 
@@ -599,7 +612,7 @@ Méthode :
 
 ---
 
-# 20. JOURNALISATION
+# 19. JOURNALISATION
 
 - ✔ Tracer actions
 - ✔ Tracer erreurs
@@ -608,7 +621,7 @@ Méthode :
 
 ---
 
-# 21. NOMMAGE
+# 20. NOMMAGE
 
 - ✔ PascalCase
 - ✔ Noms explicites
@@ -616,7 +629,7 @@ Méthode :
 
 ---
 
-# 22. INJECTION DE DÉPENDANCES
+# 21. INJECTION DE DÉPENDANCES
 
 Actuel :
 
@@ -628,7 +641,7 @@ Futur :
 
 ---
 
-# 23. ÉTAT ACTUEL
+# 22. ÉTAT ACTUEL
 
 - ✔ Core fonctionnel
 - ✔ Export opérationnel
@@ -645,7 +658,7 @@ Futur :
 
 ---
 
-# 24. ÉVOLUTIONS
+# 23. ÉVOLUTIONS
 
 ## 🔮 À venir
 
@@ -672,7 +685,7 @@ LatuCollect est volontairement simplifié :
 
 ---
 
-# 25. OBJECTIF GLOBAL
+# 24. OBJECTIF GLOBAL
 
 - ✔ Simple
 - ✔ Structuré

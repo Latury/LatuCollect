@@ -1,18 +1,26 @@
-# 🧪 TESTS – LATUCOLLECT
+# 🧪 TESTS – LATUCOLLECT (V2)
 
 Stratégie officielle de validation du projet LatuCollect
 
+---
+
 ## 📌 Résumé
 
-Ce document définit la stratégie de tests de LatuCollect, incluant les tests manuels actuels et les évolutions vers des tests automatisés.
+Ce document définit la stratégie de tests de LatuCollect.
 
-👉 Il permet de valider la stabilité, la fiabilité et la cohérence de l’application.
+👉 Il permet de valider :
+
+- La stabilité
+- La fiabilité
+- La cohérence UI / Core
+
+---
 
 ## 📊 État des tests
 
-- ✔ Validé
-- 🔄 En cours
-- 🔮 À venir [ROADMAP](./ROADMAP.md)
+- ✔ Tests manuels complets (UI)
+- 🔄 Tests unitaires (à venir)
+- 🔮 Tests système (futurs)
 
 ---
 
@@ -33,8 +41,8 @@ Garantir :
 Approche progressive :
 
 1. Tests manuels (actuels)
-2. Tests unitaires (à venir)
-3. Tests système (futurs)
+2. Tests unitaires (Core)
+3. Tests système (global)
 
 ---
 
@@ -63,6 +71,7 @@ Tests réalisés directement dans l’interface WinUI
 
 - Structure affichée correctement
 - Message clair en cas d’erreur
+- Aucun crash
 
 ---
 
@@ -92,7 +101,7 @@ Tests réalisés directement dans l’interface WinUI
 👉 Résultat attendu :
 
 - Message "Aucun résultat"
-- Aucun écran vide
+- UI cohérente
 
 ---
 
@@ -130,9 +139,11 @@ Tests réalisés directement dans l’interface WinUI
 
 - Checkbox fonctionnelle
 - Multi-sélection
-- Désélection
+- Désélection correcte
 
-### Cas limites :
+---
+
+### ⚠️ Cas limites :
 
 - Aucun fichier sélectionné
 
@@ -141,20 +152,30 @@ Tests réalisés directement dans l’interface WinUI
 - Message affiché
 - Export bloqué
 - Copier désactivé
-- Clics rapides répétés (anti double clic)
 
 ---
 
-### ⚠️ Sélection globale
+## 🌳 COHÉRENCE ARBORESCENCE (CRITIQUE — 0.11.0)
 
-- Désactivée (choix volontaire actuel)
+### Vérifier :
 
-👉 Pourquoi :
+- Sélection parent → sélection enfants
+- Désélection enfant → mise à jour parent correcte
+- Aucun comportement incohérent
 
-- Éviter les ralentissements
-- Préserver la fluidité
+### Cas critiques :
 
-👉 Évolution possible dans les versions futures
+- Décoche un fichier → ne doit pas recocher le parent
+- Sélection partielle d’un dossier
+- Propagation correcte des états
+
+👉 Résultat attendu :
+
+- Cohérence parfaite parent ↔ enfants
+- Aucun bug visuel
+- Aucun état incohérent
+
+👉 Priorité : haute
 
 ---
 
@@ -176,11 +197,11 @@ Tests réalisés directement dans l’interface WinUI
 
 ### ⚠️ Limitation
 
-- Maximum 20 fichiers
+- Maximum 20 fichiers affichés
 
 👉 Message :
 
-```texte
+```text
 ⚠ Aperçu limité à 20 fichiers
 ```
 
@@ -199,11 +220,12 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ## 🔄 ÉTATS UI
 
-- Chargement → loader
-- Erreur → message
-- Prêt → contenu
+- Loading
+- Ready
+- Empty
+- Error
 
-👉 Toujours cohérent
+👉 Toujours cohérents
 
 ---
 
@@ -234,9 +256,11 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 👉 Message :
 
-```texte
+```text
 ⚠ Projet volumineux — affichage partiel
 ```
+
+---
 
 ### Vérifier :
 
@@ -254,6 +278,8 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Pas de recalcul inutile
 - UI stable
 
+---
+
 ### Cas :
 
 - Clics rapides
@@ -263,6 +289,8 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 - Aucun ralentissement
 - Aucun bug visuel
+
+---
 
 ### 🖥️ Fenêtre
 
@@ -293,6 +321,8 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Fichier créé
 - Contenu correct
 - Séparateur respecté
+
+---
 
 ### MARKDOWN
 
@@ -340,16 +370,15 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Affichage des logs
 - Filtrage (Info / Warning / Error)
 
+---
+
 ### Export logs :
 
 - Fichier créé
 - Contenu correct
 - Format lisible
 
-### Badge erreurs :
-
-- Affichage si erreurs présentes
-- Compteur correct
+---
 
 👉 Résultat attendu :
 
@@ -367,6 +396,8 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Caractères
 - Taille
 
+---
+
 ### Comportement :
 
 - Temps réel
@@ -381,7 +412,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 - Activation via paramètres
 - Désactivation par défaut
-- Affichage du message d’avertissement
+- Affichage d’un indicateur visuel
+
+---
 
 ### Comportement :
 
@@ -389,37 +422,26 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Activation immédiate
 - UI mise à jour correctement
 
-👉 Résultat attendu :
+---
 
-- Bouton simulation visible uniquement si actif
-- Message affiché dans l’UI
+👉 Objectif :
+
+- Debug
+- Analyse interne
+- Outils de développement
 
 ---
 
-## 🧪 SIMULATION
+👉 Résultat attendu :
 
-### Vérifier :
-
-- Activation / désactivation
-- Changement de scénario
-- Effet immédiat
-
-### Scénarios UI :
-
-- Loader bloqué
-- Erreur UI
-
-### Résultat attendu :
-
-- Comportement simulé visible
-- Aucun impact réel sur les fichiers
-- Désactivation restaure un comportement normal
+- Mode isolé
+- Aucun impact métier
 
 ---
 
 ## 📄 FORMAT
 
-```texte
+```text
 Chemin du fichier
 
 (contenu du fichier)
@@ -440,6 +462,8 @@ Chemin du fichier
 - Échec export
 - Fermeture application pendant traitement
 
+---
+
 👉 Résultat attendu :
 
 - Aucun crash
@@ -449,10 +473,9 @@ Chemin du fichier
 
 # 🧠 TESTS UNITAIRES (À VENIR)
 
-Objectif :
+## 🎯 Objectif
 
-- Tester la logique métier indépendamment de l’UI
-- Garantir la fiabilité du Core
+Tester la logique métier indépendamment de l’UI
 
 ---
 
@@ -460,7 +483,7 @@ Objectif :
 
 - FileReaderService
 - FileExportService
-- FileStatisticsService (plus tard)
+- FileStatisticsService
 
 ---
 
@@ -469,7 +492,7 @@ Objectif :
 ### Lecture
 
 - Lecture valide
-- Gestion des erreurs (accès refusé, fichier inexistant)
+- Gestion des erreurs
 
 ---
 
@@ -486,23 +509,6 @@ Objectif :
 - Comptage lignes
 - Comptage caractères
 - Gestion fichiers vides
-
----
-
-## Cas principaux
-
-### Lecture
-
-- Lecture valide
-- Gestion erreur
-
----
-
-### Export
-
-- TXT
-- Markdown
-- Format respecté
 
 ---
 
@@ -531,7 +537,7 @@ Priorité :
 
 ## Flux utilisateur
 
-```text id="fluxtest-latucollect"
+```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
@@ -539,12 +545,12 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ## Pipeline interne
 
-```text id="pipelinetest-latucollect"
+```text
 Import → Lecture → Collection → Assemblage → Statistiques → Export
 ```
 
-👉 Aucun traitement complexe
 👉 Copier intelligent uniquement
+👉 Aucun traitement complexe
 
 ---
 
@@ -554,8 +560,6 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - ✔ Validation des cas principaux
 - ✔ Vérification des performances
 - 🔄 Tests unitaires en préparation
-
-👉 Base solide pour évolution vers tests automatisés
 
 ---
 
@@ -567,16 +571,18 @@ Les tests garantissent :
 - Aucun crash
 - Cohérence UI / Core
 
+---
+
 👉 LatuCollect reste :
 
-- Fiable
 - Stable
+- Fiable
 - Prévisible
 
 ---
 
-# 🔮 Évolutions des tests
+# 🔮 ÉVOLUTIONS
 
-Les améliorations futures (tests unitaires, automatisation) sont définies dans la roadmap.
-
-👉 Voir : [ROADMAP](./ROADMAP.md)
+- Tests unitaires complets
+- Tests automatisés
+- Tests de performance avancés

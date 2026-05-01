@@ -1085,7 +1085,7 @@ Cette version introduit :
 
 ## 📌 Statut
 
-🟡 En cours — Stabilisation avancée UI + structuration interne
+🟢 Terminée — Application stable et prête pour utilisation réelle
 
 ---
 
@@ -1126,7 +1126,15 @@ Finaliser l’application pour une utilisation réelle, stable, cohérente et ma
 - ✅ Correction du TreeView :
   - Navigation restaurée
   - Expansion fonctionnelle
-  - Suppression du mauvais template
+  - Sélection fluide
+
+- ✅ Amélioration interaction utilisateur :
+  - clic sur toute la ligne
+  - sélection intuitive
+
+- ✅ Correction du preview :
+  - ScrollViewer + TextBox (WinUI compliant)
+  - scrolling fonctionnel
 
 ---
 
@@ -1134,7 +1142,8 @@ Finaliser l’application pour une utilisation réelle, stable, cohérente et ma
 
 - ✅ Amélioration de la sélection :
   - Sélection d’un dossier → sélection automatique des enfants
-  - Comportement plus logique et rapide
+  - Mise à jour des parents
+  - Comportement cohérent
 
 - ✅ Recherche dynamique :
   - Filtrage sans reload
@@ -1142,7 +1151,7 @@ Finaliser l’application pour une utilisation réelle, stable, cohérente et ma
 
 ---
 
-## ⚙️ Configuration utilisateur (NOUVEAU)
+## ⚙️ Configuration utilisateur
 
 - ✅ Mise en place d’un système complet de configuration persistée (JSON)
 
@@ -1151,26 +1160,31 @@ Finaliser l’application pour une utilisation réelle, stable, cohérente et ma
   - Mode développeur
   - Dossier ouvert
   - Dossiers exclus
+  - Mode d’export
+  - Niveau de logs
+  - Thème
 
 - ✅ Chargement au démarrage :
   - Restauration automatique des paramètres
 
-- ✅ Correction critique :
-  - Suppression de l’écrasement de config au lancement
+- ✅ Vérification du dossier au lancement :
+  - reset propre si invalide
+  - message utilisateur
 
 - ✅ Synchronisation complète :
   - UI ↔ ViewModel ↔ fichier config
+
+- ✅ Bouton "Réinitialiser les paramètres"
 
 ---
 
 ## 🧑‍💻 Mode développeur
 
 - ✅ Activation via paramètres
-- ✅ Toggle fonctionnel (liaison ViewModel)
+- ✅ Toggle fonctionnel
 - ✅ Persistance entre sessions
 - ✅ Affichage direct dans l’UI
 - ✅ Message d’avertissement intégré
-- ✅ Aucun impact utilisateur standard
 
 ---
 
@@ -1187,29 +1201,79 @@ Finaliser l’application pour une utilisation réelle, stable, cohérente et ma
 
 - ✅ Système de logs structuré :
   - Info / Warning / Error
-  - Format lisible
+
+- ✅ Niveau de logs configurable
+
+- ✅ Filtrage côté Core
 
 - ✅ Mise à jour dynamique UI
 
 - ✅ Badge d’erreurs
 
-- ✅ Correction des conflits UI
-
 ---
 
-## 🔄 Pipeline interne (amélioré)
+## 🔄 Pipeline interne
 
-Flux complet stabilisé :
+Flux stabilisé :
 
 👉 Import → Sélection → Lecture → Assemblage → Statistiques → Export
 
-- ✅ Comportement cohérent
-- ✅ Moins d’effets de bord
-- ✅ Meilleure lisibilité interne
+- ✅ Pipeline cohérent
+- ✅ Source unique (Preview = Export)
+- ✅ Réduction des effets de bord
 
 ---
 
-## 🧱 Architecture (gros refactor)
+## ⚡ Performance
+
+- ✅ Cache lecture fichiers :
+  - limite
+  - expiration
+  - nettoyage
+
+- ✅ Réduction des accès disque inutiles
+
+- ✅ Traitement async complet
+
+- ✅ Optimisation statistiques
+
+- ✅ Limitation des traitements :
+  - preview
+  - export
+  - import
+
+---
+
+## 📦 Gestion des gros fichiers
+
+- ✅ Lecture partielle automatique
+- ✅ Limite de taille fichier
+- ✅ Message :
+  - "⚠ Fichier tronqué"
+
+---
+
+## 📤 Export
+
+- ✅ Export async complet
+
+- ✅ ExportResult structuré
+
+- ✅ Mode d’export :
+  - Normal
+  - Compatible IA
+
+- ✅ Gestion des limites :
+  - nombre de fichiers
+  - taille du contenu
+
+- ✅ Export partiel :
+  - détection automatique
+  - message utilisateur unique
+
+---
+
+## 🧠 Architecture
 
 ### Core
 
@@ -1220,106 +1284,89 @@ Flux complet stabilisé :
   - FileCollectionService
   - FileStatisticsService
 
-- ✅ Ajout cache mémoire (lecture fichiers)
-
 - ✅ Séparation stricte des responsabilités
 
 ---
 
 ### Configuration
 
-- ✅ Nouvelle architecture :
-  - Constants
-  - Interfaces
+- ✅ Architecture complète :
   - Models
   - Services
-
-- ✅ Ajout :
-  - UserConfig
-  - ConfigurationService
-  - ConfigurationDefaults
+  - Defaults
 
 ---
 
 ### Logging
 
-- ✅ Système centralisé :
-  - LogService
-  - LogEntry
-  - LogLevel
+- ✅ Système centralisé
 
 ---
 
 ### UI
 
-- ✅ Nettoyage complet des converters :
-  - BooleanToVisibilityConverter
-  - InverseBooleanToVisibilityConverter
-  - StringEqualsConverter
-  - Preview converters
-  - LogLevelToColorConverter
-  - FolderFileIconConverter
-  - BoolToIconConverter
-
+- ✅ Nettoyage des converters
 - ✅ Structure homogène
-
-- ✅ Préparation thèmes futurs
+- ✅ Préparation thèmes
 
 ---
 
 ### Mapping UI ↔ Core
 
 - ✅ Conversion propre des FileNode
-- ✅ Suppression dépendances ambiguës
 - ✅ Respect strict ALC
 
 ---
 
 ## 🛠️ Stabilité UI
 
-- ✅ Correction des freezes (ContentDialog)
+- ✅ Correction des freezes
 - ✅ Suppression conflits UI
 - ✅ Réduction flickering
-- ✅ Gestion taille minimum (1600 x 1000)
-- ✅ Amélioration du comportement global
+- ✅ États UI fiables :
+  - Loading
+  - Ready
+  - Empty
+  - Error
+
+---
+
+## 🔒 Sécurité & robustesse
+
+- ✅ Gestion erreurs :
+  - accès refusé
+  - fichier introuvable
+  - chemin invalide
+
+- ✅ Protection contre surcharge :
+  - limites globales
+  - affichage partiel
 
 ---
 
 ## 🧠 Résultat
 
-- ✔ Interface plus propre
-- ✔ Navigation plus fluide
-- ✔ Sélection intuitive
+- ✔ Interface claire et fluide
+- ✔ Comportement prévisible
+- ✔ Export fiable
+- ✔ Preview cohérent
+- ✔ Gestion gros projets
 - ✔ Paramètres persistants
-- ✔ Architecture solide
+- ✔ Architecture propre
 - ✔ Code maintenable
-- ✔ Base prête pour production
 
 ---
 
-# ⚠️ En cours
+# 🏁 Conclusion
 
-- ⬜ Refonte complète du système de simulation (Core)
-- ⬜ Finalisation UI (design global)
-- ⬜ Paramètres avancés :
-  - niveau de logs
-  - options utilisateur étendues
+👉 Version 0.10.0 finalisée avec succès
 
-- ⬜ Optimisation performances (gros projets)
-- ⬜ Mode développeur avancé (outils internes)
-- ⬜ Thèmes (clair / sombre)
+LatuCollect est désormais :
 
----
-
----
-
-## 🏁 Objectif
-
-👉 Préparer LatuCollect pour :
-
-- ✔ distribution
-- ✔ utilisation réelle
-- ✔ stabilité maximale
+- stable
+- cohérent
+- performant
+- prêt pour évoluer
 
 ---
 

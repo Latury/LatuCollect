@@ -1,25 +1,25 @@
-# 🖥️ UI GUIDE – LATUCOLLECT
+# 🖥️ UI GUIDE – LATUCOLLECT (V2)
 
 Guide officiel de l’interface utilisateur WinUI 3
 
-Ce document définit :
-
-- La structure visuelle
-- Le comportement utilisateur
-- Les interactions principales
-
-👉 Document de référence pour toute l’interface utilisateur
+---
 
 ## 📌 Résumé
 
-Ce document décrit l’organisation de l’interface utilisateur, le comportement des différentes zones et les règles UX du projet LatuCollect.
+Ce document décrit :
 
-👉 Il sert de référence pour toute modification de l’interface.
+- La structure visuelle
+- Le comportement utilisateur
+- Les règles UX
 
-## 📊 État des fonctionnalités
+👉 Il sert de référence pour toute évolution de l’interface.
 
-- ✅ Implémenté
-- 🔮 À venir [ROADMAP](./ROADMAP.md)
+---
+
+## 📊 État
+
+- ✔ Implémenté (v0.10.0)
+- 🔄 Évolution prévue (v0.17.0 — UI & thèmes)
 
 ---
 
@@ -30,13 +30,15 @@ Créer une interface :
 - Simple
 - Lisible
 - Rapide à comprendre
-- Fidèle au besoin réel
+- Prévisible
+
+👉 Sans complexité inutile
 
 ---
 
 # 🧠 CONCEPT GLOBAL
 
-```text id="pipelineui-guide"
+```text
 Importer → Sélectionner → Aperçu → Exporter
 ```
 
@@ -46,12 +48,14 @@ Importer → Sélectionner → Aperçu → Exporter
 
 # 🧩 STRUCTURE PRINCIPALE
 
-```text id="structureui-guide"
+```text
 Gauche → Projet
 Centre → Options
 Droite → Aperçu
-Bas → Export
+Bas → Actions
 ```
+
+👉 Structure FIXE (ne doit jamais être modifiée)
 
 ---
 
@@ -59,7 +63,7 @@ Bas → Export
 
 ## 🎯 Rôle
 
-Informer l’utilisateur des actions en cours ou terminées
+Informer sans bloquer l’utilisateur
 
 ---
 
@@ -74,71 +78,48 @@ Informer l’utilisateur des actions en cours ou terminées
 
 ## ⚙️ Comportement
 
-- Affichage temporaire
 - Non bloquant
-- Affiché dans la zone aperçu (si actif)
-
-👉 Permet un retour immédiat sans interrompre l’utilisateur
+- Temporaire
+- Visible dans l’aperçu
 
 ---
 
-# 🟦 ZONE GAUCHE — PROJET
+# 🟦 ZONE GAUCHE — PROJET (CŒUR APP)
 
 ## 🎯 Rôle
 
-Afficher la structure complète du projet
+Afficher la structure du projet
 
 ---
 
 ## 📦 Contenu
 
-- Bouton charger un dossier (📂)
+- Bouton charger un dossier
 - Barre de recherche
-- Arborescence complète
-- Fichiers sélectionnables (checkbox)
+- Arborescence
+- Checkboxes
 
 ---
 
 ## ⚙️ Comportement
 
-- Ouverture du sélecteur de dossier
-- Chargement récursif complet
-- Chargement asynchrone (UI non bloquée)
-- Navigation dans les dossiers
+- Chargement asynchrone
+- Navigation fluide
 - Filtrage dynamique
-
-### 📁 Exclusions
-
-- Dossiers exclus automatiquement :
-  - bin
-  - obj
-  - .git
-
-👉 Définis dans le Core (AppConfig)
-👉 Jamais affichés dans l’arborescence
 
 ---
 
 ## 🔎 Recherche
 
-- Filtrage fichiers + dossiers
 - Insensible à la casse
-- Mise à jour rapide (debounce)
+- Débounce actif
+- Mise à jour rapide
 
-### 🔮 Évolutions
+---
 
-- Filtrage par extension :
-  - .cs
-  - .xaml
-  - .json
+## ⚠️ Aucun résultat
 
-- Optimisation :
-  - Moins de recalculs
-  - UI fluide même sur gros projets
-
-### ⚠️ Aucun résultat
-
-👉 Affichage :
+👉 Message affiché :
 
 "Aucun résultat"
 
@@ -146,28 +127,14 @@ Afficher la structure complète du projet
 
 ## ✅ Sélection
 
-- Checkbox = inclusion dans l’export
 - Multi-sélection
-- Mise à jour immédiate de l’aperçu
+- Mise à jour immédiate du preview
 
 ---
 
-## ⚠️ Sélection globale
+## ⚠️ Cas limites
 
-- Désactivée (choix volontaire actuel)
-
-👉 Raison :
-
-- Éviter les ralentissements
-- Préserver la fluidité
-
-👉 Réintégration possible dans les versions futures
-
----
-
-## ⚠️ Cas particuliers
-
-- Dossier invalide → aucun chargement
+- Dossier invalide → ignoré
 - Accès refusé → ignoré
 
 ---
@@ -176,19 +143,18 @@ Afficher la structure complète du projet
 
 ## 🎯 Rôle
 
-Configurer et interagir avec l’application
+Configurer et interagir
 
 ---
 
 ## 📦 Contenu
 
-- Choix du format :
-  - TXT
-  - Markdown
-
+- Format (TXT / Markdown)
 - Bouton Copier
 
-- Accès :
+---
+
+## Accès :
 
 - Paramètres
 - Statistiques
@@ -200,51 +166,35 @@ Configurer et interagir avec l’application
 
 ## 🧑‍💻 Mode développeur
 
-- Activation via paramètres
-- Indicateur visuel affiché
+👉 Rôle :
+
+- Debug
+- Analyse
+- Outils internes
+
+👉 Règles :
+
+- Désactivé par défaut
 - Aucun impact utilisateur standard
 
 ---
 
 ## 📊 Statistiques
 
-Affiche :
+- Fichiers
+- Lignes
+- Caractères
+- Taille
 
-- Nombre de fichiers
-- Nombre de lignes
-- Nombre de caractères
-- Taille totale
-
-👉 Mise à jour en temps réel
-👉 Calcul en arrière-plan
+👉 Temps réel
+👉 Async
 
 ---
 
 ## 📋 Copier
 
-- Copie le contenu de l’aperçu
-- Message de confirmation
-
-👉 Aperçu = contenu copié
-
----
-
-## ⚙️ Dialogs
-
-- Paramètres :
-  - Gestion des dossiers exclus
-  - Activation mode développeur
-
-- Aide :
-  - Guide rapide
-
-- À propos :
-  - Infos application
-
-- Quitter :
-  - Confirmation
-
-👉 Toute modification → recharge de l’arbre
+- Copie du preview
+- Feedback utilisateur
 
 ---
 
@@ -252,7 +202,7 @@ Affiche :
 
 ## 🎯 Rôle
 
-Afficher le document final
+Afficher le résultat final
 
 ---
 
@@ -266,142 +216,81 @@ Afficher le document final
 
 ## ⚙️ Comportement
 
-Mise à jour automatique lors de :
+Mise à jour automatique :
 
 - Sélection
-- Désélection
 - Recherche
-- Chargement dossier
+- Chargement
 
 ---
 
 ## 🔄 États UI
 
-- Chargement → loader
-- Erreur → message
-- Prêt → contenu ou vide
+- Loading
+- Ready
+- Empty
+- Error
 
 ---
 
 ## ⚠️ Cas
 
-- Aucun fichier → message centré
-- Contenu long → scroll actif
+- Aucun fichier → message
+- Long contenu → scroll
 
 ---
 
-## ⚠️ Projets volumineux
+## ⚠️ Gros projets
 
-👉 Message :
+Message :
 
 ```text
 ⚠ Projet volumineux — affichage partiel
-```
-
-👉 Chargement partiel pour garantir la fluidité
-
----
-
-## 📄 Contenu affiché
-
-- Chemin du fichier
-- Contenu
-- Séparateur
-
----
-
-# 📄 FORMAT D’AFFICHAGE
-
-```text
-Chemin du fichier
-
-(contenu du fichier)
-
----
-
-```
-
-👉 Répété pour chaque fichier
-
----
-
-## 🟢 Markdown
-
-```text
-
-## 📄 chemin du fichier
-
-(contenu du fichier)
-
----
-
 ```
 
 ---
 
 ## 🔁 Cohérence
 
-- Source unique : Core
-- Aucun recalcul UI
-- Aperçu = export
+👉 Aperçu = Export (règle absolue)
 
 ---
 
-## ⚡ Optimisations
-
-- Recalcul uniquement si nécessaire
-- Cache interne
-- Protection appels multiples
-
-👉 Résultat :
-
-- UI fluide
-- Moins de charge
-
----
-
-# 🔻 ZONE BASSE — ACTION
+# 🔻 ZONE BASSE — ACTIONS
 
 ## 🎯 Rôle
 
-Actions finales de l’application
+Actions finales
 
 ---
 
 ## 📦 Contenu
 
-- Bouton Exporter
-- Bouton Logs
-- Bouton Simulation (mode développeur uniquement)
+- Exporter
+- Logs
 
 ---
 
 ## ⚙️ Comportement
 
-- Génère le fichier final
-- Respecte le format
-- Utilise les fichiers sélectionnés
-- Affiche confirmation
+- Génération du fichier
+- Respect du format
+- Feedback utilisateur
 
 ---
 
 ## ⚠️ Erreurs
 
-- Aucun fichier sélectionné
+- Aucun fichier
 - Échec export
-
-👉 Message utilisateur
 
 ---
 
 ## 🧾 Logs
 
-- Accès via bouton dédié
-- Affichage dans un dialog
+- Affichage dialog
 - Filtrage (Info / Warning / Error)
 - Export possible
-
-👉 Utilisé pour debug et suivi application
 
 ---
 
@@ -409,47 +298,28 @@ Actions finales de l’application
 
 ## 📏 Fenêtre
 
-- Taille minimale : 1600 x 1000
-- Empêche la casse de l’interface
+- Minimum : 1600 x 1000
 
 ---
 
 ## ⚡ Redimensionnement
 
-- Gestion contrôlée
-- Réduction du flickering
 - UI toujours lisible
-
-👉 Objectif : stabilité visuelle
-
----
-
-# 📌 ÉTAT ACTUEL UI
-
-- ✔ Interface structurée en 4 zones (Gauche / Centre / Droite / Bas)
-- ✔ Chargement asynchrone du projet
-- ✔ Recherche dynamique avec debounce
-- ✔ Aperçu temps réel
-- ✔ Export fonctionnel
-- ✔ Mode développeur actif
-- ✔ Système de logs accessible
-
-👉 UI stable en version 0.10.0
+- Aucun flickering
 
 ---
 
 # 🧠 RÈGLE ALC
 
-- Aucune logique métier dans UI
 - UI = affichage uniquement
+- Aucune logique métier
 
 ---
 
 # 🧠 RÈGLES UX
 
-- Une action = un rôle clair
-- Pas de surcharge visuelle
-- Aperçu = résultat final
+- Une action = un rôle
+- Pas de surcharge
 - Feedback immédiat
 - Aucun recalcul inutile
 
@@ -457,10 +327,60 @@ Actions finales de l’application
 
 # ⚠️ INTERDIT
 
-- Pipeline visible
+- Logique métier dans UI
 - Multiples écrans
-- Logique métier UI
 - Actions cachées
+
+---
+
+# 🎨 ÉVOLUTION UI (v0.17.0)
+
+## 🎯 Objectif
+
+Améliorer l’interface sans changer son fonctionnement
+
+---
+
+## Axes
+
+- Thèmes (clair / sombre)
+- Couleurs centralisées
+- Typographie améliorée
+- Alignements propres
+- Icônes homogènes
+
+---
+
+## 🔍 Audit UX/UI
+
+👉 Fonctionnement :
+
+- Choix guidé
+- Comparaison visuelle
+- Décisions utilisateur
+
+---
+
+## Sujets concernés
+
+- Thème global
+- Boutons
+- Arborescence
+- Preview
+- Feedback
+- Logs
+- Paramètres
+- Couleurs
+- Typographie
+
+---
+
+# 📌 ÉTAT ACTUEL
+
+- ✔ Structure stable
+- ✔ UI fluide
+- ✔ Pipeline respecté
+- ✔ Preview = Export
 
 ---
 
@@ -470,15 +390,7 @@ Une interface :
 
 - Intuitive
 - Rapide
-- Sans confusion
-- Adaptée à un usage réel
+- Claire
+- Prévisible
 
 👉 L’utilisateur comprend immédiatement quoi faire
-
----
-
-# 🔮 Évolutions UI
-
-Les améliorations futures de l’interface sont définies dans la roadmap.
-
-👉 Voir : [ROADMAP](./ROADMAP.md)

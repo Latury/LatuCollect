@@ -1,8 +1,10 @@
-# 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE)
+# 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE V2)
 
 👉 ⚠️ Cette structure correspond à l’organisation cible
 👉 Elle n’est pas entièrement implémentée actuellement
 👉 Voir ROADMAP pour l’évolution
+
+---
 
 ## 📌 Résumé
 
@@ -29,36 +31,33 @@ Permettre :
 LatuCollect/
 │
 ├── Core/
-│ ├── Services/
-│ │ ├── Import/
-│ │ ├── Reader/
-│ │ ├── Collection/
-│ │ ├── Statistics/
-│ │ ├── Export/
-│ │ └── Utils/
-│ │
-│ ├── Simulation/
-│ │ ├── Scenarios/
-│ │
-│ ├── Configuration/
-│ ├── Logging/
-│ ├── Models/
-│ ├── Interfaces/ (centralisation future)
-│ │👉 Certaines interfaces existent déjà dans :
-│ │   - Configuration/
-│ │   - Logging/
-│ │👉 Elles seront centralisées plus tard
-│ ├── Helpers/
-│ └── DTOs/
+│   ├── Services/
+│   │   ├── Import/
+│   │   ├── Reader/
+│   │   ├── Collection/
+│   │   ├── Statistics/
+│   │   ├── Export/
+│   │   └── Utils/
+│   │
+│   ├── Configuration/
+│   ├── Logging/
+│   ├── Models/
+│   ├── Interfaces/ (centralisation future)
+│   │   👉 Certaines interfaces existent déjà dans :
+│   │      - Configuration/
+│   │      - Logging/
+│   │   👉 Elles seront centralisées plus tard
+│   ├── Helpers/
+│   └── DTOs/
 │
 ├── UI/
-│ └── WinUI/
-│ ├── Views/
-│ ├── ViewModels/
-│ ├── Models/
-│ ├── Converters/
-│ ├── Services/
-│ └── Themes/
+│   └── WinUI/
+│       ├── Views/
+│       ├── ViewModels/
+│       ├── Models/
+│       ├── Converters/
+│       ├── Services/
+│       └── Themes/
 │
 ├── Resources/
 ├── Tests/
@@ -82,6 +81,7 @@ LatuCollect/
 - Structure cible (pas encore complète)
 - Implémentation progressive
 - Alignement avec ROADMAP obligatoire
+- ❌ Aucun système de simulation dans la version finale
 
 ---
 
@@ -101,34 +101,23 @@ Responsabilités :
 👉 Source unique de vérité
 👉 Aucune dépendance UI
 
+---
+
 ### Utils/
 
-Fonctions utilitaires simples (ex : helpers techniques)
+Fonctions utilitaires simples (helpers techniques)
 
 ---
 
 ### Helpers/
 
-Fonctions d’aide plus spécifiques au projet
+Fonctions d’aide spécifiques au projet
 
 ---
 
 ### DTOs/
 
 Objets de transfert de données entre services
-
----
-
-## Simulation/
-
-Permet de simuler :
-
-- Erreurs
-- Gros projets
-- Cas extrêmes
-
-👉 Activé uniquement en mode développeur
-👉 Jamais actif en production (désactivé par défaut)
 
 ---
 
@@ -172,14 +161,16 @@ Responsabilités :
 - Styles
 - Dimensions
 
-👉 Base pour theming futur
+👉 Base pour le système de thèmes
 
 ---
 
 ## Tests/
 
 - Tests unitaires
-- Tests simulation
+- Tests fonctionnels
+
+👉 Aucun test lié à la simulation
 
 ---
 
@@ -221,7 +212,7 @@ Importer → Sélectionner → Aperçu → Exporter
 Gauche → Arborescence
 Centre → Options
 Droite → Aperçu
-Bas → Export
+Bas → Actions
 ```
 
 ---
@@ -275,17 +266,16 @@ LatuCollect.Core/
 │   ├── Export/
 │   └── Statistics/
 ├── Models/
-├── Simulation/
 │
 ├── Documentation/
-│ ├── README.md
-│ ├── ARCHITECTURE.md
-│ ├── UI_GUIDE.md
-│ ├── DIRECTORY_STRUCTURE.md
-│ ├── GUIDE_UTILISATEUR.md
-│ ├── ROADMAP.md
-│ ├── PATCH_NOTES.md
-│ ├── TESTS.md
+│   ├── README.md
+│   ├── ARCHITECTURE.md
+│   ├── UI_GUIDE.md
+│   ├── DIRECTORY_STRUCTURE.md
+│   ├── GUIDE_UTILISATEUR.md
+│   ├── ROADMAP.md
+│   ├── PATCH_NOTES.md
+│   ├── TESTS.md
 ```
 
 ---
@@ -294,16 +284,17 @@ LatuCollect.Core/
 
 ## ✅ ÉLÉMENTS DÉJÀ EN PLACE
 
-✔ Services Core principaux (Import, Reader, Collection, Export, Statistics)
-✔ Simulation (structure initiale)
+✔ Services Core principaux
 ✔ Logging centralisé
 ✔ Configuration globale (AppConfig)
-✔ UI WinUI structurée (Views, ViewModels, Models)
+✔ UI WinUI structurée
 ✔ Séparation stricte UI / Core
 
 👉 Base solide déjà fonctionnelle
 
-❌ Non implémenté :
+---
+
+## ❌ Non implémenté
 
 - Utils/
 - Interfaces/
@@ -311,7 +302,7 @@ LatuCollect.Core/
 - DTOs/
 - Themes/
 - Resources/
-- Tests structuré
+- Tests structurés
 - Installer
 - Assets global
 
@@ -324,7 +315,6 @@ LatuCollect.Core/
 ✔ Pipeline optimisé
 ✔ Cache actif
 ✔ Logs intégrés
-✔ Mode développeur
 ✔ UI stable
 ✔ Séparation UI / Core
 ```
@@ -334,13 +324,13 @@ LatuCollect.Core/
 # 📌 ÉTAT ACTUEL
 
 - ✔ Core structuré par services
-- ✔ Configuration organisée (Constants / Interfaces / Services)
-- ✔ Logging séparé et centralisé
-- ✔ UI WinUI structurée (Views / ViewModels / Models)
-- ✔ Séparation UI / Core respectée
+- ✔ Configuration organisée
+- ✔ Logging séparé
+- ✔ UI WinUI structurée
+- ✔ Architecture respectée
 
-👉 Structure déjà stable en v0.10.0
-👉 Évolution progressive vers la structure cible
+👉 Structure stable en v0.10.0
+👉 Évolution progressive vers la cible
 
 ---
 
