@@ -38,11 +38,18 @@ namespace LatuCollect.Core.Services.Reader
     public static class FileReaderService
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CACHE
+        // 1. CONFIGURATION
         // ═════════════════════════════════════════════════════════════
 
         private const int MAX_CACHE_ITEMS = 100;
         private static readonly TimeSpan CACHE_DURATION = TimeSpan.FromMinutes(5);
+        private const long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CACHE — STRUCTURE
+        // ═════════════════════════════════════════════════════════════
+
         private class CacheItem
         {
             public FileReadResult Result { get; set; }
@@ -51,10 +58,9 @@ namespace LatuCollect.Core.Services.Reader
 
         private static readonly ConcurrentDictionary<string, CacheItem> _fileCache = new();
 
-        private const long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 
         // ═════════════════════════════════════════════════════════════
-        // 2. LECTURE FICHIER (ASYNC)
+        // 3. API PUBLIQUE — LECTURE
         // ═════════════════════════════════════════════════════════════
 
         public static async Task<FileReadResult> ReadFileAsync(string path)
@@ -75,66 +81,16 @@ namespace LatuCollect.Core.Services.Reader
                     return FileReadResult.Success(simulated, 0);
 
                 // 🔁 Cache
-                if (_fileCache.TryGetValue(path, out var cachedItem))
-                {
-                    if (DateTime.Now - cachedItem.Timestamp < CACHE_DURATION)
-                    {
-                        return cachedItem.Result;
-                    }
-                    else
-                    {
-                        _fileCache.TryRemove(path, out _);
-                    }
-                }
+                if (TryGetFromCache(path, out var cached))
+                    return cached;
 
-                // 🔥 Limitation taille fichier (ex: 10 Mo)
-                string content;
+                // 📦 Lecture fichier
+                var (content, fileSize) = await ReadContentAsync(path);
 
-                long fileSize = 0;
-
-                try
-                {
-                    fileSize = new FileInfo(path).Length;
-                }
-                catch
-                {
-                    // ignoré
-                }
-
-                // 🔥 GROS FICHIER → lecture partielle
-                if (fileSize > MAX_FILE_SIZE)
-                {
-                    using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    using var reader = new StreamReader(stream);
-
-                    char[] buffer = new char[MAX_FILE_SIZE];
-                    int read = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
-
-                    content = new string(buffer, 0, read);
-
-                    content += "\n\n----------------------------------------\n";
-                    content += "⚠ Fichier tronqué (trop volumineux)";
-                }
-                else
-                {
-                    content = await File.ReadAllTextAsync(path);
-                }
-
-                // 📦 Résultat
                 var result = FileReadResult.Success(content, fileSize);
 
                 // 💾 Cache
-                _fileCache[path] = new CacheItem
-                {
-                    Result = result,
-                    Timestamp = DateTime.Now
-                };
-
-                // 🔥 LIMITATION CACHE (ICI EXACTEMENT)
-                if (_fileCache.Count > MAX_CACHE_ITEMS)
-                {
-                    CleanOldestCacheItem();
-                }
+                AddToCache(path, result);
 
                 return result;
             }
@@ -156,6 +112,82 @@ namespace LatuCollect.Core.Services.Reader
             }
         }
 
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. LECTURE INTERNE
+        // ═════════════════════════════════════════════════════════════
+
+        private static async Task<(string content, long fileSize)> ReadContentAsync(string path)
+        {
+            long fileSize = 0;
+
+            try
+            {
+                fileSize = new FileInfo(path).Length;
+            }
+            catch
+            {
+                // ignoré
+            }
+
+            // 🔥 GROS FICHIER → lecture partielle
+            if (fileSize > MAX_FILE_SIZE)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var reader = new StreamReader(stream);
+
+                char[] buffer = new char[MAX_FILE_SIZE];
+                int read = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
+
+                var content = new string(buffer, 0, read);
+
+                content += "\n\n----------------------------------------\n";
+                content += "⚠ Fichier tronqué (trop volumineux)";
+
+                return (content, fileSize);
+            }
+
+            var fullContent = await File.ReadAllTextAsync(path);
+            return (fullContent, fileSize);
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. CACHE — GESTION
+        // ═════════════════════════════════════════════════════════════
+
+        private static bool TryGetFromCache(string path, out FileReadResult result)
+        {
+            result = null;
+
+            if (_fileCache.TryGetValue(path, out var cachedItem))
+            {
+                if (DateTime.Now - cachedItem.Timestamp < CACHE_DURATION)
+                {
+                    result = cachedItem.Result;
+                    return true;
+                }
+
+                _fileCache.TryRemove(path, out _);
+            }
+
+            return false;
+        }
+
+        private static void AddToCache(string path, FileReadResult result)
+        {
+            _fileCache[path] = new CacheItem
+            {
+                Result = result,
+                Timestamp = DateTime.Now
+            };
+
+            if (_fileCache.Count > MAX_CACHE_ITEMS)
+            {
+                CleanOldestCacheItem();
+            }
+        }
+
         private static void CleanOldestCacheItem()
         {
             if (_fileCache.IsEmpty)
@@ -171,8 +203,9 @@ namespace LatuCollect.Core.Services.Reader
             }
         }
 
+
         // ═════════════════════════════════════════════════════════════
-        // 3. CACHE UTILITAIRE
+        // 6. CACHE — API PUBLIQUE
         // ═════════════════════════════════════════════════════════════
 
         public static void ClearCache()
