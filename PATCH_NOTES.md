@@ -1370,6 +1370,86 @@ LatuCollect est désormais :
 
 ---
 
+# 🚧 VERSION 0.11.0 (en cours)
+
+## 📌 Statut
+
+🟡 En cours — Stabilisation du Core et de la sélection
+
+---
+
+## 🎯 Objectif
+
+Corriger les bugs critiques du système de sélection et garantir un comportement stable, prévisible et cohérent entre l’UI et le Core.
+
+---
+
+## 🐞 Corrections
+
+### 🌳 Sélection TreeView
+
+- ✅ Correction complète de la sélection parent / enfants
+- ✅ Synchronisation UI ↔ ViewModel (source unique = CheckBox)
+- ✅ Suppression des désynchronisations
+- ✅ Correction du bug :
+  - fichier sélectionné non visible dans le preview
+  - parent non cohérent avec les enfants
+
+---
+
+### ⚡ Stabilité
+
+- ✅ Ajout protection anti appels multiples
+  - `_isBatchUpdating`
+  - `_isPreviewLoading`
+
+- ✅ Correction des comportements instables (spam clic)
+- ✅ État toujours cohérent après interaction
+
+---
+
+### 🔎 Recherche (arborescence)
+
+- ✅ Correction du filtrage principal (fonctionnel)
+- ✅ Suppression de la duplication de l’arborescence
+- ✅ Filtrage basé sur la visibilité (`IsVisible`)
+- ✅ Arbre réel conservé (plus de copie)
+
+⚠ Améliorations encore nécessaires :
+
+- cohérence sélection ↔ visibilité
+- gestion des cas limites (nœuds masqués / réaffichés)
+- comportement UX lors du filtrage dynamique
+
+---
+
+## 🧠 Résultat
+
+- ✔ Sélection fiable et prévisible
+- ✔ Preview cohérent avec la sélection
+- ✔ UI stable même en cas d’interactions rapides
+- ✔ Recherche fonctionnelle
+
+---
+
+## ⚠️ Limites actuelles
+
+- ❌ Anti-spam encore améliorable (optimisation à venir)
+- ❌ Pas de tri-state checkbox (état intermédiaire)
+
+---
+
+## 🔜 Prochaines étapes
+
+- 🔜 Anti-spam solide (optimisation des appels et performance)
+- 🔜 Amélioration du système de recherche (TreeView)
+  - cohérence sélection / visibilité
+  - comportement UX stable
+- 🔜 Amélioration du système d’exclusion (paramètres + cohérence UI/Core)
+- 🔜 Tri-state checkbox (état intermédiaire visuel)
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité
