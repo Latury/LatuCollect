@@ -153,10 +153,11 @@
                                                 Grid.Column="1"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
+                                                Checked="OnNodeChecked"
                                                 Content="{Binding Name}"
                                                 Foreground="White"
-                                                IsChecked="{Binding IsSelected, Mode=OneWay}"
-                                                Tapped="OnNodeTapped" />
+                                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                Unchecked="OnNodeChecked" />
                                         </Grid>
                                     </TreeViewItem>
                                 </DataTemplate>

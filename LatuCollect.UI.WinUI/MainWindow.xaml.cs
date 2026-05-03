@@ -240,11 +240,9 @@ namespace LatuCollect.UI.WinUI
             _viewModel.SelectedFormat = ".md";
         }
 
-        // 🖱️ Click node
-        private void OnNodeTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        // ✅ Coche / décoche un nœud
+        private void OnNodeChecked(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
-
             if (sender is FrameworkElement element &&
                 element.DataContext is LatuCollect.UI.WinUI.Models.FileNode node)
             {

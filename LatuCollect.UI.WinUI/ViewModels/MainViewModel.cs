@@ -754,7 +754,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private async Task RefreshPreviewAsync()
         {
             // 🔒 Protection anti multi-appel
-            if (_isPreviewLoading)
+            if (_isPreviewLoading || _isBatchUpdating)
                 return;
 
             _logger.Info("Génération du preview");
@@ -910,55 +910,47 @@ namespace LatuCollect.UI.WinUI.ViewModels
             string.IsNullOrWhiteSpace(CurrentFolderPath) || Tree.Count == 0;
 
         // Click sur un node
-        public void HandleNodeClick(UiFileNode node)
+        public async void HandleNodeClick(UiFileNode node)
         {
-            if (_isBatchUpdating)
+            // 🔒 BLOQUE tout si en cours
+            if (_isBatchUpdating || _isPreviewLoading)
                 return;
 
-            _isBatchUpdating = true;
+            try
+            {
+                _isBatchUpdating = true;
 
-            bool newValue = !node.IsSelected;
+                bool newValue = node.IsSelected;
 
-            // 🔥 Si dossier → appliquer à tous les enfants
-            SetNodeSelection(node, newValue);
+                // 🔽 descente
+                SetNodeSelection(node, newValue);
 
-            // 🔼 Mettre à jour les parents
-            UpdateParentSelection(node);
+                // 🔼 remontée COMPLÈTE
+                UpdateParentSelectionRecursive(node);
+            }
+            finally
+            {
+                _isBatchUpdating = false;
+            }
 
-            _isBatchUpdating = false;
-
-            _ = RefreshPreviewAsync();
+            // 🔒 attendre preview AVANT nouvelle action
+            await RefreshPreviewAsync();
         }
 
         // Met à jour les parents
-        private void UpdateParentSelection(UiFileNode node)
+        private void UpdateParentSelectionRecursive(UiFileNode node)
         {
-            if (node.Parent == null)
-                return;
-
             var parent = node.Parent;
 
-            bool allSelected = parent.Children.All(c => c.IsSelected);
-            bool noneSelected = parent.Children.All(c => !c.IsSelected);
+            while (parent != null)
+            {
+                bool anySelected = parent.Children.Any(c => c.IsSelected);
 
-            // ✔ tous cochés → parent coché
-            if (allSelected)
-            {
-                parent.IsSelected = true;
-            }
-            // ✔ aucun coché → parent décoché
-            else if (noneSelected)
-            {
-                parent.IsSelected = false;
-            }
-            // ✔ mix → parent décoché (simple)
-            else
-            {
-                parent.IsSelected = false;
-            }
+                // 🔥 règle : au moins un enfant = parent coché
+                parent.IsSelected = anySelected;
 
-            // 🔁 remonter récursivement
-            UpdateParentSelection(parent);
+                parent = parent.Parent;
+            }
         }
 
         // Applique sélection récursive
@@ -978,13 +970,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private void ApplyFilter()
         {
+            // 🔁 Toujours travailler sur le vrai Tree
             FilteredTree.Clear();
 
-            // 🔹 Pas de recherche → copie complète
+            // 🔹 Pas de recherche → tout visible
             if (string.IsNullOrWhiteSpace(SearchText))
             {
                 foreach (var node in Tree)
                 {
+                    SetVisibilityRecursive(node, true);
                     FilteredTree.Add(node);
                 }
 
@@ -996,11 +990,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             foreach (var node in Tree)
             {
-                var filtered = FilterNode(node);
+                bool visible = ApplyFilterRecursive(node);
 
-                if (filtered != null)
+                if (visible)
                 {
-                    FilteredTree.Add(filtered);
+                    FilteredTree.Add(node);
                     hasResult = true;
                 }
             }
@@ -1008,31 +1002,37 @@ namespace LatuCollect.UI.WinUI.ViewModels
             HasSearchResult = hasResult;
         }
 
-        private UiFileNode? FilterNode(UiFileNode node)
+        // Applique visibilité récursive
+        private bool ApplyFilterRecursive(UiFileNode node)
         {
             bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
 
-            var newNode = new UiFileNode
-            {
-                Name = node.Name,
-                Path = node.Path,
-                IsSelected = node.IsSelected
-            };
+            bool hasVisibleChild = false;
 
             foreach (var child in node.Children)
             {
-                var filteredChild = FilterNode(child);
-
-                if (filteredChild != null)
+                if (ApplyFilterRecursive(child))
                 {
-                    newNode.Children.Add(filteredChild);
+                    hasVisibleChild = true;
                 }
             }
 
-            if (match || newNode.Children.Count > 0)
-                return newNode;
+            bool isVisible = match || hasVisibleChild;
 
-            return null;
+            node.IsVisible = isVisible;
+
+            return isVisible;
+        }
+
+        // Applique visibilité récursive (sans logique de recherche, pour reset)
+        private void SetVisibilityRecursive(UiFileNode node, bool visible)
+        {
+            node.IsVisible = visible;
+
+            foreach (var child in node.Children)
+            {
+                SetVisibilityRecursive(child, visible);
+            }
         }
 
         // Debounce recherche
@@ -1092,7 +1092,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     Name = uiNode.Name,
                     Path = uiNode.Path,
-                    IsSelected = uiNode.IsSelected
+                    IsSelected = uiNode.IsSelected && uiNode.Children.Count == 0
                 };
 
                 foreach (var child in ConvertToCoreNodes(uiNode.Children))

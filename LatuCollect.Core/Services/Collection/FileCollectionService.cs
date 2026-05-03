@@ -106,6 +106,7 @@ namespace LatuCollect.Core.Services.Collection
         private bool IsValidSelectedFile(FileNode node)
         {
             return node.IsSelected &&
+                   node.Children.Count == 0 && // 🔥 IMPORTANT : fichier uniquement
                    !string.IsNullOrWhiteSpace(node.Path) &&
                    File.Exists(node.Path);
         }
