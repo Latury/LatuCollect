@@ -43,7 +43,7 @@ namespace LatuCollect.UI.WinUI.Models
         private string _path = "";
         private bool _isSelected;
         private bool _isVisible = true;
-
+        private bool _isExpanded;
 
         // ==========================================
         // 🌐 PROPRIÉTÉS
@@ -77,6 +77,13 @@ namespace LatuCollect.UI.WinUI.Models
             set => SetProperty(ref _isVisible, value);
         }
 
+
+        // État d’ouverture du dossier
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
 
         // ==========================================
         // 🌳 STRUCTURE ARBORESCENTE

@@ -131,7 +131,7 @@
 
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="models:FileNode">
-                                    <TreeViewItem ItemsSource="{Binding Children}">
+                                    <TreeViewItem IsExpanded="{Binding IsExpanded, Mode=TwoWay}" ItemsSource="{Binding Children}">
                                         <Grid ColumnSpacing="6" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <Grid.ColumnDefinitions>
@@ -157,6 +157,7 @@
                                                 Content="{Binding Name}"
                                                 Foreground="White"
                                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                RightTapped="OnNodeRightTapped"
                                                 Unchecked="OnNodeChecked" />
                                         </Grid>
                                     </TreeViewItem>

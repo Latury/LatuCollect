@@ -932,9 +932,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 _isBatchUpdating = false;
             }
-
-            // 🔒 attendre preview AVANT nouvelle action
-            await RefreshPreviewAsync();
         }
 
         // Met à jour les parents
@@ -962,6 +959,78 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 SetNodeSelection(child, isSelected);
             }
+        }
+
+        // Ajout exclusion depuis TreeView
+        public async Task AddExclusionFromNode(UiFileNode node)
+        {
+            if (node == null)
+                return;
+
+            try
+            {
+                _logger.Info("Ajout exclusion depuis TreeView", node.Path);
+
+                // 🔹 Nom fichier ou dossier
+                string name = Path.GetFileName(node.Path);
+
+                if (string.IsNullOrWhiteSpace(name))
+                    return;
+
+                // 🔹 Vérifie doublon
+                if (_config.ExcludedFolders.Contains(name))
+                {
+                    await ShowFeedbackAsync($"⚠ Déjà exclu : {name}");
+                    return;
+                }
+
+                // 🔹 Ajout config (UI + UserConfig)
+                _config.ExcludedFolders.Add(name);
+
+                if (!_userConfig.ExcludedFolders.Contains(name))
+                {
+                    _userConfig.ExcludedFolders.Add(name);
+                }
+
+                // 🔹 Update UI paramètres
+                OnPropertyChanged(nameof(Config));
+
+                // 🔹 🔥 SUPPRESSION IMMÉDIATE DU NODE (IMPORTANT)
+                RemoveNodeFromTree(node);
+
+                // 🔹 Sauvegarde NON BLOQUANTE
+                _ = SaveConfigurationAsync();
+
+                // 🔹 Feedback utilisateur
+                await ShowFeedbackAsync($"✔ Exclu : {name}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur exclusion depuis TreeView", ex.Message);
+                await ShowFeedbackAsync("❌ Erreur lors de l'exclusion");
+            }
+        }
+
+        // Suppression d’un node de l’arbre (exclusion)
+        private void RemoveNodeFromTree(UiFileNode node)
+        {
+            if (node == null)
+                return;
+
+            // 🔹 Si racine
+            if (node.Parent == null)
+            {
+                Tree.Remove(node);
+            }
+            else
+            {
+                node.Parent.Children.Remove(node);
+            }
+
+            // 🔹 Nettoyage filtre
+            ApplyFilter();
+
+            OnPropertyChanged(nameof(IsTreeEmpty));
         }
 
         // ═════════════════════════════════════════════════════════════

@@ -59,7 +59,7 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
         // 4. ÉVÉNEMENTS UI — AJOUT
         // ==========================================
 
-        private void OnAddClicked(object sender, RoutedEventArgs e)
+        private async void OnAddClicked(object sender, RoutedEventArgs e)
         {
             // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
@@ -77,8 +77,14 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
             {
                 vm.Config.ExcludedFolders.Add(value);
 
-                // Sauvegarde configuration
-                _ = vm.SaveConfigurationAsync();
+                // 💾 Sauvegarde configuration
+                await vm.SaveConfigurationAsync();
+
+                // 🔁 Rechargement arbre + preview
+                if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))
+                {
+                    await vm.LoadTreeAsync(vm.CurrentFolderPath);
+                }
             }
 
             // Reset champ input
@@ -90,7 +96,7 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
         // 5. ÉVÉNEMENTS UI — SUPPRESSION
         // ==========================================
 
-        private void OnRemoveClicked(object sender, RoutedEventArgs e)
+        private async void OnRemoveClicked(object sender, RoutedEventArgs e)
         {
             // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
@@ -101,8 +107,14 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
             {
                 vm.Config.ExcludedFolders.Remove(selected);
 
-                // Sauvegarde configuration
-                _ = vm.SaveConfigurationAsync();
+                // 💾 Sauvegarde configuration
+                await vm.SaveConfigurationAsync();
+
+                // 🔁 Rechargement arbre + preview
+                if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))
+                {
+                    await vm.LoadTreeAsync(vm.CurrentFolderPath);
+                }
             }
         }
     }

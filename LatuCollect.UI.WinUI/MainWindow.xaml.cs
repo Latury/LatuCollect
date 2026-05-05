@@ -250,6 +250,32 @@ namespace LatuCollect.UI.WinUI
             }
         }
 
+        // 🆕 CLIC DROIT SUR UN NODE
+        private void OnNodeRightTapped(object sender, Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement element)
+                return;
+
+            if (element.DataContext is not LatuCollect.UI.WinUI.Models.FileNode node)
+                return;
+
+            var flyout = new MenuFlyout();
+
+            var excludeItem = new MenuFlyoutItem
+            {
+                Text = "🚫 Exclure"
+            };
+
+            excludeItem.Click += async (_, __) =>
+            {
+                await _viewModel.AddExclusionFromNode(node);
+            };
+
+            flyout.Items.Add(excludeItem);
+
+            flyout.ShowAt(element);
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 6. EXPORT / COPY
         // ═════════════════════════════════════════════════════════════
