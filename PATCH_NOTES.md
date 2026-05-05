@@ -1374,13 +1374,13 @@ LatuCollect est désormais :
 
 ## 📌 Statut
 
-🟡 En cours — Stabilisation du Core et de la sélection
+🟡 En cours — Stabilisation + amélioration UX TreeView
 
 ---
 
 ## 🎯 Objectif
 
-Corriger les bugs critiques du système de sélection et garantir un comportement stable, prévisible et cohérent entre l’UI et le Core.
+Corriger les bugs critiques du système de sélection et améliorer l’expérience utilisateur (TreeView, exclusions, cohérence UI/Core).
 
 ---
 
@@ -1403,7 +1403,10 @@ Corriger les bugs critiques du système de sélection et garantir un comportemen
   - `_isBatchUpdating`
   - `_isPreviewLoading`
 
+- ✅ Suppression d’un refresh inutile dans `HandleNodeClick`
+
 - ✅ Correction des comportements instables (spam clic)
+
 - ✅ État toujours cohérent après interaction
 
 ---
@@ -1418,8 +1421,45 @@ Corriger les bugs critiques du système de sélection et garantir un comportemen
 ⚠ Améliorations encore nécessaires :
 
 - cohérence sélection ↔ visibilité
-- gestion des cas limites (nœuds masqués / réaffichés)
-- comportement UX lors du filtrage dynamique
+- gestion des cas limites
+- UX du filtrage
+
+---
+
+## ✨ Améliorations UX
+
+### 🖱️ Menu clic droit (TreeView)
+
+- ✅ Ajout clic droit sur les nodes
+- ✅ Menu contextuel avec action :
+  - 🚫 Exclure fichier / dossier
+
+- ✅ Intégration directe avec le ViewModel
+
+---
+
+### 🚫 Système d’exclusion
+
+- ✅ Ajout exclusion depuis TreeView (sans passer par paramètres)
+- ✅ Synchronisation immédiate avec la configuration
+- ✅ Mise à jour automatique de la liste des exclusions
+- ✅ Suppression immédiate du node dans l’arbre (sans reload complet)
+
+---
+
+### 🌲 Arbre dynamique
+
+- ✅ Suppression du rechargement complet (plus de latence)
+- ✅ Mise à jour ciblée (RemoveNodeFromTree)
+- ✅ Arbre fluide et instantané
+
+---
+
+### 📂 Persistance visuelle
+
+- ✅ Ajout propriété `IsExpanded` dans FileNode
+- ✅ Binding TreeView → conservation des dossiers ouverts
+- ✅ Amélioration forte UX navigation
 
 ---
 
@@ -1427,26 +1467,27 @@ Corriger les bugs critiques du système de sélection et garantir un comportemen
 
 - ✔ Sélection fiable et prévisible
 - ✔ Preview cohérent avec la sélection
-- ✔ UI stable même en cas d’interactions rapides
-- ✔ Recherche fonctionnelle
+- ✔ Exclusion rapide et intuitive
+- ✔ Arbre fluide (sans rechargement)
+- ✔ UX nettement améliorée
 
 ---
 
 ## ⚠️ Limites actuelles
 
-- ❌ Anti-spam encore améliorable (optimisation à venir)
-- ❌ Pas de tri-state checkbox (état intermédiaire)
+- ❌ Exclusion basée sur le nom (pas le chemin complet)
+- ❌ État ouvert non persisté après reload complet
+- ❌ Pas de tri-state checkbox
 
 ---
 
 ## 🔜 Prochaines étapes
 
-- 🔜 Anti-spam solide (optimisation des appels et performance)
-- 🔜 Amélioration du système de recherche (TreeView)
-  - cohérence sélection / visibilité
-  - comportement UX stable
-- 🔜 Amélioration du système d’exclusion (paramètres + cohérence UI/Core)
-- 🔜 Tri-state checkbox (état intermédiaire visuel)
+- 🔜 Amélioration du système d’exclusion (chemin complet)
+- 🔜 Persistance complète de l’état de l’arbre
+- 🔜 Amélioration du système de recherche (fichier/dossier)
+- 🔜 Tri-state checkbox
+- 🔜 Optimisation anti-spam
 
 ---
 
@@ -1454,14 +1495,6 @@ Corriger les bugs critiques du système de sélection et garantir un comportemen
 
 - ✅ Simplicité avant complexité
 - ✅ Lisibilité avant optimisation
-- ✅ Utilité avant fonctionnalité
+- ✅ UX immédiate avant perfection
 
 ---
-
-# 📜 Rôle du Patch Notes
-
-- ✅ Suivre l’évolution réelle du projet
-- ✅ Comprendre les changements
-- ✅ Garantir la cohérence
-
-👉 Un historique fiable = un projet maintenable

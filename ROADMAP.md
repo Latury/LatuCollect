@@ -582,31 +582,111 @@ Finaliser l’application pour une utilisation réelle, stable, testée et distr
 
 ---
 
-# 🚀 15. Version 0.11.0 — STABILITÉ CORE
+# 🚀 15. Version 0.11.0 — STABILITÉ CORE + UX
 
 ## 🎯 Objectif
 
-Rendre le Core prévisible, testable et sans effets de bord.
+Rendre le Core prévisible, testable et sans effets de bord
+ET améliorer l’expérience utilisateur (TreeView + exclusions)
 
 ---
 
-## 🐞 Bugs critiques (PRIORITÉ HAUTE)
+# 🐞 Bugs critiques (PRIORITÉ HAUTE)
 
 - ⬜ Correction reset incomplet
-- ⬜ Correction sélection TreeView :
-  - décocher un fichier ne doit pas recocher le parent
-  - propagation correcte parent ↔ enfants
+
+- 🟡 Correction sélection TreeView :
+  - ⬜ décocher un fichier ne doit pas recocher le parent
+  - 🟡 propagation correcte parent ↔ enfants (partiellement corrigé)
 
 ---
 
-## 🧠 FileReader
+# 🧠 FileReader
 
 - ⬜ Gestion erreurs complète (cas extrêmes manquants)
 - ⬜ Validation fichiers (null, accès, encodage)
 
 ---
 
-## 📊 Statistics
+# ✨ UX / TreeView (DÉJÀ FAIT)
+
+- ✅ Ajout menu clic droit (exclusion)
+- ✅ Exclusion directe depuis l’arborescence
+- ✅ Suppression node sans reload complet
+- ✅ Ajout IsExpanded (persistance visuelle)
+
+---
+
+# 🧠 TODO — Amélioration système d’exclusion & UX arbre
+
+## 📁 1. Persistance complète de l’état de l’arbre
+
+- ⬜ Stockage des nodes ouverts (HashSet<string>)
+- ⬜ Sauvegarde avant reload
+- ⬜ Restauration après reconstruction
+
+---
+
+## 🧾 2. Amélioration menu clic droit
+
+- ⬜ Ajouter option "Inclure"
+- ⬜ Ajouter "Copier le chemin"
+- ⬜ Ajouter "Ouvrir dans l’explorateur"
+- ⬜ Désactiver "Exclure" si déjà exclu
+
+---
+
+## ⚡ 3. Performance / refresh
+
+- 🟡 Suppression reload complet (déjà amélioré)
+- ⬜ Supprimer tous les Task.Delay inutiles
+- ⬜ Vérifier ApplyFilter (pas de blocage UI)
+
+---
+
+## 🎯 4. Système d’exclusion (PRIORITÉ IMPORTANTE)
+
+- ⬜ Passage nom → chemin complet
+- ⬜ Adapter FileImportService
+- ⬜ Adapter sauvegarde config
+
+⚠ Problème actuel :
+
+- "bin" exclut partout (non précis)
+
+---
+
+## 🎨 5. Feedback visuel (optionnel)
+
+- ⬜ Animation suppression (fade)
+- ⬜ Mise en évidence temporaire
+
+---
+
+## 🔍 6. Recherche (TreeView)
+
+- 🟡 Filtrage fonctionnel (déjà corrigé)
+
+À améliorer :
+
+- ⬜ Cohérence sélection ↔ visibilité
+- ⬜ Gestion des nodes masqués
+- ⬜ Optimisation ApplyFilterRecursive
+- ⬜ Ajustement debounce
+
+---
+
+## 🧪 7. Tests
+
+- ⬜ Exclusion fichier simple
+- ⬜ Exclusion dossier avec enfants
+- ⬜ Réouverture arbre après exclusion
+- ⬜ Persistance config
+- ⬜ Recherche après exclusion
+
+---
+
+# 📊 Statistics
 
 - ⬜ Suppression dépendance FileInfo
 - ⬜ Utilisation fileSize uniquement
@@ -614,18 +694,52 @@ Rendre le Core prévisible, testable et sans effets de bord.
 
 ---
 
-## 📤 Export
+# 📤 Export
 
 - ⬜ Validation stricte des entrées
 - ⬜ Robustesse export massif
 
 ---
 
-## 📦 Collection
+# 📦 Collection
 
 - ⬜ Gestion cas limites
 - ⬜ Tri stable
 - ⬜ Limite sécurité
+
+---
+
+# 🎯 État réel du projet
+
+## ✔ Déjà stabilisé
+
+- Sélection TreeView (majoritairement)
+- Preview cohérent
+- UI stable
+- Exclusion dynamique fonctionnelle
+
+## 🟡 En cours
+
+- UX TreeView (très avancée)
+- Recherche (fonctionnelle mais perfectible)
+
+## ❌ À faire (Core important)
+
+- FileReader
+- Statistics
+- Export validation
+- Collection robustesse
+
+---
+
+# 🚀 Résultat attendu
+
+✔ Core stable et testable
+✔ UX fluide et moderne
+✔ Comportement prévisible
+✔ Base solide pour versions suivantes
+
+---
 
 # 🚀 16. Version 0.12.0 — PERFORMANCE
 
