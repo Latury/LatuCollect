@@ -593,12 +593,12 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 
 # 🐞 Bugs critiques (PRIORITÉ HAUTE)
 
-- ⬜ Correction reset incomplet
-
-- 🟡 Correction sélection TreeView :
+- ✅ Correction sélection TreeView :
   - ✅ propagation correcte parent ↔ enfants
-  - ⬜ décocher un fichier ne doit pas recocher le parent
-  - ⬜ tri-state checkbox
+  - ✅ décocher un fichier ne recoche plus le parent
+  - ✅ support tri-state checkbox
+  - ✅ comportement type Windows Explorer
+  - ✅ état partiel cohérent
 
 ---
 
@@ -611,6 +611,11 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ✅ Protection anti multi-clic
 - ✅ Stabilisation HandleNodeClick
 - ✅ Arbre réel conservé (plus de duplication)
+- ✅ Ajout état partiel (`bool?`)
+- ✅ Synchronisation explicite CheckBox → ViewModel
+- ✅ Correction rebond WinUI CheckBox
+- ✅ Preview synchronisé après sélection
+- ✅ Ajout tests sélection TreeView
 
 ---
 
@@ -737,10 +742,10 @@ Pas bloquant pour la 0.11.0 actuelle
 
 # 🧾 Menu clic droit — TODO UX
 
-- ⬜ Ajouter option "Inclure"
-- ⬜ Ajouter "Copier le chemin"
+- ✅ Ajouter option "Inclure"
+- ✅ Ajouter "Copier le chemin"
 - ⬜ Ajouter "Ouvrir dans l’explorateur"
-- ⬜ Désactiver "Exclure" si déjà exclu
+- ✅ Désactiver "Exclure" si déjà exclu
 
 ---
 
@@ -781,6 +786,9 @@ Pas bloquant pour la 0.11.0 actuelle
 
 ## ⬜ À compléter
 
+- ✅ Tests sélection TreeView
+- ✅ Tests propagation parent ↔ enfants
+- ✅ Tests état partiel tri-state
 - ⬜ Réouverture arbre après exclusion
 - ⬜ Recherche après exclusion
 - ⬜ Cas limites exclusions protégées
@@ -822,6 +830,9 @@ Pas bloquant pour la 0.11.0 actuelle
 - Exclusion dynamique fonctionnelle
 - Core exclusions stabilisé
 - Tests exclusions ajoutés
+- Tri-state TreeView
+- Synchronisation preview ↔ sélection
+- Tests sélection ViewModel
 
 ---
 

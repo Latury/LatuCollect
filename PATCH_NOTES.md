@@ -1389,6 +1389,10 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 ### 🌳 Sélection TreeView
 
 - ✅ Correction complète de la sélection parent / enfants
+- ✅ Ajout du support tri-state (état partiel)
+- ✅ Comportement type Windows Explorer
+- ✅ Support état indéterminé (`null`)
+- ✅ Cohérence sélection partielle dossier
 - ✅ Synchronisation UI ↔ ViewModel (source unique = CheckBox)
 - ✅ Suppression des désynchronisations
 - ✅ Correction du bug :
@@ -1408,6 +1412,10 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Correction des comportements instables (spam clic)
 
 - ✅ État toujours cohérent après interaction
+
+- ✅ Correction du rebond WinUI CheckBox
+
+- ✅ Synchronisation explicite UI → ViewModel
 
 ---
 
@@ -1500,6 +1508,9 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 
 - ✅ Ajout tests exclusions configuration
 - ✅ Ajout tests exclusions import
+- ✅ Ajout tests sélection TreeView
+- ✅ Validation propagation parent ↔ enfants
+- ✅ Validation état partiel (tri-state)
 - ✅ Validation :
   - exclusion fichiers
   - exclusion dossiers
@@ -1524,7 +1535,6 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 ## ⚠️ Limites actuelles
 
 - ❌ État ouvert non persisté après reload complet
-- ❌ Pas de tri-state checkbox
 - ❌ Quelques cas limites recherche/arbre encore possibles
 - ❌ Réduction arbre lors reload complet
 
@@ -1535,7 +1545,6 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - 🔜 Persistance complète état arbre
 - 🔜 Sauvegarde/restauration dossiers ouverts
 - 🔜 Amélioration système recherche
-- 🔜 Tri-state checkbox
 - 🔜 Optimisation anti-spam
 - 🔜 Stabilisation FileReader
 - 🔜 Stabilisation Statistics
