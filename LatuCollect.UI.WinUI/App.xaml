@@ -74,6 +74,9 @@
             <!--  Comparaison string insensible à la casse  -->
             <conv:FolderFileIconConverter x:Key="FolderFileIconConverter" />
 
+            <!--  Icône exclusion (📁 dossier / 📄 fichier)  -->
+            <conv:ExclusionIconConverter x:Key="ExclusionIconConverter" />
+
             <!--  🧾 TEMPLATE LOGS  -->
             <DataTemplate x:Key="LogItemTemplate">
                 <Border

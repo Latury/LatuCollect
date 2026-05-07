@@ -37,6 +37,7 @@ using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -261,17 +262,85 @@ namespace LatuCollect.UI.WinUI
 
             var flyout = new MenuFlyout();
 
+            // 🔍 état actuel (exclusion existante ou non)
+            string path = node.Path;
+
+            var existing = _viewModel.Config.ExcludedFolders
+                .FirstOrDefault(e =>
+                    string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase));
+
+            // 🚫 EXCLURE
             var excludeItem = new MenuFlyoutItem
             {
-                Text = "🚫 Exclure"
+                Text = "🚫 Exclure",
+                IsEnabled = existing == null
             };
 
             excludeItem.Click += async (_, __) =>
             {
-                await _viewModel.AddExclusionFromNode(node);
+                bool confirm = await ShowConfirm(
+    "Exclure",
+    $"Voulez-vous exclure :\n{node.Name} ?");
+
+                if (confirm)
+                {
+                    await _viewModel.AddExclusionFromNode(node);
+                }
             };
 
             flyout.Items.Add(excludeItem);
+
+            // 🔒 EXCLUSION PROTÉGÉE
+            var protectedItem = new MenuFlyoutItem
+            {
+                Text = "🔒 Exclusion protégée",
+                IsEnabled = existing == null
+            };
+
+            protectedItem.Click += async (_, __) =>
+            {
+                bool confirm = await ShowConfirm(
+                    "Exclusion protégée",
+                    $"⚠ Cette exclusion sera protégée.\n\n" +
+                    $"Impossible à supprimer sans le mode développeur.\n\n" +
+                    $"Continuer avec :\n{node.Name} ?");
+
+                if (confirm)
+                {
+                    await _viewModel.AddProtectedExclusionFromNode(node);
+                }
+            };
+
+            flyout.Items.Add(protectedItem);
+
+            // ♻️ INCLURE
+            var includeItem = new MenuFlyoutItem
+            {
+                Text = "♻️ Inclure",
+                IsEnabled = existing != null && !existing.IsProtected
+            };
+
+            includeItem.Click += async (_, __) =>
+            {
+                await _viewModel.RemoveExclusionFromNode(node);
+            };
+
+            flyout.Items.Add(includeItem);
+
+            // 📋 COPIER LE CHEMIN
+            var copyPathItem = new MenuFlyoutItem
+            {
+                Text = "📋 Copier le chemin"
+            };
+
+            copyPathItem.Click += (_, __) =>
+            {
+                var package = new Windows.ApplicationModel.DataTransfer.DataPackage();
+                package.SetText(node.Path);
+                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(package);
+            };
+
+            flyout.Items.Add(copyPathItem);
 
             flyout.ShowAt(element);
         }

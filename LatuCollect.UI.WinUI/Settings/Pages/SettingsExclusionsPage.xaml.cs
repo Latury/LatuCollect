@@ -13,10 +13,15 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Configuration.Models;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LatuCollect.UI.WinUI.Settings.Pages
 {
@@ -61,61 +66,154 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
 
         private async void OnAddClicked(object sender, RoutedEventArgs e)
         {
-            // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
                 return;
 
-            // Lecture valeur utilisateur
             var value = InputExclude.Text?.Trim();
 
-            // Validation : vide
             if (string.IsNullOrWhiteSpace(value))
                 return;
 
-            // Vérification doublon
-            if (!vm.Config.ExcludedFolders.Contains(value))
+            // Vérifie doublon (sur Name)
+            if (!vm.Config.ExcludedFolders.Any(e =>
+                string.Equals(e.Name, value, StringComparison.OrdinalIgnoreCase)))
             {
-                vm.Config.ExcludedFolders.Add(value);
+                var item = new ExclusionItem(value, false);
 
-                // 💾 Sauvegarde configuration
+                vm.Config.ExcludedFolders.Add(item);
+
                 await vm.SaveConfigurationAsync();
 
-                // 🔁 Rechargement arbre + preview
                 if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))
                 {
                     await vm.LoadTreeAsync(vm.CurrentFolderPath);
                 }
             }
 
-            // Reset champ input
             InputExclude.Text = "";
         }
 
 
-        // ==========================================
-        // 5. ÉVÉNEMENTS UI — SUPPRESSION
-        // ==========================================
-
         private async void OnRemoveClicked(object sender, RoutedEventArgs e)
         {
-            // Récupération ViewModel
             if (DataContext is not MainViewModel vm)
                 return;
 
-            // Récupération sélection
-            if (ExclusionsList.SelectedItem is string selected)
+            if (vm.SelectedExclusion == null)
+                return;
+
+            var item = vm.SelectedExclusion;
+
+            if (item.IsProtected && !vm.IsDeveloperMode)
             {
-                vm.Config.ExcludedFolders.Remove(selected);
-
-                // 💾 Sauvegarde configuration
-                await vm.SaveConfigurationAsync();
-
-                // 🔁 Rechargement arbre + preview
-                if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))
+                await new ContentDialog
                 {
-                    await vm.LoadTreeAsync(vm.CurrentFolderPath);
-                }
+                    Title = "Protégé",
+                    Content = "Impossible de supprimer un élément protégé sans le mode développeur.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                }.ShowAsync();
+
+                return;
             }
+
+            var confirm = await new ContentDialog
+            {
+                Title = "Confirmation",
+                Content = $"Supprimer l'exclusion :\n{item.Name} ?",
+                PrimaryButtonText = "Oui",
+                CloseButtonText = "Non",
+                XamlRoot = this.XamlRoot
+            }.ShowAsync();
+
+            if (confirm != ContentDialogResult.Primary)
+                return;
+
+            // 🔥 Sauvegarde position scroll
+            double currentOffset = 0;
+
+            var scrollViewer = FindScrollViewer(ExclusionsList);
+
+            if (scrollViewer != null)
+            {
+                currentOffset = scrollViewer.VerticalOffset;
+            }
+
+            // 🔥 Suppression sécurisée
+            var itemsToRemove = vm.Config.ExcludedFolders
+                .Where(e =>
+                    string.Equals(e.Name, item.Name, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            foreach (var exclusion in itemsToRemove)
+            {
+                vm.Config.ExcludedFolders.Remove(exclusion);
+            }
+
+            vm.SelectedExclusion = null;
+
+            // 🔥 Refresh UI
+            vm.RefreshExclusionsUi();
+
+            // 🔥 Restauration scroll
+            await Task.Delay(50);
+
+            scrollViewer = FindScrollViewer(ExclusionsList);
+
+            scrollViewer?.ChangeView(null, currentOffset, null);
+
+            // 💾 Sauvegarde
+            await vm.SaveConfigurationAsync();
+
+            // 🔄 Rechargement arbre
+            if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))
+            {
+                await vm.LoadTreeAsync(vm.CurrentFolderPath);
+            }
+        }
+
+        // ==========================================
+        // 5. GESTION SÉLECTION LISTE
+        // ==========================================
+
+        private ScrollViewer? FindScrollViewer(DependencyObject parent)
+        {
+            if (parent == null)
+                return null;
+
+            if (parent is ScrollViewer scrollViewer)
+                return scrollViewer;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                var result = FindScrollViewer(child);
+
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        private void ExclusionsList_SelectionChanged(
+            object sender,
+            SelectionChangedEventArgs e)
+        {
+            if (DataContext is not MainViewModel vm)
+                return;
+
+            // 🔒 Ignore les headers texte
+            if (ExclusionsList.SelectedItem is not ExclusionItem item)
+            {
+                ExclusionsList.SelectedItem = null;
+                vm.SelectedExclusion = null;
+
+                return;
+            }
+
+            vm.SelectedExclusion = item;
         }
     }
 }

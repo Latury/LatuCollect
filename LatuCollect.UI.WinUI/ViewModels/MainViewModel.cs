@@ -251,6 +251,39 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+
+        private ExclusionItem? _selectedExclusion;
+        // Exclusion sélectionnée dans la liste (pour suppression)
+        public ExclusionItem? SelectedExclusion
+        {
+            get => _selectedExclusion;
+            set
+            {
+                if (SetProperty(ref _selectedExclusion, value))
+                {
+                    OnPropertyChanged(nameof(CanRemoveExclusion));
+                }
+            }
+        }
+
+        // Autorisation suppression exclusion
+        public bool CanRemoveExclusion
+        {
+            get
+            {
+                // Rien sélectionné
+                if (SelectedExclusion == null)
+                    return false;
+
+                // ✔ Exclusion normale
+                if (!SelectedExclusion.IsProtected)
+                    return true;
+
+                // 🔒 Protégée → mode développeur requis
+                return IsDeveloperMode;
+            }
+        }
+
         public bool AutoLoadLastFolder
         {
             get => _userConfig.AutoLoadLastFolder;
@@ -264,6 +297,47 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Liste d’exclusions regroupée pour l’affichage (protégées vs normales)
+        public IEnumerable<object> GroupedExclusions
+        {
+            get
+            {
+                var list = Config.ExcludedFolders;
+
+                if (list == null || list.Count == 0)
+                    return Enumerable.Empty<object>();
+
+                var result = new List<object>();
+
+                var protectedItems = list.Where(e => e.IsProtected).ToList();
+                var normalItems = list.Where(e => !e.IsProtected).ToList();
+
+                // 🔒 Protégés
+                if (protectedItems.Count > 0)
+                {
+                    result.Add("🔒 Protégés");
+
+                    foreach (var item in protectedItems)
+                    {
+                        result.Add(item);
+                    }
+                }
+
+                // 📁 Normaux
+                if (normalItems.Count > 0)
+                {
+                    result.Add("📁 Normaux");
+
+                    foreach (var item in normalItems)
+                    {
+                        result.Add(item);
+                    }
+                }
+
+                return result;
+            }
+        }
+
         public bool IsDeveloperMode
         {
             get => _isDeveloperMode;
@@ -273,6 +347,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     OnPropertyChanged(nameof(IsSimulationVisible));
                     OnPropertyChanged(nameof(IsDeveloperModeEnabled));
+
+                    // 🔥 IMPORTANT
+                    OnPropertyChanged(nameof(CanRemoveExclusion));
                 }
             }
         }
@@ -961,7 +1038,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // Ajout exclusion depuis TreeView
+        // Ajout d’un node de l’arbre (exclusion)
         public async Task AddExclusionFromNode(UiFileNode node)
         {
             if (node == null)
@@ -971,43 +1048,176 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 _logger.Info("Ajout exclusion depuis TreeView", node.Path);
 
-                // 🔹 Nom fichier ou dossier
-                string name = Path.GetFileName(node.Path);
+                string path = node.Path;
+                var displayName = System.IO.Path.GetFileName(path);
 
-                if (string.IsNullOrWhiteSpace(name))
+                if (string.IsNullOrWhiteSpace(path))
                     return;
 
-                // 🔹 Vérifie doublon
-                if (_config.ExcludedFolders.Contains(name))
+                // 🔍 Vérifie si déjà présent
+                if (_config.ExcludedFolders.Any(e =>
+                    string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase)))
                 {
-                    await ShowFeedbackAsync($"⚠ Déjà exclu : {name}");
+                    await ShowFeedbackAsync($"⚠ Déjà exclu : {displayName}");
                     return;
                 }
+                // ✔ Ajout exclusion
+                var item = new ExclusionItem(
+    path,
+    false,
+    node.Children.Count > 0
+);
 
-                // 🔹 Ajout config (UI + UserConfig)
-                _config.ExcludedFolders.Add(name);
+                _config.ExcludedFolders.Add(item);
 
-                if (!_userConfig.ExcludedFolders.Contains(name))
+                if (!_userConfig.ExcludedFolders.Any(e =>
+                    string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase)))
                 {
-                    _userConfig.ExcludedFolders.Add(name);
+                    _userConfig.ExcludedFolders.Add(item);
                 }
 
-                // 🔹 Update UI paramètres
                 OnPropertyChanged(nameof(Config));
 
-                // 🔹 🔥 SUPPRESSION IMMÉDIATE DU NODE (IMPORTANT)
+                OnPropertyChanged(nameof(GroupedExclusions));
+
+                // 🔥 IMPORTANT : suppression immédiate dans l’arbre
                 RemoveNodeFromTree(node);
 
-                // 🔹 Sauvegarde NON BLOQUANTE
-                _ = SaveConfigurationAsync();
+                // 💾 Sauvegarde
+                await SaveConfigurationAsync();
 
-                // 🔹 Feedback utilisateur
-                await ShowFeedbackAsync($"✔ Exclu : {name}");
+                // ❌ SUPPRIMÉ → plus de reload complet
+                // await LoadTreeAsync(CurrentFolderPath);
+
+                await ShowFeedbackAsync($"✔ Exclu : {displayName}");
             }
             catch (Exception ex)
             {
                 _logger.Error("Erreur exclusion depuis TreeView", ex.Message);
                 await ShowFeedbackAsync("❌ Erreur lors de l'exclusion");
+            }
+        }
+
+        // Ajout d’un node de l’arbre (exclusion protégée)
+        public async Task AddProtectedExclusionFromNode(UiFileNode node)
+        {
+            if (node == null)
+                return;
+
+            try
+            {
+                _logger.Info("Ajout exclusion PROTÉGÉE", node.Path);
+
+                string path = node.Path;
+                var displayName = System.IO.Path.GetFileName(path);
+
+                if (string.IsNullOrWhiteSpace(path))
+                    return;
+
+                // 🔍 Vérifie si déjà présent
+                if (_config.ExcludedFolders.Any(e =>
+                    string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase)))
+                {
+                    await ShowFeedbackAsync($"⚠ Déjà exclu : {displayName}");
+                    return;
+                }
+
+                // ✔ Ajout exclusion PROTÉGÉE
+                var item = new ExclusionItem(
+    path,
+    true,
+    Directory.Exists(path)
+);
+
+                _config.ExcludedFolders.Add(item);
+
+                // 🔥 Évite doublon config utilisateur
+                if (!_userConfig.ExcludedFolders.Any(e =>
+                    string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase)))
+                {
+                    _userConfig.ExcludedFolders.Add(item);
+                }
+
+                // 🔄 Refresh UI
+                OnPropertyChanged(nameof(Config));
+                OnPropertyChanged(nameof(GroupedExclusions));
+
+                // 🔥 Suppression immédiate dans l’arbre
+                RemoveNodeFromTree(node);
+
+                // 💾 Sauvegarde
+                await SaveConfigurationAsync();
+
+                await ShowFeedbackAsync($"🔒 Exclusion protégée : {displayName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur exclusion protégée", ex.Message);
+
+                await ShowFeedbackAsync("❌ Erreur");
+            }
+        }
+
+        // Suppression d’un node de l’arbre (exclusion)
+        public async Task RemoveExclusionFromNode(UiFileNode node)
+        {
+            if (node == null)
+                return;
+
+            try
+            {
+                _logger.Info("Suppression exclusion", node.Path);
+
+                string path = node.Path;
+                var displayName = System.IO.Path.GetFileName(path);
+
+                var existing = _config.ExcludedFolders
+                    .FirstOrDefault(e =>
+                        string.Equals(e.Name, path, StringComparison.OrdinalIgnoreCase));
+
+                if (existing == null)
+                {
+                    await ShowFeedbackAsync($"⚠ Non trouvé : {displayName}");
+                    return;
+                }
+
+                // 🔒 Protégé → mode développeur requis
+                if (existing.IsProtected && !IsDeveloperMode)
+                {
+                    await ShowFeedbackAsync($"🔒 Mode développeur requis : {displayName}");
+                    return;
+                }
+
+                var configItemsToRemove = _config.ExcludedFolders
+                    .Where(e =>
+                        string.Equals(e.Name, existing.Name, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                foreach (var item in configItemsToRemove)
+                {
+                    _config.ExcludedFolders.Remove(item);
+                }
+
+                var userConfigItemsToRemove = _userConfig.ExcludedFolders
+                    .Where(e =>
+                        string.Equals(e.Name, existing.Name, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                foreach (var item in userConfigItemsToRemove)
+                {
+                    _userConfig.ExcludedFolders.Remove(item);
+                }
+
+                OnPropertyChanged(nameof(Config));
+
+                await SaveConfigurationAsync();
+
+                await ShowFeedbackAsync($"♻️ Inclus : {displayName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur suppression exclusion", ex.Message);
+                await ShowFeedbackAsync("❌ Erreur suppression");
             }
         }
 
@@ -1017,7 +1227,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             if (node == null)
                 return;
 
-            // 🔹 Si racine
+            // 🔹 1. Suppression directe
             if (node.Parent == null)
             {
                 Tree.Remove(node);
@@ -1027,7 +1237,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 node.Parent.Children.Remove(node);
             }
 
-            // 🔹 Nettoyage filtre
+            // 🔹 2. Réapplique filtre uniquement
             ApplyFilter();
 
             OnPropertyChanged(nameof(IsTreeEmpty));
@@ -1039,10 +1249,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private void ApplyFilter()
         {
-            // 🔁 Toujours travailler sur le vrai Tree
             FilteredTree.Clear();
 
-            // 🔹 Pas de recherche → tout visible
+            // 🔥 RESET EXPANSION SI PAS DE RECHERCHE
             if (string.IsNullOrWhiteSpace(SearchText))
             {
                 foreach (var node in Tree)
@@ -1089,6 +1298,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
             bool isVisible = match || hasVisibleChild;
 
             node.IsVisible = isVisible;
+
+            // 🔥 IMPORTANT : ouvrir automatiquement les parents
+            if (hasVisibleChild && !string.IsNullOrWhiteSpace(SearchText))
+            {
+                node.IsExpanded = true;
+            }
 
             return isVisible;
         }
@@ -1184,6 +1399,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ═════════════════════════════════════════════════════════════
         // 22. CONFIGURATION UTILISATEUR
         // ═════════════════════════════════════════════════════════════
+
+        public void RefreshExclusionsUi()
+        {
+            OnPropertyChanged(nameof(GroupedExclusions));
+            OnPropertyChanged(nameof(CanRemoveExclusion));
+        }
 
         private async Task LoadConfigurationAsync()
         {
