@@ -1433,6 +1433,7 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Ajout clic droit sur les nodes
 - ✅ Menu contextuel avec action :
   - 🚫 Exclure fichier / dossier
+  - 🔒 Exclure protégé
 
 - ✅ Intégration directe avec le ViewModel
 
@@ -1441,9 +1442,22 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 ### 🚫 Système d’exclusion
 
 - ✅ Ajout exclusion depuis TreeView (sans passer par paramètres)
+- ✅ Ajout exclusions protégées
 - ✅ Synchronisation immédiate avec la configuration
 - ✅ Mise à jour automatique de la liste des exclusions
 - ✅ Suppression immédiate du node dans l’arbre (sans reload complet)
+
+---
+
+### 📂 Exclusions avancées
+
+- ✅ Passage exclusions nom → chemin complet
+- ✅ Support exclusions fichiers individuels
+- ✅ Support exclusions dossiers spécifiques
+- ✅ Compatibilité ancien format conservée
+- ✅ Normalisation des chemins (`NormalizePath`)
+- ✅ Correction du bug :
+  - `"bin"` excluait tous les dossiers portant ce nom
 
 ---
 
@@ -1461,6 +1475,37 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Binding TreeView → conservation des dossiers ouverts
 - ✅ Amélioration forte UX navigation
 
+⚠ Limite actuelle :
+
+- ❌ état ouvert non restauré après reload complet
+
+---
+
+### ⚙️ Panneau exclusions
+
+- ✅ Distinction réelle fichiers / dossiers
+- ✅ Correction affichage icônes exclusions
+- ✅ Groupement :
+  - 🔒 Protégés
+  - 📁 Normaux
+
+- ✅ Correction suppression exclusions
+- ✅ Protection mode développeur
+- ✅ Préservation position scroll
+- ✅ Correction sélection headers ListView
+
+---
+
+## 🧪 Tests
+
+- ✅ Ajout tests exclusions configuration
+- ✅ Ajout tests exclusions import
+- ✅ Validation :
+  - exclusion fichiers
+  - exclusion dossiers
+  - sauvegarde configuration
+  - conservation extensions fichiers
+
 ---
 
 ## 🧠 Résultat
@@ -1468,26 +1513,34 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✔ Sélection fiable et prévisible
 - ✔ Preview cohérent avec la sélection
 - ✔ Exclusion rapide et intuitive
+- ✔ Exclusions beaucoup plus précises
 - ✔ Arbre fluide (sans rechargement)
-- ✔ UX nettement améliorée
+- ✔ UI exclusions plus claire
+- ✔ Base Core plus robuste
+- ✔ Premiers tests de non-régression
 
 ---
 
 ## ⚠️ Limites actuelles
 
-- ❌ Exclusion basée sur le nom (pas le chemin complet)
 - ❌ État ouvert non persisté après reload complet
 - ❌ Pas de tri-state checkbox
+- ❌ Quelques cas limites recherche/arbre encore possibles
+- ❌ Réduction arbre lors reload complet
 
 ---
 
 ## 🔜 Prochaines étapes
 
-- 🔜 Amélioration du système d’exclusion (chemin complet)
-- 🔜 Persistance complète de l’état de l’arbre
-- 🔜 Amélioration du système de recherche (fichier/dossier)
+- 🔜 Persistance complète état arbre
+- 🔜 Sauvegarde/restauration dossiers ouverts
+- 🔜 Amélioration système recherche
 - 🔜 Tri-state checkbox
 - 🔜 Optimisation anti-spam
+- 🔜 Stabilisation FileReader
+- 🔜 Stabilisation Statistics
+- 🔜 Validation export massif
+- 🔜 Extension couverture tests
 
 ---
 
@@ -1496,5 +1549,6 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Simplicité avant complexité
 - ✅ Lisibilité avant optimisation
 - ✅ UX immédiate avant perfection
+- ✅ Core prévisible avant nouvelles fonctionnalités
 
 ---

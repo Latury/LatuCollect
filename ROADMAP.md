@@ -596,8 +596,21 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ⬜ Correction reset incomplet
 
 - 🟡 Correction sélection TreeView :
+  - ✅ propagation correcte parent ↔ enfants
   - ⬜ décocher un fichier ne doit pas recocher le parent
-  - 🟡 propagation correcte parent ↔ enfants (partiellement corrigé)
+  - ⬜ tri-state checkbox
+
+---
+
+# 🌳 TreeView / Sélection (STABILISÉ MAJORITAIREMENT)
+
+- ✅ Correction complète sélection parent / enfants
+- ✅ Synchronisation UI ↔ ViewModel
+- ✅ Suppression désynchronisations sélection
+- ✅ Correction preview incohérent
+- ✅ Protection anti multi-clic
+- ✅ Stabilisation HandleNodeClick
+- ✅ Arbre réel conservé (plus de duplication)
 
 ---
 
@@ -612,22 +625,117 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 
 - ✅ Ajout menu clic droit (exclusion)
 - ✅ Exclusion directe depuis l’arborescence
+- ✅ Exclusion protégée
 - ✅ Suppression node sans reload complet
 - ✅ Ajout IsExpanded (persistance visuelle)
+- ✅ RemoveNodeFromTree()
+- ✅ UI beaucoup plus fluide
 
 ---
 
-# 🧠 TODO — Amélioration système d’exclusion & UX arbre
+# 🎯 Système d’exclusion (MAJORITAIREMENT STABILISÉ)
 
-## 📁 1. Persistance complète de l’état de l’arbre
+## ✅ Déjà corrigé
 
-- ⬜ Stockage des nodes ouverts (HashSet<string>)
-- ⬜ Sauvegarde avant reload
-- ⬜ Restauration après reconstruction
+- ✅ Passage nom → chemin complet
+- ✅ Adaptation FileImportService
+- ✅ Adaptation sauvegarde config
+- ✅ Compatibilité ancien format conservée
+- ✅ Support exclusions fichiers
+- ✅ Support exclusions dossiers
+- ✅ Distinction réelle fichier / dossier
+- ✅ Correction bug :
+  - "bin" excluait partout
+
+- ✅ Ajout exclusions protégées
+- ✅ Synchronisation config ↔ UI
+- ✅ Suppression immédiate arbre
+- ✅ Rechargement exclusions cohérent
 
 ---
 
-## 🧾 2. Amélioration menu clic droit
+## ⚠️ Limites restantes
+
+- ⬜ Persistance complète état ouvert arbre
+- ⬜ Réduction arbre après reload complet
+- ⬜ Scroll exclusions encore perfectible
+
+---
+
+# 🧠 TODO — Stabilisation UI Exclusions (POST 0.11.0)
+
+## 🎯 Objectif
+
+Améliorer la stabilité visuelle et les performances de la page :
+📁 Dossiers exclus
+
+---
+
+# ⚠️ Problème actuel
+
+GroupedExclusions reconstruit complètement la source UI
+à chaque refresh :
+
+→ recréation des items
+→ reset visuel partiel
+→ recalcul layout
+→ scroll potentiellement instable
+
+---
+
+# ✅ Amélioration prévue
+
+## 🔄 Remplacer GroupedExclusions IEnumerable
+
+Passer vers :
+
+✔ ObservableCollection dédiée
+✔ groupes persistants
+✔ refresh partiel uniquement
+✔ conservation état UI
+
+---
+
+# 🧩 Structure cible
+
+- ObservableCollection<GroupedExclusionSection>
+- sections persistantes :
+  - 🔒 Protégés
+  - 📁 Normaux
+
+---
+
+# 🎯 Résultats attendus
+
+✔ Plus de “saut” visuel
+✔ Scroll totalement stable
+✔ Meilleure fluidité UI
+✔ Moins de reconstruction ListView
+✔ Meilleure évolutivité UX
+
+---
+
+# ⚠️ IMPORTANT
+
+À faire uniquement APRÈS stabilisation complète :
+
+- système exclusions
+- mode développeur
+- persistence config
+- reload arbre
+- tests UX 0.11.0
+
+---
+
+# 📌 Priorité
+
+🟡 Moyenne
+
+Pas bloquant pour la 0.11.0 actuelle
+
+---
+
+# 🧾 Menu clic droit — TODO UX
 
 - ⬜ Ajouter option "Inclure"
 - ⬜ Ajouter "Copier le chemin"
@@ -636,53 +744,48 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 
 ---
 
-## ⚡ 3. Performance / refresh
+# ⚡ Performance / refresh
 
-- 🟡 Suppression reload complet (déjà amélioré)
-- ⬜ Supprimer tous les Task.Delay inutiles
+- ✅ Suppression reload complet majeur
+- ✅ Mise à jour ciblée arbre
+- ⬜ Supprimer Task.Delay inutiles
 - ⬜ Vérifier ApplyFilter (pas de blocage UI)
 
 ---
 
-## 🎯 4. Système d’exclusion (PRIORITÉ IMPORTANTE)
+# 🔍 Recherche (TreeView)
 
-- ⬜ Passage nom → chemin complet
-- ⬜ Adapter FileImportService
-- ⬜ Adapter sauvegarde config
-
-⚠ Problème actuel :
-
-- "bin" exclut partout (non précis)
-
----
-
-## 🎨 5. Feedback visuel (optionnel)
-
-- ⬜ Animation suppression (fade)
-- ⬜ Mise en évidence temporaire
-
----
-
-## 🔍 6. Recherche (TreeView)
-
-- 🟡 Filtrage fonctionnel (déjà corrigé)
+- ✅ Filtrage fonctionnel
+- ✅ Filtrage basé visibilité
+- ✅ Plus de duplication arbre
 
 À améliorer :
 
 - ⬜ Cohérence sélection ↔ visibilité
-- ⬜ Gestion des nodes masqués
+- ⬜ Gestion nodes masqués
 - ⬜ Optimisation ApplyFilterRecursive
 - ⬜ Ajustement debounce
 
 ---
 
-## 🧪 7. Tests
+# 🧪 Tests
 
-- ⬜ Exclusion fichier simple
-- ⬜ Exclusion dossier avec enfants
+## ✅ Déjà ajoutés
+
+- ✅ Exclusion fichier simple
+- ✅ Exclusion dossier avec enfants
+- ✅ Persistance config
+- ✅ Conservation extensions fichiers
+
+---
+
+## ⬜ À compléter
+
 - ⬜ Réouverture arbre après exclusion
-- ⬜ Persistance config
 - ⬜ Recherche après exclusion
+- ⬜ Cas limites exclusions protégées
+- ⬜ Tests UI exclusions
+- ⬜ Tests stabilité reload
 
 ---
 
@@ -717,11 +820,18 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - Preview cohérent
 - UI stable
 - Exclusion dynamique fonctionnelle
+- Core exclusions stabilisé
+- Tests exclusions ajoutés
+
+---
 
 ## 🟡 En cours
 
 - UX TreeView (très avancée)
 - Recherche (fonctionnelle mais perfectible)
+- Stabilisation exclusions UI
+
+---
 
 ## ❌ À faire (Core important)
 
@@ -738,6 +848,7 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 ✔ UX fluide et moderne
 ✔ Comportement prévisible
 ✔ Base solide pour versions suivantes
+✔ Réduction forte des effets de bord
 
 ---
 
@@ -751,7 +862,7 @@ Améliorer la gestion des gros projets.
 
 ## 📂 Import
 
-- ⬜ EnumerateFiles (streaming)
+- ✅ EnumerateFiles (streaming déjà utilisé)
 - ⬜ Tri optimisé
 
 ---
@@ -774,6 +885,8 @@ Améliorer la gestion des gros projets.
 - ⬜ Gestion export massif
 - ⬜ Protection mémoire
 
+---
+
 # 🚀 17. Version 0.13.0 — UX & COMPORTEMENT
 
 ## 🎯 Objectif
@@ -785,16 +898,16 @@ Améliorer l’expérience utilisateur.
 ## 📂 Import
 
 - ⬜ Lazy loading
-- ⬜ CancellationToken
-- ⬜ ImportResult
-- ⬜ Affichage partiel
+- ✅ CancellationToken
+- ✅ ImportResult
+- ✅ Affichage partiel
 
 ---
 
 ## 🖥️ UI
 
 - ⬜ Reset dossier propre
-- ⬜ Message état vide
+- ✅ Message état vide
 
 ---
 
@@ -802,7 +915,9 @@ Améliorer l’expérience utilisateur.
 
 - ⬜ Sélection dossier fiable
 - ⬜ Preview limité configurable
-- ⬜ Message export partiel
+- ✅ Message export partiel
+
+---
 
 # 🚀 18. Version 0.14.0 — ARCHITECTURE
 
@@ -815,7 +930,7 @@ Corriger les écarts ALC restants.
 ## 🧠 Core
 
 - ⬜ Interfaces services
-- ⬜ Séparer AppConfig / UserConfig
+- 🟡 Séparation AppConfig / UserConfig (améliorée mais encore incomplète)
 
 ---
 
@@ -840,6 +955,8 @@ Corriger les écarts ALC restants.
 
 - ⬜ Déplacer formatage Date côté UI
 
+---
+
 # 🚀 19. Version 0.15.0 — LOGS
 
 ## 🎯 Objectif
@@ -852,9 +969,11 @@ Améliorer debug et stabilité.
 
 - ⬜ Limite mémoire
 - ⬜ Thread safety
-- ⬜ Export logs
-- ⬜ Niveaux de logs
-- ⬜ Filtrage
+- ✅ Export logs
+- ✅ Niveaux de logs
+- ✅ Filtrage
+
+---
 
 # 🚀 20. Version 0.16.0 — SUPPRESSION SIMULATION
 
@@ -905,6 +1024,8 @@ Supprimer complètement le système de simulation.
   - export OK
   - aucun comportement cassé
 
+---
+
 # 🎨 🚀 21. Version 0.17.0 — UI / THÈMES / AUDIT COMPLET
 
 ## 🎯 Objectif
@@ -921,7 +1042,7 @@ Transformer l’application en produit propre, agréable et cohérent visuelleme
 
 ## 🧱 1. BASE THÈME (OBLIGATOIRE)
 
-- ⬜ Mode clair / sombre
+- ✅ Mode clair / sombre
 - ⬜ Centralisation couleurs (DynamicResource)
 - ⬜ Suppression couleurs en dur
 - ⬜ Palette cohérente :
@@ -1098,6 +1219,8 @@ Ex :
 - ✔ ALC respectée
 - ✔ utile uniquement
 
+---
+
 # 🚀 22. Version 0.18.0 — FINALISATION & DISTRIBUTION
 
 ## 🎯 Objectif
@@ -1116,6 +1239,8 @@ Transformer l’application en produit final.
 - ⬜ Multi-architecture
 - ⬜ Choix dossier
 - ⬜ Raccourcis
+
+---
 
 # 🏁 OBJECTIF FINAL
 
