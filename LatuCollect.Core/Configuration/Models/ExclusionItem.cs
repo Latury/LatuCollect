@@ -1,15 +1,15 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
-║  Module : Core.Configuration.Constants                               ║
-║  Fichier : ConfigurationDefaults.cs                                  ║
+║  Module : Core.Configuration.Models                                  ║
+║  Fichier : ExclusionItem.cs                                          ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Centraliser les valeurs par défaut de la configuration              ║
+║  Représenter un élément d’exclusion                                  ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Fournir des constantes de configuration par défaut                ║
-║  - Fournir une instance UserConfig initialisée                       ║
+║  - Stocker le nom du dossier/fichier exclu                           ║
+║  - Indiquer si l’exclusion est protégée                              ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Données uniquement                                                ║
@@ -19,54 +19,51 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Configuration.Models;
-using System.Collections.Generic;
-
-namespace LatuCollect.Core.Configuration.Constants
+namespace LatuCollect.Core.Configuration.Models
 {
-    public static class ConfigurationDefaults
+    public class ExclusionItem
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. CONSTANTES PAR DÉFAUT
+        // 1. PROPRIÉTÉS
+        // ═════════════════════════════════════════════════════════════
+        //
+        // - Nom du dossier ou chemin exclu
+        // - Exemple : "bin", "obj", ".git"
+        //
+
+        public string Name { get; set; } = string.Empty;
+
+        // Indique si l’exclusion est protégée
+        // true  → non supprimable
+        // false → supprimable
+        public bool IsProtected { get; set; }
+
+        // Indique si l’exclusion est un dossier (true) ou un fichier (false)
+        public bool IsDirectory { get; set; }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
-        public const string DEFAULT_FORMAT = ".txt";
-        public const bool DEFAULT_DEV_MODE = false;
-        public const bool DEFAULT_AUTO_LOAD = false;
-        public const int DEFAULT_PREVIEW_MAX_FILES = 20;
-        public const string DEFAULT_THEME = "Light";
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 2. DOSSIERS EXCLUS PAR DÉFAUT (IMMUTABLES)
-        // ═════════════════════════════════════════════════════════════
-
-        public static IReadOnlyList<ExclusionItem> DefaultExcludedFolders => new List<ExclusionItem>
+        public ExclusionItem(
+    string name,
+    bool isProtected = false,
+    bool isDirectory = false)
         {
-            new ExclusionItem("bin", true),
-            new ExclusionItem("obj", true),
-            new ExclusionItem(".git", true)
-        };
+            Name = name;
+            IsProtected = isProtected;
+            IsDirectory = isDirectory;
+        }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. CONFIGURATION COMPLÈTE PAR DÉFAUT
+        // 3. MÉTHODES
         // ═════════════════════════════════════════════════════════════
 
-        public static UserConfig CreateDefault()
+        public override string ToString()
         {
-            return new UserConfig
-            {
-                DefaultFormat = DEFAULT_FORMAT,
-                IsDeveloperMode = DEFAULT_DEV_MODE,
-                LastOpenedFolder = string.Empty,
-                AutoLoadLastFolder = DEFAULT_AUTO_LOAD,
-                PreviewMaxFiles = DEFAULT_PREVIEW_MAX_FILES,
-                Theme = DEFAULT_THEME,
-
-                // Copie défensive pour éviter toute mutation externe
-                ExcludedFolders = new List<ExclusionItem>(DefaultExcludedFolders)
-            };
+            return Name;
         }
     }
 }

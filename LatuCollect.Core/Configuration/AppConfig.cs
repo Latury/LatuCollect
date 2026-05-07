@@ -8,7 +8,7 @@
 ║  Stocker la configuration globale de l’application                   ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Gérer les dossiers exclus                                         ║
+║  - Gérer les exclusions (avec protection)                            ║
 ║  - Fournir des paramètres globaux                                    ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
@@ -20,6 +20,7 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Configuration.Models;
 using System.Collections.ObjectModel;
 
 namespace LatuCollect.Core.Configuration
@@ -30,19 +31,14 @@ namespace LatuCollect.Core.Configuration
         // 1. DOSSIERS EXCLUS
         // ═════════════════════════════════════════════════════════════
         //
-        // Liste des dossiers ignorés lors de l’import
+        // Liste des exclusions actives utilisées par le Core
         //
         // Exemple :
-        // - bin
-        // - obj
-        // - .git
+        // - bin (protégé)
+        // - obj (protégé)
+        // - node_modules (non protégé)
         //
 
-        public ObservableCollection<string> ExcludedFolders { get; set; } = new()
-        {
-            "bin",
-            "obj",
-            ".git"
-        };
+        public ObservableCollection<ExclusionItem> ExcludedFolders { get; set; } = new();
     }
 }

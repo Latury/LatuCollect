@@ -140,44 +140,54 @@ namespace LatuCollect.Core.Services.Import
         // ═════════════════════════════════════════════════════════════
 
         private void TryAddDirectories(
-            FileNode parent,
-            string path,
-            int depth,
-            ref int count,
-            ImportResult result,
-            CancellationToken token)
+    FileNode parent,
+    string path,
+    int depth,
+    ref int count,
+    ImportResult result,
+    CancellationToken token)
         {
+            IEnumerable<string> directories;
+
             try
             {
-                var directories = Directory
-                    .EnumerateDirectories(path)
-                    .OrderBy(d => d);
-
-                foreach (var dir in directories)
-                {
-                    if (token.IsCancellationRequested)
-                        return;
-
-                    if (count >= MAX_NODES)
-                    {
-                        result.IsPartial = true;
-                        return;
-                    }
-
-                    var folderName = Path.GetFileName(dir);
-
-                    if (IsExcluded(folderName))
-                        continue;
-
-                    var child = CreateNode(dir, depth + 1, ref count, result, token);
-
-                    if (child != null)
-                        parent.Children.Add(child);
-                }
+                directories = Directory.EnumerateDirectories(path);
             }
             catch
             {
-                // ignoré volontairement
+                // 🔥 IMPORTANT : si accès refusé → on abandonne CE dossier
+                return;
+            }
+
+            foreach (var dir in directories.OrderBy(d => d))
+            {
+                if (token.IsCancellationRequested)
+                    return;
+
+                if (count >= MAX_NODES)
+                {
+                    result.IsPartial = true;
+                    return;
+                }
+
+                // 🔥 EXCLUSION AVANT TOUT
+                if (IsExcluded(dir))
+                    continue;
+
+                FileNode? child;
+
+                try
+                {
+                    child = CreateNode(dir, depth + 1, ref count, result, token);
+                }
+                catch
+                {
+                    // 🔥 si un sous-dossier plante → on ignore proprement
+                    continue;
+                }
+
+                if (child != null)
+                    parent.Children.Add(child);
             }
         }
 
@@ -209,6 +219,10 @@ namespace LatuCollect.Core.Services.Import
                         return;
                     }
 
+                    // 🔥 IMPORTANT : exclusion fichiers
+                    if (IsExcluded(file))
+                        continue;
+
                     parent.Children.Add(new FileNode
                     {
                         Name = GetSafeName(file),
@@ -229,9 +243,54 @@ namespace LatuCollect.Core.Services.Import
         // 1.7 UTILITAIRES
         // ═════════════════════════════════════════════════════════════
 
-        private bool IsExcluded(string folderName)
+        private bool IsExcluded(string path)
         {
-            return _config.ExcludedFolders.Contains(folderName);
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            string normalizedPath = NormalizePath(path);
+
+            foreach (var exclusion in _config.ExcludedFolders)
+            {
+                if (exclusion == null)
+                    continue;
+
+                string name = exclusion.Name?.Trim();
+
+                if (string.IsNullOrWhiteSpace(name) || name.Length < 2)
+                    continue;
+
+                // Cas chemin complet
+                if (name.Contains("\\") || name.Contains("/"))
+                {
+                    string normalizedExclusion = NormalizePath(name);
+
+                    if (normalizedExclusion.Length < 4)
+                        continue;
+
+                    if (normalizedPath.StartsWith(normalizedExclusion, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+                // Cas nom simple (compatibilité)
+                else
+                {
+                    string folderName = Path.GetFileName(normalizedPath);
+
+                    if (string.Equals(folderName, name, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        // 🔒 normalisation pour éviter les problèmes de slashs et de comparaisons
+        private string NormalizePath(string path)
+        {
+            return path
+                .Trim()
+                .Replace('/', '\\')
+                .TrimEnd('\\');
         }
 
         private string GetSafeName(string path)

@@ -24,6 +24,7 @@ using LatuCollect.Core.Configuration.Constants;
 using LatuCollect.Core.Configuration.Interfaces;
 using LatuCollect.Core.Configuration.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -154,15 +155,18 @@ namespace LatuCollect.Core.Configuration.Services
             return ConfigurationDefaults.CreateDefault();
         }
 
-        // Sécurise les données chargées depuis le JSON
-        // pour éviter les valeurs null ou invalides.
+        // Valide et normalise la configuration (valeurs par défaut si nécessaire)
         private static UserConfig Sanitize(UserConfig config)
         {
             return new UserConfig
             {
                 DefaultFormat = string.IsNullOrWhiteSpace(config.DefaultFormat) ? ".txt" : config.DefaultFormat,
                 IsDeveloperMode = config.IsDeveloperMode,
-                ExcludedFolders = config.ExcludedFolders ?? new(),
+
+                ExcludedFolders = config.ExcludedFolders != null
+                    ? new List<ExclusionItem>(config.ExcludedFolders)
+                    : new List<ExclusionItem>(),
+
                 LastOpenedFolder = config.LastOpenedFolder ?? string.Empty,
                 AutoLoadLastFolder = config.AutoLoadLastFolder,
                 PreviewMaxFiles = config.PreviewMaxFiles <= 0 ? 20 : config.PreviewMaxFiles,

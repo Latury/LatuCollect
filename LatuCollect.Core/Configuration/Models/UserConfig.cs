@@ -9,10 +9,12 @@
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Stocker les préférences utilisateur                               ║
-║  - Être sérialisée en JSON                                           ║
+║  - Gérer les exclusions (avec protection)                            ║
+║  - Assurer la compatibilité avec anciens formats                     ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Données uniquement                                                ║
+║  - Nettoyage autorisé                                                ║
 ║  - Aucune logique métier                                             ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
@@ -21,6 +23,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LatuCollect.Core.Configuration.Models
 {
@@ -41,20 +44,77 @@ namespace LatuCollect.Core.Configuration.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 3. DOSSIERS EXCLUS
+        // 3. DOSSIERS EXCLUS (NOUVEAU MODÈLE)
         // ═════════════════════════════════════════════════════════════
 
-        private List<string>? _excludedFolders;
+        private List<ExclusionItem>? _excludedFolders;
 
-        public List<string> ExcludedFolders
+        public List<ExclusionItem> ExcludedFolders
         {
-            get => _excludedFolders ??= new List<string>();
-            set => _excludedFolders = value ?? new List<string>();
+            get
+            {
+                if (_excludedFolders == null || _excludedFolders.Count == 0)
+                {
+                    _excludedFolders = new List<ExclusionItem>
+                    {
+                        new ExclusionItem("bin", true),
+                        new ExclusionItem("obj", true),
+                        new ExclusionItem(".git", true)
+                    };
+                }
+
+                return _excludedFolders;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _excludedFolders = new List<ExclusionItem>();
+                    return;
+                }
+
+                // 🔧 Nettoyage des données (autorisé en ALC)
+                _excludedFolders = value
+                    .Where(v => v != null && !string.IsNullOrWhiteSpace(v.Name))
+                    .Select(v => new ExclusionItem(
+    v.Name.Trim(),
+    v.IsProtected,
+    v.IsDirectory
+))
+                    .Where(v => v.Name.Length >= 2)
+                    .GroupBy(v => v.Name, System.StringComparer.OrdinalIgnoreCase)
+                    .Select(g => g.First())
+                    .ToList();
+            }
         }
 
 
         // ═════════════════════════════════════════════════════════════
-        // 4. DERNIER DOSSIER
+        // 4. MIGRATION ANCIEN FORMAT (STRING → OBJET)
+        // ═════════════════════════════════════════════════════════════
+        //
+        // Permet de charger :
+        // ["bin", "obj"]
+        //
+
+        public List<string>? LegacyExcludedFolders
+        {
+            get => null;
+            set
+            {
+                if (value == null || value.Count == 0)
+                    return;
+
+                ExcludedFolders = value
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Select(v => new ExclusionItem(v.Trim(), true))
+                    .ToList();
+            }
+        }
+
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. DERNIER DOSSIER
         // ═════════════════════════════════════════════════════════════
 
         public string LastOpenedFolder { get; set; } = string.Empty;
@@ -63,7 +123,7 @@ namespace LatuCollect.Core.Configuration.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 5. MODE D’EXPORT
+        // 6. MODE D’EXPORT
         // ═════════════════════════════════════════════════════════════
 
         public int PreviewMaxFiles { get; set; } = 20;
@@ -72,14 +132,14 @@ namespace LatuCollect.Core.Configuration.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 6. LOGS
+        // 7. LOGS
         // ═════════════════════════════════════════════════════════════
 
         public string LogLevel { get; set; } = "Info";
 
 
         // ═════════════════════════════════════════════════════════════
-        // 7. THÈME
+        // 8. THÈME
         // ═════════════════════════════════════════════════════════════
 
         public string Theme { get; set; } = "Light";
