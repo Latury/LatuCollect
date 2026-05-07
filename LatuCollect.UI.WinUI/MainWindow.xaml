@@ -153,12 +153,12 @@
                                                 Grid.Column="1"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                Checked="OnNodeChecked"
+                                                Click="OnNodeChecked"
                                                 Content="{Binding Name}"
                                                 Foreground="White"
                                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                RightTapped="OnNodeRightTapped"
-                                                Unchecked="OnNodeChecked" />
+                                                IsThreeState="True"
+                                                RightTapped="OnNodeRightTapped" />
                                         </Grid>
                                     </TreeViewItem>
                                 </DataTemplate>

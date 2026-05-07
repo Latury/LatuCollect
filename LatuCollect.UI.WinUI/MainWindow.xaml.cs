@@ -241,14 +241,19 @@ namespace LatuCollect.UI.WinUI
             _viewModel.SelectedFormat = ".md";
         }
 
-        // ✅ Coche / décoche un nœud
+        // ✅ CLIC SUR UN NODE (CHECKBOX)
         private void OnNodeChecked(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement element &&
-                element.DataContext is LatuCollect.UI.WinUI.Models.FileNode node)
-            {
-                _viewModel.HandleNodeClick(node);
-            }
+            if (sender is not CheckBox checkBox)
+                return;
+
+            if (checkBox.DataContext is not LatuCollect.UI.WinUI.Models.FileNode node)
+                return;
+
+            // 🔥 Synchronise explicitement la valeur UI → VM
+            node.IsSelected = checkBox.IsChecked;
+
+            _viewModel.HandleNodeClick(node);
         }
 
         // 🆕 CLIC DROIT SUR UN NODE

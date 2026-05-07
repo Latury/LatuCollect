@@ -17,9 +17,10 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
 
-  <ItemGroup>
+<ItemGroup>
     <ProjectReference Include="..\LatuCollect.Core\LatuCollect.Core.csproj" />
-  </ItemGroup>
+    <ProjectReference Include="..\LatuCollect.UI.WinUI\LatuCollect.UI.WinUI.csproj" />
+</ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />

@@ -41,7 +41,7 @@ namespace LatuCollect.UI.WinUI.Models
 
         private string _name = "";
         private string _path = "";
-        private bool _isSelected;
+        private bool? _isSelected;
         private bool _isVisible = true;
         private bool _isExpanded;
 
@@ -63,8 +63,8 @@ namespace LatuCollect.UI.WinUI.Models
             set => SetProperty(ref _path, value);
         }
 
-        // Sélection utilisateur
-        public bool IsSelected
+        // Sélectionné (null = indéterminé, true = sélectionné, false = non sélectionné)
+        public bool? IsSelected
         {
             get => _isSelected;
             set => SetProperty(ref _isSelected, value);

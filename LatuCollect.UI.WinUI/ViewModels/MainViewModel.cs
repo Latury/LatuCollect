@@ -997,37 +997,51 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 _isBatchUpdating = true;
 
-                bool newValue = node.IsSelected;
+                bool newValue = node.IsSelected == true;
 
                 // 🔽 descente
                 SetNodeSelection(node, newValue);
 
-                // 🔼 remontée COMPLÈTE
+                // 🔼 remontée
                 UpdateParentSelectionRecursive(node);
             }
             finally
             {
                 _isBatchUpdating = false;
             }
+
+            // 🔥 IMPORTANT
+            await RefreshPreviewAsync();
         }
 
-        // Met à jour les parents
+        // Met à jour la sélection des parents de manière récursive
         private void UpdateParentSelectionRecursive(UiFileNode node)
         {
             var parent = node.Parent;
 
             while (parent != null)
             {
-                bool anySelected = parent.Children.Any(c => c.IsSelected);
+                bool allSelected = parent.Children.All(c => c.IsSelected == true);
+                bool noneSelected = parent.Children.All(c => c.IsSelected == false);
 
-                // 🔥 règle : au moins un enfant = parent coché
-                parent.IsSelected = anySelected;
+                if (allSelected)
+                {
+                    parent.IsSelected = true;
+                }
+                else if (noneSelected)
+                {
+                    parent.IsSelected = false;
+                }
+                else
+                {
+                    parent.IsSelected = null;
+                }
 
                 parent = parent.Parent;
             }
         }
 
-        // Applique sélection récursive
+        // Applique la sélection à tous les enfants
         private void SetNodeSelection(UiFileNode node, bool isSelected)
         {
             node.IsSelected = isSelected;
@@ -1376,7 +1390,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     Name = uiNode.Name,
                     Path = uiNode.Path,
-                    IsSelected = uiNode.IsSelected && uiNode.Children.Count == 0
+                    IsSelected = uiNode.IsSelected == true && uiNode.Children.Count == 0
                 };
 
                 foreach (var child in ConvertToCoreNodes(uiNode.Children))
