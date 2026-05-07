@@ -24,6 +24,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace LatuCollect.UI.WinUI.Models
 {
@@ -89,7 +91,12 @@ namespace LatuCollect.UI.WinUI.Models
         // 🌳 STRUCTURE ARBORESCENTE
         // ==========================================
 
+        // Enfants (fichiers ou dossiers contenus dans ce dossier)
         public ObservableCollection<FileNode> Children { get; } = new();
+
+        // Enfants visibles uniquement (recherche UI)
+        public IEnumerable<FileNode> VisibleChildren =>
+            Children.Where(c => c.IsVisible);
 
         // Parent (assigné uniquement lors de la construction)
         public FileNode? Parent { get; internal set; }

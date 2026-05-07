@@ -1261,7 +1261,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 20. FILTRAGE & RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
-        private void ApplyFilter()
+        internal void ApplyFilter()
         {
             FilteredTree.Clear();
 

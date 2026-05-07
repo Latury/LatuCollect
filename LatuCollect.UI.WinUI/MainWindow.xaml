@@ -120,7 +120,7 @@
                         MinHeight="40"
                         Margin="10,0,10,5"
                         PlaceholderText="Rechercher un fichier..."
-                        Text="{Binding SearchText, Mode=TwoWay}"
+                        Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Visibility="{Binding IsSearchVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <!--  CONTENU (TREE + OVERLAY)  -->
@@ -131,7 +131,9 @@
 
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="models:FileNode">
-                                    <TreeViewItem IsExpanded="{Binding IsExpanded, Mode=TwoWay}" ItemsSource="{Binding Children}">
+
+                                    <TreeViewItem IsExpanded="{Binding IsExpanded, Mode=TwoWay}" ItemsSource="{Binding VisibleChildren}">
+
                                         <Grid ColumnSpacing="6" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                             <Grid.ColumnDefinitions>
@@ -159,8 +161,11 @@
                                                 IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                                 IsThreeState="True"
                                                 RightTapped="OnNodeRightTapped" />
+
                                         </Grid>
+
                                     </TreeViewItem>
+
                                 </DataTemplate>
                             </TreeView.ItemTemplate>
                         </TreeView>
