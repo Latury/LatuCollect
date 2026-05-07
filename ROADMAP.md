@@ -662,7 +662,7 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 ## ⚠️ Limites restantes
 
 - ⬜ Persistance complète état ouvert arbre
-- ⬜ Réduction arbre après reload complet
+- ⬜ Refresh TreeView encore perfectible après reload complet
 - ⬜ Scroll exclusions encore perfectible
 
 ---
@@ -760,16 +760,33 @@ Pas bloquant pour la 0.11.0 actuelle
 
 # 🔍 Recherche (TreeView)
 
-- ✅ Filtrage fonctionnel
-- ✅ Filtrage basé visibilité
-- ✅ Plus de duplication arbre
+## ✅ Déjà stabilisé
 
-À améliorer :
+- ✅ Filtrage fonctionnel
+- ✅ Filtrage basé visibilité (`IsVisible`)
+- ✅ Recherche instantanée pendant la frappe
+- ✅ Ajout `UpdateSourceTrigger=PropertyChanged`
+- ✅ Suppression des espaces vides TreeView
+- ✅ Ajout `VisibleChildren`
+- ✅ Filtrage UI propre sans duplication
+- ✅ Conservation de l’arbre réel
+- ✅ Compatibilité expansion automatique
+- ✅ Navigation TreeView conservée
+- ✅ Plus de duplication arbre
+- ✅ Ajout tests recherche TreeView
+- ✅ Validation visibilité nodes
+- ✅ Validation expansion automatique
+- ✅ Validation `VisibleChildren`
+
+---
+
+## ⬜ À améliorer
 
 - ⬜ Cohérence sélection ↔ visibilité
-- ⬜ Gestion nodes masqués
-- ⬜ Optimisation ApplyFilterRecursive
+- ⬜ Gestion cas limites gros arbres
+- ⬜ Optimisation `ApplyFilterRecursive`
 - ⬜ Ajustement debounce
+- ⬜ Vérification refresh WinUI sur très gros projets
 
 ---
 

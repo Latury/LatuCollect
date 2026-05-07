@@ -1425,6 +1425,13 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Suppression de la duplication de l’arborescence
 - ✅ Filtrage basé sur la visibilité (`IsVisible`)
 - ✅ Arbre réel conservé (plus de copie)
+- ✅ Recherche instantanée pendant la frappe
+- ✅ Ajout `UpdateSourceTrigger=PropertyChanged`
+- ✅ Suppression des espaces vides dans le TreeView
+- ✅ Ajout `VisibleChildren` pour filtrage UI propre
+- ✅ Affichage uniquement des nodes visibles
+- ✅ Conservation navigation arborescente réelle
+- ✅ Compatibilité recherche + expansion automatique
 
 ⚠ Améliorations encore nécessaires :
 
@@ -1511,6 +1518,11 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✅ Ajout tests sélection TreeView
 - ✅ Validation propagation parent ↔ enfants
 - ✅ Validation état partiel (tri-state)
+- ✅ Ajout tests recherche TreeView
+- ✅ Validation visibilité nodes
+- ✅ Validation expansion automatique
+- ✅ Validation `VisibleChildren`
+- ✅ Validation suppression nodes invisibles
 - ✅ Validation :
   - exclusion fichiers
   - exclusion dossiers
@@ -1529,14 +1541,17 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 - ✔ UI exclusions plus claire
 - ✔ Base Core plus robuste
 - ✔ Premiers tests de non-régression
+- ✔ Recherche TreeView plus lisible
+- ✔ Suppression des grands espaces vides
+- ✔ Filtrage beaucoup plus propre
 
 ---
 
 ## ⚠️ Limites actuelles
 
 - ❌ État ouvert non persisté après reload complet
-- ❌ Quelques cas limites recherche/arbre encore possibles
-- ❌ Réduction arbre lors reload complet
+- ❌ Quelques cas limites TreeView encore possibles
+- ❌ Rafraîchissement WinUI potentiellement perfectible sur très gros arbres
 
 ---
 
@@ -1544,7 +1559,9 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 
 - 🔜 Persistance complète état arbre
 - 🔜 Sauvegarde/restauration dossiers ouverts
-- 🔜 Amélioration système recherche
+- 🔜 Stabilisation finale recherche TreeView
+- 🔜 Validation gros arbres WinUI
+- 🔜 Optimisation refresh visibilité
 - 🔜 Optimisation anti-spam
 - 🔜 Stabilisation FileReader
 - 🔜 Stabilisation Statistics
