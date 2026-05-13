@@ -52,7 +52,8 @@ namespace LatuCollect.Core.Services.Collection
             if (roots == null)
                 return new List<string>();
 
-            var files = new HashSet<string>();
+            var files = new HashSet<string>(
+                System.StringComparer.OrdinalIgnoreCase);
 
             // 🔁 parcours des racines
             foreach (var root in roots)
@@ -86,6 +87,9 @@ namespace LatuCollect.Core.Services.Collection
             }
 
             // 🔁 enfants
+            if (node.Children == null)
+                return;
+
             foreach (var child in node.Children)
             {
                 TraverseNode(child, files);
@@ -105,10 +109,26 @@ namespace LatuCollect.Core.Services.Collection
 
         private bool IsValidSelectedFile(FileNode node)
         {
-            return node.IsSelected &&
-                   node.Children.Count == 0 && // 🔥 IMPORTANT : fichier uniquement
-                   !string.IsNullOrWhiteSpace(node.Path) &&
-                   File.Exists(node.Path);
+            if (node == null)
+                return false;
+
+            if (!node.IsSelected)
+                return false;
+
+            if (node.IsDirectory)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(node.Path))
+                return false;
+
+            try
+            {
+                return File.Exists(node.Path);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
 
