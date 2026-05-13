@@ -62,19 +62,41 @@ namespace LatuCollect.Core.Services.Export
         // 2.2 EXPORT FICHIER
         // ═════════════════════════════════════════════════════════════
 
-        public ExportResult Export(string path, string content)
+        public ExportResult Export(
+            string path,
+            string content)
         {
+            // 🔒 validation
+            if (string.IsNullOrWhiteSpace(path))
+                return Fail("Chemin invalide");
+
+            content ??= string.Empty;
+
             return ExecuteExport(() =>
             {
-                File.WriteAllText(path, content, Encoding.UTF8);
+                File.WriteAllText(
+                    path,
+                    content,
+                    Encoding.UTF8);
             });
         }
 
-        public async Task<ExportResult> ExportAsync(string path, string content)
+        public async Task<ExportResult> ExportAsync(
+            string path,
+            string content)
         {
+            // 🔒 validation
+            if (string.IsNullOrWhiteSpace(path))
+                return Fail("Chemin invalide");
+
+            content ??= string.Empty;
+
             return await ExecuteExportAsync(async () =>
             {
-                await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+                await File.WriteAllTextAsync(
+                    path,
+                    content,
+                    Encoding.UTF8);
             });
         }
 
@@ -83,14 +105,30 @@ namespace LatuCollect.Core.Services.Export
         // 2.3 BUILD CONTENU (SYNC)
         // ═════════════════════════════════════════════════════════════
 
-        public ExportData BuildContentWithStats(IEnumerable<string> filePaths, bool isMarkdown)
+        public ExportData BuildContentWithStats(
+            IEnumerable<string> filePaths,
+            bool isMarkdown)
         {
             var builder = new StringBuilder();
             var stats = new StatisticsResult();
 
+            // 🔒 Sécurisation
+            if (filePaths == null)
+            {
+                return new ExportData
+                {
+                    Content = string.Empty,
+                    Stats = stats
+                };
+            }
+
             foreach (var path in filePaths)
             {
-                ProcessFileSync(path, builder, stats, isMarkdown);
+                ProcessFileSync(
+                    path,
+                    builder,
+                    stats,
+                    isMarkdown);
             }
 
             return new ExportData
@@ -117,25 +155,49 @@ namespace LatuCollect.Core.Services.Export
             string partialMessage = "";
             int fileCount = 0;
 
+            // 🔒 Sécurisation
+            if (filePaths == null)
+            {
+                return new ExportData
+                {
+                    Content = string.Empty,
+                    Stats = stats,
+                    IsPartial = false,
+                    PartialMessage = string.Empty
+                };
+            }
+
             foreach (var path in filePaths)
             {
                 if (IsFileLimitReached(exportMode, fileCount))
                 {
-                    SetPartial(ref isPartial, ref partialMessage, builder,
+                    SetPartial(
+                        ref isPartial,
+                        ref partialMessage,
+                        builder,
                         $"⚠ Limite atteinte : {MAX_FILES_AI} fichiers maximum (mode IA)");
+
                     break;
                 }
 
-                await ProcessFileAsync(path, builder, stats, isMarkdown);
+                await ProcessFileAsync(
+                    path,
+                    builder,
+                    stats,
+                    isMarkdown);
 
                 fileCount++;
 
                 if (IsCharLimitReached(exportMode, builder))
                 {
-                    SetPartial(ref isPartial, ref partialMessage, builder,
+                    SetPartial(
+                        ref isPartial,
+                        ref partialMessage,
+                        builder,
                         exportMode?.ToLower() == "ai"
                             ? $"⚠ Limite atteinte : {MAX_CHARACTERS_AI:N0} caractères (mode IA)"
                             : $"⚠ Limite atteinte : {MAX_CHARACTERS_NORMAL:N0} caractères");
+
                     break;
                 }
             }
@@ -227,15 +289,27 @@ namespace LatuCollect.Core.Services.Export
         // 2.7 FORMAT
         // ═════════════════════════════════════════════════════════════
 
-        private void AppendFormatted(StringBuilder builder, string path, string content, bool isMarkdown)
+        private void AppendFormatted(
+            StringBuilder builder,
+            string path,
+            string content,
+            bool isMarkdown)
         {
+            if (builder == null)
+                return;
+
+            content ??= string.Empty;
+            path ??= "[Chemin invalide]";
+
             if (isMarkdown)
             {
                 builder.AppendLine($"## 📄 {path}");
                 builder.AppendLine();
+
                 builder.AppendLine("```");
-                builder.AppendLine(content ?? "");
+                builder.AppendLine(content);
                 builder.AppendLine("```");
+
                 builder.AppendLine();
                 builder.AppendLine("---");
                 builder.AppendLine();
@@ -244,12 +318,11 @@ namespace LatuCollect.Core.Services.Export
             {
                 builder.AppendLine($"📄 {path}");
                 builder.AppendLine();
-                builder.AppendLine();
-                builder.AppendLine(content ?? "");
-                builder.AppendLine();
+
+                builder.AppendLine(content);
+
                 builder.AppendLine();
                 builder.AppendLine("----------------------------------------");
-                builder.AppendLine();
                 builder.AppendLine();
             }
         }
@@ -279,6 +352,10 @@ namespace LatuCollect.Core.Services.Export
             {
                 return Fail("Chemin invalide");
             }
+            catch (NotSupportedException)
+            {
+                return Fail("Chemin invalide");
+            }
             catch (Exception ex)
             {
                 return Fail($"Erreur : {ex.Message}");
@@ -302,6 +379,10 @@ namespace LatuCollect.Core.Services.Export
                 return Fail("Fichier utilisé ou inaccessible");
             }
             catch (ArgumentException)
+            {
+                return Fail("Chemin invalide");
+            }
+            catch (NotSupportedException)
             {
                 return Fail("Chemin invalide");
             }
