@@ -46,10 +46,15 @@ namespace LatuCollect.Core.Configuration.Models
         // 2. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
+        // Constructeur vide requis pour la désérialisation JSON
+        public ExclusionItem()
+        {
+        }
+
         public ExclusionItem(
-    string name,
-    bool isProtected = false,
-    bool isDirectory = false)
+            string name,
+            bool isProtected = false,
+            bool isDirectory = false)
         {
             Name = name;
             IsProtected = isProtected;

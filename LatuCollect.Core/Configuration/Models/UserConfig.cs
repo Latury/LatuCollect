@@ -47,24 +47,12 @@ namespace LatuCollect.Core.Configuration.Models
         // 3. DOSSIERS EXCLUS (NOUVEAU MODÈLE)
         // ═════════════════════════════════════════════════════════════
 
-        private List<ExclusionItem>? _excludedFolders;
+        private List<ExclusionItem> _excludedFolders = new();
 
         public List<ExclusionItem> ExcludedFolders
         {
-            get
-            {
-                if (_excludedFolders == null || _excludedFolders.Count == 0)
-                {
-                    _excludedFolders = new List<ExclusionItem>
-                    {
-                        new ExclusionItem("bin", true),
-                        new ExclusionItem("obj", true),
-                        new ExclusionItem(".git", true)
-                    };
-                }
+            get => _excludedFolders;
 
-                return _excludedFolders;
-            }
             set
             {
                 if (value == null)
@@ -73,14 +61,13 @@ namespace LatuCollect.Core.Configuration.Models
                     return;
                 }
 
-                // 🔧 Nettoyage des données (autorisé en ALC)
                 _excludedFolders = value
                     .Where(v => v != null && !string.IsNullOrWhiteSpace(v.Name))
                     .Select(v => new ExclusionItem(
-    v.Name.Trim(),
-    v.IsProtected,
-    v.IsDirectory
-))
+                        v.Name.Trim(),
+                        v.IsProtected,
+                        v.IsDirectory
+                    ))
                     .Where(v => v.Name.Length >= 2)
                     .GroupBy(v => v.Name, System.StringComparer.OrdinalIgnoreCase)
                     .Select(g => g.First())

@@ -51,14 +51,34 @@ namespace LatuCollect.Core.Configuration.Services
         // 3. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
-        public ConfigurationService()
+        public ConfigurationService(string? customConfigPath = null)
         {
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            // 🔥 Tests → chemin custom
+            if (!string.IsNullOrWhiteSpace(customConfigPath))
+            {
+                var directory = Path.GetDirectoryName(customConfigPath);
+
+                if (!string.IsNullOrWhiteSpace(directory) &&
+                    !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                _configPath = customConfigPath;
+
+                return;
+            }
+
+            // ✔ Application réelle
+            var appData = Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData);
 
             var folder = Path.Combine(appData, "LatuCollect");
 
             if (!Directory.Exists(folder))
+            {
                 Directory.CreateDirectory(folder);
+            }
 
             _configPath = Path.Combine(folder, CONFIG_FILE_NAME);
         }
@@ -107,12 +127,23 @@ namespace LatuCollect.Core.Configuration.Services
             {
                 var json = Serialize(config);
 
-                await File.WriteAllTextAsync(_configPath, json);
+                // 🔥 IMPORTANT
+                // Écriture atomique pour éviter pollution / race condition
+                var tempPath = _configPath + ".tmp";
+
+                await File.WriteAllTextAsync(tempPath, json);
+
+                if (File.Exists(_configPath))
+                {
+                    File.Delete(_configPath);
+                }
+
+                File.Move(tempPath, _configPath);
             }
             catch (Exception ex)
             {
-                // Non bloquant mais visible en debug
-                Console.WriteLine($"Erreur sauvegarde config : {ex.Message}");
+                Console.WriteLine(
+                    $"Erreur sauvegarde config : {ex.Message}");
             }
         }
 
