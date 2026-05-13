@@ -94,6 +94,14 @@ namespace LatuCollect.Core.Services.Reader
 
                 return result;
             }
+            catch (FileNotFoundException)
+            {
+                return FileReadResult.Fail("Fichier introuvable");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return FileReadResult.Fail("Dossier introuvable");
+            }
             catch (PathTooLongException)
             {
                 return FileReadResult.Fail("Chemin trop long");
@@ -111,7 +119,6 @@ namespace LatuCollect.Core.Services.Reader
                 return FileReadResult.Fail("Erreur inconnue");
             }
         }
-
 
         // ═════════════════════════════════════════════════════════════
         // 4. LECTURE INTERNE
@@ -156,32 +163,60 @@ namespace LatuCollect.Core.Services.Reader
         // 5. CACHE — GESTION
         // ═════════════════════════════════════════════════════════════
 
-        private static bool TryGetFromCache(string path, out FileReadResult result)
+        private static bool TryGetFromCache(
+    string path,
+    out FileReadResult result)
         {
-            result = null;
+            result = FileReadResult.Fail("Cache invalide");
+
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
 
             if (_fileCache.TryGetValue(path, out var cachedItem))
             {
-                if (DateTime.Now - cachedItem.Timestamp < CACHE_DURATION)
+                // 🔥 cache expiré
+                if (DateTime.Now - cachedItem.Timestamp >= CACHE_DURATION)
                 {
-                    result = cachedItem.Result;
-                    return true;
+                    _fileCache.TryRemove(path, out _);
+                    return false;
                 }
 
-                _fileCache.TryRemove(path, out _);
+                // 🔥 sécurité supplémentaire
+                if (cachedItem.Result == null)
+                {
+                    _fileCache.TryRemove(path, out _);
+                    return false;
+                }
+
+                result = cachedItem.Result;
+                return true;
             }
 
             return false;
         }
 
-        private static void AddToCache(string path, FileReadResult result)
+        private static void AddToCache(
+    string path,
+    FileReadResult result)
         {
+            // 🔒 validation
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            if (result == null)
+                return;
+
+            // ❌ on ne cache jamais les erreurs
+            if (!result.IsSuccess)
+                return;
+
             _fileCache[path] = new CacheItem
             {
                 Result = result,
                 Timestamp = DateTime.Now
             };
 
+            // 🔥 nettoyage cache
             if (_fileCache.Count > MAX_CACHE_ITEMS)
             {
                 CleanOldestCacheItem();
