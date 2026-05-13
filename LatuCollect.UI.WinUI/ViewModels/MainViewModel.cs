@@ -90,6 +90,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private string _selectedLogLevel = "Info";
         private string _selectedTheme = "Dark";
 
+        private bool _isRefreshingExclusions = false;
+
         // ═════════════════════════════════════════════════════════════
         // 2. SERVICES & CONFIGURATION
         // ═════════════════════════════════════════════════════════════
@@ -518,7 +520,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _searchText, value))
                 {
-                    DebounceFilter();
+                    _ = DebounceFilterAsync();
                 }
             }
         }
@@ -606,8 +608,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _logger.Info("Dossier sélectionné", path);
 
                 CurrentState = UiState.Loading;
-
-                await Task.Delay(100);
 
                 if (!await UiSimulationService.ApplyUiSimulationAsync(this))
                 {
@@ -701,13 +701,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
 
-        public bool CanCopy => !string.IsNullOrWhiteSpace(PreviewText);
+        public bool CanCopy =>
+    CurrentState == UiState.Ready &&
+    !string.IsNullOrWhiteSpace(PreviewText);
 
-        public bool IsPreviewEmpty => CurrentState == UiState.Empty;
+        public bool IsPreviewEmpty =>
+    CurrentState == UiState.Empty;
 
         public bool CanExport =>
-            !IsPreviewEmpty &&
-            SelectedFormat != null;
+    !IsPreviewEmpty &&
+    !string.IsNullOrWhiteSpace(SelectedFormat);
 
         public enum ExportCheckResult
         {
@@ -940,6 +943,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        internal async Task RefreshPreviewForTestsAsync()
+        {
+            await RefreshPreviewAsync();
+        }
+
         private string BuildSelectionSignature(List<string> filePaths)
         {
             if (filePaths == null || filePaths.Count == 0)
@@ -1079,7 +1087,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 var item = new ExclusionItem(
     path,
     false,
-    node.Children.Count > 0
+    node.IsDirectory
 );
 
                 _config.ExcludedFolders.Add(item);
@@ -1092,7 +1100,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 OnPropertyChanged(nameof(Config));
 
-                OnPropertyChanged(nameof(GroupedExclusions));
+                RefreshExclusionsUi();
 
                 // 🔥 IMPORTANT : suppression immédiate dans l’arbre
                 RemoveNodeFromTree(node);
@@ -1154,7 +1162,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 // 🔄 Refresh UI
                 OnPropertyChanged(nameof(Config));
-                OnPropertyChanged(nameof(GroupedExclusions));
+
+                RefreshExclusionsUi();
 
                 // 🔥 Suppression immédiate dans l’arbre
                 RemoveNodeFromTree(node);
@@ -1236,7 +1245,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // Suppression d’un node de l’arbre (exclusion)
-        private void RemoveNodeFromTree(UiFileNode node)
+        internal void RemoveNodeFromTree(UiFileNode node)
         {
             if (node == null)
                 return;
@@ -1313,19 +1322,27 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             node.IsVisible = isVisible;
 
-            // 🔥 IMPORTANT : ouvrir automatiquement les parents
-            if (hasVisibleChild && !string.IsNullOrWhiteSpace(SearchText))
+            // 🔥 IMPORTANT
+            // Expansion automatique uniquement pendant recherche active
+            if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                node.IsExpanded = true;
+                node.IsExpanded = hasVisibleChild;
             }
 
             return isVisible;
         }
 
-        // Applique visibilité récursive (sans logique de recherche, pour reset)
-        private void SetVisibilityRecursive(UiFileNode node, bool visible)
+        // Applique visibilité récursive (sans toucher à l’expansion)
+        private void SetVisibilityRecursive(
+    UiFileNode node,
+    bool visible)
         {
+            // ✔ visibilité uniquement
             node.IsVisible = visible;
+
+            // ❌ IMPORTANT
+            // Ne pas modifier IsExpanded ici
+            // sinon perte état utilisateur
 
             foreach (var child in node.Children)
             {
@@ -1334,7 +1351,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // Debounce recherche
-        private async void DebounceFilter()
+        private async Task DebounceFilterAsync()
         {
             _searchCts?.Cancel();
 
@@ -1365,7 +1382,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
             var uiNode = new UiFileNode
             {
                 Name = coreNode.Name,
-                Path = coreNode.Path
+                Path = coreNode.Path,
+
+                // 🔥 IMPORTANT
+                // Conserve le vrai type du node
+                IsDirectory = coreNode.IsDirectory
             };
 
             foreach (var child in coreNode.Children)
@@ -1390,7 +1411,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     Name = uiNode.Name,
                     Path = uiNode.Path,
-                    IsSelected = uiNode.IsSelected == true && uiNode.Children.Count == 0
+
+                    // 🔥 IMPORTANT
+                    // Conserve le vrai type du node
+                    IsDirectory = uiNode.IsDirectory,
+
+                    // 🔥 IMPORTANT
+                    // Seuls les fichiers peuvent être exportés
+                    IsSelected = uiNode.IsSelected == true && !uiNode.IsDirectory
                 };
 
                 foreach (var child in ConvertToCoreNodes(uiNode.Children))
@@ -1571,7 +1599,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        public async void ResetSettings()
+        public async Task ResetSettingsAsync()
         {
             await ResetConfigurationAsync();
         }

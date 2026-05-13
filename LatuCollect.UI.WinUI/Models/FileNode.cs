@@ -46,6 +46,7 @@ namespace LatuCollect.UI.WinUI.Models
         private bool? _isSelected;
         private bool _isVisible = true;
         private bool _isExpanded;
+        private bool _isDirectory;
 
         // ==========================================
         // 🌐 PROPRIÉTÉS
@@ -87,6 +88,13 @@ namespace LatuCollect.UI.WinUI.Models
             set => SetProperty(ref _isExpanded, value);
         }
 
+        // Indique si le node est un dossier réel
+        public bool IsDirectory
+        {
+            get => _isDirectory;
+            set => SetProperty(ref _isDirectory, value);
+        }
+
         // ==========================================
         // 🌳 STRUCTURE ARBORESCENTE
         // ==========================================
@@ -106,8 +114,8 @@ namespace LatuCollect.UI.WinUI.Models
         // ⚙️ PROPRIÉTÉS CALCULÉES
         // ==========================================
 
-        // Indique si c'est un dossier
-        public bool IsFolder => Children.Count > 0;
+        // Indique si le node est un dossier (pour l’affichage UI)
+        public bool IsFolder => IsDirectory;
 
 
         // ==========================================
