@@ -616,13 +616,31 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ✅ Correction rebond WinUI CheckBox
 - ✅ Preview synchronisé après sélection
 - ✅ Ajout tests sélection TreeView
+- ✅ Tests propagation parent ↔ enfants
+- ✅ Tests état partiel tri-state
+- ✅ Validation états export ViewModel
+- ✅ Validation états UI ViewModel
 
 ---
 
 # 🧠 FileReader
 
-- ⬜ Gestion erreurs complète (cas extrêmes manquants)
-- ⬜ Validation fichiers (null, accès, encodage)
+- ✅ Validation chemins null / vides
+- ✅ Gestion fichier introuvable
+- ✅ Gestion dossier introuvable
+- ✅ Gestion chemin trop long
+- ✅ Gestion accès refusé
+- ✅ Gestion erreurs IO
+- ✅ Gestion cache lecture
+- ✅ Ajout RemoveFromCache()
+- ✅ Ajout ClearCache()
+- ✅ Gestion gros fichiers
+- ✅ Lecture partielle fichiers volumineux
+- ✅ Tests cache
+- ✅ Tests gros fichiers
+- ✅ Tests suppression fichier
+- ✅ Tests remove cache
+- ✅ Tests clear cache
 
 ---
 
@@ -635,6 +653,9 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ✅ Ajout IsExpanded (persistance visuelle)
 - ✅ RemoveNodeFromTree()
 - ✅ UI beaucoup plus fluide
+- ✅ Option "Inclure"
+- ✅ Option "Copier le chemin"
+- ✅ Désactivation "Exclure" si déjà exclu
 
 ---
 
@@ -656,95 +677,16 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ✅ Synchronisation config ↔ UI
 - ✅ Suppression immédiate arbre
 - ✅ Rechargement exclusions cohérent
+- ✅ Tests exclusion fichier simple
+- ✅ Tests exclusion dossier avec enfants
+- ✅ Tests persistance config
 
 ---
 
-## ⚠️ Limites restantes
-
-- ⬜ Persistance complète état ouvert arbre
-- ⬜ Refresh TreeView encore perfectible après reload complet
-- ⬜ Scroll exclusions encore perfectible
-
----
-
-# 🧠 TODO — Stabilisation UI Exclusions (POST 0.11.0)
-
-## 🎯 Objectif
-
-Améliorer la stabilité visuelle et les performances de la page :
-📁 Dossiers exclus
-
----
-
-# ⚠️ Problème actuel
-
-GroupedExclusions reconstruit complètement la source UI
-à chaque refresh :
-
-→ recréation des items
-→ reset visuel partiel
-→ recalcul layout
-→ scroll potentiellement instable
-
----
-
-# ✅ Amélioration prévue
-
-## 🔄 Remplacer GroupedExclusions IEnumerable
-
-Passer vers :
-
-✔ ObservableCollection dédiée
-✔ groupes persistants
-✔ refresh partiel uniquement
-✔ conservation état UI
-
----
-
-# 🧩 Structure cible
-
-- ObservableCollection<GroupedExclusionSection>
-- sections persistantes :
-  - 🔒 Protégés
-  - 📁 Normaux
-
----
-
-# 🎯 Résultats attendus
-
-✔ Plus de “saut” visuel
-✔ Scroll totalement stable
-✔ Meilleure fluidité UI
-✔ Moins de reconstruction ListView
-✔ Meilleure évolutivité UX
-
----
-
-# ⚠️ IMPORTANT
-
-À faire uniquement APRÈS stabilisation complète :
-
-- système exclusions
-- mode développeur
-- persistence config
-- reload arbre
-- tests UX 0.11.0
-
----
-
-# 📌 Priorité
-
-🟡 Moyenne
-
-Pas bloquant pour la 0.11.0 actuelle
-
----
-
-# 🧾 Menu clic droit — TODO UX
+# 🧾 Menu clic droit
 
 - ✅ Ajouter option "Inclure"
 - ✅ Ajouter "Copier le chemin"
-- ⬜ Ajouter "Ouvrir dans l’explorateur"
 - ✅ Désactiver "Exclure" si déjà exclu
 
 ---
@@ -753,8 +695,11 @@ Pas bloquant pour la 0.11.0 actuelle
 
 - ✅ Suppression reload complet majeur
 - ✅ Mise à jour ciblée arbre
-- ⬜ Supprimer Task.Delay inutiles
-- ⬜ Vérifier ApplyFilter (pas de blocage UI)
+- ✅ Protection anti multi-refresh
+- ✅ Protection anti double preview
+- ✅ Limitation preview volumineux
+- ✅ Optimisation signature sélection
+- ✅ Réduction recalculs inutiles
 
 ---
 
@@ -777,16 +722,9 @@ Pas bloquant pour la 0.11.0 actuelle
 - ✅ Validation visibilité nodes
 - ✅ Validation expansion automatique
 - ✅ Validation `VisibleChildren`
-
----
-
-## ⬜ À améliorer
-
-- ⬜ Cohérence sélection ↔ visibilité
-- ⬜ Gestion cas limites gros arbres
-- ⬜ Optimisation `ApplyFilterRecursive`
-- ⬜ Ajustement debounce
-- ⬜ Vérification refresh WinUI sur très gros projets
+- ✅ Reset visibilité après recherche
+- ✅ Reset expansion après recherche
+- ✅ Tests suppression nodes arbre
 
 ---
 
@@ -794,89 +732,109 @@ Pas bloquant pour la 0.11.0 actuelle
 
 ## ✅ Déjà ajoutés
 
-- ✅ Exclusion fichier simple
-- ✅ Exclusion dossier avec enfants
-- ✅ Persistance config
-- ✅ Conservation extensions fichiers
-
----
-
-## ⬜ À compléter
-
 - ✅ Tests sélection TreeView
 - ✅ Tests propagation parent ↔ enfants
 - ✅ Tests état partiel tri-state
-- ⬜ Réouverture arbre après exclusion
-- ⬜ Recherche après exclusion
-- ⬜ Cas limites exclusions protégées
-- ⬜ Tests UI exclusions
-- ⬜ Tests stabilité reload
+- ✅ Tests recherche TreeView
+- ✅ Tests visibilité nodes
+- ✅ Tests expansion automatique
+- ✅ Tests reset visibilité
+- ✅ Tests reset expansion
+- ✅ Tests suppression nodes
+- ✅ Tests exclusions
+- ✅ Tests FileReader
+- ✅ Tests Export
+- ✅ Tests Collection
+- ✅ Tests Statistics
+- ✅ Tests états export ViewModel
+- ✅ Tests états UI ViewModel
 
 ---
 
 # 📊 Statistics
 
-- ⬜ Suppression dépendance FileInfo
-- ⬜ Utilisation fileSize uniquement
-- ⬜ Fiabilisation calcul
+- ✅ Fiabilisation calcul lignes
+- ✅ Gestion contenu null
+- ✅ Gestion contenu vide
+- ✅ Gestion unicode
+- ✅ Gestion tailles négatives
+- ✅ Ajout tests statistiques
+- ✅ Validation accumulation statistiques
 
 ---
 
 # 📤 Export
 
-- ⬜ Validation stricte des entrées
-- ⬜ Robustesse export massif
+- ✅ Validation export async
+- ✅ Validation export sync
+- ✅ Gestion fichier manquant
+- ✅ Gestion dossier manquant
+- ✅ Gestion contenu vide
+- ✅ Gestion collection vide
+- ✅ Gestion mode IA
+- ✅ Limitation nombre fichiers
+- ✅ Limitation taille contenu
+- ✅ Gestion export partiel
+- ✅ Ajout statistiques export
+- ✅ Ajout format Markdown
+- ✅ Validation Preview = Export
+- ✅ Tests export massif
+- ✅ Tests export async
+- ✅ Tests chemins invalides
 
 ---
 
 # 📦 Collection
 
-- ⬜ Gestion cas limites
-- ⬜ Tri stable
-- ⬜ Limite sécurité
+- ✅ Gestion roots null
+- ✅ Validation fichiers sélectionnés
+- ✅ Ignorer dossiers
+- ✅ Suppression doublons
+- ✅ Limite sécurité MAX_FILES
+- ✅ Tri stable résultats
+- ✅ Tests doublons
+- ✅ Tests limite MAX_FILES
+- ✅ Tests fichiers sélectionnés
 
 ---
 
-# 🎯 État réel du projet
+# 🧠 Résultat
 
-## ✔ Déjà stabilisé
-
-- Sélection TreeView (majoritairement)
-- Preview cohérent
-- UI stable
-- Exclusion dynamique fonctionnelle
-- Core exclusions stabilisé
-- Tests exclusions ajoutés
-- Tri-state TreeView
-- Synchronisation preview ↔ sélection
-- Tests sélection ViewModel
-
----
-
-## 🟡 En cours
-
-- UX TreeView (très avancée)
-- Recherche (fonctionnelle mais perfectible)
-- Stabilisation exclusions UI
-
----
-
-## ❌ À faire (Core important)
-
-- FileReader
-- Statistics
-- Export validation
-- Collection robustesse
+✔ Sélection TreeView stabilisée
+✔ Tri-state fonctionnel
+✔ Synchronisation parent ↔ enfants cohérente
+✔ Preview synchronisé et prévisible
+✔ Recherche TreeView fonctionnelle
+✔ Filtrage basé visibilité stabilisé
+✔ Expansion automatique fonctionnelle
+✔ Exclusions dynamiques stables
+✔ Suppression nodes sans reload complet
+✔ Synchronisation config ↔ UI stabilisée
+✔ Support exclusions fichiers + dossiers
+✔ Compatibilité ancien format conservée
+✔ UI globalement plus fluide
+✔ Réduction importante des effets de bord
+✔ Ajout massif de tests unitaires
+✔ Core beaucoup plus testable
+✔ Export plus robuste
+✔ Collection plus sécurisée
+✔ FileReader stabilisé majoritairement
+✔ Statistics fiabilisé
+✔ Validation états export ViewModel
+✔ Validation états UI ViewModel
 
 ---
 
-# 🚀 Résultat attendu
+# 🏁 Objectif atteint
 
-✔ Core stable et testable
-✔ UX fluide et moderne
-✔ Comportement prévisible
-✔ Base solide pour versions suivantes
-✔ Réduction forte des effets de bord
+✔ Core plus stable
+✔ Architecture plus prévisible
+✔ UX TreeView largement stabilisée
+✔ Synchronisation UI fiable
+✔ Base solide pour les prochaines versions
+✔ Meilleure robustesse générale
+✔ Meilleure maintenabilité
+✔ Stabilisation majeure de la 0.11.0
 
 ---
 
@@ -892,6 +850,9 @@ Améliorer la gestion des gros projets.
 
 - ✅ EnumerateFiles (streaming déjà utilisé)
 - ⬜ Tri optimisé
+- ⬜ Gestion gros arbres
+- ⬜ Validation récursion profonde
+- ⬜ Vérification comportement très gros projets
 
 ---
 
@@ -899,12 +860,17 @@ Améliorer la gestion des gros projets.
 
 - ⬜ Limite mémoire
 - ⬜ Expiration cache
+- ⬜ Invalidation cache si fichier modifié (LastWriteTime)
+- ⬜ Vérification cohérence Preview = Export après modification disque
 
 ---
 
 ## 📊 Stats
 
 - ⬜ Optimisation calcul lignes
+- ⬜ Suppression dépendance FileInfo
+- ⬜ Utilisation fileSize uniquement
+- ⬜ Fiabilisation cas extrêmes
 
 ---
 
@@ -912,6 +878,20 @@ Améliorer la gestion des gros projets.
 
 - ⬜ Gestion export massif
 - ⬜ Protection mémoire
+- ⬜ Robustesse export massif réel
+- ⬜ Gestion erreurs disque
+- ⬜ Protection mémoire export massif
+
+## 🔍 Recherche / TreeView
+
+- ⬜ Optimisation ApplyFilterRecursive
+- ⬜ Ajustement debounce
+- ⬜ Vérification absence freeze UI
+- ⬜ Vérification refresh WinUI très gros projets
+- ⬜ Cohérence sélection ↔ visibilité
+- ⬜ Vérification recherche avec état partiel
+- ⬜ Vérification nodes masqués + recherche
+- ⬜ Optimisation sélection massive
 
 ---
 
@@ -944,6 +924,25 @@ Améliorer l’expérience utilisateur.
 - ⬜ Sélection dossier fiable
 - ⬜ Preview limité configurable
 - ✅ Message export partiel
+- ⬜ Ajouter "Ouvrir dans l’explorateur"
+- ⬜ Preview limité configurable
+- ⬜ Stabilisation scroll exclusions
+- ⬜ Conservation état ouvert après reload complet
+- ⬜ Persistance complète état ouvert arbre
+
+## 🌳 TreeView
+
+- ⬜ Vérifier rendu visuel état tri-state WinUI
+- ⬜ Vérifier cohérence visuelle parent partiel
+- ⬜ Vérifier absence rebond visuel
+- ⬜ Vérifier stabilité multi-clic rapide
+
+## 🧪 Validation UX
+
+- ⬜ Réouverture arbre après exclusion
+- ⬜ Recherche après exclusion
+- ⬜ Vérification stabilité exclusions protégées
+- ⬜ Vérification synchronisation visibilité ↔ exclusions
 
 ---
 
@@ -959,6 +958,10 @@ Corriger les écarts ALC restants.
 
 - ⬜ Interfaces services
 - 🟡 Séparation AppConfig / UserConfig (améliorée mais encore incomplète)
+- ⬜ Homogénéisation complète FileReadResult
+- ⬜ Séparation exclusions système / utilisateur
+- ⬜ Sécurisation ResetAsync / LoadAsync
+- ⬜ Éviter écrasement exclusions utilisateur
 
 ---
 
@@ -976,6 +979,14 @@ Corriger les écarts ALC restants.
 
 - ⬜ Supprimer IsSelected du Core
 - ⬜ Ajouter IsFolder réel
+
+## 🧱 FileReader
+
+- ⬜ Gestion encodages invalides
+- ⬜ Validation fichiers verrouillés
+- ⬜ Détection simple fichiers binaires
+- ⬜ Fallback UTF8 / UTF16 sécurisé
+- ⬜ Gestion caractères invalides
 
 ---
 
@@ -1199,6 +1210,9 @@ Ex :
 - lignes
 - icônes
 - sélection
+- Audit visuel état tri-state
+- Audit lisibilité sélection partielle
+- Audit confort navigation gros projets
 
 ### 👁️ Preview
 
@@ -1213,6 +1227,9 @@ Ex :
 - inline
 - badges
 - couleurs
+- Messages explicites fichiers binaires ignorés
+- Feedback erreurs encodage
+- Feedback accès refusés
 
 ### 🧾 Logs UI
 
@@ -1259,6 +1276,10 @@ Transformer l’application en produit final.
 
 ## ⚙️ BUILD
 
+- ⬜ Validation stabilité très gros projets
+- ⬜ Validation export massif réel
+- ⬜ Validation mémoire
+- ⬜ Validation performances TreeView
 - ⬜ Build release propre
 - ⬜ Tests complets
 - ⬜ Vérification stabilité

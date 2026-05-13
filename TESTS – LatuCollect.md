@@ -19,8 +19,10 @@ Ce document définit la stratégie de tests de LatuCollect.
 ## 📊 État des tests
 
 - ✔ Tests manuels complets (UI)
-- 🔄 Tests unitaires (à venir)
-- 🔮 Tests système (futurs)
+- ✔ Tests unitaires Core
+- ✔ Tests unitaires ViewModel
+- 🔄 Extension couverture tests
+- 🔮 Tests système complets (futurs)
 
 ---
 
@@ -471,7 +473,7 @@ Chemin du fichier
 
 ---
 
-# 🧠 TESTS UNITAIRES (À VENIR)
+# 🧠 TESTS UNITAIRES
 
 ## 🎯 Objectif
 
@@ -484,10 +486,54 @@ Tester la logique métier indépendamment de l’UI
 - FileReaderService
 - FileExportService
 - FileStatisticsService
+- FileCollectionService
+- MainViewModel
+- Recherche TreeView
+- Sélection TreeView
+- États UI
+- États Export
+- Exclusions
 
 ---
 
 ## 📋 Cas principaux
+
+### Recherche TreeView
+
+- Filtrage visibilité
+- Expansion automatique
+- Reset visibilité
+- Reset expansion
+- Suppression nodes
+
+---
+
+### Sélection TreeView
+
+- Propagation parent ↔ enfants
+- Tri-state (`true / false / null`)
+- Cohérence états partiels
+- Synchronisation preview
+
+---
+
+### Exclusions
+
+- Exclusion fichiers
+- Exclusion dossiers
+- Persistance configuration
+- Compatibilité ancien format
+
+---
+
+### États UI / Export
+
+- États Loading / Ready / Empty / Error
+- Validation export
+- Validation CanExport
+- Validation CanCopy
+
+---
 
 ### Lecture
 
@@ -514,10 +560,12 @@ Tester la logique métier indépendamment de l’UI
 
 # 📊 COUVERTURE CIBLE
 
-| Module  | Objectif |
-| ------- | -------- |
-| Lecture | 90%      |
-| Export  | 90%      |
+|  Module   | Objectif |
+| :-------: | :------: |
+|  Lecture  |   90%    |
+|  Export   |   90%    |
+| TreeView  |   85%    |
+| ViewModel |   85%    |
 
 ---
 
@@ -557,9 +605,12 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 # 📌 ÉTAT ACTUEL
 
 - ✔ Tests manuels complets (UI)
-- ✔ Validation des cas principaux
-- ✔ Vérification des performances
-- 🔄 Tests unitaires en préparation
+- ✔ Base importante de tests unitaires
+- ✔ Validation TreeView / Recherche / Sélection
+- ✔ Validation Export / Statistics / Collection
+- ✔ Validation états UI / ViewModel
+- ✔ Vérification des performances principales
+- 🔄 Extension couverture tests avancés
 
 ---
 
@@ -583,6 +634,6 @@ Les tests garantissent :
 
 # 🔮 ÉVOLUTIONS
 
-- Tests unitaires complets
+- Extension couverture tests unitaires
 - Tests automatisés
 - Tests de performance avancés

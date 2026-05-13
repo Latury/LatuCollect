@@ -18,8 +18,8 @@ Ce document décrit :
 
 ## 📊 État
 
-- ✔ Implémenté (v0.10.0)
-- 🔄 Évolution prévue (v0.17.0 — UI & thèmes)
+- ✔ Stabilisé majoritairement (v0.11.0)
+- 🔄 Évolution UI prévue (v0.17.0 — thèmes & audit UX)
 
 ---
 
@@ -114,6 +114,18 @@ Afficher la structure du projet
 - Insensible à la casse
 - Débounce actif
 - Mise à jour rapide
+- Conservation de l’arbre réel
+
+---
+
+## 🌳 Recherche TreeView
+
+- Filtrage dynamique sans duplication d’arbre
+- Conservation de la navigation réelle
+- Expansion automatique pendant recherche
+- Reset visibilité après recherche
+- Reset expansion après recherche
+- Débounce anti-spam
 
 ---
 
@@ -128,7 +140,10 @@ Afficher la structure du projet
 ## ✅ Sélection
 
 - Multi-sélection
+- Support tri-state (`true / false / null`)
+- Synchronisation parent ↔ enfants
 - Mise à jour immédiate du preview
+- Comportement inspiré de Windows Explorer
 
 ---
 
@@ -221,6 +236,9 @@ Mise à jour automatique :
 - Sélection
 - Recherche
 - Chargement
+- Protection anti double génération preview
+- Optimisation basée signature sélection
+- Limitation automatique contenu massif
 
 ---
 
@@ -247,6 +265,10 @@ Message :
 ```text
 ⚠ Projet volumineux — affichage partiel
 ```
+
+- Chargement partiel possible
+- Limitation preview automatique
+- Protection contre les recalculs inutiles
 
 ---
 
@@ -306,6 +328,28 @@ Actions finales
 
 - UI toujours lisible
 - Aucun flickering
+
+---
+
+# ⚡ STABILITÉ UI / PERFORMANCE
+
+## Règles importantes
+
+- Aucun reload complet inutile
+- Aucun blocage UI volontaire
+- Aucun recalcul massif inutile
+- Preview synchronisé avec la sélection
+- Aperçu toujours cohérent avec l’export
+
+## Optimisations actuelles
+
+- Protection anti multi-refresh
+- Protection anti multi-clic
+- Réduction recalculs preview
+- Mise à jour ciblée TreeView
+- Conservation de l’arbre réel (pas de duplication)
+- Filtrage basé visibilité (`IsVisible`)
+- Mise à jour ciblée sans reload complet
 
 ---
 

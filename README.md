@@ -10,15 +10,17 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.10.0-FFDF20?style=for-the-badge)
-![Statut](<https://img.shields.io/badge/Statut-Stable%20(0.10.0)-28A745?style=for-the-badge>)
+![Version](https://img.shields.io/badge/Version-0.11.0-FFDF20?style=for-the-badge)
+![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.11.0)-28A745?style=for-the-badge>)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
 
 <br>
 
-Auteur : Flo Latury
+### 👨🏻‍💻 Auteur
+
+Flo Latury
 
 </div>
 
@@ -32,8 +34,9 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 
 ## 📊 État des fonctionnalités
 
-- ✅ Implémenté
-- 🔮 À venir [ROADMAP](./ROADMAP.md)
+- ✅ Stabilisation majeure terminée (0.11.0)
+- 🔄 Optimisations performance en cours (0.12.0)
+- 🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
 
 ---
 
@@ -217,7 +220,7 @@ Chemin du fichier
 - Taille minimale : 1600 x 1000
 - Réduction flickering
 - Gestion propre du resize
-- Dialogs stables
+- Fenêtres de dialogue stables
 
 ---
 
@@ -258,9 +261,12 @@ Chemin du fichier
 
 ### 🔮 À venir
 
+- Optimisation TreeView
 - Optimisation gros projets
+- Cache intelligent
+- Lazy loading
+- Stabilisation performance
 - Améliorations UX
-- Améliorations performance
 
 ---
 
@@ -303,7 +309,8 @@ Resources/
 - Logs intégrés
 - Mode développeur actif
 
-👉 Phase finale (0.10.0)
+👉 Stabilisation majeure terminée (0.11.0)
+👉 Passage vers optimisation performance (0.12.0)
 
 ---
 
@@ -313,7 +320,8 @@ Resources/
 - Rapide
 - Stable
 - Lisible
-- Sans risque
+- Non destructif - - Lecture seule
+- Aucune modification
 
 ---
 
@@ -348,3 +356,14 @@ Resources/
 # 📝 Versions
 
 👉 Voir : [PATCH NOTES](./PATCH_NOTES.md)
+
+---
+
+# 🔗 Liens utiles
+
+- 📌 [ROADMAP](./ROADMAP.md)
+- 📝 [PATCH NOTES](./PATCH_NOTES.md)
+- 🧪 [TESTS](./TESTS.md)
+- 🖥️ [UI GUIDE](./UI_GUIDE.md)
+- 🏗️ [ARCHITECTURE](./ARCHITECTURE.md)
+- 📂 [DIRECTORY STRUCTURE](./DIRECTORY_STRUCTURE.md)

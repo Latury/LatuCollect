@@ -81,7 +81,7 @@ LatuCollect/
 - Structure cible (pas encore complète)
 - Implémentation progressive
 - Alignement avec ROADMAP obligatoire
-- ❌ Aucun système de simulation dans la version finale
+- ❌ Le système de simulation sera supprimé avant la version finale
 
 ---
 
@@ -169,6 +169,7 @@ Responsabilités :
 
 - Tests unitaires
 - Tests fonctionnels
+- Tests ViewModel
 
 👉 Aucun test lié à la simulation
 
@@ -246,26 +247,25 @@ UI → ViewModel → Core
 
 ---
 
-# 🧩 STRUCTURE ACTUELLE (v0.10.0)
+# 🧩 STRUCTURE ACTUELLE (v0.11.0)
 
 ```text
-LatuCollect.Core/
-├── Configuration/
-│   ├── Constants/
-│   ├── Interfaces/
-│   ├── Models/
-│   └── Services/
-├── Logging/
-│   ├── Interfaces/
-│   ├── Models/
-│   └── Services/
-├── Services/
-│   ├── Import/
-│   ├── Reader/
-│   ├── Collection/
-│   ├── Export/
-│   └── Statistics/
+LatuCollect.UI.WinUI/
+│
+├── Assets/
+├── Converters/
 ├── Models/
+├── Properties/
+├── Services/
+├── Settings/
+│   ├── Pages/
+│   ├── Panels/
+│   └── ViewModels/
+├── Themes/
+├── ViewModels/
+│
+├── App.xaml
+├── MainWindow.xaml
 │
 ├── Documentation/
 │   ├── README.md
@@ -276,6 +276,35 @@ LatuCollect.Core/
 │   ├── ROADMAP.md
 │   ├── PATCH_NOTES.md
 │   ├── TESTS.md
+│
+├── LatuCollect.Core/
+│   ├── Configuration/
+│   ├── Logging/
+│   ├── Models/
+│   └── Services/
+│       ├── Collection/
+│       ├── Export/
+│       ├── Import/
+│       ├── Reader/
+│       └── Statistics/
+│
+└── LatuCollect.Tests/
+    ├── Core/
+    │   ├── Collection/
+    │   ├── Configuration/
+    │   ├── Export/
+    │   ├── Import/
+    │   ├── Reader/
+    │   └── Statistics/
+    │
+    └── UI/
+        └── ViewModels/
+            ├── Exclusions/
+            ├── Export/
+            ├── Preview/
+            ├── Search/
+            ├── Selection/
+            └── State/
 ```
 
 ---
@@ -300,11 +329,14 @@ LatuCollect.Core/
 - Interfaces/
 - Helpers/
 - DTOs/
-- Themes/
 - Resources/
-- Tests structurés
+- Structure finale des tests
+- Centralisation complète des tests
+- Tests système automatisés
 - Installer
 - Assets global
+- Système de thèmes avancé
+- Centralisation complète des ressources UI
 
 ---
 
@@ -329,7 +361,7 @@ LatuCollect.Core/
 - ✔ UI WinUI structurée
 - ✔ Architecture respectée
 
-👉 Structure stable en v0.10.0
+👉 Structure largement stabilisée en v0.11.0
 👉 Évolution progressive vers la cible
 
 ---

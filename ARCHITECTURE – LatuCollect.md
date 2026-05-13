@@ -129,8 +129,6 @@ Dans la classe :
 
 # 3. SÉPARATION DES RESPONSABILITÉS
 
-# 3. SÉPARATION DES RESPONSABILITÉS
-
 | Couche | Rôle           |
 | ------ | -------------- |
 | Core   | Logique métier |
@@ -403,7 +401,7 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 # ⚡ 8. PERFORMANCE
 
-## ✔ État actuel (v0.9.0)
+## ✔ État actuel (v0.11.0)
 
 - Mise en cache des fichiers (FileReaderService)
 - Réduction des accès disque (I/O)
@@ -411,11 +409,22 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 - Optimisation mémoire
 - Amélioration du temps de génération du preview
 
+- Réduction des reload complets TreeView
+- Mise à jour ciblée des nodes
+- Réduction des recalculs preview
+- Protection anti multi-refresh
+- Protection anti double génération preview
+- Optimisation signature sélection
+- Limitation automatique preview volumineux
+- Conservation de l’arbre réel (sans duplication)
+
 👉 Résultat :
 
 - Application plus rapide
 - UI plus fluide
 - Pipeline plus efficace
+- TreeView beaucoup plus stable
+- Réduction importante des effets de bord
 
 ---
 
@@ -529,12 +538,28 @@ Chemin du fichier
 
 ---
 
+## 🔒 Source unique de vérité
+
+Le contenu généré pour l’aperçu est également utilisé pour l’export.
+
+👉 Aucun contenu spécifique n’est régénéré côté UI.
+
+Objectif :
+
+- éviter les désynchronisations
+- garantir Preview = Export
+- réduire les effets de bord
+
+---
+
 # 13. STRUCTURE PROJET
 
 ```text
 Core/
 ├── Services/
 ├── Configuration/
+├── Logging/
+├── Models/
 
 UI/
 └── WinUI/
@@ -656,17 +681,33 @@ Futur :
 - ✔ Séparation des statistiques
 - ✔ UI plus stable (gestion des états améliorée)
 
+- ✔ Sélection TreeView tri-state stabilisée
+- ✔ Synchronisation parent ↔ enfants
+- ✔ Filtrage basé visibilité (`IsVisible`)
+- ✔ Conservation de l’arbre réel (sans duplication)
+- ✔ Exclusions dynamiques stabilisées
+- ✔ Réduction des reload complets TreeView
+- ✔ Mise à jour ciblée des nodes
+- ✔ Protection anti multi-refresh
+- ✔ Protection anti double génération preview
+- ✔ Réduction des recalculs inutiles
+- ✔ Preview synchronisé avec la sélection
+- ✔ Validation Preview = Export
+- ✔ Core largement couvert par les tests
+- ✔ Tests ViewModel stabilisés
+
 ---
 
 # 23. ÉVOLUTIONS
 
 ## 🔮 À venir
 
+- Séparation AppConfig / UserConfig
 - Injection de dépendances (interfaces)
 - Refactor avancé du Core
 - Amélioration UI
-- Persistance configuration (JSON)
-- Filtrage avancé
+- Centralisation des interfaces
+- Stabilisation architecture cible
 
 👉 Voir [ROADMAP](./ROADMAP.md) pour le détail
 
@@ -685,7 +726,29 @@ LatuCollect est volontairement simplifié :
 
 ---
 
-# 24. OBJECTIF GLOBAL
+# 24. VALIDATION & TESTS
+
+## ✔ Tests actuels
+
+- Tests Core
+- Tests ViewModel
+- Tests recherche TreeView
+- Tests sélection tri-state
+- Tests exclusions
+- Tests export
+- Tests statistiques
+
+## 🎯 Objectif
+
+Garantir :
+
+- stabilité
+- cohérence UI ↔ Core
+- absence de régression
+
+---
+
+# 25. OBJECTIF GLOBAL
 
 - ✔ Simple
 - ✔ Structuré

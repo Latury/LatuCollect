@@ -1370,23 +1370,26 @@ LatuCollect est désormais :
 
 ---
 
-# 🚧 VERSION 0.11.0 (en cours)
+# 🚀 VERSION 0.11.0
 
 ## 📌 Statut
 
-🟡 En cours — Stabilisation + amélioration UX TreeView
+🟢 Terminée — Stabilisation majeure Core + UX TreeView
 
 ---
 
 ## 🎯 Objectif
 
-Corriger les bugs critiques du système de sélection et améliorer l’expérience utilisateur (TreeView, exclusions, cohérence UI/Core).
+Corriger les bugs critiques du système de sélection,
+stabiliser le Core,
+fiabiliser le pipeline Preview = Export
+et améliorer fortement l’expérience utilisateur.
 
 ---
 
-## 🐞 Corrections
+# 🐞 Corrections
 
-### 🌳 Sélection TreeView
+## 🌳 Sélection TreeView
 
 - ✅ Correction complète de la sélection parent / enfants
 - ✅ Ajout du support tri-state (état partiel)
@@ -1401,172 +1404,323 @@ Corriger les bugs critiques du système de sélection et améliorer l’expérie
 
 ---
 
-### ⚡ Stabilité
+## ⚡ Stabilité
 
-- ✅ Ajout protection anti appels multiples
+- ✅ Ajout protections anti appels multiples :
   - `_isBatchUpdating`
   - `_isPreviewLoading`
 
-- ✅ Suppression d’un refresh inutile dans `HandleNodeClick`
-
-- ✅ Correction des comportements instables (spam clic)
-
-- ✅ État toujours cohérent après interaction
-
-- ✅ Correction du rebond WinUI CheckBox
-
+- ✅ Suppression refresh inutiles
+- ✅ Correction comportements instables (spam clic)
+- ✅ Correction rebond WinUI CheckBox
 - ✅ Synchronisation explicite UI → ViewModel
+- ✅ État toujours cohérent après interaction
+- ✅ Protection anti multi-refresh
+- ✅ Protection anti double preview
+- ✅ Réduction recalculs inutiles
+- ✅ Optimisation signature sélection
+- ✅ Limitation preview volumineux
+- ✅ Suppression `Task.Delay` inutile
+- ✅ Debounce async sécurisé
 
 ---
 
-### 🔎 Recherche (arborescence)
+# 🔍 Recherche (TreeView)
 
-- ✅ Correction du filtrage principal (fonctionnel)
-- ✅ Suppression de la duplication de l’arborescence
-- ✅ Filtrage basé sur la visibilité (`IsVisible`)
-- ✅ Arbre réel conservé (plus de copie)
-- ✅ Recherche instantanée pendant la frappe
+## ✅ Stabilisation
+
+- ✅ Correction filtrage principal
+- ✅ Suppression duplication arborescence
+- ✅ Filtrage basé visibilité (`IsVisible`)
+- ✅ Arbre réel conservé
+- ✅ Recherche instantanée pendant frappe
 - ✅ Ajout `UpdateSourceTrigger=PropertyChanged`
-- ✅ Suppression des espaces vides dans le TreeView
-- ✅ Ajout `VisibleChildren` pour filtrage UI propre
-- ✅ Affichage uniquement des nodes visibles
-- ✅ Conservation navigation arborescente réelle
+- ✅ Suppression espaces vides TreeView
+- ✅ Ajout `VisibleChildren`
+- ✅ Affichage uniquement nodes visibles
 - ✅ Compatibilité recherche + expansion automatique
-
-⚠ Améliorations encore nécessaires :
-
-- cohérence sélection ↔ visibilité
-- gestion des cas limites
-- UX du filtrage
+- ✅ Navigation TreeView conservée
+- ✅ Reset visibilité après recherche
+- ✅ Reset expansion après recherche
+- ✅ Expansion automatique uniquement pendant recherche
+- ✅ Conservation état expansion utilisateur
+- ✅ Reset visibilité sans casser expansion utilisateur
 
 ---
 
-## ✨ Améliorations UX
+# ✨ Améliorations UX
 
-### 🖱️ Menu clic droit (TreeView)
+## 🖱️ Menu clic droit (TreeView)
 
-- ✅ Ajout clic droit sur les nodes
-- ✅ Menu contextuel avec action :
+- ✅ Ajout clic droit sur nodes
+- ✅ Menu contextuel :
   - 🚫 Exclure fichier / dossier
   - 🔒 Exclure protégé
+  - ➕ Inclure
+  - 📋 Copier le chemin
 
-- ✅ Intégration directe avec le ViewModel
+- ✅ Désactivation "Exclure" si déjà exclu
+- ✅ Intégration directe ViewModel
 
 ---
 
-### 🚫 Système d’exclusion
+## 🚫 Système d’exclusion
 
-- ✅ Ajout exclusion depuis TreeView (sans passer par paramètres)
+- ✅ Ajout exclusion depuis TreeView
 - ✅ Ajout exclusions protégées
-- ✅ Synchronisation immédiate avec la configuration
-- ✅ Mise à jour automatique de la liste des exclusions
-- ✅ Suppression immédiate du node dans l’arbre (sans reload complet)
-
----
-
-### 📂 Exclusions avancées
-
+- ✅ Synchronisation immédiate configuration
+- ✅ Mise à jour automatique exclusions
+- ✅ Suppression immédiate node sans reload complet
 - ✅ Passage exclusions nom → chemin complet
 - ✅ Support exclusions fichiers individuels
 - ✅ Support exclusions dossiers spécifiques
 - ✅ Compatibilité ancien format conservée
-- ✅ Normalisation des chemins (`NormalizePath`)
-- ✅ Correction du bug :
+- ✅ Normalisation chemins (`NormalizePath`)
+- ✅ Correction bug :
   - `"bin"` excluait tous les dossiers portant ce nom
 
+- ✅ Distinction réelle fichier / dossier
+- ✅ Rechargement exclusions cohérent
+- ✅ Refresh exclusions UI centralisé
+- ✅ Réduction refresh inutiles exclusions
+
 ---
 
-### 🌲 Arbre dynamique
+## 🌲 Arbre dynamique
 
-- ✅ Suppression du rechargement complet (plus de latence)
-- ✅ Mise à jour ciblée (RemoveNodeFromTree)
+- ✅ Suppression rechargement complet
+- ✅ Mise à jour ciblée (`RemoveNodeFromTree`)
 - ✅ Arbre fluide et instantané
+- ✅ UI beaucoup plus fluide
 
 ---
 
-### 📂 Persistance visuelle
+## 📂 Persistance visuelle
 
-- ✅ Ajout propriété `IsExpanded` dans FileNode
-- ✅ Binding TreeView → conservation des dossiers ouverts
+- ✅ Ajout propriété `IsExpanded`
+- ✅ Conservation dossiers ouverts
 - ✅ Amélioration forte UX navigation
 
-⚠ Limite actuelle :
+⚠ Limite restante :
 
 - ❌ état ouvert non restauré après reload complet
 
 ---
 
-### ⚙️ Panneau exclusions
+# 🧠 FileReader
 
-- ✅ Distinction réelle fichiers / dossiers
-- ✅ Correction affichage icônes exclusions
-- ✅ Groupement :
-  - 🔒 Protégés
-  - 📁 Normaux
+## ✅ Stabilisation
 
-- ✅ Correction suppression exclusions
-- ✅ Protection mode développeur
-- ✅ Préservation position scroll
-- ✅ Correction sélection headers ListView
-
----
-
-## 🧪 Tests
-
-- ✅ Ajout tests exclusions configuration
-- ✅ Ajout tests exclusions import
-- ✅ Ajout tests sélection TreeView
-- ✅ Validation propagation parent ↔ enfants
-- ✅ Validation état partiel (tri-state)
-- ✅ Ajout tests recherche TreeView
-- ✅ Validation visibilité nodes
-- ✅ Validation expansion automatique
-- ✅ Validation `VisibleChildren`
-- ✅ Validation suppression nodes invisibles
-- ✅ Validation :
-  - exclusion fichiers
-  - exclusion dossiers
-  - sauvegarde configuration
-  - conservation extensions fichiers
+- ✅ Validation chemins null / vides
+- ✅ Gestion fichier introuvable
+- ✅ Gestion dossier introuvable
+- ✅ Gestion chemin trop long
+- ✅ Gestion accès refusé
+- ✅ Gestion erreurs IO
+- ✅ Gestion `FileNotFoundException`
+- ✅ Gestion `DirectoryNotFoundException`
 
 ---
 
-## 🧠 Résultat
+## ⚡ Cache
 
-- ✔ Sélection fiable et prévisible
-- ✔ Preview cohérent avec la sélection
-- ✔ Exclusion rapide et intuitive
-- ✔ Exclusions beaucoup plus précises
-- ✔ Arbre fluide (sans rechargement)
-- ✔ UI exclusions plus claire
-- ✔ Base Core plus robuste
-- ✔ Premiers tests de non-régression
-- ✔ Recherche TreeView plus lisible
-- ✔ Suppression des grands espaces vides
-- ✔ Filtrage beaucoup plus propre
+- ✅ Gestion cache lecture
+- ✅ Ajout `RemoveFromCache()`
+- ✅ Ajout `ClearCache()`
+- ✅ Sécurisation cache expiré
+- ✅ Suppression cache invalide
+- ✅ Refus cache erreurs
+- ✅ Nettoyage automatique cache
 
 ---
 
-## ⚠️ Limites actuelles
+## 📦 Fichiers volumineux
 
-- ❌ État ouvert non persisté après reload complet
-- ❌ Quelques cas limites TreeView encore possibles
-- ❌ Rafraîchissement WinUI potentiellement perfectible sur très gros arbres
+- ✅ Gestion gros fichiers
+- ✅ Lecture partielle fichiers volumineux
+- ✅ Limitation preview volumineux
 
 ---
 
-## 🔜 Prochaines étapes
+# ⚙️ Configuration
 
-- 🔜 Persistance complète état arbre
-- 🔜 Sauvegarde/restauration dossiers ouverts
-- 🔜 Stabilisation finale recherche TreeView
-- 🔜 Validation gros arbres WinUI
-- 🔜 Optimisation refresh visibilité
-- 🔜 Optimisation anti-spam
-- 🔜 Stabilisation FileReader
-- 🔜 Stabilisation Statistics
-- 🔜 Validation export massif
-- 🔜 Extension couverture tests
+- ✅ Constructeur custom `ConfigurationService(customPath)`
+- ✅ Support tests isolés
+- ✅ Écriture atomique configuration
+- ✅ Sauvegarde via fichier temporaire
+- ✅ Réduction risques corruption config
+- ✅ Sécurisation désérialisation JSON
+- ✅ Ajout constructeur vide `ExclusionItem`
+
+---
+
+## 🧹 Nettoyage configuration
+
+- ✅ Suppression exclusions invalides
+- ✅ Suppression doublons exclusions
+- ✅ Normalisation données exclusions
+- ✅ Nettoyage données null
+
+---
+
+# 📦 Collection
+
+- ✅ Validation sécurisée nodes sélectionnés
+- ✅ Vérification `IsDirectory`
+- ✅ Protection `Children == null`
+- ✅ HashSet insensible casse
+- ✅ Protection exceptions `File.Exists`
+- ✅ Gestion roots null
+- ✅ Validation fichiers sélectionnés
+- ✅ Ignorer dossiers
+- ✅ Suppression doublons
+- ✅ Limite sécurité `MAX_FILES`
+- ✅ Tri stable résultats
+
+---
+
+# 📤 Export
+
+## ✅ Validation
+
+- ✅ Validation export async
+- ✅ Validation export sync
+- ✅ Validation chemins invalides
+- ✅ Validation collections null
+- ✅ Validation builder null
+- ✅ Validation contenu null
+- ✅ Gestion fichier manquant
+- ✅ Gestion dossier manquant
+- ✅ Gestion contenu vide
+- ✅ Gestion collection vide
+- ✅ Gestion `NotSupportedException`
+
+---
+
+## ⚡ Robustesse
+
+- ✅ Gestion mode IA
+- ✅ Limitation nombre fichiers
+- ✅ Limitation taille contenu
+- ✅ Gestion export partiel
+- ✅ Protection taille maximale export
+- ✅ Réduction espaces inutiles export
+- ✅ Fiabilisation Preview = Export
+
+---
+
+## 📝 Formats
+
+- ✅ Ajout format Markdown
+- ✅ Amélioration format Markdown
+- ✅ Ajout statistiques export
+
+---
+
+# 📊 Statistics
+
+- ✅ Fiabilisation calcul lignes
+- ✅ Gestion contenu null
+- ✅ Gestion contenu vide
+- ✅ Gestion unicode
+- ✅ Gestion tailles négatives
+- ✅ Sécurisation accumulation statistiques (`checked`)
+- ✅ Validation accumulation statistiques
+
+---
+
+# 🧱 FileNode
+
+- ✅ Ajout `IsDirectory`
+- ✅ Distinction réelle fichier / dossier
+- ✅ `IsFolder` basé sur type réel
+- ✅ Suppression dépendance `Children.Count`
+
+---
+
+# 🧠 MainViewModel
+
+- ✅ `CanCopy` dépend maintenant de l’état UI
+- ✅ `CanExport` sécurisé (`string.IsNullOrWhiteSpace`)
+- ✅ Ajout `RefreshPreviewForTestsAsync()`
+- ✅ `ResetSettingsAsync()` async cohérent
+
+---
+
+# 🧪 Tests
+
+## ✅ Ajouts majeurs
+
+- ✅ Tests sélection TreeView
+- ✅ Tests propagation parent ↔ enfants
+- ✅ Tests état partiel tri-state
+- ✅ Tests recherche TreeView
+- ✅ Tests visibilité nodes
+- ✅ Tests expansion automatique
+- ✅ Tests reset visibilité
+- ✅ Tests reset expansion
+- ✅ Tests suppression nodes
+- ✅ Tests exclusions
+- ✅ Tests FileReader
+- ✅ Tests Export
+- ✅ Tests Collection
+- ✅ Tests Statistics
+- ✅ Tests états export ViewModel
+- ✅ Tests états UI ViewModel
+
+---
+
+## ✅ Structure tests
+
+- ✅ Réorganisation structure dossiers tests
+- ✅ Séparation tests Core / UI
+- ✅ Séparation tests Search / Export / State
+- ✅ Couverture beaucoup plus précise
+- ✅ Ajout cas limites
+
+---
+
+# 🧠 Résultat
+
+✔ Sélection TreeView stabilisée
+✔ Tri-state fonctionnel
+✔ Synchronisation parent ↔ enfants cohérente
+✔ Preview synchronisé et prévisible
+✔ Recherche TreeView fonctionnelle
+✔ Filtrage basé visibilité stabilisé
+✔ Expansion automatique fonctionnelle
+✔ Exclusions dynamiques stables
+✔ Suppression nodes sans reload complet
+✔ Synchronisation config ↔ UI stabilisée
+✔ Support exclusions fichiers + dossiers
+✔ Compatibilité ancien format conservée
+✔ UI globalement plus fluide
+✔ Réduction importante des effets de bord
+✔ Ajout massif de tests unitaires
+✔ Core beaucoup plus testable
+✔ Export plus robuste
+✔ Collection plus sécurisée
+✔ FileReader stabilisé majoritairement
+✔ Statistics fiabilisé
+✔ Validation états export ViewModel
+✔ Validation états UI ViewModel
+✔ Configuration beaucoup plus robuste
+✔ Pipeline Preview = Export beaucoup plus fiable
+✔ Architecture plus explicite (`IsDirectory`)
+✔ Réduction logique implicite basée sur `Children.Count`
+
+---
+
+# 🏁 Objectif atteint
+
+✔ Core plus stable
+✔ Architecture plus prévisible
+✔ UX TreeView largement stabilisée
+✔ Synchronisation UI fiable
+✔ Base solide pour les prochaines versions
+✔ Meilleure robustesse générale
+✔ Meilleure maintenabilité
+✔ Stabilisation majeure de la 0.11.0
 
 ---
 
