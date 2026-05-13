@@ -18,7 +18,7 @@ using LatuCollect.Core.Configuration;
 using LatuCollect.Core.Configuration.Models;
 using LatuCollect.Core.Services.Import;
 
-namespace LatuCollect.Tests
+namespace LatuCollect.Tests.Core.Import
 {
     public class FileImportExclusionTests
     {

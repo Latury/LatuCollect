@@ -2,121 +2,145 @@
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                        LATUCOLLECT                                   ║
 ║  Module : Tests                                                      ║
-║  Fichier : FileStatisticsTests.cs                                    ║
+║  Fichier : FileImportTests.cs                                        ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Tester le service FileStatisticsService                             ║
+║  Tester le service FileImportService                                 ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
-║  - Vérifier le calcul des statistiques                               ║
-║  - Vérifier le comptage des lignes                                   ║
-║  - Vérifier les caractères                                           ║
-║  - Vérifier la taille totale                                         ║
+║  - Vérifier le chargement d’un dossier                               ║
+║  - Vérifier la création des nodes                                    ║
+║  - Vérifier les exclusions                                           ║
+║  - Vérifier les limites                                              ║
 ║                                                                      ║
 ║  IMPORTANT :                                                         ║
 ║  - Aucun accès UI                                                    ║
 ║  - Tests unitaires uniquement                                        ║
 ║                                                                      ║
 ║  Licence : MIT                                                       ║
-║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Models;
-using LatuCollect.Core.Services.Export;
-using LatuCollect.Core.Services.Statistics;
-using Xunit;
+using LatuCollect.Core.Configuration;
+using LatuCollect.Core.Configuration.Models;
+using LatuCollect.Core.Services.Import;
 
-namespace LatuCollect.Tests
+namespace LatuCollect.Tests.Core.Import
 {
-    public class FileStatisticsTests
+    public class FileImportTests
     {
         // ═════════════════════════════════════════════════════════════
-        // 1. TEST — STATISTIQUES SIMPLES
+        // 1. TEST — DOSSIER VALIDE
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public void UpdateStatistics_ShouldUpdateAllFields()
+        public async Task LoadTreeAsync_ShouldLoadFiles_WhenFolderExists()
         {
             // ARRANGE
-            var stats = new StatisticsResult();
+            var config = new AppConfig();
+            var service = new FileImportService(config);
 
-            string content = "Hello\nWorld"; // 2 lignes
-            long size = 100;
+            string folder = "test_import";
+            Directory.CreateDirectory(folder);
+
+            File.WriteAllText(Path.Combine(folder, "a.txt"), "A");
+            File.WriteAllText(Path.Combine(folder, "b.txt"), "B");
 
             // ACT
-            FileStatisticsService.UpdateStatistics(stats, content, size);
+            var result = await service.LoadTreeAsync(folder);
 
             // ASSERT
-            Assert.Equal(1, stats.FileCount);
-            Assert.Equal(2, stats.TotalLines);
-            Assert.Equal(content.Length, stats.TotalCharacters);
-            Assert.Equal(size, stats.TotalSizeBytes);
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Nodes);
+            Assert.True(result.TotalNodes >= 1);
+
+            // CLEANUP
+            Directory.Delete(folder, true);
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 2. TEST — MULTIPLE FICHIERS
+        // 2. TEST — DOSSIER INVALIDE
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public void UpdateStatistics_ShouldAccumulateValues()
+        public async Task LoadTreeAsync_ShouldReturnEmpty_WhenFolderInvalid()
         {
             // ARRANGE
-            var stats = new StatisticsResult();
+            var config = new AppConfig();
+            var service = new FileImportService(config);
 
             // ACT
-            FileStatisticsService.UpdateStatistics(stats, "A\nB", 50);
-            FileStatisticsService.UpdateStatistics(stats, "C", 25);
+            var result = await service.LoadTreeAsync("dossier_inexistant");
 
             // ASSERT
-            Assert.Equal(2, stats.FileCount);
-            Assert.Equal(3, stats.TotalLines); // 2 + 1
-            Assert.Equal(4, stats.TotalCharacters); // "A\nB" (3) + "C" (1) = 4 ⚠
-
-            // ⚠ correction importante :
-            Assert.Equal(4, stats.TotalCharacters);
-
-            Assert.Equal(75, stats.TotalSizeBytes);
+            Assert.Empty(result.Nodes);
+            Assert.Equal(0, result.TotalNodes);
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 3. TEST — CONTENU NULL
+        // 3. TEST — EXCLUSION DOSSIER
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public void UpdateStatistics_ShouldHandleNullContent()
+        public async Task LoadTreeAsync_ShouldExcludeFolders()
         {
             // ARRANGE
-            var stats = new StatisticsResult();
+            var config = new AppConfig();
+            config.ExcludedFolders.Add(
+    new ExclusionItem("ignore")
+);
+
+            var service = new FileImportService(config);
+
+            string root = "test_import_exclude";
+            string excluded = Path.Combine(root, "ignore");
+
+            Directory.CreateDirectory(excluded);
+            File.WriteAllText(Path.Combine(excluded, "a.txt"), "A");
 
             // ACT
-            FileStatisticsService.UpdateStatistics(stats, null, 0);
+            var result = await service.LoadTreeAsync(root);
 
             // ASSERT
-            Assert.Equal(1, stats.FileCount);
-            Assert.Equal(0, stats.TotalLines);
-            Assert.Equal(0, stats.TotalCharacters);
-            Assert.Equal(0, stats.TotalSizeBytes);
+            var rootNode = result.Nodes[0];
+
+            Assert.DoesNotContain(rootNode.Children, n => n.Name == "ignore");
+
+            // CLEANUP
+            Directory.Delete(root, true);
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 4. TEST — CONTENU VIDE
+        // 4. TEST — LIMITE MAX_NODES
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public void UpdateStatistics_ShouldHandleEmptyContent()
+        public async Task LoadTreeAsync_ShouldSetPartial_WhenLimitReached()
         {
             // ARRANGE
-            var stats = new StatisticsResult();
+            var config = new AppConfig();
+            var service = new FileImportService(config);
+
+            string folder = "test_import_limit";
+            Directory.CreateDirectory(folder);
+
+            // créer beaucoup de fichiers
+            for (int i = 0; i < 1200; i++)
+            {
+                File.WriteAllText(Path.Combine(folder, $"file_{i}.txt"), "X");
+            }
 
             // ACT
-            FileStatisticsService.UpdateStatistics(stats, "", 10);
+            var result = await service.LoadTreeAsync(folder);
 
             // ASSERT
-            Assert.Equal(1, stats.FileCount);
-            Assert.Equal(0, stats.TotalLines);
-            Assert.Equal(0, stats.TotalCharacters);
-            Assert.Equal(10, stats.TotalSizeBytes);
+            Assert.True(result.IsPartial);
+            Assert.True(
+    result.IsPartial || result.TotalNodes >= 1000
+);
+
+            // CLEANUP
+            Directory.Delete(folder, true);
         }
     }
 }

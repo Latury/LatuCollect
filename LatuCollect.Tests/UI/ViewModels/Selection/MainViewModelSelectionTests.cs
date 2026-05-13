@@ -25,7 +25,7 @@
 using LatuCollect.UI.WinUI.Models;
 using LatuCollect.UI.WinUI.ViewModels;
 
-namespace LatuCollect.Tests
+namespace LatuCollect.Tests.UI.ViewModels.Selection
 {
     public class MainViewModelSelectionTests
     {
