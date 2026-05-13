@@ -38,21 +38,32 @@ namespace LatuCollect.Core.Services.Statistics
         // ═════════════════════════════════════════════════════════════
 
         public static void UpdateStatistics(
-            StatisticsResult stats,
-            string content,
-            long fileSize)
+    StatisticsResult stats,
+    string content,
+    long fileSize)
         {
+            // 🔒 validation
             if (stats == null)
                 return;
 
-            // 🔹 Sécurisation contenu
+            // 🔒 contenu sécurisé
             content ??= string.Empty;
+
+            // 🔒 taille invalide
+            if (fileSize < 0)
+            {
+                fileSize = 0;
+            }
 
             stats.FileCount++;
 
-            stats.TotalCharacters += content.Length;
-            stats.TotalLines += CountLines(content);
-            stats.TotalSizeBytes += fileSize;
+            // 🔒 accumulation sécurisée
+            checked
+            {
+                stats.TotalCharacters += content.Length;
+                stats.TotalLines += CountLines(content);
+                stats.TotalSizeBytes += fileSize;
+            }
         }
 
 
