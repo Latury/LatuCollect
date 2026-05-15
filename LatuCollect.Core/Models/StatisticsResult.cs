@@ -24,9 +24,9 @@ namespace LatuCollect.Core.Models
 
         public int FileCount { get; set; }
 
-        public int TotalLines { get; set; }
+        public long TotalLines { get; set; }
 
-        public int TotalCharacters { get; set; }
+        public long TotalCharacters { get; set; }
 
         public long TotalSizeBytes { get; set; }
     }

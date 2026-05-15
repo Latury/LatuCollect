@@ -26,10 +26,7 @@
 */
 
 using LatuCollect.Core.Services.Reader;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace LatuCollect.Tests.Core.Reader
 {
@@ -86,7 +83,7 @@ namespace LatuCollect.Tests.Core.Reader
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task ReadFileAsync_ShouldUseCache_WhenFileAlreadyRead()
+        public async Task ReadFileAsync_ShouldInvalidateCache_WhenFileModified()
         {
             // ARRANGE
             string path = "test_cache.txt";
@@ -108,8 +105,8 @@ namespace LatuCollect.Tests.Core.Reader
             Assert.True(firstRead.IsSuccess);
             Assert.True(secondRead.IsSuccess);
 
-            // doit utiliser le cache
-            Assert.Equal(initialContent, secondRead.Content);
+            // doit relire le fichier car il a été modifié
+            Assert.Equal(modifiedContent, secondRead.Content);
 
             // CLEANUP
             if (File.Exists(path))
@@ -118,6 +115,174 @@ namespace LatuCollect.Tests.Core.Reader
             }
 
             FileReaderService.ClearCache();
+        }
+
+        [Fact]
+        public async Task ReadFileAsync_ShouldReloadFile_WhenLastWriteTimeChanges()
+        {
+            // ARRANGE
+            string path = "last_write_test.txt";
+
+            await File.WriteAllTextAsync(
+                path,
+                "Version 1");
+
+            // première lecture
+            var firstRead =
+                await FileReaderService.ReadFileAsync(path);
+
+            // 🔥 important :
+            // attendre pour garantir changement timestamp
+            await Task.Delay(1100);
+
+            // modification réelle fichier
+            await File.WriteAllTextAsync(
+                path,
+                "Version 2");
+
+            // ACT
+            var secondRead =
+                await FileReaderService.ReadFileAsync(path);
+
+            // ASSERT
+            Assert.True(firstRead.IsSuccess);
+            Assert.True(secondRead.IsSuccess);
+
+            Assert.Equal(
+                "Version 2",
+                secondRead.Content);
+
+            // CLEANUP
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            FileReaderService.ClearCache();
+        }
+
+        [Fact]
+        public async Task ReadFileAsync_ShouldAddFileToCache()
+        {
+            // ARRANGE
+            string path = "cache_presence.txt";
+
+            await File.WriteAllTextAsync(path, "Cache test");
+
+            // ACT
+            await FileReaderService.ReadFileAsync(path);
+
+            // ASSERT
+            Assert.True(
+                FileReaderService.IsInCache(path));
+
+            // CLEANUP
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            FileReaderService.ClearCache();
+        }
+
+        [Fact]
+        public async Task Cache_ShouldRespectMaximumLimit()
+        {
+            // ARRANGE
+            FileReaderService.ClearCache();
+
+            // ACT
+            for (int i = 0; i < 120; i++)
+            {
+                string path = $"cache_limit_{i}.txt";
+
+                await File.WriteAllTextAsync(
+                    path,
+                    $"Content {i}");
+
+                await FileReaderService.ReadFileAsync(path);
+            }
+
+            // ASSERT
+            Assert.True(
+                FileReaderService.CacheCount <= 100);
+
+            // CLEANUP
+            for (int i = 0; i < 120; i++)
+            {
+                string path = $"cache_limit_{i}.txt";
+
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+
+            FileReaderService.ClearCache();
+        }
+
+        [Fact]
+        public async Task Cache_ShouldExpire_AfterDuration()
+        {
+            // ARRANGE
+            string path = "cache_expiration_test.txt";
+
+            var originalNowProvider =
+                FileReaderService.NowProvider;
+
+            DateTime fakeNow =
+                DateTime.Now;
+
+            try
+            {
+                FileReaderService.NowProvider =
+                    () => fakeNow;
+
+                await File.WriteAllTextAsync(
+                    path,
+                    "Version 1");
+
+                // première lecture
+                var firstRead =
+                    await FileReaderService.ReadFileAsync(path);
+
+                Assert.True(firstRead.IsSuccess);
+
+                // 🔥 avancer le temps
+                fakeNow =
+                    fakeNow.AddMinutes(10);
+
+                // modification fichier
+                await File.WriteAllTextAsync(
+                    path,
+                    "Version 2");
+
+                // ACT
+                var secondRead =
+                    await FileReaderService.ReadFileAsync(path);
+
+                // ASSERT
+                Assert.True(secondRead.IsSuccess);
+
+                // 🔥 doit relire le fichier
+                // car cache expiré
+                Assert.Equal(
+                    "Version 2",
+                    secondRead.Content);
+            }
+            finally
+            {
+                // CLEANUP
+                FileReaderService.NowProvider =
+                    originalNowProvider;
+
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
+                FileReaderService.ClearCache();
+            }
         }
 
         // ═════════════════════════════════════════════════════════════

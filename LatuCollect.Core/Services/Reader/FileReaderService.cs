@@ -42,22 +42,38 @@ namespace LatuCollect.Core.Services.Reader
         // ═════════════════════════════════════════════════════════════
 
         private const int MAX_CACHE_ITEMS = 100;
-        private static readonly TimeSpan CACHE_DURATION = TimeSpan.FromMinutes(5);
-        private const long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 
+        private static readonly TimeSpan CACHE_DURATION =
+            TimeSpan.FromMinutes(5);
+
+        private const long MAX_FILE_SIZE =
+            2 * 1024 * 1024; // 2 MB
+
+        private const long MAX_CACHE_MEMORY_SIZE =
+            50 * 1024 * 1024; // 50 MB
+
+        public static Func<DateTime> NowProvider =
+            () => DateTime.Now;
 
         // ═════════════════════════════════════════════════════════════
         // 2. CACHE — STRUCTURE
         // ═════════════════════════════════════════════════════════════
 
+        public static int CacheCount =>
+            _fileCache.Count;
+
         private class CacheItem
         {
             public FileReadResult Result { get; set; }
+
+            // ⏱ Moment où l’entrée cache a été créée
             public DateTime Timestamp { get; set; }
+
+            // 📄 Dernière modification réelle du fichier disque
+            public DateTime LastWriteTimeUtc { get; set; }
         }
 
         private static readonly ConcurrentDictionary<string, CacheItem> _fileCache = new();
-
 
         // ═════════════════════════════════════════════════════════════
         // 3. API PUBLIQUE — LECTURE
@@ -174,9 +190,30 @@ namespace LatuCollect.Core.Services.Reader
 
             if (_fileCache.TryGetValue(path, out var cachedItem))
             {
-                // 🔥 cache expiré
-                if (DateTime.Now - cachedItem.Timestamp >= CACHE_DURATION)
+                // 🔥 cache expiré → invalide
+                if (NowProvider() - cachedItem.Timestamp >= CACHE_DURATION)
                 {
+                    _fileCache.TryRemove(path, out _);
+                    return false;
+                }
+
+                // 🔥 fichier modifié → cache invalide
+                try
+                {
+                    var currentWriteTime =
+                        File.GetLastWriteTimeUtc(path);
+
+                    if (currentWriteTime != cachedItem.LastWriteTimeUtc)
+                    {
+                        _fileCache.TryRemove(path, out _);
+                        return false;
+                    }
+                }
+                catch
+                {
+                    // 🔥 sécurité :
+                    // si problème accès disque
+                    // on invalide le cache
                     _fileCache.TryRemove(path, out _);
                     return false;
                 }
@@ -213,11 +250,18 @@ namespace LatuCollect.Core.Services.Reader
             _fileCache[path] = new CacheItem
             {
                 Result = result,
-                Timestamp = DateTime.Now
+
+                // ⏱ moment création cache
+                Timestamp = NowProvider(),
+
+                // 📄 état réel fichier disque
+                LastWriteTimeUtc = File.GetLastWriteTimeUtc(path)
             };
 
             // 🔥 nettoyage cache
-            if (_fileCache.Count > MAX_CACHE_ITEMS)
+            while (
+                _fileCache.Count > MAX_CACHE_ITEMS ||
+                GetCurrentCacheMemorySize() > MAX_CACHE_MEMORY_SIZE)
             {
                 CleanOldestCacheItem();
             }
@@ -238,10 +282,30 @@ namespace LatuCollect.Core.Services.Reader
             }
         }
 
+        private static long GetCurrentCacheMemorySize()
+        {
+            long totalSize = 0;
+
+            foreach (var item in _fileCache.Values)
+            {
+                if (item?.Result?.Content != null)
+                {
+                    totalSize +=
+                        item.Result.Content.Length * sizeof(char);
+                }
+            }
+
+            return totalSize;
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 6. CACHE — API PUBLIQUE
         // ═════════════════════════════════════════════════════════════
+
+        public static bool IsInCache(string path)
+        {
+            return _fileCache.ContainsKey(path);
+        }
 
         public static void ClearCache()
         {

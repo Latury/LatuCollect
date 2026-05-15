@@ -485,15 +485,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _fileCount, value);
         }
 
-        private int _totalLines;
-        public int TotalLines
+        private long _totalLines;
+        public long TotalLines
         {
             get => _totalLines;
             set => SetProperty(ref _totalLines, value);
         }
 
-        private int _totalCharacters;
-        public int TotalCharacters
+        private long _totalCharacters;
+        public long TotalCharacters
         {
             get => _totalCharacters;
             set => SetProperty(ref _totalCharacters, value);
