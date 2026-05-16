@@ -940,7 +940,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        internal async Task RefreshPreviewForTestsAsync()
+        // Méthode d’accès aux fichiers sélectionnés
+        public async Task RefreshPreviewForTestsAsync()
         {
             await RefreshPreviewAsync();
         }
@@ -1329,6 +1330,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private async Task DebounceFilterAsync()
         {
             _searchCts?.Cancel();
+            _searchCts?.Dispose();
 
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;

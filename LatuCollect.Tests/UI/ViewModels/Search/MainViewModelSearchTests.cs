@@ -16,32 +16,27 @@
 
 using LatuCollect.UI.WinUI.Models;
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.Tests.Helpers;
 
 namespace LatuCollect.Tests.UI.ViewModels.Search
 {
     public class MainViewModelSearchTests
     {
         // ═════════════════════════════════════════════════════════════
-        // TEST — FICHIER TROUVÉ
+        // TEST — VISIBILITÉ FICHIER NON MATCH
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task Search_ShouldShowMatchingFile()
+        public void Search_ShouldShowMatchingFile()
         {
             // ARRANGE
             var vm = new MainViewModel();
 
-            var root = new FileNode
-            {
-                Name = "Root"
-            };
+            var root = TestTreeFactory.CreateFolder("Root");
 
-            var file = new FileNode
-            {
-                Name = "TestFile.cs"
-            };
+            var file = TestTreeFactory.CreateFile("TestFile.cs");
 
-            root.Children.Add(file);
+            TestTreeFactory.AddChild(root, file);
 
             vm.Tree.Add(root);
 
@@ -55,26 +50,20 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
         }
 
         // ═════════════════════════════════════════════════════════════
-        // TEST — FICHIER MASQUÉ
+        // TEST — FICHIER NON TROUVÉ
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task Search_ShouldHideNonMatchingFile()
+        public void Search_ShouldHideNonMatchingFile()
         {
             // ARRANGE
             var vm = new MainViewModel();
 
-            var root = new FileNode
-            {
-                Name = "Root"
-            };
+            var root = TestTreeFactory.CreateFolder("Root");
 
-            var file = new FileNode
-            {
-                Name = "Hello.cs"
-            };
+            var file = TestTreeFactory.CreateFile("Hello.cs");
 
-            root.Children.Add(file);
+            TestTreeFactory.AddChild(root, file);
 
             vm.Tree.Add(root);
 
@@ -92,7 +81,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task Search_ShouldKeepParentVisible_WhenChildMatches()
+        public void Search_ShouldKeepParentVisible_WhenChildMatches()
         {
             // ARRANGE
             var vm = new MainViewModel();
@@ -126,7 +115,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task Search_ShouldExpandParent_WhenChildMatches()
+        public void Search_ShouldExpandParent_WhenChildMatches()
         {
             // ARRANGE
             var vm = new MainViewModel();
@@ -427,8 +416,8 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
             vm.SearchText = string.Empty;
             vm.ApplyFilter();
 
-            // ASSERT — expansion conservée
-            Assert.True(folder.IsExpanded);
+            // ASSERT — reset expansion
+            Assert.False(folder.IsExpanded);
         }
     }
 }

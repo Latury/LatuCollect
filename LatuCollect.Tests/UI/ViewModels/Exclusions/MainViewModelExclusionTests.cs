@@ -1,11 +1,11 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
-║                        LATUCOLLECT                                  ║
-║  Module : Tests                                                     ║
-║  Fichier : MainViewModelExclusionTests.cs                           ║
+║                        LATUCOLLECT                                   ║
+║  Module : Tests                                                      ║
+║  Fichier : MainViewModelExclusionTests.cs                            ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Tester les exclusions TreeView                                     ║
+║  Tester les exclusions TreeView                                      ║
 ║                                                                      ║
 ║  IMPORTANT :                                                         ║
 ║  - Aucun accès UI réel                                               ║
