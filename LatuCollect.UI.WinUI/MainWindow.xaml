@@ -155,13 +155,12 @@
                                                 Grid.Column="1"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                Click="OnNodeChecked"
+                                                Checked="OnNodeChecked"
                                                 Content="{Binding Name}"
                                                 Foreground="White"
-                                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                IsThreeState="True"
-                                                RightTapped="OnNodeRightTapped" />
-
+                                                IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                RightTapped="OnNodeRightTapped"
+                                                Unchecked="OnNodeChecked" />
                                         </Grid>
 
                                     </TreeViewItem>

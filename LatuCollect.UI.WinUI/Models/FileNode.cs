@@ -30,10 +30,9 @@ using System.Collections.Generic;
 namespace LatuCollect.UI.WinUI.Models
 {
     // ==========================================
-    // 🧠 DESCRIPTION
+    // 🌟 CLASSE PRINCIPALE
     // ==========================================
     // Représente un node UI (fichier ou dossier)
-
 
     public partial class FileNode : ObservableObject
     {
@@ -43,7 +42,7 @@ namespace LatuCollect.UI.WinUI.Models
 
         private string _name = "";
         private string _path = "";
-        private bool? _isSelected;
+        private bool _isSelected;
         private bool _isVisible = true;
         private bool _isExpanded;
         private bool _isDirectory;
@@ -66,8 +65,8 @@ namespace LatuCollect.UI.WinUI.Models
             set => SetProperty(ref _path, value);
         }
 
-        // Sélectionné (null = indéterminé, true = sélectionné, false = non sélectionné)
-        public bool? IsSelected
+        // Sélectionné (UI)
+        public bool IsSelected
         {
             get => _isSelected;
             set => SetProperty(ref _isSelected, value);
@@ -94,6 +93,8 @@ namespace LatuCollect.UI.WinUI.Models
             get => _isDirectory;
             set => SetProperty(ref _isDirectory, value);
         }
+
+
 
         // ==========================================
         // 🌳 STRUCTURE ARBORESCENTE

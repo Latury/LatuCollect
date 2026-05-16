@@ -241,8 +241,8 @@ namespace LatuCollect.UI.WinUI
             _viewModel.SelectedFormat = ".md";
         }
 
-        // ✅ CLIC SUR UN NODE (CHECKBOX)
-        private void OnNodeChecked(object sender, RoutedEventArgs e)
+        // ✅ Sélection d’un node
+        private async void OnNodeChecked(object sender, RoutedEventArgs e)
         {
             if (sender is not CheckBox checkBox)
                 return;
@@ -250,10 +250,9 @@ namespace LatuCollect.UI.WinUI
             if (checkBox.DataContext is not LatuCollect.UI.WinUI.Models.FileNode node)
                 return;
 
-            // 🔥 Synchronise explicitement la valeur UI → VM
-            node.IsSelected = checkBox.IsChecked;
-
-            _viewModel.HandleNodeClick(node);
+            await _viewModel.OnNodeSelectionChanged(
+                node,
+                checkBox.IsChecked == true);
         }
 
         // 🆕 CLIC DROIT SUR UN NODE

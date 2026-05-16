@@ -75,7 +75,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private bool _isSimulationEnabled = false;
         private string _selectedSimulationScenario = "Aucun";
 
-        private bool _isBatchUpdating = false;
         private CancellationTokenSource? _searchCts;
         private bool _isPreviewLoading = false;
         private bool _isBusy = false;
@@ -833,11 +832,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private async Task RefreshPreviewAsync()
         {
-            // 🔒 Protection anti multi-appel
-            if (_isPreviewLoading || _isBatchUpdating)
+            // 🔒 Protection anti double refresh
+            if (_isPreviewLoading)
                 return;
-
-            _logger.Info("Génération du preview");
 
             _isPreviewLoading = true;
 
@@ -994,63 +991,31 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public bool IsTreeEmpty =>
             string.IsNullOrWhiteSpace(CurrentFolderPath) || Tree.Count == 0;
 
-        // Click sur un node
-        public async void HandleNodeClick(UiFileNode node)
+        public async Task OnNodeSelectionChanged(
+    UiFileNode node,
+    bool isChecked)
         {
-            // 🔒 BLOQUE tout si en cours
-            if (_isBatchUpdating || _isPreviewLoading)
+            if (_isPreviewLoading)
                 return;
 
-            try
+            if (node == null)
+                return;
+
+            node.IsSelected = isChecked;
+
+            // 📁 propagation dossier uniquement
+            if (node.IsDirectory)
             {
-                _isBatchUpdating = true;
-
-                bool newValue = node.IsSelected == true;
-
-                // 🔽 descente
-                SetNodeSelection(node, newValue);
-
-                // 🔼 remontée
-                UpdateParentSelectionRecursive(node);
-            }
-            finally
-            {
-                _isBatchUpdating = false;
+                SetNodeSelection(node, isChecked);
             }
 
-            // 🔥 IMPORTANT
             await RefreshPreviewAsync();
         }
 
-        // Met à jour la sélection des parents de manière récursive
-        private void UpdateParentSelectionRecursive(UiFileNode node)
-        {
-            var parent = node.Parent;
-
-            while (parent != null)
-            {
-                bool allSelected = parent.Children.All(c => c.IsSelected == true);
-                bool noneSelected = parent.Children.All(c => c.IsSelected == false);
-
-                if (allSelected)
-                {
-                    parent.IsSelected = true;
-                }
-                else if (noneSelected)
-                {
-                    parent.IsSelected = false;
-                }
-                else
-                {
-                    parent.IsSelected = null;
-                }
-
-                parent = parent.Parent;
-            }
-        }
-
-        // Applique la sélection à tous les enfants
-        private void SetNodeSelection(UiFileNode node, bool isSelected)
+        // Applique sélection récursive
+        private void SetNodeSelection(
+            UiFileNode node,
+            bool isSelected)
         {
             node.IsSelected = isSelected;
 
@@ -1310,6 +1275,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             bool hasVisibleChild = false;
 
+            // 🔥 synchronisation optimisée
             foreach (var child in node.Children)
             {
                 if (ApplyFilterRecursive(child))
@@ -1320,13 +1286,19 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             bool isVisible = match || hasVisibleChild;
 
-            node.IsVisible = isVisible;
+            if (node.IsVisible != isVisible)
+            {
+                node.IsVisible = isVisible;
+            }
 
-            // 🔥 IMPORTANT
-            // Expansion automatique uniquement pendant recherche active
+            // 🔥 IMPORTANT : n’expande que si match ou enfant visible, et seulement si il y a une recherche en cours
+            // sinon on garde l’état d’expansion de l’utilisateur
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                node.IsExpanded = hasVisibleChild;
+                if (hasVisibleChild && !node.IsExpanded)
+                {
+                    node.IsExpanded = true;
+                }
             }
 
             return isVisible;
@@ -1334,15 +1306,18 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         // Applique visibilité récursive (sans toucher à l’expansion)
         private void SetVisibilityRecursive(
-    UiFileNode node,
-    bool visible)
+           UiFileNode node,
+           bool visible)
         {
-            // ✔ visibilité uniquement
+            // ✔ visibilité
             node.IsVisible = visible;
 
-            // ❌ IMPORTANT
-            // Ne pas modifier IsExpanded ici
-            // sinon perte état utilisateur
+            // 🔥 IMPORTANT
+            // Reset expansion quand recherche supprimée
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                node.IsExpanded = false;
+            }
 
             foreach (var child in node.Children)
             {
@@ -1401,6 +1376,35 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return uiNode;
         }
 
+        private List<string> GetSelectedFilesOptimized()
+        {
+            var result = new List<string>();
+
+            foreach (var node in Tree)
+            {
+                CollectSelectedFilesRecursive(node, result);
+            }
+
+            return result;
+        }
+
+        private void CollectSelectedFilesRecursive(
+            UiFileNode node,
+            List<string> result)
+        {
+            // ✔ uniquement fichiers sélectionnés
+            if (!node.IsDirectory &&
+                node.IsSelected)
+            {
+                result.Add(node.Path);
+            }
+
+            foreach (var child in node.Children)
+            {
+                CollectSelectedFilesRecursive(child, result);
+            }
+        }
+
         private List<CoreFileNode> ConvertToCoreNodes(IEnumerable<UiFileNode> uiNodes)
         {
             var result = new List<CoreFileNode>();
@@ -1417,8 +1421,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     IsDirectory = uiNode.IsDirectory,
 
                     // 🔥 IMPORTANT
-                    // Seuls les fichiers peuvent être exportés
-                    IsSelected = uiNode.IsSelected == true && !uiNode.IsDirectory
+                    IsSelected = uiNode.IsSelected && !uiNode.IsDirectory
                 };
 
                 foreach (var child in ConvertToCoreNodes(uiNode.Children))
@@ -1434,8 +1437,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private List<string> GetSelectedFiles()
         {
-            var coreNodes = ConvertToCoreNodes(Tree);
-            return _collectionService.GetSelectedFiles(coreNodes);
+            return GetSelectedFilesOptimized();
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -1703,4 +1705,3 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
     }
 }
-
