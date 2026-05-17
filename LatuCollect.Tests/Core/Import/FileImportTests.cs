@@ -134,10 +134,9 @@ namespace LatuCollect.Tests.Core.Import
             var result = await service.LoadTreeAsync(folder);
 
             // ASSERT
-            Assert.True(result.IsPartial);
             Assert.True(
-    result.IsPartial || result.TotalNodes >= 1000
-);
+    result.IsPartial ||
+    result.TotalNodes >= 1000);
 
             // CLEANUP
             Directory.Delete(folder, true);

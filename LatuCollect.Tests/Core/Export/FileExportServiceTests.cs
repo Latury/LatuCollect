@@ -24,6 +24,7 @@
 */
 
 using LatuCollect.Core.Services.Export;
+using LatuCollect.UI.WinUI.ViewModels;
 
 namespace LatuCollect.Tests.Core.Export
 {
@@ -448,6 +449,129 @@ namespace LatuCollect.Tests.Core.Export
                 "Chemin invalide",
                 result.Message
             );
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — EXPORT PARTIEL SI CONTENU TROP VOLUMINEUX
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public async Task BuildContentWithStatsAsync_ShouldSetPartial_WhenContentTooLarge()
+        {
+            // ARRANGE
+            var service = new FileExportService();
+
+            var tempFiles = new List<string>();
+
+            try
+            {
+                // 🔥 Génération contenu massif
+                string hugeContent = new string('A', 300_000);
+
+                // 🔥 Plusieurs fichiers pour dépasser la limite
+                for (int i = 0; i < 5; i++)
+                {
+                    string tempFile = Path.GetTempFileName();
+
+                    await File.WriteAllTextAsync(
+                        tempFile,
+                        hugeContent);
+
+                    tempFiles.Add(tempFile);
+                }
+
+                // ACT
+                var result = await service.BuildContentWithStatsAsync(
+                    tempFiles,
+                    false,
+                    "normal");
+
+                // ASSERT
+                Assert.True(result.IsPartial);
+
+                Assert.Contains(
+                    "Limite atteinte",
+                    result.PartialMessage);
+
+                Assert.Contains(
+                    "contenu a été tronqué",
+                    result.Content);
+            }
+            finally
+            {
+                // CLEANUP
+                foreach (var file in tempFiles)
+                {
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — FICHIER VERROUILLÉ
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public async Task ExportAsync_ShouldHandleLockedFile()
+        {
+            // ARRANGE
+            var service = new FileExportService();
+
+            string exportPath = "locked_export.txt";
+
+            await File.WriteAllTextAsync(
+                exportPath,
+                "Initial content");
+
+            // 🔒 verrouillage fichier
+            using var stream = new FileStream(
+                exportPath,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.None);
+
+            // ACT
+            var result = await service.ExportAsync(
+                exportPath,
+                "New content");
+
+            // ASSERT
+            Assert.False(result.IsSuccess);
+
+            Assert.NotEmpty(result.Message);
+
+            // CLEANUP
+            stream.Close();
+
+            if (File.Exists(exportPath))
+            {
+                File.Delete(exportPath);
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — DEBOUNCE RECHERCHE
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public async Task Search_ShouldDebounceMultipleRapidChanges()
+        {
+            // ARRANGE
+            var vm = new MainViewModel();
+
+            // ACT
+            vm.SearchText = "A";
+            vm.SearchText = "AB";
+            vm.SearchText = "ABC";
+
+            await Task.Delay(500);
+
+            // ASSERT
+            Assert.True(
+    vm.ApplyFilterCallCount <= 2);
         }
     }
 }
