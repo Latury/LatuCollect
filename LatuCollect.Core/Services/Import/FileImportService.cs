@@ -44,7 +44,7 @@ namespace LatuCollect.Core.Services.Import
         // 1.1 LIMITES
         // ═════════════════════════════════════════════════════════════
 
-        private const int MAX_NODES = 1000;
+        private const int MAX_NODES = 5000;
         private const int MAX_DEPTH = 10;
 
         private readonly AppConfig _config;
@@ -98,16 +98,24 @@ namespace LatuCollect.Core.Services.Import
         // ═════════════════════════════════════════════════════════════
 
         private FileNode? CreateNode(
-            string path,
-            int depth,
-            ref int count,
-            ImportResult result,
-            CancellationToken token)
+    string path,
+    int depth,
+    ref int count,
+    ImportResult result,
+    CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return null;
 
-            if (depth > MAX_DEPTH || count >= MAX_NODES)
+            // 🔥 IMPORTANT
+            // On autorise toujours :
+            // - le root
+            // - les enfants directs du root
+            // même si MAX_NODES est atteint
+            bool allowRootLevel = depth <= 1;
+
+            if (depth > MAX_DEPTH ||
+                (!allowRootLevel && count >= MAX_NODES))
             {
                 result.IsPartial = true;
                 result.Message = "⚠ Projet volumineux — affichage partiel";
@@ -123,14 +131,37 @@ namespace LatuCollect.Core.Services.Import
 
             count++;
 
+            // 🔥 IMPORTANT
+            // Si quota atteint :
+            // on garde le node visible
+            // mais on ne charge plus ses enfants
+            if (count >= MAX_NODES)
+            {
+                result.IsPartial = true;
+                result.Message = "⚠ Projet volumineux — affichage partiel";
+
+                return node;
+            }
+
             if (!node.IsDirectory)
                 return node;
 
-            // 📁 DOSSIERS (triés)
-            TryAddDirectories(node, path, depth, ref count, result, token);
+            // 📁 DOSSIERS
+            TryAddDirectories(
+                node,
+                path,
+                depth,
+                ref count,
+                result,
+                token);
 
-            // 📄 FICHIERS (triés)
-            TryAddFiles(node, path, ref count, result, token);
+            // 📄 FICHIERS
+            TryAddFiles(
+                node,
+                path,
+                ref count,
+                result,
+                token);
 
             return node;
         }
@@ -159,12 +190,14 @@ namespace LatuCollect.Core.Services.Import
                 return;
             }
 
-            foreach (var dir in directories.OrderBy(d => d))
+            foreach (var dir in directories.OrderBy(Path.GetFileName))
             {
                 if (token.IsCancellationRequested)
                     return;
 
-                if (count >= MAX_NODES)
+                bool allowRootChildren = depth == 0;
+
+                if (count >= MAX_NODES && !allowRootChildren)
                 {
                     result.IsPartial = true;
                     return;
@@ -206,7 +239,7 @@ namespace LatuCollect.Core.Services.Import
             {
                 var files = Directory
                     .EnumerateFiles(path)
-                    .OrderBy(f => f);
+                    .OrderBy(Path.GetFileName);
 
                 foreach (var file in files)
                 {
