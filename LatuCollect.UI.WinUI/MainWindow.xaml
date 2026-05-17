@@ -161,6 +161,7 @@
                                                 IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 RightTapped="OnNodeRightTapped"
                                                 Unchecked="OnNodeChecked" />
+
                                         </Grid>
 
                                     </TreeViewItem>

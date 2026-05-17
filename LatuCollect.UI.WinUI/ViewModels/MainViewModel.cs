@@ -91,6 +91,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private bool _isRefreshingExclusions = false;
 
+        // 🔥 Protection sélection massive
+        private bool _isBulkSelectionUpdating = false;
+
+        public bool IsBulkSelectionUpdating =>
+            _isBulkSelectionUpdating;
+
+        // DEBUG TESTS
+        private int _applyFilterCallCount;
+
         // ═════════════════════════════════════════════════════════════
         // 2. SERVICES & CONFIGURATION
         // ═════════════════════════════════════════════════════════════
@@ -109,7 +118,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 3. CONSTANTES
         // ═════════════════════════════════════════════════════════════
 
-        private const int MAX_NODES = 1000;
+        private const int MAX_NODES = 5000;
         private const int MAX_DEPTH = 10;
 
         // ═════════════════════════════════════════════════════════════
@@ -542,6 +551,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _isLimitReached, value);
         }
 
+        public int ApplyFilterCallCount =>
+            _applyFilterCallCount;
+
         // ═════════════════════════════════════════════════════════════
         // 14. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
@@ -850,9 +862,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     _lastSelectionSignature = string.Empty;
                     _lastIsMarkdown = false;
 
-                    // ✅ IMPORTANT : on affiche le message
+                    // ✅ Reset preview
                     PreviewText = "Aucun fichier sélectionné...";
+
+                    // ✅ Reset statistiques
+                    FileCount = 0;
+                    TotalLines = 0;
+                    TotalCharacters = 0;
+                    TotalSize = 0;
+
                     CurrentState = UiState.Empty;
+
+                    OnPropertyChanged(nameof(CanCopy));
+                    OnPropertyChanged(nameof(IsPreviewEmpty));
+                    OnPropertyChanged(nameof(CanExport));
+                    OnPropertyChanged(nameof(HasEmptyFiles));
 
                     return;
                 }
@@ -996,21 +1020,34 @@ namespace LatuCollect.UI.WinUI.ViewModels
     UiFileNode node,
     bool isChecked)
         {
+            // 🔥 Ignore événements pendant propagation massive
+            if (_isBulkSelectionUpdating)
+                return;
+
             if (_isPreviewLoading)
                 return;
 
             if (node == null)
                 return;
 
-            node.IsSelected = isChecked;
+            // 🔥 IMPORTANT
+            // verrou global sélection massive
+            _isBulkSelectionUpdating = true;
 
-            // 📁 propagation dossier uniquement
-            if (node.IsDirectory)
+            try
             {
+                // 📁 propagation récursive
                 SetNodeSelection(node, isChecked);
-            }
 
-            await RefreshPreviewAsync();
+                // 🔥 IMPORTANT
+                // refresh APRÈS propagation complète
+                await RefreshPreviewAsync();
+            }
+            finally
+            {
+                // 🔥 libération UNIQUEMENT à la toute fin
+                _isBulkSelectionUpdating = false;
+            }
         }
 
         // Applique sélection récursive
@@ -1238,6 +1275,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         internal void ApplyFilter()
         {
+            _applyFilterCallCount++;
+
             FilteredTree.Clear();
 
             // 🔥 RESET EXPANSION SI PAS DE RECHERCHE

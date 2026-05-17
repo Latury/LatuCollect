@@ -244,6 +244,11 @@ namespace LatuCollect.UI.WinUI
         // ✅ Sélection d’un node
         private async void OnNodeChecked(object sender, RoutedEventArgs e)
         {
+            // 🔥 IMPORTANT
+            // Ignore événements pendant propagation récursive
+            if (_viewModel.IsBulkSelectionUpdating)
+                return;
+
             if (sender is not CheckBox checkBox)
                 return;
 
