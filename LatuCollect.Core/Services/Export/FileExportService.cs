@@ -144,9 +144,9 @@ namespace LatuCollect.Core.Services.Export
         // ═════════════════════════════════════════════════════════════
 
         public async Task<ExportData> BuildContentWithStatsAsync(
-            IEnumerable<string> filePaths,
-            bool isMarkdown,
-            string exportMode)
+    IEnumerable<string> filePaths,
+    bool isMarkdown,
+    string exportMode)
         {
             var builder = new StringBuilder();
             var stats = new StatisticsResult();
@@ -154,6 +154,8 @@ namespace LatuCollect.Core.Services.Export
             bool isPartial = false;
             string partialMessage = "";
             int fileCount = 0;
+
+            bool previewLimitReached = false;
 
             // 🔒 Sécurisation
             if (filePaths == null)
@@ -169,6 +171,7 @@ namespace LatuCollect.Core.Services.Export
 
             foreach (var path in filePaths)
             {
+                // 🔒 Limite mode IA
                 if (IsFileLimitReached(exportMode, fileCount))
                 {
                     SetPartial(
@@ -180,16 +183,23 @@ namespace LatuCollect.Core.Services.Export
                     break;
                 }
 
+                // 🔥 Toujours calculer les stats
+                // 🔥 Mais limiter uniquement le preview
                 await ProcessFileAsync(
                     path,
                     builder,
                     stats,
-                    isMarkdown);
+                    isMarkdown,
+                    !previewLimitReached);
 
                 fileCount++;
 
-                if (IsCharLimitReached(exportMode, builder))
+                // 🔥 Vérification limite preview
+                if (!previewLimitReached &&
+                    IsCharLimitReached(exportMode, builder))
                 {
+                    previewLimitReached = true;
+
                     SetPartial(
                         ref isPartial,
                         ref partialMessage,
@@ -197,8 +207,6 @@ namespace LatuCollect.Core.Services.Export
                         exportMode?.ToLower() == "ai"
                             ? $"⚠ Limite atteinte : {MAX_CHARACTERS_AI:N0} caractères (mode IA)"
                             : $"⚠ Limite atteinte : {MAX_CHARACTERS_NORMAL:N0} caractères");
-
-                    break;
                 }
             }
 
@@ -236,11 +244,24 @@ namespace LatuCollect.Core.Services.Export
             AppendFormatted(builder, path, result.Content, isMarkdown);
         }
 
-        private async Task ProcessFileAsync(string path, StringBuilder builder, StatisticsResult stats, bool isMarkdown)
+        private async Task ProcessFileAsync(
+    string path,
+    StringBuilder builder,
+    StatisticsResult stats,
+    bool isMarkdown,
+    bool appendContent = true)
         {
             if (!File.Exists(path))
             {
-                AppendFormatted(builder, path, "[Erreur : fichier introuvable]", isMarkdown);
+                if (appendContent)
+                {
+                    AppendFormatted(
+                        builder,
+                        path,
+                        "[Erreur : fichier introuvable]",
+                        isMarkdown);
+                }
+
                 return;
             }
 
@@ -248,12 +269,33 @@ namespace LatuCollect.Core.Services.Export
 
             if (!result.IsSuccess)
             {
-                AppendFormatted(builder, path, $"[Erreur : {result.ErrorMessage}]", isMarkdown);
+                if (appendContent)
+                {
+                    AppendFormatted(
+                        builder,
+                        path,
+                        $"[Erreur : {result.ErrorMessage}]",
+                        isMarkdown);
+                }
+
                 return;
             }
 
-            FileStatisticsService.UpdateStatistics(stats, result.Content, result.FileSize);
-            AppendFormatted(builder, path, result.Content, isMarkdown);
+            // 🔥 Stats TOUJOURS calculées
+            FileStatisticsService.UpdateStatistics(
+                stats,
+                result.Content,
+                result.FileSize);
+
+            // 🔥 Preview seulement si autorisé
+            if (appendContent)
+            {
+                AppendFormatted(
+                    builder,
+                    path,
+                    result.Content,
+                    isMarkdown);
+            }
         }
 
 
