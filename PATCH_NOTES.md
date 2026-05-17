@@ -1724,6 +1724,193 @@ et améliorer fortement l’expérience utilisateur.
 
 ---
 
+# 🚀 VERSION 0.12.0
+
+## 📌 Statut
+
+🟢 Stabilisation majeure terminée — Performance & gros projets validés
+
+---
+
+## 🎯 Objectif
+
+Améliorer les performances,
+réduire les recalculs inutiles
+et simplifier le comportement du TreeView
+pour rendre l’application plus fluide et plus prévisible sur les gros projets.
+
+---
+
+# ⚡ Performance preview
+
+- ✅ Optimisation anti refresh preview inutile
+- ✅ Réduction des recalculs inutiles
+- ✅ Optimisation signature sélection
+- ✅ Protection anti double génération preview
+- ✅ Protection état preview (`_isPreviewLoading`)
+- ✅ Simplification logique refresh preview
+- ✅ Suppression vérifications inutiles
+- ✅ Stabilisation preview gros volumes
+- ✅ Limitation preview gros contenu
+- ✅ Synchronisation Preview ↔ Export
+- ✅ Réduction refresh inutiles pendant sélection massive
+
+---
+
+# 🌳 TreeView / Sélection
+
+- ✅ Simplification système sélection
+- ✅ Suppression logique tri-state
+- ✅ Suppression états partiels (`null`)
+- ✅ Sélection parent → enfants conservée
+- ✅ Comportement sélection simplifié et plus prévisible
+- ✅ Réduction effets de bord WinUI
+- ✅ Réduction complexité synchronisation sélection
+- ✅ Protection sélection massive (`_isBulkSelectionUpdating`)
+- ✅ Stabilisation propagation sélection récursive
+- ✅ Conservation sélection après reset filtre
+- ✅ Cohérence sélection ↔ visibilité
+- ✅ Stabilisation reset preview/statistiques
+- ✅ Validation sélection massive gros projets
+
+---
+
+# 📂 Import / Gros projets
+
+- ✅ Gestion gros arbres
+- ✅ Validation récursion profonde
+- ✅ Vérification comportement très gros projets
+- ✅ Stabilisation affichage root + dossiers principaux
+- ✅ Protection affichage partiel gros projets
+- ✅ Augmentation limite nodes (`MAX_NODES`)
+- ✅ Tri optimisé dossiers/fichiers
+- ✅ Conservation structure visible même après limite atteinte
+
+---
+
+# 📤 Export massif
+
+- ✅ Gestion export massif
+- ✅ Robustesse export massif réel
+- ✅ Protection mémoire export massif
+- ✅ Stabilisation preview partiel gros contenu
+- ✅ Calcul statistiques même après troncature preview
+- ✅ Gestion erreurs fichiers verrouillés
+- ✅ Gestion contenu volumineux
+- ✅ Protection limites mode IA
+- ✅ Préservation cohérence stats ↔ preview
+
+---
+
+# 📊 Statistiques
+
+- ✅ Utilisation `fileSize`
+- ✅ Réduction dépendance `FileInfo`
+- ✅ Fiabilisation cas extrêmes
+- ✅ Correction statistiques export massif
+- ✅ Synchronisation stats ↔ preview
+- ✅ Reset statistiques si aucune sélection
+- ✅ Validation comportement gros volumes
+
+---
+
+# ⚡ Cache
+
+- ✅ Expiration cache
+- ✅ Invalidation cache si fichier modifié (`LastWriteTime`)
+- ✅ Nettoyage automatique cache ancien
+- ✅ Limitation taille cache mémoire
+- ✅ Limitation nombre entrées cache
+- ✅ Validation cohérence Preview = Export après modification disque
+
+---
+
+# 🔍 Recherche
+
+- ✅ Optimisation `ApplyFilterRecursive`
+- ✅ Validation recherche gros arbres
+- ✅ Vérification nodes masqués + recherche
+- ✅ Ajustement debounce validé sur gros projets
+- ✅ Validation absence freeze UI
+- ✅ Validation refresh WinUI très gros projets
+- ✅ Stabilisation restauration visibilité après filtre
+
+---
+
+# 🧪 Tests
+
+- ✅ Nettoyage tests obsolètes tri-state
+- ✅ Simplification tests sélection
+- ✅ Adaptation tests nouvelle logique TreeView
+- ✅ Réduction dépendances logique état partiel
+- ✅ Validation nouvelle cohérence sélection
+- ✅ Ajout tests gros arbres
+- ✅ Ajout tests récursion profonde
+- ✅ Ajout tests sélection massive
+- ✅ Ajout tests debounce recherche
+- ✅ Ajout tests visibilité après recherche
+- ✅ Ajout tests conservation sélection après reset filtre
+- ✅ Ajout tests export massif
+- ✅ Ajout tests fichiers verrouillés
+- ✅ Validation stress tests massifs
+- ✅ Validation gros volumes mémoire
+- ✅ 100 tests automatisés validés
+
+---
+
+# 🧹 Robustesse
+
+- ✅ Nettoyage validations null inutiles
+- ✅ Réduction code défensif inutile
+- ✅ Simplification logique sélection
+- ✅ Clarification comportement sélection TreeView
+- ✅ Réduction effets de bord pipeline preview
+- ✅ Stabilisation refresh preview/statistiques
+- ✅ Réduction risques multi-refresh
+- ✅ Réduction risques blocage WinUI
+
+---
+
+# 🧠 Résultat
+
+✔ TreeView plus simple
+✔ Sélection plus prévisible
+✔ Réduction importante de la complexité
+✔ Réduction des recalculs inutiles
+✔ Preview plus stable
+✔ Gestion gros projets validée
+✔ Export massif stabilisé
+✔ Pipeline preview/export plus cohérent
+✔ Tests plus cohérents
+✔ Base beaucoup plus robuste pour la suite
+✔ RAM maîtrisée sur stress tests massifs
+✔ Application plus fluide et prévisible
+
+---
+
+# 🏁 Objectif atteint
+
+✔ Performance améliorée sur gros projets
+✔ Sélection TreeView simplifiée et stabilisée
+✔ Réduction importante des recalculs inutiles
+✔ Preview plus fluide et plus prévisible
+✔ Gestion export massif stabilisée
+✔ Cohérence Preview ↔ Export validée
+✔ Pipeline preview/statistiques renforcé
+✔ Gestion mémoire maîtrisée sur stress tests
+✔ Réduction des effets de bord WinUI
+✔ Robustesse générale fortement améliorée
+✔ Base de tests automatisés fortement renforcée
+✔ Application plus stable, plus simple et plus maintenable
+
+👉 Sans complexifier l’application.
+
+👉 La prochaine étape logique devient désormais :
+
+🚀 17. Version 0.13.0 — REFACTOR ARCHITECTURE
+
+---
+
 # 🧠 Philosophie
 
 - ✅ Simplicité avant complexité

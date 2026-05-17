@@ -272,9 +272,37 @@ Message :
 
 ---
 
+## ⚠️ Preview limité
+
+Dans certains très gros projets :
+
+- le preview peut être volontairement tronqué
+- l’export complet reste conservé
+- les statistiques restent calculées sur tous les fichiers sélectionnés
+
+👉 Objectif :
+
+- éviter les freezes UI
+- limiter l’utilisation mémoire
+- conserver une interface fluide
+
+---
+
+### ⚠️ Important
+
+Dans ces cas spécifiques :
+
+Preview ≠ Export
+
+uniquement pour l’affichage.
+
+Le contenu exporté reste complet.
+
+---
+
 ## 🔁 Cohérence
 
-👉 Aperçu = Export (règle absolue)
+👉 Aperçu = Export dans le fonctionnement standard
 
 ---
 
@@ -353,10 +381,69 @@ Actions finales
 
 ---
 
+## 🔄 Évolution future — Stabilisation async UI
+
+Le projet évoluera progressivement vers une gestion async UI plus robuste afin de :
+
+- réduire les race conditions
+- améliorer la stabilité du TreeView
+- limiter les doubles refresh preview
+- améliorer la testabilité
+
+---
+
+### Zones concernées
+
+- sélection TreeView
+- refresh preview
+- recherche dynamique
+- interactions rapides utilisateur
+
+---
+
+### Objectif
+
+- UI plus prévisible
+- interactions plus fiables
+- réduction des comportements aléatoires
+
+---
+
 # 🧠 RÈGLE ALC
 
 - UI = affichage uniquement
 - Aucune logique métier
+
+---
+
+## 🔮 Évolution future — Split MainViewModel
+
+Le `MainViewModel` sera progressivement séparé en plusieurs ViewModels spécialisés afin de :
+
+- réduire les responsabilités centralisées
+- améliorer la maintenabilité
+- réduire les effets de bord
+- améliorer la stabilité async
+
+---
+
+### Découpage prévu
+
+- `TreeViewViewModel`
+- `PreviewViewModel`
+- `ExportViewModel`
+- `SettingsViewModel`
+- `LogsViewModel`
+
+---
+
+### ⚠️ Important
+
+Cette évolution restera progressive afin de préserver :
+
+- la stabilité UI
+- les bindings
+- la cohérence du pipeline
 
 ---
 
@@ -425,6 +512,7 @@ Améliorer l’interface sans changer son fonctionnement
 - ✔ UI fluide
 - ✔ Pipeline respecté
 - ✔ Preview = Export
+- 🔄 Suppression future du système de simulation
 
 ---
 

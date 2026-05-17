@@ -849,176 +849,71 @@ Améliorer la gestion des gros projets.
 ## 📂 Import
 
 - ✅ EnumerateFiles (streaming déjà utilisé)
-- ⬜ Tri optimisé
-- ⬜ Gestion gros arbres
-- ⬜ Validation récursion profonde
-- ⬜ Vérification comportement très gros projets
-
----
+- ✅ Tri optimisé
+- ✅ Gestion gros arbres
+- ✅ Validation récursion profonde
+- ✅ Vérification comportement très gros projets
+- ✅ Stabilisation affichage root + dossiers principaux
+- ✅ Protection affichage partiel gros projets
 
 ## ⚡ Cache
 
-- ⬜ Limite mémoire
-- ⬜ Expiration cache
-- ⬜ Invalidation cache si fichier modifié (LastWriteTime)
-- ⬜ Vérification cohérence Preview = Export après modification disque
-
----
+- ✅ Expiration cache
+- ✅ Invalidation cache si fichier modifié (LastWriteTime)
+- ✅ Optimisation anti refresh preview inutile
+- ✅ Vérification cohérence Preview = Export après modification disque
 
 ## 📊 Stats
 
-- ⬜ Optimisation calcul lignes
-- ⬜ Suppression dépendance FileInfo
-- ⬜ Utilisation fileSize uniquement
-- ⬜ Fiabilisation cas extrêmes
-
----
+- ✅ Réduction dépendance FileInfo (usage minimal conservé pour récupération taille disque)
+- ✅ Réduction dépendance FileInfo (usage minimal conservé pour récupération taille disque)
+- ✅ Utilisation fileSize uniquement
+- ✅ Fiabilisation cas extrêmes
+- ✅ Correction stats export massif réel
+- ✅ Synchronisation stats ↔ preview
 
 ## 📤 Export
 
-- ⬜ Gestion export massif
-- ⬜ Protection mémoire
-- ⬜ Robustesse export massif réel
-- ⬜ Gestion erreurs disque
-- ⬜ Protection mémoire export massif
+- ✅ Gestion export massif
+- ✅ Robustesse export massif réel
+- ✅ Gestion erreurs disque
+- ✅ Protection mémoire export massif
+- ✅ Gestion fichiers verrouillés
+- ✅ Stabilisation preview partiel gros contenu
 
 ## 🔍 Recherche / TreeView
 
-- ⬜ Optimisation ApplyFilterRecursive
-- ⬜ Ajustement debounce
-- ⬜ Vérification absence freeze UI
-- ⬜ Vérification refresh WinUI très gros projets
-- ⬜ Cohérence sélection ↔ visibilité
-- ⬜ Vérification recherche avec état partiel
-- ⬜ Vérification nodes masqués + recherche
-- ⬜ Optimisation sélection massive
+- ✅ Simplification sélection TreeView (suppression tri-state)
+- ✅ Optimisation ApplyFilterRecursive
+- ✅ Ajustement debounce validé sur gros projets
+- ✅ Vérification absence freeze UI
+- ✅ Vérification refresh WinUI très gros projets
+- ✅ Cohérence sélection ↔ visibilité
+- ✅ Vérification nodes masqués + recherche
+- ✅ Optimisation sélection massive
+- ✅ Conservation sélection après reset filtre
+- ✅ Stabilisation reset preview/statistiques
+- ✅ Validation recherche + sélection massive
+
+## 🧪 Tests & stabilité
+
+- ✅ Ajout tests sélection ↔ visibilité
+- ✅ Ajout tests debounce recherche
+- ✅ Ajout tests export fichiers verrouillés
+- ✅ Validation stress tests massifs
+- ✅ Stabilisation pipeline preview/export
+- ✅ Validation comportement gros volumes mémoire
+- ✅ 100 tests automatisés validés
 
 ---
 
-# 🚀 17. Version 0.13.0 — UX & COMPORTEMENT
+# 🚀 17. Version 0.13.0 — SUPPRESSION SIMULATION
 
 ## 🎯 Objectif
 
-Améliorer l’expérience utilisateur.
-
----
-
-## 📂 Import
-
-- ⬜ Lazy loading
-- ✅ CancellationToken
-- ✅ ImportResult
-- ✅ Affichage partiel
-
----
-
-## 🖥️ UI
-
-- ⬜ Reset dossier propre
-- ✅ Message état vide
-
----
-
-## ✨ UX
-
-- ⬜ Sélection dossier fiable
-- ⬜ Preview limité configurable
-- ✅ Message export partiel
-- ⬜ Ajouter "Ouvrir dans l’explorateur"
-- ⬜ Preview limité configurable
-- ⬜ Stabilisation scroll exclusions
-- ⬜ Conservation état ouvert après reload complet
-- ⬜ Persistance complète état ouvert arbre
-
-## 🌳 TreeView
-
-- ⬜ Vérifier rendu visuel état tri-state WinUI
-- ⬜ Vérifier cohérence visuelle parent partiel
-- ⬜ Vérifier absence rebond visuel
-- ⬜ Vérifier stabilité multi-clic rapide
-
-## 🧪 Validation UX
-
-- ⬜ Réouverture arbre après exclusion
-- ⬜ Recherche après exclusion
-- ⬜ Vérification stabilité exclusions protégées
-- ⬜ Vérification synchronisation visibilité ↔ exclusions
-
----
-
-# 🚀 18. Version 0.14.0 — ARCHITECTURE
-
-## 🎯 Objectif
-
-Corriger les écarts ALC restants.
-
----
-
-## 🧠 Core
-
-- ⬜ Interfaces services
-- 🟡 Séparation AppConfig / UserConfig (améliorée mais encore incomplète)
-- ⬜ Homogénéisation complète FileReadResult
-- ⬜ Séparation exclusions système / utilisateur
-- ⬜ Sécurisation ResetAsync / LoadAsync
-- ⬜ Éviter écrasement exclusions utilisateur
-
----
-
-## 📦 Modèles
-
-- ⬜ Déplacer :
-  - ExportResult
-  - ExportData
-  - StatisticsResult
-    👉 vers Core/Models/Export/
-
----
-
-## 🧱 FileNode
-
-- ⬜ Supprimer IsSelected du Core
-- ⬜ Ajouter IsFolder réel
-
-## 🧱 FileReader
-
-- ⬜ Gestion encodages invalides
-- ⬜ Validation fichiers verrouillés
-- ⬜ Détection simple fichiers binaires
-- ⬜ Fallback UTF8 / UTF16 sécurisé
-- ⬜ Gestion caractères invalides
-
----
-
-## 🧾 Logging
-
-- ⬜ Déplacer formatage Date côté UI
-
----
-
-# 🚀 19. Version 0.15.0 — LOGS
-
-## 🎯 Objectif
-
-Améliorer debug et stabilité.
-
----
-
-## 🧾 Logs
-
-- ⬜ Limite mémoire
-- ⬜ Thread safety
-- ✅ Export logs
-- ✅ Niveaux de logs
-- ✅ Filtrage
-
----
-
-# 🚀 20. Version 0.16.0 — SUPPRESSION SIMULATION
-
-## 🎯 Objectif
-
-Supprimer complètement le système de simulation.
+Supprimer complètement le système de simulation afin de simplifier l’architecture,
+réduire les effets de bord
+et préparer les futurs refactors UI/Core.
 
 ---
 
@@ -1061,7 +956,372 @@ Supprimer complètement le système de simulation.
 - ⬜ Vérifier :
   - lecture OK
   - export OK
+  - preview OK
+  - statistiques OK
   - aucun comportement cassé
+
+---
+
+# 🚀 18. Version 0.14.0 — UX & COMPORTEMENT
+
+## 🎯 Objectif
+
+Améliorer l’expérience utilisateur
+et stabiliser les comportements UI.
+
+---
+
+## 📂 Import
+
+- ⬜ Lazy loading
+- ✅ CancellationToken
+- ✅ ImportResult
+- ✅ Affichage partiel
+
+---
+
+## 🖥️ UI
+
+- ⬜ Reset dossier propre
+- ✅ Message état vide
+
+---
+
+## ✨ UX
+
+- ⬜ Sélection dossier fiable
+- ✅ Message export partiel
+- ⬜ Ajouter "Ouvrir dans l’explorateur"
+- ⬜ Stabilisation scroll exclusions
+- ⬜ Conservation état ouvert après reload complet
+- ⬜ Persistance complète état ouvert arbre
+
+---
+
+## 🌳 TreeView
+
+- ⬜ Vérifier rendu visuel état tri-state WinUI
+- ⬜ Vérifier cohérence visuelle parent partiel
+- ⬜ Vérifier absence rebond visuel
+- ⬜ Vérifier stabilité multi-clic rapide
+
+---
+
+## 🧪 Validation UX
+
+- ⬜ Réouverture arbre après exclusion
+- ⬜ Recherche après exclusion
+- ⬜ Vérification stabilité exclusions protégées
+- ⬜ Vérification synchronisation visibilité ↔ exclusions
+
+---
+
+# 🚀 19. Version 0.15.0 — ARCHITECTURE & SPLIT MAINVIEWMODEL
+
+## 🎯 Objectif
+
+Corriger les écarts ALC restants,
+réduire les responsabilités du MainViewModel
+et préparer les futurs refactors async/UI.
+
+---
+
+## 🧠 Core
+
+- ⬜ Interfaces services
+- 🟡 Séparation AppConfig / UserConfig (améliorée mais encore incomplète)
+- ⬜ Homogénéisation complète FileReadResult
+- ⬜ Séparation exclusions système / utilisateur
+- ⬜ Sécurisation ResetAsync / LoadAsync
+- ⬜ Éviter écrasement exclusions utilisateur
+
+---
+
+## 📦 Modèles
+
+- ⬜ Déplacer :
+  - ExportResult
+  - ExportData
+  - StatisticsResult
+    👉 vers Core/Models/Export/
+
+---
+
+## 🧱 FileNode
+
+- ⬜ Supprimer IsSelected du Core
+- ⬜ Ajouter IsFolder réel
+
+---
+
+## 🧱 FileReader
+
+- ⬜ Gestion encodages invalides
+- ⬜ Validation fichiers verrouillés
+- ⬜ Détection simple fichiers binaires
+- ⬜ Fallback UTF8 / UTF16 sécurisé
+- ⬜ Gestion caractères invalides
+
+---
+
+## 🧾 Logging
+
+- ⬜ Déplacer formatage Date côté UI
+
+---
+
+## 🖥️ UI — Split MainViewModel
+
+- ⬜ Préparer séparation des responsabilités UI
+- ⬜ Réduire taille MainViewModel
+- ⬜ Éviter accumulation logique UI + pipeline
+- ⬜ Préparer découpage :
+  - TreeViewViewModel
+  - PreviewViewModel
+  - ExportViewModel
+  - SettingsViewModel
+  - LogsViewModel
+
+---
+
+## ⚠️ Important
+
+Le split MainViewModel doit rester progressif
+afin d’éviter :
+
+- régressions UI
+- cassures bindings
+- effets de bord async
+- pertes stabilité TreeView
+
+---
+
+# 🚀 20. Version 0.16.0 — STABILISATION ASYNC UI & LOGS
+
+## 🎯 Objectif
+
+Fiabiliser complètement les interactions async UI
+et améliorer la stabilité globale.
+
+---
+
+## 🧾 Logs
+
+- ⬜ Limite mémoire
+- ⬜ Thread safety
+- ✅ Export logs
+- ✅ Niveaux de logs
+- ✅ Filtrage
+
+---
+
+## 🔄 Async UI
+
+### ⚠️ Problème actuel
+
+Certains handlers utilisent actuellement :
+
+async void
+
+Ce qui provoque plusieurs risques :
+
+- impossibilité d’attendre correctement les opérations async
+- tests potentiellement instables
+- race conditions UI
+- exceptions async difficiles à capturer
+- comportements imprévisibles lors des clics rapides
+
+---
+
+## 🔧 Évolutions prévues
+
+### ⬜ Transformer les handlers async critiques
+
+Remplacer progressivement :
+
+async void
+
+par :
+
+async Task
+
+---
+
+### ⬜ Stabiliser pipeline async UI
+
+Vérifier :
+
+- sélection massive
+- clics rapides
+- multi-refresh preview
+- recherche + sélection simultanée
+- suppression exclusions + refresh
+
+---
+
+### ⬜ Améliorer testabilité
+
+Permettre aux tests de :
+
+- await correctement les opérations
+- détecter erreurs async
+- éviter faux positifs
+- éviter tests instables
+
+---
+
+### ⬜ Vérifier compatibilité WinUI
+
+Valider :
+
+- bindings commandes
+- événements UI
+- interactions TreeView
+- absence freeze
+- absence double refresh
+
+---
+
+## ⚡ Mémoire & cache avancé
+
+- ⬜ Monitoring mémoire cache
+- ⬜ Nettoyage mémoire intelligent
+- ⬜ Stratégie eviction avancée
+- ⬜ Profiling mémoire gros projets
+- ⬜ Optimisation allocations preview/export
+- ⬜ Preview limité configurable
+
+---
+
+## 📌 Preview limité / Export complet
+
+### 🎯 Objectif
+
+Clarifier le comportement des très gros projets lorsque le preview est tronqué
+mais que les statistiques continuent d’être calculées sur l’ensemble des fichiers sélectionnés.
+
+---
+
+### ⚠️ Contexte actuel
+
+Pour les gros volumes :
+
+- le preview est volontairement limité pour protéger :
+  - la mémoire
+  - les performances
+  - la fluidité UI
+
+- mais les statistiques continuent d’être calculées sur :
+  - tous les fichiers sélectionnés
+  - l’export complet réel
+
+Conséquence actuelle :
+
+Preview ≠ Export
+
+dans certains cas extrêmes.
+
+---
+
+### 🔍 Évolutions prévues
+
+- ⬜ Ajouter un indicateur visuel clair lorsque le preview est tronqué
+- ⬜ Différencier explicitement :
+  - statistiques export complet
+  - contenu preview limité
+- ⬜ Clarifier le message utilisateur lors des limites de caractères
+- ⬜ Vérifier cohérence UX du mode preview tronqué
+- ⬜ Étudier un mode :
+  - preview partiel intelligent
+  - export complet conservé
+- ⬜ Vérifier cohérence architecture ALC avec la règle :
+  - Preview = Export
+
+---
+
+### 🧠 Important
+
+Cette évolution ne concerne que :
+
+- les très gros projets
+- les limites de protection mémoire/performance
+
+Le comportement actuel reste volontaire afin de :
+
+- éviter les freezes UI
+- limiter l’utilisation mémoire
+- conserver une application fluide
+
+---
+
+## ⚠️ Risques
+
+Cette modification impacte :
+
+- pipeline UI
+- interactions utilisateur
+- rafraîchissement preview
+- stabilité TreeView
+
+👉 Refactor à faire uniquement après stabilisation architecture.
+
+---
+
+## ✅ Conditions avant implémentation
+
+- stabilisation performance 0.12.0 terminée
+- TreeView stable
+- recherche stable
+- preview stable
+- split MainViewModel suffisamment avancé
+- tests actuels validés
+
+---
+
+## 🧪 Tests à prévoir
+
+### Sélection
+
+- parent → enfants
+- enfants → parent
+- état partiel
+- clics rapides
+
+---
+
+### Recherche
+
+- recherche dynamique
+- suppression recherche
+- expansion automatique
+- conservation état UI
+
+---
+
+### Async
+
+- multi-clic rapide
+- double refresh
+- refresh simultanés
+- absence race conditions
+
+---
+
+### Preview / Export
+
+- cohérence preview ↔ export
+- preview tronqué gros projets
+- statistiques export complet
+
+---
+
+## 🎯 Résultat attendu
+
+✔ UI plus prévisible
+✔ Tests plus fiables
+✔ Async plus propre
+✔ Réduction comportements aléatoires
+✔ Base plus robuste pour futures optimisations
 
 ---
 

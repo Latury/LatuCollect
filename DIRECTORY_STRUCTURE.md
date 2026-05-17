@@ -54,6 +54,15 @@ LatuCollect/
 │   └── WinUI/
 │       ├── Views/
 │       ├── ViewModels/
+│       │   ├── TreeView/
+│       │   ├── Preview/
+│       │   ├── Export/
+│       │   ├── Logs/
+│       │   ├── Search/
+│       │   └── Settings/
+│       │
+│       │   👉 Découpage progressif prévu du MainViewModel
+│       │
 │       ├── Models/
 │       ├── Converters/
 │       ├── Services/
@@ -337,6 +346,8 @@ LatuCollect.UI.WinUI/
 - Assets global
 - Système de thèmes avancé
 - Centralisation complète des ressources UI
+- Suppression complète du système de simulation
+- Nettoyage des dépendances simulation
 
 ---
 
@@ -345,6 +356,8 @@ LatuCollect.UI.WinUI/
 ```text
 ✔ Architecture stabilisée
 ✔ Pipeline optimisé
+🔄 Stabilisation async UI prévue
+🔄 Split progressif MainViewModel prévu
 ✔ Cache actif
 ✔ Logs intégrés
 ✔ UI stable

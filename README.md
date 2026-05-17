@@ -10,8 +10,8 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.11.0-FFDF20?style=for-the-badge)
-![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.11.0)-28A745?style=for-the-badge>)
+![Version](https://img.shields.io/badge/Version-0.12.0-FFDF20?style=for-the-badge)
+![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.12.0)-28A745?style=for-the-badge>)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -184,7 +184,7 @@ Chemin du fichier
 ----------------------------------------
 ```
 
-👉 Aperçu = Export
+👉 Aperçu = Export dans le fonctionnement standard
 
 ---
 
@@ -212,6 +212,20 @@ Chemin du fichier
 👉 Message :
 
 ⚠ Projet volumineux — affichage partiel
+
+### ⚠️ Preview limité
+
+Dans certains très gros projets :
+
+- le preview peut être volontairement tronqué
+- l’export complet reste conservé
+- les statistiques restent calculées sur tous les fichiers sélectionnés
+
+👉 Objectif :
+
+- éviter les freezes UI
+- limiter l’utilisation mémoire
+- conserver une application fluide
 
 ---
 
@@ -287,6 +301,16 @@ UI = affichage
 
 👉 ViewModel = orchestrateur
 
+### 🔮 Évolution future
+
+Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spécialisés afin de :
+
+- améliorer la maintenabilité
+- réduire les effets de bord
+- améliorer la stabilité async UI
+
+👉 Voir ROADMAP pour les détails
+
 ---
 
 # 📦 15. Structure
@@ -310,7 +334,7 @@ Resources/
 - Mode développeur actif
 
 👉 Stabilisation majeure terminée (0.11.0)
-👉 Passage vers optimisation performance (0.12.0)
+👉 Préparation architecture & stabilisation future
 
 ---
 
@@ -347,7 +371,10 @@ Resources/
 
 - Lazy loading
 - Optimisation performance
+- Stabilisation async UI
+- Split progressif MainViewModel
 - Amélioration UX
+- Optimisation gros projets
 
 👉 Voir : [ROADMAP](./ROADMAP.md)
 

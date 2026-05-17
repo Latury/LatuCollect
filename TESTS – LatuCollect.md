@@ -186,7 +186,7 @@ Tests réalisés directement dans l’interface WinUI
 ### Vérifier :
 
 - Mise à jour en temps réel
-- Aperçu = export
+- Aperçu = export dans le fonctionnement standard
 - Lisibilité correcte
 
 ### Déclencheurs :
@@ -217,6 +217,37 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Pas de recalcul inutile
 - Cache actif
 - Protection double appel
+
+---
+
+---
+
+## ⚠️ PREVIEW LIMITÉ / EXPORT COMPLET
+
+### Vérifier :
+
+- preview tronqué correctement
+- export complet conservé
+- statistiques calculées sur tous les fichiers
+- cohérence des messages utilisateur
+
+---
+
+### Cas critiques :
+
+- très gros projet
+- limite mémoire atteinte
+- grand nombre de fichiers sélectionnés
+- preview volontairement limité
+
+---
+
+👉 Résultat attendu :
+
+- Aucun freeze UI
+- Export complet conservé
+- Message utilisateur clair
+- Comportement prévisible
 
 ---
 
@@ -291,6 +322,54 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 - Aucun ralentissement
 - Aucun bug visuel
+
+---
+
+### 🧠 Mémoire & cache
+
+### Vérifier :
+
+- Nettoyage correct du cache
+- Réduction des recalculs inutiles
+- Absence d’explosion mémoire
+- Stabilité sur gros projets
+
+---
+
+👉 Résultat attendu :
+
+- Mémoire stable
+- UI fluide
+- Aucun ralentissement progressif
+
+---
+
+## 🔄 TESTS ASYNC UI
+
+### Vérifier :
+
+- absence de double refresh
+- absence de race conditions
+- stabilité lors des clics rapides
+- stabilité sélection + recherche simultanées
+
+---
+
+### Cas critiques :
+
+- multi-clic rapide
+- sélection massive
+- refresh preview simultanés
+- suppression exclusions pendant refresh
+
+---
+
+👉 Résultat attendu :
+
+- Aucun comportement incohérent
+- Aucun freeze
+- Aucun refresh infini
+- UI toujours réactive
 
 ---
 
@@ -637,3 +716,7 @@ Les tests garantissent :
 - Extension couverture tests unitaires
 - Tests automatisés
 - Tests de performance avancés
+- Tests communication inter-ViewModels
+- Validation synchronisation états UI
+- Validation stabilité bindings
+- Validation stabilité commandes async

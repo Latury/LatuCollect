@@ -155,6 +155,61 @@ Dans la classe :
 
 ---
 
+## 🔮 Évolution future — Split MainViewModel
+
+### 🎯 Objectif
+
+Réduire les responsabilités du `MainViewModel`
+et améliorer la maintenabilité de l’UI.
+
+---
+
+### ⚠️ Constat actuel
+
+Le `MainViewModel` centralise actuellement :
+
+- sélection TreeView
+- recherche
+- preview
+- export
+- logs
+- statistiques
+- états UI
+- commandes
+
+👉 Cette centralisation simplifie actuellement le développement
+mais augmente progressivement :
+
+- les risques d’effets de bord
+- la complexité des refresh UI
+- la difficulté des tests
+- les risques liés aux interactions async
+
+---
+
+### 🔧 Évolution prévue
+
+Le projet évoluera progressivement vers plusieurs ViewModels spécialisés :
+
+- `TreeViewViewModel`
+- `PreviewViewModel`
+- `ExportViewModel`
+- `SettingsViewModel`
+- `LogsViewModel`
+
+---
+
+### ⚠️ Important
+
+Cette séparation restera progressive afin de :
+
+- préserver la stabilité UI
+- éviter les cassures bindings
+- limiter les régressions
+- conserver un pipeline prévisible
+
+---
+
 ## 🔹 Rôle réel du ViewModel (v0.8.0)
 
 Le ViewModel ne contient plus de logique métier complexe.
@@ -278,7 +333,7 @@ Importer → Sélectionner → Aperçu → Exporter
 - ✔ Lecture via FileReaderService
 - ✔ Assemblage via FileExportService
 - ✔ Source unique de vérité pour le contenu
-- ✔ Aperçu = Export (strictement identique)
+- ✔ Aperçu = Export dans le fonctionnement standard
 
 ---
 
@@ -552,6 +607,42 @@ Objectif :
 
 ---
 
+## ⚠️ Cas particulier — Preview limité
+
+Pour les très gros projets :
+
+- le preview peut être volontairement tronqué
+- l’export complet reste conservé
+- les statistiques restent calculées sur l’ensemble réel des fichiers
+
+👉 Cette limitation protège :
+
+- la mémoire
+- les performances
+- la stabilité UI
+
+---
+
+### ⚠️ Important
+
+Dans ces cas extrêmes :
+
+Preview ≠ Export
+
+uniquement pour l’affichage.
+
+Le contenu exporté reste complet.
+
+---
+
+### 🎯 Objectif
+
+- éviter les freezes UI
+- conserver une application fluide
+- limiter l’utilisation mémoire
+
+---
+
 # 13. STRUCTURE PROJET
 
 ```text
@@ -611,6 +702,38 @@ Méthode :
 - ✔ UI jamais bloquée
 
 👉 Les opérations coûteuses doivent être contrôlées (ex : debounce côté UI)
+
+---
+
+### 🔮 Évolution future — Stabilisation async UI
+
+Certaines interactions UI utilisent encore actuellement :
+
+async void
+
+👉 Une migration progressive vers :
+
+async Task
+
+est prévue pour :
+
+- améliorer la stabilité
+- réduire les race conditions
+- améliorer la testabilité
+- faciliter la gestion des erreurs async
+
+---
+
+### ⚠️ Important
+
+Cette évolution impacte fortement :
+
+- le TreeView
+- les refresh preview
+- les interactions rapides UI
+
+👉 Elle doit être réalisée progressivement
+et uniquement après stabilisation architecture.
 
 ---
 
@@ -708,6 +831,11 @@ Futur :
 - Amélioration UI
 - Centralisation des interfaces
 - Stabilisation architecture cible
+- Suppression complète du système de simulation
+- Nettoyage des dépendances simulation
+- Simplification du pipeline global
+- Split progressif du MainViewModel
+- Stabilisation async UI
 
 👉 Voir [ROADMAP](./ROADMAP.md) pour le détail
 
