@@ -31,7 +31,6 @@
 */
 
 using LatuCollect.Core.Services.Export;
-using LatuCollect.Core.Simulation;
 using LatuCollect.UI.WinUI.Settings.Panels;
 using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
@@ -676,67 +675,8 @@ namespace LatuCollect.UI.WinUI
             await dialog.ShowAsync();
         }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 9. SIMULATION
-        // ═════════════════════════════════════════════════════════════
-
-        private async void OnSimulationClicked(object sender, RoutedEventArgs e)
-        {
-            var dialog = new ContentDialog
-            {
-                Title = "Mode simulation",
-                PrimaryButtonText = "Appliquer",
-                CloseButtonText = "Annuler",
-                XamlRoot = this.Content.XamlRoot
-            };
-
-            var stack = new StackPanel { Spacing = 10 };
-
-            var toggle = new ToggleSwitch
-            {
-                Header = "Activer la simulation",
-                IsOn = _viewModel.IsSimulationEnabled
-            };
-
-            var combo = new ComboBox
-            {
-                ItemsSource = new string[]
-                {
-                    "Aucun",
-                    "FichiersVides",
-                    "ErreursExport",
-                    "ErreursLecture",
-                    "CheminsLongs",
-                    "UI_Loader",
-                    "UI_Error",
-                },
-                SelectedItem = _viewModel.SelectedSimulationScenario
-            };
-
-            stack.Children.Add(toggle);
-            stack.Children.Add(new TextBlock { Text = "Scénario :" });
-            stack.Children.Add(combo);
-
-            dialog.Content = stack;
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                dialog.Hide();
-
-                _viewModel.IsSimulationEnabled = toggle.IsOn;
-                _viewModel.SelectedSimulationScenario = combo.SelectedItem?.ToString() ?? "Aucun";
-
-                SimulationConfig.IsEnabled = _viewModel.IsSimulationEnabled;
-                SimulationConfig.Scenario = _viewModel.SelectedSimulationScenario;
-            }
-        }
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 10. DIALOG HELPERS
+        // 9. DIALOG HELPERS
         // ═════════════════════════════════════════════════════════════
 
         private async Task ShowDialog(string title, string message)
@@ -803,7 +743,7 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 11. NAVIGATION / MENUS
+        // 10. NAVIGATION / MENUS
         // ═════════════════════════════════════════════════════════════
 
         private async void OnHelpClicked(object sender, RoutedEventArgs e)
@@ -909,7 +849,7 @@ namespace LatuCollect.UI.WinUI
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 12. FERMETURE APP
+        // 11. FERMETURE APP
         // ═════════════════════════════════════════════════════════════
 
         private async void OnQuitClicked(object sender, RoutedEventArgs e)
@@ -929,7 +869,7 @@ namespace LatuCollect.UI.WinUI
 
 
         // ═════════════════════════════════════════════════════════════
-        // 13. UTILITAIRES
+        // 12. UTILITAIRES
         // ═════════════════════════════════════════════════════════════
 
         // 🧑🏻‍💻 Description technique

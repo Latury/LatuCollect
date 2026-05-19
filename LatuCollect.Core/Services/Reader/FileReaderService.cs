@@ -10,11 +10,9 @@
 ║  Responsabilités principales :                                       ║
 ║  - Lire un fichier texte                                             ║
 ║  - Gérer les erreurs de lecture                                      ║
-║  - Appliquer la simulation si activée                                ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - System.IO                                                         ║
-║  - SimulationService                                                 ║
 ║                                                                      ║
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Aucune dépendance UI                                              ║
@@ -26,7 +24,6 @@
 */
 
 using LatuCollect.Core.Models;
-using LatuCollect.Core.Simulation;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -90,11 +87,6 @@ namespace LatuCollect.Core.Services.Reader
                 // 🔹 Existence fichier
                 if (!File.Exists(path))
                     return FileReadResult.Fail("Fichier introuvable");
-
-                // 🧪 Simulation
-                var simulated = SimulationService.SimulateRead(path);
-                if (simulated != null)
-                    return FileReadResult.Success(simulated, 0);
 
                 // 🔁 Cache
                 if (TryGetFromCache(path, out var cached))

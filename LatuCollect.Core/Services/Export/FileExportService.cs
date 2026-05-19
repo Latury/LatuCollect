@@ -24,7 +24,6 @@ using LatuCollect.Core.Models;
 using LatuCollect.Core.Models.Export;
 using LatuCollect.Core.Services.Reader;
 using LatuCollect.Core.Services.Statistics;
-using LatuCollect.Core.Simulation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -378,7 +377,6 @@ namespace LatuCollect.Core.Services.Export
         {
             try
             {
-                SimulationService.SimulateExport();
                 action();
                 return Success("Export réussi");
             }
@@ -408,7 +406,6 @@ namespace LatuCollect.Core.Services.Export
         {
             try
             {
-                SimulationService.SimulateExport();
                 await action();
                 return Success("Export réussi");
             }

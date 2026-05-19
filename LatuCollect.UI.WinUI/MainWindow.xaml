@@ -233,15 +233,6 @@
                             Text="🧑🏻‍💻 Mode développeur activé"
                             Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                        <TextBlock
-                            Margin="0,4,0,0"
-                            FontSize="12"
-                            Foreground="Orange"
-                            Text="{Binding DeveloperWarningMessage}"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap"
-                            Visibility="{Binding IsDeveloperModeEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
                     </StackPanel>
 
                     <!--  Titre "Choix du format"  -->
@@ -486,22 +477,13 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  =========================  -->
-                            <!--  GAUCHE : SIMULATION + LOGS  -->
+                            <!--  GAUCHE : LOGS  -->
                             <!--  =========================  -->
                             <StackPanel
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal"
                                 Spacing="10">
-
-                                <!--  🧪 SIMULATION  -->
-                                <Button
-                                    Height="40"
-                                    Padding="12,0"
-                                    Click="OnSimulationClicked"
-                                    Content="{Binding SimulationLabel}"
-                                    ToolTipService.ToolTip="Simulation"
-                                    Visibility="{Binding IsSimulationVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                 <!--  🧾 LOGS  -->
                                 <Grid>

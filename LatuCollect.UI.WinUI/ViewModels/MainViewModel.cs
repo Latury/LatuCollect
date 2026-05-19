@@ -40,8 +40,6 @@ using LatuCollect.Core.Logging.Services;
 using LatuCollect.Core.Services.Collection;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
-using LatuCollect.Core.Simulation;
-using LatuCollect.UI.WinUI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,9 +69,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private string _feedbackMessage = "";
         private bool _isFeedbackVisible;
-
-        private bool _isSimulationEnabled = false;
-        private string _selectedSimulationScenario = "Aucun";
 
         private CancellationTokenSource? _searchCts;
         private bool _isPreviewLoading = false;
@@ -355,7 +350,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _isDeveloperMode, value))
                 {
-                    OnPropertyChanged(nameof(IsSimulationVisible));
                     OnPropertyChanged(nameof(IsDeveloperModeEnabled));
 
                     // 🔥 IMPORTANT
@@ -436,54 +430,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 : CurrentFolderPath;
 
         // ═════════════════════════════════════════════════════════════
-        // 11. MODE DEV & SIMULATION
-        // ═════════════════════════════════════════════════════════════
-
-        public bool IsSimulationVisible => IsDeveloperMode;
-
-        public bool IsSimulationEnabled
-        {
-            get => _isSimulationEnabled;
-            set
-            {
-                if (SetProperty(ref _isSimulationEnabled, value))
-                {
-                    SimulationConfig.IsEnabled = value;
-                    OnPropertyChanged(nameof(SimulationLabel));
-                    _ = RefreshPreviewAsync();
-                }
-            }
-        }
-
-        public string SelectedSimulationScenario
-        {
-            get => _selectedSimulationScenario;
-            set
-            {
-                if (SetProperty(ref _selectedSimulationScenario, value))
-                {
-                    SimulationConfig.Scenario = value;
-                    OnPropertyChanged(nameof(SimulationLabel));
-                    _ = RefreshPreviewAsync();
-                }
-            }
-        }
-
-        public string SimulationLabel =>
-            !IsSimulationEnabled
-                ? "🧪 Simulation : Désactivé"
-                : SelectedSimulationScenario == "Aucun"
-                    ? "🧪 Simulation : Activé"
-                    : $"🧪 Simulation : {SelectedSimulationScenario}";
-
-        public string DeveloperWarningMessage =>
-            "⚠ Mode simulation\n\n" +
-            "Ce mode est destiné aux tests.\n" +
-            "Il peut provoquer des comportements instables.";
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 12. STATISTIQUES
+        // 11. STATISTIQUES
         // ═════════════════════════════════════════════════════════════
 
         private int _fileCount;
@@ -515,7 +462,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 13. ARBORESCENCE & RECHERCHE
+        // 12. ARBORESCENCE & RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
         public ObservableCollection<UiFileNode> Tree { get; } = new();
@@ -555,7 +502,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             _applyFilterCallCount;
 
         // ═════════════════════════════════════════════════════════════
-        // 14. CONSTRUCTEUR
+        // 13. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
         public MainViewModel()
@@ -594,14 +541,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             CurrentState = UiState.Empty;
             CurrentFolderPath = string.Empty;
             SelectedFormat = null;
-
-            // 🧪 Simulation
-            IsSimulationEnabled = false;
-            SelectedSimulationScenario = "Aucun";
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 15. COMMANDES UI
+        // 14. COMMANDES UI
         // ═════════════════════════════════════════════════════════════
 
         // Chargement dossier
@@ -620,13 +563,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 CurrentState = UiState.Loading;
 
-                if (!await UiSimulationService.ApplyUiSimulationAsync(this))
-                {
-                    await RefreshPreviewAsync();
-                    return;
-                }
-
-                // 🔥 Import
+               // 🔥 Import
                 var importResult = await _importService.LoadTreeAsync(path);
 
                 // 🔥 Reset propre
@@ -692,7 +629,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 16. EXPORT
+        // 15. EXPORT
         // ═════════════════════════════════════════════════════════════
 
         private string _exportMode = "normal";
@@ -839,7 +776,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 17. PREVIEW
+        // 16. PREVIEW
         // ═════════════════════════════════════════════════════════════
 
         private async Task RefreshPreviewAsync()
@@ -981,7 +918,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 18. FEEDBACK
+        // 17. FEEDBACK
         // ═════════════════════════════════════════════════════════════
 
         public bool IsFeedbackVisible
@@ -1010,7 +947,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 19. SÉLECTION & ARBORESCENCE
+        // 18. SÉLECTION & ARBORESCENCE
         // ═════════════════════════════════════════════════════════════
 
         public bool IsTreeEmpty =>
@@ -1270,7 +1207,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 20. FILTRAGE & RECHERCHE
+        // 19. FILTRAGE & RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
         internal void ApplyFilter()
@@ -1390,7 +1327,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 21. CONVERSION UI ↔ CORE
+        // 20. CONVERSION UI ↔ CORE
         // ═════════════════════════════════════════════════════════════
 
         private UiFileNode ConvertToUiNode(CoreFileNode coreNode)
@@ -1482,7 +1419,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 22. CONFIGURATION UTILISATEUR
+        // 21. CONFIGURATION UTILISATEUR
         // ═════════════════════════════════════════════════════════════
 
         public void RefreshExclusionsUi()
@@ -1648,7 +1585,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         }
 
         // ═════════════════════════════════════════════════════════════
-        // 23. LOGS
+        // 22. LOGS
         // ═════════════════════════════════════════════════════════════
 
         public string GetLogsExportContent()
