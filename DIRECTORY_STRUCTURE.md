@@ -90,7 +90,8 @@ LatuCollect/
 - Structure cible (pas encore complète)
 - Implémentation progressive
 - Alignement avec ROADMAP obligatoire
-- ❌ Le système de simulation sera supprimé avant la version finale
+- ✔ Système de simulation supprimé (v0.13.0)
+- ✔ Architecture simplifiée
 
 ---
 
@@ -179,8 +180,6 @@ Responsabilités :
 - Tests unitaires
 - Tests fonctionnels
 - Tests ViewModel
-
-👉 Aucun test lié à la simulation
 
 ---
 
@@ -346,22 +345,25 @@ LatuCollect.UI.WinUI/
 - Assets global
 - Système de thèmes avancé
 - Centralisation complète des ressources UI
-- Suppression complète du système de simulation
-- Nettoyage des dépendances simulation
 
 ---
 
 # 🧠 ÉTAT DU PROJET
 
 ```text
-✔ Architecture stabilisée
-✔ Pipeline optimisé
-🔄 Stabilisation async UI prévue
-🔄 Split progressif MainViewModel prévu
-✔ Cache actif
-✔ Logs intégrés
-✔ UI stable
-✔ Séparation UI / Core
+- ✔ Architecture stabilisée
+- ✔ Pipeline optimisé
+- 🔄 Stabilisation async UI prévue
+- 🔄 Split progressif MainViewModel prévu
+- ✔ Cache actif
+- ✔ Logs intégrés
+- ✔ UI stable
+- ✔ Séparation UI / Core
+- ✔ Système de simulation supprimé
+- ✔ Couplage Core/UI réduit
+- ✔ Pipeline simplifié
+- ✔ Simplification architecture (v0.13.0)
+- ✔ Réduction des dépendances inutiles
 ```
 
 ---

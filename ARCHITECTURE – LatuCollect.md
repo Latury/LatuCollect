@@ -521,9 +521,9 @@ Le mode développeur permet d’activer des fonctionnalités internes de debug.
 
 ### ✔ Objectif
 
-- Debug
-- Analyse
-- Aide au développement
+- Analyse interne
+- Outils de développement
+- Gestion avancée des exclusions protégées
 
 👉 Le mode développeur reste strictement isolé du comportement normal.
 
@@ -670,6 +670,7 @@ UI/
 - ✔ Pas de logique UI dans Core
 - ✔ Pas de logique métier complexe dans UI
 - ✔ Pas de valeurs en dur UI
+- ✔ Réduire les dépendances inutiles entre Core et UI
 
 ---
 
@@ -819,6 +820,10 @@ Futur :
 - ✔ Core largement couvert par les tests
 - ✔ Tests ViewModel stabilisés
 
+- ✔ Suppression complète du système de simulation (v0.13.0)
+- ✔ Réduction du couplage Core/UI
+- ✔ Simplification architecture globale
+
 ---
 
 # 23. ÉVOLUTIONS
@@ -831,8 +836,6 @@ Futur :
 - Amélioration UI
 - Centralisation des interfaces
 - Stabilisation architecture cible
-- Suppression complète du système de simulation
-- Nettoyage des dépendances simulation
 - Simplification du pipeline global
 - Split progressif du MainViewModel
 - Stabilisation async UI

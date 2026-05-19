@@ -512,7 +512,9 @@ Améliorer l’interface sans changer son fonctionnement
 - ✔ UI fluide
 - ✔ Pipeline respecté
 - ✔ Preview = Export
-- 🔄 Suppression future du système de simulation
+- ✔ Système de simulation supprimé (v0.13.0)
+- ✔ Architecture simplifiée
+- ✔ Réduction du couplage Core/UI
 
 ---
 

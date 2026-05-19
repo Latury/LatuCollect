@@ -1911,11 +1911,168 @@ pour rendre l’application plus fluide et plus prévisible sur les gros projets
 
 ---
 
-# 🧠 Philosophie
+# 🚀 VERSION 0.13.0
 
-- ✅ Simplicité avant complexité
-- ✅ Lisibilité avant optimisation
-- ✅ UX immédiate avant perfection
-- ✅ Core prévisible avant nouvelles fonctionnalités
+## 📌 Statut
+
+🟢 Terminé — Simplification architecture & suppression du système de simulation
 
 ---
+
+# 🎯 Objectif
+
+Supprimer complètement le système de simulation afin de :
+
+- simplifier l’architecture
+- réduire les effets de bord
+- nettoyer les dépendances inutiles
+- préparer les futurs refactors UI/Core
+- réduire le code mort
+- stabiliser davantage le pipeline principal
+
+⚠️ Aucun changement fonctionnel utilisateur majeur attendu.
+
+---
+
+# 🔥 Suppression complète du système de simulation
+
+## 🧱 Core
+
+### ✅ Suppression :
+
+- `SimulationConfig.cs`
+- `SimulationService.cs`
+- dossier `Core/Simulation/`
+
+### ✅ Nettoyage :
+
+- suppression des scénarios simulés
+- suppression des hooks simulation
+- suppression des dépendances simulation dans :
+  - `FileReaderService`
+  - `FileExportService`
+
+### ✅ Résultat :
+
+- pipeline simplifié
+- moins de conditions spéciales
+- réduction des effets de bord
+- réduction du couplage Core/UI
+
+---
+
+## 🖥️ UI
+
+### ✅ Suppression :
+
+- bouton simulation
+- dialog simulation
+- logique ViewModel liée
+- états simulation
+- labels simulation
+- bindings WinUI liés
+- handlers UI liés
+
+### ✅ Nettoyage :
+
+- suppression des propriétés simulation dans `MainViewModel`
+- suppression des hooks UI simulation
+- suppression des refresh liés simulation
+
+### ✅ Conservation :
+
+- mode développeur
+- exclusions protégées
+- logs
+- architecture MVVM
+
+---
+
+# 🧹 Nettoyage architecture
+
+### ✅ Nettoyage global :
+
+- suppression code mort
+- suppression flags inutiles
+- suppression using inutiles
+- suppression références simulation restantes
+- suppression bindings WinUI obsolètes
+
+### ✅ Simplification :
+
+- `MainViewModel` allégé
+- dépendances simplifiées
+- architecture plus lisible
+- pipeline plus prévisible
+
+### ✅ Préparation future :
+
+- futurs splits ViewModels
+- futurs refactors UI/Core
+- stabilisation async
+- réduction des risques de couplage
+
+---
+
+# ⚙️ Pipeline
+
+## ✅ Pipeline principal conservé
+
+```text
+Import → Lecture → Collection → Assemblage → Statistiques → Export
+```
+
+---
+
+### ✅ Vérifications :
+
+- Preview = Export conservé
+- fonctionnement async conservé
+- cache lecture conservé
+- statistiques conservées
+- export conservé
+
+---
+
+# 🧪 Validation
+
+### ✅ Vérifications effectuées :
+
+- lecture OK
+- export OK
+- preview OK
+- logs OK
+- mode développeur OK
+- aucun binding WinUI simulation restant
+- aucun comportement majeur cassé détecté
+
+---
+
+# 📈 Impact technique
+
+## ✅ Bénéfices
+
+- architecture simplifiée
+- réduction du code mort
+- réduction des effets de bord
+- réduction du couplage Core/UI
+- meilleure lisibilité
+- meilleure maintenabilité
+- meilleure stabilité future
+
+---
+
+# 🧠 Philosophie
+
+Cette version poursuit l’objectif principal de LatuCollect :
+
+✔ simple
+✔ stable
+✔ prévisible
+✔ maintenable
+
+❌ aucune complexité inutile
+❌ aucun pipeline secondaire inutile
+❌ aucun comportement implicite inutile
+
+👉 Copier intelligent uniquement

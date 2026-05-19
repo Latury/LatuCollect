@@ -10,8 +10,8 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.12.0-FFDF20?style=for-the-badge)
-![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.12.0)-28A745?style=for-the-badge>)
+![Version](https://img.shields.io/badge/Version-0.13.0-FFDF20?style=for-the-badge)
+![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.13.0)-28A745?style=for-the-badge>)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -35,7 +35,8 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 ## 📊 État des fonctionnalités
 
 - ✅ Stabilisation majeure terminée (0.11.0)
-- 🔄 Optimisations performance en cours (0.12.0)
+- ✅ Optimisations performance terminées (0.12.0)
+- ✅ Simplification architecture terminée (0.13.0)
 - 🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
 
 ---
@@ -137,16 +138,16 @@ Accès :
 
 ---
 
-### 🧑‍💻 Mode développeur
+### 👨🏻‍💻 Mode développeur
 
 - Activation via ⚙ Paramètres
 - Indicateur visuel intégré
 
 👉 Rôle :
 
-- Debug
-- Analyse
-- Outils internes
+- Analyse interne
+- Outils de développement
+- Gestion avancée des exclusions protégées
 
 👉 Aucun impact sur l’utilisateur standard
 
@@ -270,6 +271,8 @@ Dans certains très gros projets :
 - Statistiques
 - Logs
 - Mode développeur
+- Architecture simplifiée
+- Réduction du couplage Core/UI
 
 ---
 
@@ -334,7 +337,8 @@ Resources/
 - Mode développeur actif
 
 👉 Stabilisation majeure terminée (0.11.0)
-👉 Préparation architecture & stabilisation future
+👉 Simplification architecture terminée (0.13.0)
+👉 Préparation des futurs refactors ViewModels
 
 ---
 
@@ -344,7 +348,8 @@ Resources/
 - Rapide
 - Stable
 - Lisible
-- Non destructif - - Lecture seule
+- Non destructif
+- Lecture seule
 - Aucune modification
 
 ---

@@ -487,7 +487,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 🧑‍💻 MODE DÉVELOPPEUR
+## 👨🏻‍💻 MODE DÉVELOPPEUR
 
 ### Vérifier :
 
@@ -507,9 +507,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 👉 Objectif :
 
-- Debug
 - Analyse interne
 - Outils de développement
+- Gestion avancée des exclusions protégées
 
 ---
 
@@ -549,6 +549,26 @@ Chemin du fichier
 
 - Aucun crash
 - Message clair
+
+---
+
+## 🧹 VALIDATION POST-SUPPRESSION SIMULATION
+
+### Vérifier :
+
+- absence de bouton simulation
+- absence de dialog simulation
+- absence de bindings simulation
+- mode développeur toujours fonctionnel
+
+---
+
+👉 Résultat attendu :
+
+- Aucun élément simulation restant
+- Aucun binding cassé
+- Aucun comportement incohérent
+- UI simplifiée et stable
 
 ---
 
@@ -689,6 +709,8 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - ✔ Validation Export / Statistics / Collection
 - ✔ Validation états UI / ViewModel
 - ✔ Vérification des performances principales
+- ✔ Suppression complète du système de simulation (v0.13.0)
+- ✔ Simplification architecture Core/UI
 - 🔄 Extension couverture tests avancés
 
 ---

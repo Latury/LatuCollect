@@ -919,10 +919,10 @@ et préparer les futurs refactors UI/Core.
 
 ## 🧠 Core
 
-- ⬜ Supprimer dossier Simulation/
-- ⬜ Supprimer SimulationService
-- ⬜ Supprimer tous les scénarios
-- ⬜ Nettoyer dépendances dans :
+- ✅ Supprimer dossier Simulation/
+- ✅ Supprimer SimulationService
+- ✅ Supprimer tous les scénarios
+- ✅ Nettoyer dépendances dans :
   - FileReaderService
   - FileExportService
 
@@ -930,35 +930,39 @@ et préparer les futurs refactors UI/Core.
 
 ## 🖥️ UI
 
-- ⬜ Supprimer bouton Simulation
-- ⬜ Supprimer logique ViewModel liée
-- ⬜ Supprimer activation mode simulation
+- ✅ Supprimer bouton Simulation
+- ✅ Supprimer logique ViewModel liée
+- ✅ Supprimer activation mode simulation
+- ✅ Supprimer bindings WinUI liés à la simulation
+- ✅ Supprimer dialog simulation
+- ✅ Nettoyer handlers UI liés
 
 ---
 
 ## ⚙️ Configuration
 
-- ⬜ Supprimer SimulationConfig
-- ⬜ Nettoyer config utilisateur
+- ✅ Supprimer SimulationConfig
+- ✅ Vérifier absence de dépendance simulation dans UserConfig
 
 ---
 
 ## 🧹 Nettoyage global
 
-- ⬜ Supprimer code mort
-- ⬜ Supprimer flags inutiles
-- ⬜ Vérifier qu’aucune référence ne reste
+- ✅ Supprimer code mort
+- ✅ Supprimer flags inutiles
+- ✅ Vérifier qu’aucune référence ne reste
+- ✅ Réduire le couplage Core/UI
+- ✅ Simplifier MainViewModel
+- ✅ Préparer les futurs refactors ViewModels
 
 ---
 
 ## 🧪 Validation
 
-- ⬜ Vérifier :
-  - lecture OK
-  - export OK
-  - preview OK
-  - statistiques OK
-  - aucun comportement cassé
+- ✅ Aucun problème majeur détecté
+- ✅ Vérifier Preview = Export
+- ✅ Vérifier absence de bindings WinUI cassés
+- ✅ Vérifier mode développeur toujours fonctionnel
 
 ---
 
