@@ -140,10 +140,10 @@ Afficher la structure du projet
 ## ✅ Sélection
 
 - Multi-sélection
-- Support tri-state (`true / false / null`)
-- Synchronisation parent ↔ enfants
+- Synchronisation simplifiée parent ↔ enfants
 - Mise à jour immédiate du preview
-- Comportement inspiré de Windows Explorer
+- Sélection simplifiée et prévisible
+- Comportement de sélection simple et prévisible
 
 ---
 

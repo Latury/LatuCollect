@@ -621,6 +621,18 @@ ET améliorer l’expérience utilisateur (TreeView + exclusions)
 - ✅ Validation états export ViewModel
 - ✅ Validation états UI ViewModel
 
+⚠️ Important
+
+Le système tri-state introduit en v0.11.0
+a ensuite été volontairement supprimé et simplifié en v0.12.0
+afin de :
+
+- réduire la complexité WinUI
+- limiter les effets de bord
+- améliorer la stabilité UI
+- simplifier les interactions async
+- rendre le comportement TreeView plus prévisible
+
 ---
 
 # 🧠 FileReader
@@ -1004,10 +1016,11 @@ et stabiliser les comportements UI.
 
 ## 🌳 TreeView
 
-- ⬜ Vérifier rendu visuel état tri-state WinUI
-- ⬜ Vérifier cohérence visuelle parent partiel
-- ⬜ Vérifier absence rebond visuel
+- ⬜ Vérifier stabilité sélection massive
 - ⬜ Vérifier stabilité multi-clic rapide
+- ⬜ Vérifier absence de refresh inutiles
+- ⬜ Vérifier cohérence sélection ↔ visibilité
+- ⬜ Vérifier stabilité après exclusions dynamiques
 
 ---
 
@@ -1288,7 +1301,6 @@ Cette modification impacte :
 
 - parent → enfants
 - enfants → parent
-- état partiel
 - clics rapides
 
 ---
@@ -1474,8 +1486,6 @@ Ex :
 - lignes
 - icônes
 - sélection
-- Audit visuel état tri-state
-- Audit lisibilité sélection partielle
 - Audit confort navigation gros projets
 
 ### 👁️ Preview

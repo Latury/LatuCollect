@@ -162,14 +162,15 @@ Tests réalisés directement dans l’interface WinUI
 ### Vérifier :
 
 - Sélection parent → sélection enfants
-- Désélection enfant → mise à jour parent correcte
+- Désélection cohérente
 - Aucun comportement incohérent
+- Synchronisation correcte sélection ↔ preview
 
 ### Cas critiques :
 
 - Décoche un fichier → ne doit pas recocher le parent
-- Sélection partielle d’un dossier
-- Propagation correcte des états
+- Dossier contenant des fichiers sélectionnés et non sélectionnés
+- Synchronisation correcte de la sélection
 
 👉 Résultat attendu :
 
@@ -610,9 +611,10 @@ Tester la logique métier indépendamment de l’UI
 ### Sélection TreeView
 
 - Propagation parent ↔ enfants
-- Tri-state (`true / false / null`)
-- Cohérence états partiels
 - Synchronisation preview
+- Cohérence sélection ↔ visibilité
+- Sélection massive
+- Multi-clic rapide
 
 ---
 

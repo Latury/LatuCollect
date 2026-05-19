@@ -234,7 +234,7 @@ Le ViewModel ne contient plus de logique métier complexe.
 ## 🔹 Models (UI)
 
 - ✔ Structure des données (FileNode)
-- ✔ Contient les états UI (IsVisible, IsSelected)
+- ✔ Sélection simplifiée (`bool`)
 - ❌ Pas de logique métier
 
 ---
@@ -805,7 +805,7 @@ Futur :
 - ✔ Séparation des statistiques
 - ✔ UI plus stable (gestion des états améliorée)
 
-- ✔ Sélection TreeView tri-state stabilisée
+- ✔ Sélection TreeView simplifiée et stabilisée
 - ✔ Synchronisation parent ↔ enfants
 - ✔ Filtrage basé visibilité (`IsVisible`)
 - ✔ Conservation de l’arbre réel (sans duplication)
@@ -864,7 +864,9 @@ LatuCollect est volontairement simplifié :
 - Tests Core
 - Tests ViewModel
 - Tests recherche TreeView
-- Tests sélection tri-state
+- Tests sélection TreeView
+- Tests synchronisation sélection ↔ preview
+- Tests sélection massive
 - Tests exclusions
 - Tests export
 - Tests statistiques
