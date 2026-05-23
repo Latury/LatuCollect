@@ -989,7 +989,7 @@ et stabiliser les comportements UI.
 
 ## 📂 Import
 
-- ⬜ Lazy loading
+- ✅ Lazy loading
 - ✅ CancellationToken
 - ✅ ImportResult
 - ✅ Affichage partiel
@@ -998,38 +998,41 @@ et stabiliser les comportements UI.
 
 ## 🖥️ UI
 
-- ⬜ Reset dossier propre
+- ✅ Reset dossier propre
 - ✅ Message état vide
 
 ---
 
 ## ✨ UX
 
-- ⬜ Sélection dossier fiable
 - ✅ Message export partiel
-- ⬜ Ajouter "Ouvrir dans l’explorateur"
-- ⬜ Stabilisation scroll exclusions
-- ⬜ Conservation état ouvert après reload complet
-- ⬜ Persistance complète état ouvert arbre
+- ✅ Sélection dossier fiable
+- ✅ Ajouter "Ouvrir dans l’explorateur"
+- ✅ Stabilisation scroll exclusions
+- ✅ Conservation état ouvert après reload complet
+- ✅ Persistance complète état ouvert arbre
 
 ---
 
 ## 🌳 TreeView
 
-- ⬜ Vérifier stabilité sélection massive
-- ⬜ Vérifier stabilité multi-clic rapide
-- ⬜ Vérifier absence de refresh inutiles
-- ⬜ Vérifier cohérence sélection ↔ visibilité
-- ⬜ Vérifier stabilité après exclusions dynamiques
+- ✅ Vérifier absence de refresh inutiles
+- ✅ Vérifier cohérence sélection ↔ visibilité
+- ✅ Vérifier stabilité après exclusions dynamiques
+- ✅ Vérifier stabilité sélection massive
+- ✅ Vérifier stabilité multi-clic rapide
+- ✅ Stabilisation pipeline preview async
+- ✅ Gestion previews obsolètes
+- ✅ Préservation fluidité UI pendant génération preview
 
 ---
 
 ## 🧪 Validation UX
 
-- ⬜ Réouverture arbre après exclusion
-- ⬜ Recherche après exclusion
-- ⬜ Vérification stabilité exclusions protégées
-- ⬜ Vérification synchronisation visibilité ↔ exclusions
+- ✅ Réouverture arbre après exclusion
+- ✅ Recherche après exclusion
+- ✅ Vérification stabilité exclusions protégées
+- ✅ Vérification synchronisation visibilité ↔ exclusions
 
 ---
 

@@ -417,7 +417,7 @@ Importer → Sélectionner → Aperçu → Exporter
 👉 Objectif :
 
 - Alléger FileExportService
-- Préparer une architecture scalable
+- Préparer une architecture évolutive et robuste
 
 ### 🔄 Évolution (v0.9.0)
 
@@ -456,7 +456,7 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 # ⚡ 8. PERFORMANCE
 
-## ✔ État actuel (v0.11.0)
+## ✔ État actuel (v0.14.0)
 
 - Mise en cache des fichiers (FileReaderService)
 - Réduction des accès disque (I/O)
@@ -472,6 +472,14 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 - Optimisation signature sélection
 - Limitation automatique preview volumineux
 - Conservation de l’arbre réel (sans duplication)
+
+- Debounce preview async
+- Invalidation previews obsolètes
+- Chargement progressif UI
+- Yield UI pendant construction TreeView
+- Conservation état ouvert TreeView
+- Réduction rebuild complets exclusions
+- Préservation fluidité pendant imports massifs
 
 👉 Résultat :
 
@@ -712,6 +720,8 @@ Certaines interactions UI utilisent encore actuellement :
 
 async void
 
+✔ Stabilisation majeure du pipeline preview async réalisée en v0.14.0
+
 👉 Une migration progressive vers :
 
 async Task
@@ -823,6 +833,13 @@ Futur :
 - ✔ Suppression complète du système de simulation (v0.13.0)
 - ✔ Réduction du couplage Core/UI
 - ✔ Simplification architecture globale
+- ✔ Pipeline preview async stabilisé
+- ✔ Persistance complète expansion TreeView
+- ✔ Validation previews obsolètes
+- ✔ Chargement progressif UI
+- ✔ Exclusions groupées stabilisées
+- ✔ Reset runtime configuration sécurisé
+- ✔ Réduction importante des race conditions UI
 
 ---
 
@@ -838,7 +855,7 @@ Futur :
 - Stabilisation architecture cible
 - Simplification du pipeline global
 - Split progressif du MainViewModel
-- Stabilisation async UI
+- Stabilisation async UI avancée
 
 👉 Voir [ROADMAP](./ROADMAP.md) pour le détail
 
@@ -870,6 +887,10 @@ LatuCollect est volontairement simplifié :
 - Tests exclusions
 - Tests export
 - Tests statistiques
+- Tests preview async
+- Tests persistance expansion
+- Tests exclusions groupées
+- Tests reset configuration runtime
 
 ## 🎯 Objectif
 

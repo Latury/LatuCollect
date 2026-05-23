@@ -177,6 +177,9 @@ Tests réalisés directement dans l’interface WinUI
 - Cohérence parfaite parent ↔ enfants
 - Aucun bug visuel
 - Aucun état incohérent
+- Conservation état ouvert TreeView
+- Persistance dossiers ouverts
+- Restauration expansion après reload
 
 👉 Priorité : haute
 
@@ -218,8 +221,10 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Pas de recalcul inutile
 - Cache actif
 - Protection double appel
-
----
+- Debounce preview async
+- Invalidation previews obsolètes
+- Protection anti race conditions
+- Génération preview découplée de la sélection
 
 ---
 
@@ -311,6 +316,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - Cache actif (pas de relecture disque)
 - Pas de recalcul inutile
 - UI stable
+- Chargement progressif UI
+- Yield UI pendant construction TreeView
+- Réduction des freezes pendant import massif
 
 ---
 
@@ -353,6 +361,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 - absence de race conditions
 - stabilité lors des clics rapides
 - stabilité sélection + recherche simultanées
+- validation previews obsolètes ignorés
+- validation versioning preview async
+- validation debounce preview
 
 ---
 
@@ -603,7 +614,7 @@ Tester la logique métier indépendamment de l’UI
 - Filtrage visibilité
 - Expansion automatique
 - Reset visibilité
-- Reset expansion
+- Conservation expansion après recherche
 - Suppression nodes
 
 ---
@@ -624,6 +635,9 @@ Tester la logique métier indépendamment de l’UI
 - Exclusion dossiers
 - Persistance configuration
 - Compatibilité ancien format
+- Validation grouped exclusions
+- Validation absence doublons exclusions
+- Validation stabilité refresh exclusions
 
 ---
 
@@ -713,6 +727,12 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - ✔ Vérification des performances principales
 - ✔ Suppression complète du système de simulation (v0.13.0)
 - ✔ Simplification architecture Core/UI
+- ✔ Stabilisation pipeline preview async
+- ✔ Validation persistance expansion TreeView
+- ✔ Validation exclusions groupées
+- ✔ Validation reset runtime configuration
+- ✔ Validation chargement progressif UI
+- ✔ 115 tests unitaires verts
 - 🔄 Extension couverture tests avancés
 
 ---
@@ -738,7 +758,7 @@ Les tests garantissent :
 # 🔮 ÉVOLUTIONS
 
 - Extension couverture tests unitaires
-- Tests automatisés
+- Extension couverture tests automatisés
 - Tests de performance avancés
 - Tests communication inter-ViewModels
 - Validation synchronisation états UI

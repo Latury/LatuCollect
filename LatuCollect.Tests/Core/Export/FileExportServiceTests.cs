@@ -551,27 +551,5 @@ namespace LatuCollect.Tests.Core.Export
                 File.Delete(exportPath);
             }
         }
-
-        // ═════════════════════════════════════════════════════════════
-        // TEST — DEBOUNCE RECHERCHE
-        // ═════════════════════════════════════════════════════════════
-
-        [Fact]
-        public async Task Search_ShouldDebounceMultipleRapidChanges()
-        {
-            // ARRANGE
-            var vm = new MainViewModel();
-
-            // ACT
-            vm.SearchText = "A";
-            vm.SearchText = "AB";
-            vm.SearchText = "ABC";
-
-            await Task.Delay(500);
-
-            // ASSERT
-            Assert.True(
-    vm.ApplyFilterCallCount <= 2);
-        }
     }
 }

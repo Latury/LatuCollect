@@ -255,7 +255,7 @@ UI → ViewModel → Core
 
 ---
 
-# 🧩 STRUCTURE ACTUELLE (v0.11.0)
+# 🧩 STRUCTURE ACTUELLE (v0.14.0)
 
 ```text
 LatuCollect.UI.WinUI/
@@ -307,12 +307,15 @@ LatuCollect.UI.WinUI/
     │
     └── UI/
         └── ViewModels/
+            ├── Configuration/
             ├── Exclusions/
             ├── Export/
+            ├── Performance/
             ├── Preview/
             ├── Search/
             ├── Selection/
-            └── State/
+            ├── State/
+            └── TreeView/
 ```
 
 ---
@@ -337,14 +340,13 @@ LatuCollect.UI.WinUI/
 - Interfaces/
 - Helpers/
 - DTOs/
-- Resources/
+- Centralisation complète des ressources UI
 - Structure finale des tests
 - Centralisation complète des tests
 - Tests système automatisés
 - Installer
-- Assets global
+- Centralisation complète des Assets
 - Système de thèmes avancé
-- Centralisation complète des ressources UI
 
 ---
 
@@ -353,17 +355,24 @@ LatuCollect.UI.WinUI/
 ```text
 - ✔ Architecture stabilisée
 - ✔ Pipeline optimisé
-- 🔄 Stabilisation async UI prévue
+- 🔄 Stabilisation async UI avancée prévue
 - 🔄 Split progressif MainViewModel prévu
 - ✔ Cache actif
 - ✔ Logs intégrés
 - ✔ UI stable
 - ✔ Séparation UI / Core
+
 - ✔ Système de simulation supprimé
 - ✔ Couplage Core/UI réduit
+
 - ✔ Pipeline simplifié
 - ✔ Simplification architecture (v0.13.0)
 - ✔ Réduction des dépendances inutiles
+
+- ✔ Pipeline preview async stabilisé
+- ✔ Chargement progressif UI
+- ✔ Persistance expansion TreeView
+- ✔ Réduction des refresh inutiles
 ```
 
 ---
@@ -376,7 +385,7 @@ LatuCollect.UI.WinUI/
 - ✔ UI WinUI structurée
 - ✔ Architecture respectée
 
-👉 Structure largement stabilisée en v0.11.0
+👉 Structure largement stabilisée en v0.14.0
 👉 Évolution progressive vers la cible
 
 ---
@@ -386,5 +395,6 @@ LatuCollect.UI.WinUI/
 ```text
 ➡ Finaliser la structure cible
 ➡ Continuer le découpage des services
+➡ Continuer le split progressif MainViewModel
 ➡ Stabiliser la version 1.0.0
 ```

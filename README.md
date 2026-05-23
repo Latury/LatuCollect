@@ -10,8 +10,8 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.13.0-FFDF20?style=for-the-badge)
-![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.13.0)-28A745?style=for-the-badge>)
+![Version](https://img.shields.io/badge/Version-0.14.0-FFDF20?style=for-the-badge)
+![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.14.0)-28A745?style=for-the-badge>)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -52,6 +52,10 @@ LatuCollect permet de :
 - Générer un aperçu en temps réel
 - Copier le contenu généré
 - Exporter un document (.txt / .md)
+- Exclure dynamiquement des dossiers
+- Sauvegarder automatiquement les préférences utilisateur
+- Restaurer automatiquement l’état ouvert de l’arborescence
+- Ouvrir rapidement le dossier courant dans l’explorateur
 
 👉 Aucun fichier source n’est modifié
 👉 Lecture seule, aucune transformation
@@ -128,6 +132,7 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 - Choix du format (.txt / .md)
 - Copier le contenu
+- Ouvrir le dossier dans l’explorateur
 
 Accès :
 
@@ -163,6 +168,8 @@ Accès :
 - Aucun fichier sélectionné
 - Chargement
 - Erreur
+- État vide
+- Chargement progressif
 
 ---
 
@@ -194,6 +201,50 @@ Chemin du fichier
 👉 Pipeline simple
 👉 Lecture uniquement
 
+## 🧱 Architecture
+
+LatuCollect suit une architecture ALC :
+
+UI → ViewModel → Core
+
+Principes importants :
+
+- UI = affichage uniquement
+- Core = logique métier
+- Aucun accès disque depuis l’UI
+- Pipeline centralisé
+- Source unique de vérité pour l’export
+
+👉 Objectif :
+
+- Stabilité
+- Lisibilité
+- Maintenabilité
+- Comportement prévisible
+
+---
+
+# 🧪 Validation & stabilité
+
+LatuCollect possède désormais :
+
+- ✔ Plus de 115 tests automatisés
+- ✔ Validation TreeView
+- ✔ Validation recherche
+- ✔ Validation preview async
+- ✔ Validation exclusions
+- ✔ Validation export massif
+- ✔ Validation gros projets
+- ✔ Stress tests mémoire
+
+👉 Objectif :
+
+Garantir une application :
+
+- Stable
+- Prévisible
+- Maintenable
+
 ---
 
 # ⚡ 9. Performance
@@ -203,18 +254,30 @@ Chemin du fichier
 - Cache fichiers
 - Réduction I/O
 - Optimisation mémoire
+- Debounce preview async
+- Réduction des recalculs inutiles
+- Chargement progressif UI
+- Protection anti multi-refresh
+- Invalidation previews obsolètes
 
 ### Protection gros projets
 
 - MAX_NODES
 - MAX_DEPTH
 - Chargement partiel
+- UI responsive pendant import massif
+- Protection contre les previews obsolètes
 
 👉 Message :
 
 ⚠ Projet volumineux — affichage partiel
 
 ### ⚠️ Preview limité
+
+👉 Le contenu exporté reste toujours complet.
+
+👉 Seul l’affichage peut être limité
+pour préserver la fluidité UI et la stabilité mémoire.
 
 Dans certains très gros projets :
 
@@ -236,6 +299,8 @@ Dans certains très gros projets :
 - Réduction flickering
 - Gestion propre du resize
 - Fenêtres de dialogue stables
+- Réduction des refresh inutiles
+- Protection anti multi-refresh
 
 ---
 
@@ -278,12 +343,11 @@ Dans certains très gros projets :
 
 ### 🔮 À venir
 
-- Optimisation TreeView
-- Optimisation gros projets
-- Cache intelligent
-- Lazy loading
-- Stabilisation performance
-- Améliorations UX
+- Lazy loading hiérarchique avancé
+- Split progressif MainViewModel
+- Optimisations mémoire avancées
+- Virtualisation TreeView
+- Améliorations UX futures
 
 ---
 
@@ -335,6 +399,10 @@ Resources/
 - Pipeline optimisé
 - Logs intégrés
 - Mode développeur actif
+- Pipeline preview async stabilisé
+- Persistance TreeView stabilisée
+- Exclusions UI stabilisées
+- Chargement progressif UI actif
 
 👉 Stabilisation majeure terminée (0.11.0)
 👉 Simplification architecture terminée (0.13.0)
@@ -354,18 +422,10 @@ Resources/
 
 ---
 
-# 🧠 17. Philosophie
-
-- Simplicité > complexité
-- Lisibilité > optimisation
-- Utilité > fonctionnalités
-
----
-
-# ⚠️ 18. Limites (actuelles)
+# ⚠️ 17. Limites (actuelles)
 
 - Pas de virtualisation avancée
-- Pas de lazy loading
+- Pas de lazy loading hiérarchique avancé
 - Chargement partiel
 
 👉 Choix volontaire
@@ -374,7 +434,7 @@ Resources/
 
 # 🔮 Évolutions prévues
 
-- Lazy loading
+- Lazy loading hiérarchique avancé
 - Optimisation performance
 - Stabilisation async UI
 - Split progressif MainViewModel
@@ -399,3 +459,30 @@ Resources/
 - 🖥️ [UI GUIDE](./UI_GUIDE.md)
 - 🏗️ [ARCHITECTURE](./ARCHITECTURE.md)
 - 📂 [DIRECTORY STRUCTURE](./DIRECTORY_STRUCTURE.md)
+
+---
+
+# 🧠 Philosophie
+
+LatuCollect est volontairement simple.
+
+👉 L’objectif n’est PAS :
+
+- Analyser du code
+- Transformer du code
+- Parser des projets complexes
+
+👉 L’objectif est :
+
+- Collecter
+- Assembler
+- Exporter
+
+de manière :
+
+- Rapide
+- Stable
+- Lisible
+- Prévisible
+
+✔ Copier intelligent uniquement

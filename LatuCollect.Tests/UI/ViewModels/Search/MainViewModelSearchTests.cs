@@ -1,15 +1,15 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
-║                        LATUCOLLECT                                  ║
-║  Module : Tests                                                     ║
-║  Fichier : MainViewModelSearchTests.cs                              ║
+║                        LATUCOLLECT                                   ║
+║  Module : Tests                                                      ║
+║  Fichier : MainViewModelSearchTests.cs                               ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Tester le système de recherche TreeView                            ║
+║  Tester le système de recherche TreeView                             ║
 ║                                                                      ║
 ║  IMPORTANT :                                                         ║
-║  - Validation logique visibilité                                    ║
-║  - Validation expansion automatique                                 ║
+║  - Validation logique visibilité                                     ║
+║  - Validation expansion automatique                                  ║
 ║  - Aucun accès UI réel                                               ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
@@ -373,7 +373,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
         }
 
         // ═════════════════════════════════════════════════════════════
-        // TEST — RESET EXPANSION APRÈS CLEAR RECHERCHE
+        // TEST — CONSERVATION EXPANSION APRÈS CLEAR RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
@@ -416,8 +416,8 @@ namespace LatuCollect.Tests.UI.ViewModels.Search
             vm.SearchText = string.Empty;
             vm.ApplyFilter();
 
-            // ASSERT — reset expansion
-            Assert.False(folder.IsExpanded);
+            // ASSERT — conservation expansion
+            Assert.True(folder.IsExpanded);
         }
     }
 }

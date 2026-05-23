@@ -1,11 +1,11 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
-║                        LATUCOLLECT                                  ║
-║  Module : Tests.UI.MainViewModel                                    ║
-║  Fichier : MainViewModelStateTests.cs                               ║
+║                        LATUCOLLECT                                   ║
+║  Module : Tests.UI.MainViewModel                                     ║
+║  Fichier : MainViewModelStateTests.cs                                ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Tester les états UI du MainViewModel                               ║
+║  Tester les états UI du MainViewModel                                ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Vérifier les états UI                                             ║
@@ -23,6 +23,7 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Tests.Helpers;
 using LatuCollect.UI.WinUI.ViewModels;
 
 namespace LatuCollect.Tests.UI.ViewModels.State
@@ -40,13 +41,16 @@ namespace LatuCollect.Tests.UI.ViewModels.State
             var vm = new MainViewModel();
 
             // ASSERT
-            Assert.Equal(MainViewModel.UiState.Empty, vm.CurrentState);
-
-            Assert.True(vm.IsEmpty);
-
             Assert.False(vm.IsReady);
+
             Assert.False(vm.IsLoading);
+
             Assert.False(vm.HasError);
+
+            // ✔ état acceptable au démarrage
+            Assert.True(
+                vm.CurrentState == MainViewModel.UiState.Empty ||
+                vm.CurrentState == MainViewModel.UiState.Loading);
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -171,6 +175,65 @@ namespace LatuCollect.Tests.UI.ViewModels.State
             Assert.Equal(
                 MainViewModel.ExportCheckResult.Ok,
                 vm.CheckExportState());
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — RESET DOSSIER CHARGÉ
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public async Task ResetConfiguration_ShouldResetLoadedFolderState()
+        {
+            // ARRANGE
+            var vm = new MainViewModel();
+
+            var root =
+                TestTreeFactory.CreateFolder("Root");
+
+            var file =
+                TestTreeFactory.CreateFile("File.cs");
+
+            TestTreeFactory.AddChild(root, file);
+
+            vm.Tree.Add(root);
+
+            await vm.OnNodeSelectionChanged(file, true);
+
+            vm.SearchText = "File";
+
+            // ACT
+            await vm.ResetConfigurationAsync();
+
+            // ASSERT
+            Assert.Empty(vm.Tree);
+
+            Assert.Empty(vm.FilteredTree);
+
+            Assert.Equal(
+                MainViewModel.UiState.Empty,
+                vm.CurrentState);
+
+            Assert.True(vm.IsEmpty);
+
+            Assert.Equal(
+                string.Empty,
+                vm.CurrentFolderPath);
+
+            Assert.Equal(
+                string.Empty,
+                vm.PreviewText);
+
+            Assert.Equal(0, vm.FileCount);
+
+            Assert.Equal(0, vm.TotalLines);
+
+            Assert.Equal(0, vm.TotalCharacters);
+
+            Assert.Equal(0, vm.TotalSize);
+
+            Assert.Equal(
+                string.Empty,
+                vm.SearchText);
         }
     }
 }

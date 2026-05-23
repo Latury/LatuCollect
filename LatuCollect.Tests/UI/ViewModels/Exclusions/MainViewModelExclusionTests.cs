@@ -14,6 +14,7 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Configuration.Models;
 using LatuCollect.UI.WinUI.Models;
 using LatuCollect.UI.WinUI.ViewModels;
 
@@ -147,6 +148,84 @@ namespace LatuCollect.Tests.UI.ViewModels.Exclusions
 
             // ASSERT
             Assert.Empty(vm.Tree);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — REBUILD EXCLUSIONS GROUPÉES
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public void RefreshExclusionsUi_ShouldBuildGroupedExclusions()
+        {
+            // ARRANGE
+            var vm = new MainViewModel();
+
+            vm.Config.ExcludedFolders.Add(
+                new ExclusionItem(
+                    "bin",
+                    true,
+                    true));
+
+            vm.Config.ExcludedFolders.Add(
+                new ExclusionItem(
+                    "node_modules",
+                    false,
+                    true));
+
+            // ACT
+            vm.RefreshExclusionsUi();
+
+            var result =
+                vm.GetGroupedExclusionsForTests();
+
+            // ASSERT
+            Assert.Contains(
+                "🔒 Protégés",
+                result);
+
+            Assert.Contains(
+                "📁 Normaux",
+                result);
+
+            Assert.Contains(
+                result,
+                x => x is ExclusionItem e &&
+                     e.Name == "bin");
+
+            Assert.Contains(
+                result,
+                x => x is ExclusionItem e &&
+                     e.Name == "node_modules");
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — AUCUN DOUBLON APRÈS REFRESH
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public void RefreshExclusionsUi_ShouldNotDuplicateItems()
+        {
+            // ARRANGE
+            var vm = new MainViewModel();
+
+            vm.Config.ExcludedFolders.Add(
+                new ExclusionItem(
+                    "bin",
+                    true,
+                    true));
+
+            // ACT
+            vm.RefreshExclusionsUi();
+            vm.RefreshExclusionsUi();
+            vm.RefreshExclusionsUi();
+
+            var result =
+                vm.GetGroupedExclusionsForTests();
+
+            // ASSERT
+            Assert.Equal(
+                2,
+                result.Count);
         }
     }
 }

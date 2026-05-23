@@ -124,7 +124,7 @@ Afficher la structure du projet
 - Conservation de la navigation réelle
 - Expansion automatique pendant recherche
 - Reset visibilité après recherche
-- Reset expansion après recherche
+- Conservation expansion après recherche
 - Débounce anti-spam
 
 ---
@@ -166,6 +166,7 @@ Configurer et interagir
 
 - Format (TXT / Markdown)
 - Bouton Copier
+- Bouton Ouvrir dans l’explorateur
 
 ---
 
@@ -179,7 +180,7 @@ Configurer et interagir
 
 ---
 
-## 🧑‍💻 Mode développeur
+## 👨🏻‍💻 Mode développeur
 
 👉 Rôle :
 
@@ -211,6 +212,12 @@ Configurer et interagir
 - Copie du preview
 - Feedback utilisateur
 
+## 📂 Ouvrir dans l’explorateur
+
+- Ouvre le dossier courant
+- Vérification dossier valide
+- Feedback utilisateur en cas d’erreur
+
 ---
 
 # 🟩 ZONE DROITE — APERÇU
@@ -239,6 +246,9 @@ Mise à jour automatique :
 - Protection anti double génération preview
 - Optimisation basée signature sélection
 - Limitation automatique contenu massif
+- Debounce preview async
+- Invalidation previews obsolètes
+- Génération preview découplée de la sélection
 
 ---
 
@@ -378,17 +388,23 @@ Actions finales
 - Conservation de l’arbre réel (pas de duplication)
 - Filtrage basé visibilité (`IsVisible`)
 - Mise à jour ciblée sans reload complet
+- Chargement progressif UI
+- Yield UI pendant construction TreeView
+- Préservation fluidité pendant imports volumineux
+- Conservation état ouvert TreeView
+- Réduction rebuild complets ListView exclusions
 
 ---
 
 ## 🔄 Évolution future — Stabilisation async UI
 
-Le projet évoluera progressivement vers une gestion async UI plus robuste afin de :
+Le projet évolue progressivement vers une gestion async UI plus robuste afin de :
 
 - réduire les race conditions
 - améliorer la stabilité du TreeView
 - limiter les doubles refresh preview
 - améliorer la testabilité
+  ✔ Stabilisation preview async réalisée en v0.14.0
 
 ---
 
@@ -515,6 +531,11 @@ Améliorer l’interface sans changer son fonctionnement
 - ✔ Système de simulation supprimé (v0.13.0)
 - ✔ Architecture simplifiée
 - ✔ Réduction du couplage Core/UI
+- ✔ Pipeline preview async stabilisé
+- ✔ Persistance expansion TreeView
+- ✔ Exclusions UI stabilisées
+- ✔ Chargement progressif UI
+- ✔ Réduction des refresh inutiles
 
 ---
 

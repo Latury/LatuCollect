@@ -2062,6 +2062,180 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 ---
 
+# 🚀 VERSION 0.14.0
+
+## 📌 Statut
+
+🟢 Stabilisation UX & comportements UI terminée
+
+---
+
+## 🎯 Objectif
+
+Améliorer l’expérience utilisateur,
+stabiliser les comportements UI
+et réduire les effets de bord sur les gros projets.
+
+---
+
+# ✨ NOUVEAUTÉS PRINCIPALES
+
+## 🌳 TreeView
+
+- ✅ Stabilisation sélection massive
+- ✅ Stabilisation multi-clic rapide
+- ✅ Réduction des refresh inutiles
+- ✅ Conservation sélection ↔ visibilité
+- ✅ Stabilisation exclusions dynamiques
+- ✅ Conservation état ouvert après reload complet
+- ✅ Persistance complète des dossiers ouverts
+- ✅ Synchronisation runtime expansion TreeView
+- ✅ Sauvegarde récursive des dossiers ouverts
+- ✅ Restauration automatique après reconstruction arbre
+
+---
+
+## ⚡ Preview async
+
+- ✅ Découplage sélection ↔ génération preview
+- ✅ Debounce preview async
+- ✅ Protection anti refresh massifs
+- ✅ Invalidation previews obsolètes
+- ✅ Versioning des previews async
+- ✅ Stabilisation pipeline preview
+- ✅ Réduction des recalculs inutiles
+- ✅ Préservation fluidité UI pendant génération preview
+- ✅ Limitation taille preview pour stabilité mémoire
+
+---
+
+## 📂 Import & performances
+
+- ✅ CancellationToken stabilisé
+- ✅ ImportResult stabilisé
+- ✅ Affichage partiel stabilisé
+- ✅ Chargement progressif UI
+- ✅ Yield UI pendant conversion TreeView
+- ✅ Réduction sensation de freeze sur gros projets
+- ✅ Conservation UI responsive pendant import massif
+
+---
+
+## 📁 Exclusions
+
+- ✅ Garantit les exclusions système protégées
+- ✅ Correction automatique exclusions système invalides
+- ✅ Stabilisation scroll exclusions
+- ✅ Grouped exclusions persistantes
+- ✅ Réduction rebuild complets ListView
+- ✅ Rafraîchissement exclusions stabilisé
+- ✅ Préservation état visuel exclusions
+
+---
+
+## 🖥️ UX
+
+- ✅ Message état vide
+- ✅ Message export partiel
+- ✅ Sélection dossier fiabilisée
+- ✅ Reset dossier chargé propre
+- ✅ Réinitialisation runtime complète
+- ✅ Ajout bouton « Ouvrir dans l’explorateur »
+- ✅ Validation dossier supprimé au lancement
+- ✅ Nettoyage automatique configuration invalide
+
+---
+
+## ⚙️ Configuration utilisateur
+
+- ✅ Sauvegarde ExpandedPaths
+- ✅ Chargement ExpandedPaths
+- ✅ Reset runtime sécurisé
+- ✅ Nettoyage valeurs invalides configuration
+- ✅ Protection chemins invalides
+- ✅ Déduplication chemins expansion
+
+---
+
+## 🔎 Recherche
+
+- ✅ Conservation expansion après reset recherche
+- ✅ Stabilisation filtrage visibilité
+- ✅ Conservation cohérence TreeView ↔ recherche
+- ✅ Réduction recalculs recherche inutiles
+
+---
+
+## 🧪 TESTS
+
+### ✅ Nouveaux tests ajoutés
+
+- ✅ Persistance ExpandedPaths
+- ✅ Reset configuration runtime
+- ✅ Rebuild exclusions groupées
+- ✅ Protection anti doublons exclusions
+- ✅ Conservation expansion après recherche
+- ✅ Validation exclusions protégées
+- ✅ Validation synchronisation visibilité ↔ sélection
+
+---
+
+## 📊 Validation
+
+### ✅ Stress tests validés
+
+- ✅ Gros TreeView ouverts
+- ✅ Scroll massif TreeView
+- ✅ Sélection massive
+- ✅ Preview async
+- ✅ Import projets volumineux
+- ✅ Stabilité mémoire acceptable
+- ✅ Aucun freeze UI détecté
+- ✅ Aucun crash détecté
+- ✅ Aucun blocage majeur détecté
+
+---
+
+## 📈 Résultat
+
+LatuCollect devient désormais :
+
+- ✔ Plus fluide
+- ✔ Plus stable
+- ✔ Plus prévisible
+- ✔ Plus maintenable
+- ✔ Plus robuste sur gros projets
+
+avec :
+
+- ✅ 115 tests verts
+- ✅ Pipeline preview stabilisé
+- ✅ TreeView stabilisé
+- ✅ UX globale améliorée
+- ✅ Réduction importante des effets de bord
+
+---
+
+## ⚠️ Notes importantes
+
+Le « Lazy loading » implémenté dans cette version correspond à un :
+
+```text
+Chargement progressif UI
+```
+
+et NON à un lazy loading hiérarchique dynamique.
+
+👉 Objectif :
+
+- Conserver Preview = Export
+- Conserver stabilité sélection
+- Conserver stabilité TreeView
+- Éviter les effets de bord complexes
+- Améliorer la fluidité sur gros projets
+
+---
+
 # 🧠 Philosophie
 
 Cette version poursuit l’objectif principal de LatuCollect :
