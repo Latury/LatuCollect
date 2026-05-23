@@ -36,13 +36,14 @@ using LatuCollect.UI.WinUI.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-
 
 namespace LatuCollect.UI.WinUI
 {
@@ -444,6 +445,50 @@ namespace LatuCollect.UI.WinUI
             await _viewModel.ShowFeedbackAsync("✔ Contenu copié");
         }
 
+        // 📂 Ouvrir dans l’explorateur
+        private async void OnOpenExplorerClicked(
+            object sender,
+            RoutedEventArgs e)
+        {
+            try
+            {
+                var path = _viewModel.CurrentFolderPath;
+
+                // ⚠ Aucun dossier chargé
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    await _viewModel.ShowFeedbackAsync(
+                        "⚠ Aucun dossier chargé");
+
+                    return;
+                }
+
+                // ⚠ Dossier supprimé
+                if (!Directory.Exists(path))
+                {
+                    await _viewModel.ShowFeedbackAsync(
+                        "⚠ Dossier introuvable");
+
+                    return;
+                }
+
+                // ✔ Ouvre l’explorateur Windows
+                Process.Start(
+                    new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{path}\"",
+                        UseShellExecute = true
+                    });
+            }
+            catch (Exception ex)
+            {
+                await _viewModel.ShowFeedbackAsync(
+                    "❌ Impossible d’ouvrir le dossier");
+
+                _viewModel.ErrorMessage = ex.Message;
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 7. LOGS UI

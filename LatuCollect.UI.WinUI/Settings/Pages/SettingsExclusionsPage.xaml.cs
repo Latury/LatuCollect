@@ -82,6 +82,8 @@ namespace LatuCollect.UI.WinUI.Settings.Pages
 
                 vm.Config.ExcludedFolders.Add(item);
 
+                vm.RefreshExclusionsUi();
+
                 await vm.SaveConfigurationAsync();
 
                 if (!string.IsNullOrWhiteSpace(vm.CurrentFolderPath))

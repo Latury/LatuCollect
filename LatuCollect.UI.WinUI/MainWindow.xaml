@@ -266,9 +266,9 @@
 
                     <!--  Copier le contenu  -->
                     <Button
-                        Width="180"
+                        Width="220"
                         Height="44"
-                        Margin="0,10,0,20"
+                        Margin="0,10,0,0"
                         Padding="12,0"
                         HorizontalAlignment="Center"
                         Click="OnCopyClicked"
@@ -276,12 +276,24 @@
                         IsEnabled="{Binding CanCopy}"
                         ToolTipService.ToolTip="Copier le contenu" />
 
+                    <!--  Ouvrir dans l’explorateur  -->
+                    <Button
+                        Width="220"
+                        Height="44"
+                        Margin="0,0,0,20"
+                        Padding="12,0"
+                        HorizontalAlignment="Center"
+                        Click="OnOpenExplorerClicked"
+                        Content="📂 Ouvrir dans l’explorateur"
+                        IsEnabled="{Binding CanOpenExplorer}"
+                        ToolTipService.ToolTip="Ouvrir le dossier courant" />
+
                     <!--  AUTRES  -->
                     <StackPanel HorizontalAlignment="Center" Spacing="14">
 
                         <!--  PARAMÈTRES  -->
                         <Button
-                            Width="180"
+                            Width="220"
                             Height="44"
                             Padding="12,0"
                             Click="OnOptionsClicked"
@@ -290,7 +302,7 @@
 
                         <!--  Statistiques  -->
                         <Button
-                            Width="180"
+                            Width="220"
                             Height="44"
                             Padding="12,0"
                             Click="OnStatsClicked"
@@ -299,7 +311,7 @@
 
                         <!--  Aide  -->
                         <Button
-                            Width="180"
+                            Width="220"
                             Height="44"
                             Padding="12,0"
                             Click="OnHelpClicked"
@@ -308,7 +320,7 @@
 
                         <!--  À propos  -->
                         <Button
-                            Width="180"
+                            Width="220"
                             Height="44"
                             Padding="12,0"
                             Click="OnAboutClicked"
@@ -318,7 +330,7 @@
 
                         <!--  Quitter  -->
                         <Button
-                            Width="180"
+                            Width="220"
                             Height="44"
                             Padding="12,0"
                             Click="OnQuitClicked"
