@@ -108,9 +108,35 @@ namespace LatuCollect.Core.Configuration.Models
 
         public bool AutoLoadLastFolder { get; set; } = false;
 
+        // ═════════════════════════════════════════════════════════════
+        // 6. ÉTAT OUVERT TREEVIEW
+        // ═════════════════════════════════════════════════════════════
+
+        private List<string> _expandedPaths = new();
+
+        public List<string> ExpandedPaths
+        {
+            get => _expandedPaths;
+
+            set
+            {
+                if (value == null)
+                {
+                    _expandedPaths = new List<string>();
+                    return;
+                }
+
+                _expandedPaths = value
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Select(v => v.Trim())
+                    .Where(v => v.Length >= 2)
+                    .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // 6. MODE D’EXPORT
+        // 7. MODE D’EXPORT
         // ═════════════════════════════════════════════════════════════
 
         public int PreviewMaxFiles { get; set; } = 20;
@@ -119,14 +145,14 @@ namespace LatuCollect.Core.Configuration.Models
 
 
         // ═════════════════════════════════════════════════════════════
-        // 7. LOGS
+        // 8. LOGS
         // ═════════════════════════════════════════════════════════════
 
         public string LogLevel { get; set; } = "Info";
 
 
         // ═════════════════════════════════════════════════════════════
-        // 8. THÈME
+        // 9. THÈME
         // ═════════════════════════════════════════════════════════════
 
         public string Theme { get; set; } = "Light";

@@ -26,6 +26,7 @@ using LatuCollect.Core.Configuration.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -189,9 +190,12 @@ namespace LatuCollect.Core.Configuration.Services
         // Valide et normalise la configuration (valeurs par défaut si nécessaire)
         private static UserConfig Sanitize(UserConfig config)
         {
-            return new UserConfig
+            var sanitized = new UserConfig
             {
-                DefaultFormat = string.IsNullOrWhiteSpace(config.DefaultFormat) ? ".txt" : config.DefaultFormat,
+                DefaultFormat = string.IsNullOrWhiteSpace(config.DefaultFormat)
+                    ? ".txt"
+                    : config.DefaultFormat,
+
                 IsDeveloperMode = config.IsDeveloperMode,
 
                 ExcludedFolders = config.ExcludedFolders != null
@@ -199,12 +203,54 @@ namespace LatuCollect.Core.Configuration.Services
                     : new List<ExclusionItem>(),
 
                 LastOpenedFolder = config.LastOpenedFolder ?? string.Empty,
+
                 AutoLoadLastFolder = config.AutoLoadLastFolder,
-                PreviewMaxFiles = config.PreviewMaxFiles <= 0 ? 20 : config.PreviewMaxFiles,
-                ExportMode = string.IsNullOrWhiteSpace(config.ExportMode) ? "normal" : config.ExportMode,
-                LogLevel = string.IsNullOrWhiteSpace(config.LogLevel) ? "Info" : config.LogLevel,
-                Theme = string.IsNullOrWhiteSpace(config.Theme) ? "Light" : config.Theme
+
+                PreviewMaxFiles = config.PreviewMaxFiles <= 0
+                    ? 20
+                    : config.PreviewMaxFiles,
+
+                ExportMode = string.IsNullOrWhiteSpace(config.ExportMode)
+                    ? "normal"
+                    : config.ExportMode,
+
+                LogLevel = string.IsNullOrWhiteSpace(config.LogLevel)
+                    ? "Info"
+                    : config.LogLevel,
+
+                Theme = string.IsNullOrWhiteSpace(config.Theme)
+                    ? "Light"
+                    : config.Theme
             };
+
+            // 🔒 Garantit les exclusions système protégées
+            foreach (var defaultExclusion in ConfigurationDefaults.DefaultExcludedFolders)
+            {
+                var existing = sanitized.ExcludedFolders
+                    .FirstOrDefault(e =>
+                        string.Equals(
+                            e.Name,
+                            defaultExclusion.Name,
+                            StringComparison.OrdinalIgnoreCase));
+
+                // ➕ Ajout si absent
+                if (existing == null)
+                {
+                    sanitized.ExcludedFolders.Add(
+                        new ExclusionItem(
+                            defaultExclusion.Name,
+                            true,
+                            true));
+                }
+                // 🔒 Correction exclusions existantes
+                else
+                {
+                    existing.IsProtected = true;
+                    existing.IsDirectory = true;
+                }
+            }
+
+            return sanitized;
         }
     }
 }

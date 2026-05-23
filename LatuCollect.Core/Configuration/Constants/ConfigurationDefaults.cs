@@ -43,9 +43,9 @@ namespace LatuCollect.Core.Configuration.Constants
 
         public static IReadOnlyList<ExclusionItem> DefaultExcludedFolders => new List<ExclusionItem>
         {
-            new ExclusionItem("bin", true),
-            new ExclusionItem("obj", true),
-            new ExclusionItem(".git", true)
+            new ExclusionItem("bin", true, true),
+            new ExclusionItem("obj", true, true),
+            new ExclusionItem(".git", true, true)
         };
 
 

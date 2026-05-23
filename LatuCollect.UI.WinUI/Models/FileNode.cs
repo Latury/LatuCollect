@@ -23,9 +23,10 @@
 */
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace LatuCollect.UI.WinUI.Models
 {
@@ -84,7 +85,13 @@ namespace LatuCollect.UI.WinUI.Models
         public bool IsExpanded
         {
             get => _isExpanded;
-            set => SetProperty(ref _isExpanded, value);
+            set
+            {
+                if (SetProperty(ref _isExpanded, value))
+                {
+                    ExpandedChanged?.Invoke(this);
+                }
+            }
         }
 
         // Indique si le node est un dossier réel
@@ -110,6 +117,8 @@ namespace LatuCollect.UI.WinUI.Models
         // Parent (assigné uniquement lors de la construction)
         public FileNode? Parent { get; internal set; }
 
+        // Notification changement expansion
+        public event Action<FileNode>? ExpandedChanged;
 
         // ==========================================
         // ⚙️ PROPRIÉTÉS CALCULÉES

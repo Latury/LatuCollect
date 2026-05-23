@@ -72,6 +72,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private CancellationTokenSource? _searchCts;
         private bool _isPreviewLoading = false;
+        // 🔥 Versioning preview async
+        private int _previewRequestId = 0;
+        private int _lastCompletedPreviewId = 0;
         private bool _isBusy = false;
 
         private bool _isSearchVisible;
@@ -92,8 +95,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public bool IsBulkSelectionUpdating =>
             _isBulkSelectionUpdating;
 
-        // DEBUG TESTS
-        private int _applyFilterCallCount;
+        // 🔥 Conservation état ouvert TreeView
+        private readonly HashSet<string> _expandedPaths = new();
 
         // ═════════════════════════════════════════════════════════════
         // 2. SERVICES & CONFIGURATION
@@ -250,7 +253,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                         _ = SaveConfigurationAsync();
 
                         // 🔄 refresh preview
-                        _ = RefreshPreviewAsync();
+                        RequestPreviewRefresh();
                     }
                 }
             }
@@ -299,47 +302,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     _userConfig.AutoLoadLastFolder = value;
                     _ = SaveConfigurationAsync();
                 }
-            }
-        }
-
-        // Liste d’exclusions regroupée pour l’affichage (protégées vs normales)
-        public IEnumerable<object> GroupedExclusions
-        {
-            get
-            {
-                var list = Config.ExcludedFolders;
-
-                if (list == null || list.Count == 0)
-                    return Enumerable.Empty<object>();
-
-                var result = new List<object>();
-
-                var protectedItems = list.Where(e => e.IsProtected).ToList();
-                var normalItems = list.Where(e => !e.IsProtected).ToList();
-
-                // 🔒 Protégés
-                if (protectedItems.Count > 0)
-                {
-                    result.Add("🔒 Protégés");
-
-                    foreach (var item in protectedItems)
-                    {
-                        result.Add(item);
-                    }
-                }
-
-                // 📁 Normaux
-                if (normalItems.Count > 0)
-                {
-                    result.Add("📁 Normaux");
-
-                    foreach (var item in normalItems)
-                    {
-                        result.Add(item);
-                    }
-                }
-
-                return result;
             }
         }
 
@@ -467,6 +429,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public ObservableCollection<UiFileNode> Tree { get; } = new();
         public ObservableCollection<UiFileNode> FilteredTree { get; } = new();
+        private readonly ObservableCollection<object>
+            _groupedExclusions = new();
 
         public string SearchText
         {
@@ -498,9 +462,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             set => SetProperty(ref _isLimitReached, value);
         }
 
-        public int ApplyFilterCallCount =>
-            _applyFilterCallCount;
-
         // ═════════════════════════════════════════════════════════════
         // 13. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
@@ -525,6 +486,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             // ⚙️ Configuration
             _config = new AppConfig();
+            RebuildGroupedExclusions();
             _configurationService = new ConfigurationService();
             _userConfig = new UserConfig();
 
@@ -563,13 +525,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 CurrentState = UiState.Loading;
 
-               // 🔥 Import
+                // 🔥 Import
                 var importResult = await _importService.LoadTreeAsync(path);
+
+                // 🔥 Sauvegarde état ouvert avant rebuild
+                SaveExpandedNodes();
 
                 // 🔥 Reset propre
                 Tree.Clear();
                 FilteredTree.Clear();
-                OnPropertyChanged(nameof(IsTreeEmpty));
 
                 // ❌ Aucun résultat
                 if (importResult.Nodes.Count == 0)
@@ -583,10 +547,22 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     return;
                 }
 
-                // ✔ Conversion vers UI
+                // ✔ Conversion vers UI progressive
+                int batchCount = 0;
+
                 foreach (var coreNode in importResult.Nodes)
                 {
                     Tree.Add(ConvertToUiNode(coreNode));
+
+                    batchCount++;
+
+                    // 🔥 Laisse respirer WinUI régulièrement
+                    if (batchCount >= 25)
+                    {
+                        batchCount = 0;
+
+                        await Task.Yield();
+                    }
                 }
 
                 OnPropertyChanged(nameof(IsTreeEmpty));
@@ -607,7 +583,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _ = SaveConfigurationAsync();
 
                 // ✅ ICI LA BONNE LOGIQUE
-                await RefreshPreviewAsync();
+                await RefreshPreviewAsync(_previewRequestId);
             }
             catch (Exception ex)
             {
@@ -755,10 +731,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 bool isMarkdown = SelectedFormat == ".md";
 
                 var data = await _exportService.BuildContentWithStatsAsync(
-    files,
-    isMarkdown,
-    ExportMode
-);
+                    files,
+                    isMarkdown,
+                    ExportMode
+                );
+
                 if (data.IsPartial && !_hasShownPartialWarning)
                 {
                     _hasShownPartialWarning = true;
@@ -779,11 +756,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 16. PREVIEW
         // ═════════════════════════════════════════════════════════════
 
-        private async Task RefreshPreviewAsync()
+        private async Task RefreshPreviewAsync(int requestId)
         {
-            // 🔒 Protection anti double refresh
-            if (_isPreviewLoading)
-                return;
+
 
             _isPreviewLoading = true;
 
@@ -822,9 +797,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 string currentSignature = BuildSelectionSignature(files);
 
                 // 🔥 IMPORTANT : optimisation pour éviter de régénérer si même sélection + même format
-                if (currentSignature == _lastSelectionSignature && isMarkdown == _lastIsMarkdown)
+                if (currentSignature == _lastSelectionSignature &&
+                    isMarkdown == _lastIsMarkdown)
                 {
-                    // 🔥 IMPORTANT : ne pas forcer Ready si aucun fichier
                     if (files.Count == 0)
                     {
                         CurrentState = UiState.Empty;
@@ -851,6 +826,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     ExportMode
                 );
 
+                // 🔥 Ignore preview devenu obsolète
+                if (requestId != _previewRequestId)
+                {
+                    _logger.Info(
+                        "Preview ignoré",
+                        $"RequestId obsolète: {requestId}");
+
+                    return;
+                }
+
                 // 🔥 message si export partiel (une seule fois)
                 if (data.IsPartial && !_hasShownPartialWarning)
                 {
@@ -859,7 +844,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 // 🔥 Limitation de l’aperçu pour éviter les problèmes de performance
-                const int MAX_PREVIEW_LENGTH = 100_000; // 100k caractères
+                const int MAX_PREVIEW_LENGTH = 100_000;
 
                 if (data.Content.Length > MAX_PREVIEW_LENGTH)
                 {
@@ -879,7 +864,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 TotalCharacters = stats.TotalCharacters;
                 TotalSize = stats.TotalSizeBytes;
 
-                _logger.Info("Preview généré avec succès", $"Fichiers: {files.Count}");
+                _logger.Info(
+                    "Preview généré avec succès",
+                    $"Fichiers: {files.Count}");
 
                 CurrentState = UiState.Ready;
 
@@ -904,7 +891,38 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Méthode d’accès aux fichiers sélectionnés
         public async Task RefreshPreviewForTestsAsync()
         {
-            await RefreshPreviewAsync();
+            await RefreshPreviewAsync(_previewRequestId);
+        }
+
+        // 🔥 TESTS — sauvegarde expansion
+        internal void SaveExpandedNodesForTests()
+        {
+            SaveExpandedNodes();
+        }
+
+        // 🔥 TESTS — conversion UI
+        internal UiFileNode ConvertToUiNodeForTests(
+            CoreFileNode coreNode)
+        {
+            return ConvertToUiNode(coreNode);
+        }
+
+        // 🔥 TESTS — état expansion runtime
+        internal List<string> GetExpandedPathsForTests()
+        {
+            return _expandedPaths.ToList();
+        }
+
+        // 🔥 TESTS — config utilisateur
+        internal UserConfig GetUserConfigForTests()
+        {
+            return _userConfig;
+        }
+
+        // 🔥 TESTS — exclusions groupées
+        internal List<object> GetGroupedExclusionsForTests()
+        {
+            return _groupedExclusions.ToList();
         }
 
         private string BuildSelectionSignature(List<string> filePaths)
@@ -953,19 +971,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public bool IsTreeEmpty =>
             string.IsNullOrWhiteSpace(CurrentFolderPath) || Tree.Count == 0;
 
-        public async Task OnNodeSelectionChanged(
+        public Task OnNodeSelectionChanged(
     UiFileNode node,
     bool isChecked)
         {
             // 🔥 Ignore événements pendant propagation massive
             if (_isBulkSelectionUpdating)
-                return;
-
-            if (_isPreviewLoading)
-                return;
+                return Task.CompletedTask;
 
             if (node == null)
-                return;
+                return Task.CompletedTask;
 
             // 🔥 IMPORTANT
             // verrou global sélection massive
@@ -975,16 +990,17 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 // 📁 propagation récursive
                 SetNodeSelection(node, isChecked);
-
-                // 🔥 IMPORTANT
-                // refresh APRÈS propagation complète
-                await RefreshPreviewAsync();
             }
             finally
             {
-                // 🔥 libération UNIQUEMENT à la toute fin
+                // 🔥 libération IMMÉDIATE après propagation
                 _isBulkSelectionUpdating = false;
             }
+
+            // 🔥 Preview découplé du pipeline sélection
+            RequestPreviewRefresh();
+
+            return Task.CompletedTask;
         }
 
         // Applique sélection récursive
@@ -1206,13 +1222,40 @@ namespace LatuCollect.UI.WinUI.ViewModels
             OnPropertyChanged(nameof(IsTreeEmpty));
         }
 
+        // Sauvegarde les dossiers ouverts
+        private void SaveExpandedNodes()
+        {
+            _expandedPaths.Clear();
+
+            foreach (var node in Tree)
+            {
+                SaveExpandedNodesRecursive(node);
+            }
+        }
+
+        // Sauvegarde récursive des paths ouverts
+        private void SaveExpandedNodesRecursive(UiFileNode node)
+        {
+            if (node.IsExpanded)
+            {
+                _expandedPaths.Add(node.Path);
+            }
+
+            foreach (var child in node.Children)
+            {
+                SaveExpandedNodesRecursive(child);
+            }
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 19. FILTRAGE & RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
         internal void ApplyFilter()
         {
-            _applyFilterCallCount++;
+            _logger.Info(
+                "ApplyFilter",
+                $"Search: '{SearchText}' | Tree: {Tree.Count} | FilteredBefore: {FilteredTree.Count}");
 
             FilteredTree.Clear();
 
@@ -1226,6 +1269,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 HasSearchResult = true;
+
+                _logger.Info(
+                    "ApplyFilter terminé",
+                    $"FilteredAfter: {FilteredTree.Count}");
+
                 return;
             }
 
@@ -1243,6 +1291,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
 
             HasSearchResult = hasResult;
+
+            _logger.Info(
+                "ApplyFilter terminé",
+                $"FilteredAfter: {FilteredTree.Count}");
         }
 
         // Applique visibilité récursive
@@ -1289,13 +1341,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             // ✔ visibilité
             node.IsVisible = visible;
 
-            // 🔥 IMPORTANT
-            // Reset expansion quand recherche supprimée
-            if (string.IsNullOrWhiteSpace(SearchText))
-            {
-                node.IsExpanded = false;
-            }
-
             foreach (var child in node.Children)
             {
                 SetVisibilityRecursive(child, visible);
@@ -1326,6 +1371,29 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Demande un refresh preview non bloquant
+        private void RequestPreviewRefresh()
+        {
+            int requestId = ++_previewRequestId;
+
+            _ = DebouncePreviewAsync(requestId);
+        }
+
+        // Debounce preview pour éviter refresh massifs
+        private async Task DebouncePreviewAsync(int requestId)
+        {
+            // 🔥 Attente courte stabilité utilisateur
+            await Task.Delay(300);
+
+            // 🔥 Ignore previews obsolètes AVANT démarrage
+            if (requestId != _previewRequestId)
+                return;
+
+            await RefreshPreviewAsync(requestId);
+
+            _lastCompletedPreviewId = requestId;
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 20. CONVERSION UI ↔ CORE
         // ═════════════════════════════════════════════════════════════
@@ -1339,7 +1407,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 // 🔥 IMPORTANT
                 // Conserve le vrai type du node
-                IsDirectory = coreNode.IsDirectory
+                IsDirectory = coreNode.IsDirectory,
+
+                // 🔥 Restaure état ouvert après rebuild
+                IsExpanded = _expandedPaths.Contains(coreNode.Path)
             };
 
             foreach (var child in coreNode.Children)
@@ -1350,6 +1421,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 uiNode.Children.Add(childNode);
             }
+
+            // 🔥 IMPORTANT
+            // Synchronisation runtime expansion
+            uiNode.ExpandedChanged += OnNodeExpandedChanged;
 
             return uiNode;
         }
@@ -1418,16 +1493,80 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return GetSelectedFilesOptimized();
         }
 
+        // Synchronisation runtime expansion TreeView
+        private void OnNodeExpandedChanged(UiFileNode node)
+        {
+            if (node == null)
+                return;
+
+            if (node.IsExpanded)
+            {
+                _expandedPaths.Add(node.Path);
+            }
+            else
+            {
+                _expandedPaths.Remove(node.Path);
+            }
+        }
+
+        // Reset expansion runtime
+        private void ClearExpandedPaths()
+        {
+            _expandedPaths.Clear();
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 21. CONFIGURATION UTILISATEUR
         // ═════════════════════════════════════════════════════════════
 
+        // Rebuild de la liste groupée des exclusions pour l’UI
+        private void RebuildGroupedExclusions()
+        {
+            _groupedExclusions.Clear();
+
+            var list = Config.ExcludedFolders;
+
+            if (list == null || list.Count == 0)
+                return;
+
+            var protectedItems =
+                list.Where(e => e.IsProtected).ToList();
+
+            var normalItems =
+                list.Where(e => !e.IsProtected).ToList();
+
+            // 🔒 Protégés
+            if (protectedItems.Count > 0)
+            {
+                _groupedExclusions.Add("🔒 Protégés");
+
+                foreach (var item in protectedItems)
+                {
+                    _groupedExclusions.Add(item);
+                }
+            }
+
+            // 📁 Normaux
+            if (normalItems.Count > 0)
+            {
+                _groupedExclusions.Add("📁 Normaux");
+
+                foreach (var item in normalItems)
+                {
+                    _groupedExclusions.Add(item);
+                }
+            }
+        }
+
+        // Rafraîchit l’UI des exclusions (après ajout/suppression)
         public void RefreshExclusionsUi()
         {
-            OnPropertyChanged(nameof(GroupedExclusions));
+            RebuildGroupedExclusions();
+
             OnPropertyChanged(nameof(CanRemoveExclusion));
         }
 
+        // Chargement de la configuration utilisateur au lancement
         private async Task LoadConfigurationAsync()
         {
             try
@@ -1436,15 +1575,30 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _logger.Info("Chargement configuration utilisateur");
 
                 _userConfig = await _configurationService.LoadAsync() ?? new UserConfig();
+
+                // 🔥 Restore état ouvert TreeView
+                _expandedPaths.Clear();
+
+                foreach (var path in _userConfig.ExpandedPaths)
+                {
+                    _expandedPaths.Add(path);
+                }
+
                 SelectedTheme = _userConfig.Theme ?? "Dark";
+
                 ThemeChanged?.Invoke(SelectedTheme);
+
                 ApplyLogLevel(_userConfig.LogLevel);
+
                 SelectedLogLevel = _userConfig.LogLevel;
+
                 _userConfig.DefaultFormat = _userConfig.DefaultFormat;
                 _userConfig.IsDeveloperMode = _userConfig.IsDeveloperMode;
                 _userConfig.LastOpenedFolder = _userConfig.LastOpenedFolder;
                 _userConfig.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+
                 ExportMode = _userConfig.ExportMode ?? "normal";
+
                 _config.ExcludedFolders.Clear();
 
                 foreach (var item in _userConfig.ExcludedFolders)
@@ -1453,12 +1607,13 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 SelectedFormat = _userConfig.DefaultFormat;
+
                 IsDeveloperMode = _userConfig.IsDeveloperMode;
 
                 _logger.Info("Configuration chargée avec succès");
 
                 if (_userConfig.AutoLoadLastFolder &&
-    !string.IsNullOrWhiteSpace(_userConfig.LastOpenedFolder))
+                    !string.IsNullOrWhiteSpace(_userConfig.LastOpenedFolder))
                 {
                     if (Directory.Exists(_userConfig.LastOpenedFolder))
                     {
@@ -1466,23 +1621,28 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     }
                     else
                     {
-                        _logger.Warning("Dossier introuvable au lancement", _userConfig.LastOpenedFolder);
+                        _logger.Warning(
+                            "Dossier introuvable au lancement",
+                            _userConfig.LastOpenedFolder);
 
                         // Reset propre
                         _userConfig.LastOpenedFolder = string.Empty;
 
-                        await ShowFeedbackAsync("⚠ Le dernier dossier n'existe plus");
+                        await ShowFeedbackAsync(
+                            "⚠ Le dernier dossier n'existe plus");
 
                         CurrentState = UiState.Empty;
 
-                        // 🔥 AJOUT ICI
+                        // 🔥 Sauvegarde config nettoyée
                         await SaveConfigurationAsync();
                     }
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error("Erreur chargement configuration", ex.Message);
+                _logger.Error(
+                    "Erreur chargement configuration",
+                    ex.Message);
             }
             finally
             {
@@ -1490,6 +1650,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Sauvegarde de la configuration utilisateur (lancée à la fermeture et après chaque modification importante)
         public async Task SaveConfigurationAsync()
         {
             try
@@ -1498,12 +1659,27 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     _userConfig = new UserConfig();
 
                 _userConfig.DefaultFormat = SelectedFormat ?? ".txt";
+
                 _userConfig.IsDeveloperMode = IsDeveloperMode;
+
                 _userConfig.LastOpenedFolder = CurrentFolderPath;
-                _userConfig.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
+
+                _userConfig.AutoLoadLastFolder =
+                    _userConfig.AutoLoadLastFolder;
+
                 _userConfig.ExportMode = ExportMode;
-                _userConfig.ExcludedFolders = _config.ExcludedFolders.ToList();
-                _userConfig.LogLevel = GetCurrentLogLevel();
+
+                SaveExpandedNodes();
+
+                _userConfig.ExcludedFolders =
+                    _config.ExcludedFolders.ToList();
+
+                _userConfig.LogLevel =
+                    GetCurrentLogLevel();
+
+                // 🔥 Sauvegarde état ouvert TreeView
+                _userConfig.ExpandedPaths =
+                    _expandedPaths.ToList();
 
                 await _configurationService.SaveAsync(_userConfig);
 
@@ -1511,8 +1687,62 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Error("Erreur sauvegarde configuration", ex.Message);
+                _logger.Error(
+                    "Erreur sauvegarde configuration",
+                    ex.Message);
             }
+        }
+
+        // Reset runtime dossier chargé
+        private void ResetLoadedFolderState()
+        {
+            // 🔥 Invalide tous previews async en cours
+            _previewRequestId++;
+
+            _lastCompletedPreviewId = 0;
+
+            _isPreviewLoading = false;
+            _isBulkSelectionUpdating = false;
+
+            // 🔥 Reset signatures preview
+            _lastSelectionSignature = string.Empty;
+            _lastIsMarkdown = false;
+
+            // 🔥 Reset feedback preview
+            _hasShownPartialWarning = false;
+
+            // 🔥 Reset expansion TreeView
+            ClearExpandedPaths();
+
+            // 🔥 Reset recherche
+            SearchText = string.Empty;
+            HasSearchResult = true;
+
+            // 🔥 Reset dossier
+            CurrentFolderPath = string.Empty;
+
+            // 🔥 Reset arbre
+            Tree.Clear();
+            FilteredTree.Clear();
+
+            // 🔥 Reset preview
+            PreviewText = string.Empty;
+
+            // 🔥 Reset statistiques
+            FileCount = 0;
+            TotalLines = 0;
+            TotalCharacters = 0;
+            TotalSize = 0;
+
+            // 🔥 Reset état UI
+            CurrentState = UiState.Empty;
+
+            // 🔥 Refresh bindings
+            OnPropertyChanged(nameof(IsTreeEmpty));
+            OnPropertyChanged(nameof(CanCopy));
+            OnPropertyChanged(nameof(IsPreviewEmpty));
+            OnPropertyChanged(nameof(CanExport));
+            OnPropertyChanged(nameof(HasEmptyFiles));
         }
 
         public async Task ResetConfigurationAsync()
@@ -1548,22 +1778,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 IsDeveloperMode = _userConfig.IsDeveloperMode;
                 ExportMode = _userConfig.ExportMode ?? "normal";
 
-                // 🔥 RESET UI COMPLET
-
-                CurrentFolderPath = string.Empty;
-
-                Tree.Clear();
-                FilteredTree.Clear();
-
-                SearchText = string.Empty;
-                HasSearchResult = true;
-
-                PreviewText = string.Empty;
-
-                CurrentState = UiState.Empty;
-
-                // reset flags internes
-                _hasShownPartialWarning = false;
+                // 🔥 Reset runtime UI
+                ResetLoadedFolderState();
 
                 await ShowFeedbackAsync("Configuration réinitialisée");
 
