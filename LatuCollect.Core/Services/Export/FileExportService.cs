@@ -46,7 +46,7 @@ namespace LatuCollect.Core.Services.Export
     // 2. SERVICE EXPORT
     // ═════════════════════════════════════════════════════════════
 
-    public class FileExportService
+    public class FileExportService : IFileExportService
     {
         // ═════════════════════════════════════════════════════════════
         // 2.1 CONSTANTES

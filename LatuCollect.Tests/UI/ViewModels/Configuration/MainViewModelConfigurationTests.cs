@@ -22,9 +22,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Tests.Helpers;
-using LatuCollect.UI.WinUI.ViewModels;
 using LatuCollect.UI.WinUI.Models;
+using LatuCollect.UI.WinUI.ViewModels;
 
 namespace LatuCollect.Tests.UI.ViewModels.Configuration
 {
@@ -40,6 +39,46 @@ namespace LatuCollect.Tests.UI.ViewModels.Configuration
             // ARRANGE
             var vm = new MainViewModel();
 
+            await Task.Delay(100);
+
+            var folder = new FileNode
+            {
+                Name = "Folder",
+                Path = @"C:\Root\Folder",
+                IsDirectory = true,
+                IsExpanded = true
+            };
+
+            vm.Tree.Add(folder);
+
+            // 🔥 Synchronisation runtime expansion
+            vm.SaveExpandedNodesForTests();
+
+            // ACT
+            await vm.SaveConfigurationAsync();
+
+            var config =
+                vm.GetUserConfigForTests();
+
+            // ASSERT
+            Assert.Contains(
+                folder.Path,
+                config.ExpandedPaths);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST — SYNCHRONISATION RUNTIME EXPANDED PATHS
+        // ═════════════════════════════════════════════════════════════
+
+        [Fact]
+        public async Task SaveExpandedNodes_ShouldUpdate_RuntimeExpandedPaths()
+        {
+            // ARRANGE
+            var vm = new MainViewModel();
+
+            // 🔥 Laisse finir l'initialisation async
+            await Task.Delay(100);
+
             var folder = new FileNode
             {
                 Name = "Folder",
@@ -53,20 +92,10 @@ namespace LatuCollect.Tests.UI.ViewModels.Configuration
             // ACT
             vm.SaveExpandedNodesForTests();
 
-            // 🔥 Vérifie runtime AVANT save
-            Assert.Contains(
-                folder.Path,
-                vm.GetExpandedPathsForTests());
-
-            await vm.SaveConfigurationAsync();
-
-            var config =
-                vm.GetUserConfigForTests();
-
             // ASSERT
             Assert.Contains(
                 folder.Path,
-                config.ExpandedPaths);
+                vm.GetExpandedPathsForTests());
         }
     }
 }

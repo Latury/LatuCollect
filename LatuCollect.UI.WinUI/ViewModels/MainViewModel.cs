@@ -103,8 +103,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // ═════════════════════════════════════════════════════════════
 
         private readonly FileImportService _importService;
-        private readonly FileCollectionService _collectionService;
-        private readonly FileExportService _exportService;
+        private readonly IFileExportService _exportService;
         private readonly ILogService _logger;
 
         private readonly AppConfig _config;
@@ -492,7 +491,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             // 📂 Services Core
             _importService = new FileImportService(_config);
-            _collectionService = new FileCollectionService();
             _exportService = new FileExportService();
 
             // 🔄 Chargement config async
