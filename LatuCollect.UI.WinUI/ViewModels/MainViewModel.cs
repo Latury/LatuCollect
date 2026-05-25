@@ -102,7 +102,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 2. SERVICES & CONFIGURATION
         // ═════════════════════════════════════════════════════════════
 
-        private readonly FileImportService _importService;
+        private readonly IFileImportService _importService;
         private readonly IFileExportService _exportService;
         private readonly ILogService _logger;
 
@@ -890,6 +890,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public async Task RefreshPreviewForTestsAsync()
         {
             await RefreshPreviewAsync(_previewRequestId);
+        }
+
+        // 🔥 TESTS — attente fin initialisation async
+        internal async Task WaitForInitializationAsync()
+        {
+            while (_isInitializing)
+            {
+                await Task.Delay(10);
+            }
         }
 
         // 🔥 TESTS — sauvegarde expansion

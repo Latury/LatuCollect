@@ -39,7 +39,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Configuration
             // ARRANGE
             var vm = new MainViewModel();
 
-            await Task.Delay(100);
+            await vm.WaitForInitializationAsync();
 
             var folder = new FileNode
             {
@@ -76,8 +76,8 @@ namespace LatuCollect.Tests.UI.ViewModels.Configuration
             // ARRANGE
             var vm = new MainViewModel();
 
-            // 🔥 Laisse finir l'initialisation async
-            await Task.Delay(100);
+            // 🔥 Synchronisation runtime expansion
+            await vm.WaitForInitializationAsync();
 
             var folder = new FileNode
             {

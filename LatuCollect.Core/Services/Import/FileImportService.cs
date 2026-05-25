@@ -38,7 +38,7 @@ namespace LatuCollect.Core.Services.Import
     // 1. SERVICE IMPORT
     // ═════════════════════════════════════════════════════════════
 
-    public class FileImportService
+    public class FileImportService : IFileImportService
     {
         // ═════════════════════════════════════════════════════════════
         // 1.1 LIMITES
