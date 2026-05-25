@@ -22,6 +22,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using System;
+
 namespace LatuCollect.Core.Logging.Interfaces
 {
     // ═════════════════════════════════════════════════════════════
@@ -51,5 +53,8 @@ namespace LatuCollect.Core.Logging.Interfaces
 
         // Log une erreur
         void Error(string message, string? context = null);
+
+        // Notification mise à jour logs
+        event EventHandler? LogsUpdated;
     }
 }

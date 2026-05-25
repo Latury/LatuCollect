@@ -471,17 +471,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
             _logger = new LogService();
             _logger.Info("MainViewModel initialisé");
 
-            // 🔁 Mise à jour UI logs
-            if (_logger is LogService logService)
+            // 🔥 Abonnement mise à jour logs pour rafraîchir UI
+            _logger.LogsUpdated += (s, e) =>
             {
-                logService.LogsUpdated += (s, e) =>
-                {
-                    OnPropertyChanged(nameof(HasLogErrors));
-                    OnPropertyChanged(nameof(Logs));
-                    OnPropertyChanged(nameof(LogErrorCount));
-                    OnPropertyChanged(nameof(FilteredLogs));
-                };
-            }
+                OnPropertyChanged(nameof(HasLogErrors));
+                OnPropertyChanged(nameof(Logs));
+                OnPropertyChanged(nameof(LogErrorCount));
+                OnPropertyChanged(nameof(FilteredLogs));
+            };
 
             // ⚙️ Configuration
             _config = new AppConfig();

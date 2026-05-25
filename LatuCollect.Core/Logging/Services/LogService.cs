@@ -91,7 +91,6 @@ namespace LatuCollect.Core.Logging.Services
             Add(LogLevel.Error, message, context);
         }
 
-
         // ═════════════════════════════════════════════════════════════
         // 6. MÉTHODES PRIVÉES
         // ═════════════════════════════════════════════════════════════
