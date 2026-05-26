@@ -71,11 +71,11 @@ namespace LatuCollect.Tests.Core.Configuration
 
 
         // ═════════════════════════════════════════════════════════════
-        // TEST — CORRECTION EXCLUSION EXISTANTE
+        // TEST — CONSERVATION EXCLUSION EXISTANTE
         // ═════════════════════════════════════════════════════════════
 
         [Fact]
-        public async Task LoadAsync_ShouldCorrectExistingSystemExclusion()
+        public async Task LoadAsync_ShouldPreserveExistingSystemExclusion()
         {
             // ARRANGE
             var tempPath = Path.Combine(
@@ -87,12 +87,12 @@ namespace LatuCollect.Tests.Core.Configuration
             var config = new UserConfig
             {
                 ExcludedFolders = new List<ExclusionItem>
-                {
-                    new ExclusionItem(
-                        ".git",
-                        false,
-                        false)
-                }
+        {
+            new ExclusionItem(
+                ".git",
+                false,
+                false)
+        }
             };
 
             await service.SaveAsync(config);
@@ -108,9 +108,10 @@ namespace LatuCollect.Tests.Core.Configuration
 
             Assert.NotNull(git);
 
-            Assert.True(git!.IsProtected);
+            // ✔ Les valeurs utilisateur doivent être conservées
+            Assert.False(git!.IsProtected);
 
-            Assert.True(git.IsDirectory);
+            Assert.False(git.IsDirectory);
         }
     }
 }

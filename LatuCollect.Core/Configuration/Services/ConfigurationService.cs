@@ -28,8 +28,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace LatuCollect.Core.Configuration.Services
 {
@@ -249,12 +249,6 @@ namespace LatuCollect.Core.Configuration.Services
                             defaultExclusion.Name,
                             true,
                             true));
-                }
-                // 🔒 Correction exclusions existantes
-                else
-                {
-                    existing.IsProtected = true;
-                    existing.IsDirectory = true;
                 }
             }
 
