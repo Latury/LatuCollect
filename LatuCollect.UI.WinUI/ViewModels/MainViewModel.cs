@@ -37,7 +37,6 @@ using LatuCollect.Core.Configuration.Services;
 using LatuCollect.Core.Logging.Interfaces;
 using LatuCollect.Core.Logging.Models;
 using LatuCollect.Core.Logging.Services;
-using LatuCollect.Core.Services.Collection;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using System;
@@ -118,6 +117,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private const int MAX_NODES = 5000;
         private const int MAX_DEPTH = 10;
 
+
+        public enum LogFilter
+        {
+            All,
+            Info,
+            Warning,
+            Error
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 4. ÉTAT GLOBAL UI
         // ═════════════════════════════════════════════════════════════
@@ -164,10 +172,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Applique le niveau de log dans le service
         private void ApplyLogLevel(string level)
         {
-            if (_logger is not LogService logService)
-                return;
-
-            logService.MinimumLevel = level switch
+            _logger.MinimumLevel = level switch
             {
                 "Warning" => LogLevel.Warning,
                 "Error" => LogLevel.Error,
@@ -178,10 +183,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Récupère le niveau de log actuel
         private string GetCurrentLogLevel()
         {
-            if (_logger is not LogService logService)
-                return "Info";
-
-            return logService.MinimumLevel switch
+            return _logger.MinimumLevel switch
             {
                 LogLevel.Warning => "Warning",
                 LogLevel.Error => "Error",
@@ -477,7 +479,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 OnPropertyChanged(nameof(HasLogErrors));
                 OnPropertyChanged(nameof(Logs));
                 OnPropertyChanged(nameof(LogErrorCount));
-                OnPropertyChanged(nameof(FilteredLogs));
+                RefreshFilteredLogs();
             };
 
             // ⚙️ Configuration
@@ -1814,6 +1816,22 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 22. LOGS
         // ═════════════════════════════════════════════════════════════
 
+        // Rafraîchit la liste filtrée des logs (après changement de filtre ou nouveau log)
+        private void RefreshFilteredLogs()
+        {
+            OnPropertyChanged(nameof(FilteredLogs));
+        }
+
+        // Formate une entrée de log pour affichage ou export
+        private string FormatLogEntry(LogEntry log)
+        {
+            return $"[{log.Date}] [{log.Level}] {log.Message}" +
+                   (string.IsNullOrWhiteSpace(log.Context)
+                       ? ""
+                       : $" ({log.Context})");
+        }
+
+        // Génère le contenu exportable des logs selon le filtre sélectionné
         public string GetLogsExportContent()
         {
             var logs = FilteredLogs.ToList();
@@ -1821,12 +1839,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             if (logs.Count == 0)
                 return string.Empty;
 
-            var lines = logs.Select(log =>
-                $"[{log.Date}] [{log.Level}] {log.Message}" +
-                (string.IsNullOrWhiteSpace(log.Context)
-                    ? ""
-                    : $" ({log.Context})")
-            );
+            var lines = logs.Select(FormatLogEntry);
 
             return string.Join(
                 Environment.NewLine
@@ -1836,6 +1849,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             );
         }
 
+        // Accès en lecture à la collection de logs complète (non filtrée)
         public ReadOnlyObservableCollection<LogEntry> Logs
         {
             get
@@ -1844,6 +1858,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Indique si des logs d’erreur sont présents (pour affichage badge ou avertissement)
         public bool HasLogErrors
         {
             get
@@ -1853,6 +1868,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Compte le nombre de logs d’erreur (pour affichage badge ou statistiques)
         public int LogErrorCount
         {
             get
@@ -1862,16 +1878,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        public enum LogFilter
-        {
-            All,
-            Info,
-            Warning,
-            Error
-        }
-
+        // Propriété de sélection du filtre de logs (tous, info, warning, erreur)
         private LogFilter _selectedLogFilter = LogFilter.All;
 
+        // 🔥 IMPORTANT : rafraîchit la liste filtrée à chaque changement de filtre
         public LogFilter SelectedLogFilter
         {
             get => _selectedLogFilter;
@@ -1884,26 +1894,33 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
+        // Génère la liste filtrée des logs selon le filtre sélectionné (version optimisée pour accès interne)
+        private IEnumerable<LogEntry> GetFilteredLogs()
+        {
+            return SelectedLogFilter switch
+            {
+                LogFilter.Info =>
+                    _logger.Logs.Where(
+                        l => l.Level == LogLevel.Info),
+
+                LogFilter.Warning =>
+                    _logger.Logs.Where(
+                        l => l.Level == LogLevel.Warning),
+
+                LogFilter.Error =>
+                    _logger.Logs.Where(
+                        l => l.Level == LogLevel.Error),
+
+                _ => _logger.Logs
+            };
+        }
+
+        // Génère la liste filtrée des logs selon le filtre sélectionné (calculé à la volée pour toujours à jour)
         public IEnumerable<LogEntry> FilteredLogs
         {
             get
             {
-                return SelectedLogFilter switch
-                {
-                    LogFilter.Info =>
-                        _logger.Logs.Where(
-                            l => l.Level == LogLevel.Info),
-
-                    LogFilter.Warning =>
-                        _logger.Logs.Where(
-                            l => l.Level == LogLevel.Warning),
-
-                    LogFilter.Error =>
-                        _logger.Logs.Where(
-                            l => l.Level == LogLevel.Error),
-
-                    _ => _logger.Logs
-                };
+                return GetFilteredLogs();
             }
         }
     }

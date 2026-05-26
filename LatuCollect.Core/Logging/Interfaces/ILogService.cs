@@ -61,5 +61,7 @@ namespace LatuCollect.Core.Logging.Interfaces
 
         
         ReadOnlyObservableCollection<LogEntry> Logs { get; }
+        
+        LogLevel MinimumLevel { get; set; }
     }
 }
