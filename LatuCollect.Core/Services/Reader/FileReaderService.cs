@@ -88,6 +88,10 @@ namespace LatuCollect.Core.Services.Reader
                 if (!File.Exists(path))
                     return FileReadResult.Fail("Fichier introuvable");
 
+                // 🔒 Fichier verrouillé
+                if (IsFileLocked(path))
+                    return FileReadResult.Fail("Fichier verrouillé");
+
                 // 🔁 Cache
                 if (TryGetFromCache(path, out var cached))
                     return cached;
@@ -131,6 +135,24 @@ namespace LatuCollect.Core.Services.Reader
         // ═════════════════════════════════════════════════════════════
         // 4. LECTURE INTERNE
         // ═════════════════════════════════════════════════════════════
+
+        private static bool IsFileLocked(string path)
+        {
+            try
+            {
+                using var stream = new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.None);
+
+                return false;
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+        }
 
         private static async Task<(string content, long fileSize)> ReadContentAsync(string path)
         {

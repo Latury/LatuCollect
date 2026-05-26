@@ -505,7 +505,7 @@ namespace LatuCollect.Tests.Core.Reader
             Assert.False(result.IsSuccess);
 
             Assert.Equal(
-                "Erreur de lecture",
+                "Fichier verrouillé",
                 result.ErrorMessage);
 
             // CLEANUP

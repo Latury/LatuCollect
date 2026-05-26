@@ -1900,21 +1900,24 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Génère la liste filtrée des logs selon le filtre sélectionné (version optimisée pour accès interne)
         private IEnumerable<LogEntry> GetFilteredLogs()
         {
+            // 🔥 Snapshot stable pour éviter modification pendant énumération
+            var logs = _logger.Logs.ToList();
+
             return SelectedLogFilter switch
             {
                 LogFilter.Info =>
-                    _logger.Logs.Where(
+                    logs.Where(
                         l => l.Level == LogLevel.Info),
 
                 LogFilter.Warning =>
-                    _logger.Logs.Where(
+                    logs.Where(
                         l => l.Level == LogLevel.Warning),
 
                 LogFilter.Error =>
-                    _logger.Logs.Where(
+                    logs.Where(
                         l => l.Level == LogLevel.Error),
 
-                _ => _logger.Logs
+                _ => logs
             };
         }
 
