@@ -1841,12 +1841,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             get
             {
-                if (_logger is LogService logService)
-                {
-                    return logService.Logs.Any(l => l.Level == LogLevel.Error);
-                }
-
-                return false;
+                return _logger.Logs.Any(
+                    l => l.Level == LogLevel.Error);
             }
         }
 
