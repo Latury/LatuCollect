@@ -20,7 +20,6 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Models;
 using LatuCollect.Core.Models.Export;
 using LatuCollect.Core.Services.Reader;
 using LatuCollect.Core.Services.Statistics;

@@ -13,8 +13,6 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Models;
-
 namespace LatuCollect.Core.Models.Export
 {
     public class ExportData

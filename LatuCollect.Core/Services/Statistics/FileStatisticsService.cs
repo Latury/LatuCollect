@@ -27,7 +27,7 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
-using LatuCollect.Core.Models;
+using LatuCollect.Core.Models.Export;
 
 namespace LatuCollect.Core.Services.Statistics
 {
