@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace LatuCollect.Core.Configuration.Services
 {
@@ -47,6 +48,7 @@ namespace LatuCollect.Core.Configuration.Services
 
         private readonly string _configPath;
 
+        private readonly SemaphoreSlim _configLock = new(1, 1);
 
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTRUCTEUR
@@ -126,6 +128,8 @@ namespace LatuCollect.Core.Configuration.Services
         {
             try
             {
+                await _configLock.WaitAsync();
+
                 var json = Serialize(config);
 
                 // 🔥 IMPORTANT
@@ -145,6 +149,10 @@ namespace LatuCollect.Core.Configuration.Services
             {
                 Console.WriteLine(
                     $"Erreur sauvegarde config : {ex.Message}");
+            }
+            finally
+            {
+                _configLock.Release();
             }
         }
 
