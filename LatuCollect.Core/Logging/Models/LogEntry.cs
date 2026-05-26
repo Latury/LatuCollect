@@ -16,6 +16,7 @@
 ║  IMPORTANT (ALC) :                                                   ║
 ║  - Modèle Core pur                                                   ║
 ║  - Aucune dépendance UI                                              ║
+║  - Aucun formatage UI                                                ║
 ║                                                                      ║
 ║  Dépendances :                                                       ║
 ║  - LogLevel                                                          ║
@@ -46,28 +47,16 @@ namespace LatuCollect.Core.Logging.Models
 
         public string? Context { get; }
 
-
         // ═════════════════════════════════════════════════════════════
-        // 2. DONNÉES FORMATÉES
-        // ═════════════════════════════════════════════════════════════
-        //
-        // ⚠ Préparé pour affichage (UI)
-        // TODO (refactor futur) : déplacer le formatage côté UI
-        //
-
-        public string Date { get; }
-
-
-        // ═════════════════════════════════════════════════════════════
-        // 3. CONSTRUCTEUR
+        // 2. CONSTRUCTEUR
         // ═════════════════════════════════════════════════════════════
 
-        public LogEntry(LogLevel level, string message, string? context = null)
+        public LogEntry(
+            LogLevel level,
+            string message,
+            string? context = null)
         {
             Timestamp = DateTime.Now;
-
-            // Format lisible : jour/mois/année + heure
-            Date = Timestamp.ToString("dd/MM/yyyy HH:mm:ss");
 
             Level = level;
             Message = message;

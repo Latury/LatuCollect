@@ -1825,7 +1825,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Formate une entrée de log pour affichage ou export
         private string FormatLogEntry(LogEntry log)
         {
-            return $"[{log.Date}] [{log.Level}] {log.Message}" +
+            string formattedDate =
+                log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss");
+
+            return $"[{formattedDate}] [{log.Level}] {log.Message}" +
                    (string.IsNullOrWhiteSpace(log.Context)
                        ? ""
                        : $" ({log.Context})");
