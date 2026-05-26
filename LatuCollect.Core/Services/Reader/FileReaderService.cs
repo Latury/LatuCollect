@@ -28,6 +28,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LatuCollect.Core.Services.Reader
@@ -170,11 +171,20 @@ namespace LatuCollect.Core.Services.Reader
             // 🔥 GROS FICHIER → lecture partielle
             if (fileSize > MAX_FILE_SIZE)
             {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var stream = new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read);
+
                 using var reader = new StreamReader(stream);
 
                 char[] buffer = new char[MAX_FILE_SIZE];
-                int read = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
+
+                int read = await reader.ReadBlockAsync(
+                    buffer,
+                    0,
+                    buffer.Length);
 
                 var content = new string(buffer, 0, read);
 
@@ -184,7 +194,19 @@ namespace LatuCollect.Core.Services.Reader
                 return (content, fileSize);
             }
 
-            var fullContent = await File.ReadAllTextAsync(path);
+            using var fullStream = new FileStream(
+                path,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read);
+
+            using var fullReader = new StreamReader(
+                fullStream,
+                Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: true);
+
+            var fullContent = await fullReader.ReadToEndAsync();
+
             return (fullContent, fileSize);
         }
 
