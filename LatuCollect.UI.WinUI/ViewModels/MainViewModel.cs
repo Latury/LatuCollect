@@ -929,6 +929,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return _groupedExclusions.ToList();
         }
 
+        // 🔥 TESTS — accès logger
+        internal ILogService GetLoggerForTests()
+        {
+            return _logger;
+        }
+
         private string BuildSelectionSignature(List<string> filePaths)
         {
             if (filePaths == null || filePaths.Count == 0)
@@ -1810,9 +1816,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string GetLogsExportContent()
         {
-            if (_logger is not LogService logService)
-                return string.Empty;
-
             var logs = FilteredLogs.ToList();
 
             if (logs.Count == 0)
@@ -1820,11 +1823,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             var lines = logs.Select(log =>
                 $"[{log.Date}] [{log.Level}] {log.Message}" +
-                (string.IsNullOrWhiteSpace(log.Context) ? "" : $" ({log.Context})")
+                (string.IsNullOrWhiteSpace(log.Context)
+                    ? ""
+                    : $" ({log.Context})")
             );
 
             return string.Join(
-                Environment.NewLine + "----------------------------------------" + Environment.NewLine,
+                Environment.NewLine
+                + "----------------------------------------"
+                + Environment.NewLine,
                 lines
             );
         }
@@ -1850,12 +1857,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             get
             {
-                if (_logger is LogService logService)
-                {
-                    return logService.Logs.Count(l => l.Level == LogLevel.Error);
-                }
-
-                return 0;
+                return _logger.Logs.Count(
+                    l => l.Level == LogLevel.Error);
             }
         }
 
@@ -1885,15 +1888,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             get
             {
-                if (_logger is not LogService logService)
-                    return Enumerable.Empty<LogEntry>();
-
                 return SelectedLogFilter switch
                 {
-                    LogFilter.Info => logService.Logs.Where(l => l.Level == LogLevel.Info),
-                    LogFilter.Warning => logService.Logs.Where(l => l.Level == LogLevel.Warning),
-                    LogFilter.Error => logService.Logs.Where(l => l.Level == LogLevel.Error),
-                    _ => logService.Logs
+                    LogFilter.Info =>
+                        _logger.Logs.Where(
+                            l => l.Level == LogLevel.Info),
+
+                    LogFilter.Warning =>
+                        _logger.Logs.Where(
+                            l => l.Level == LogLevel.Warning),
+
+                    LogFilter.Error =>
+                        _logger.Logs.Where(
+                            l => l.Level == LogLevel.Error),
+
+                    _ => _logger.Logs
                 };
             }
         }
