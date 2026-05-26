@@ -1833,7 +1833,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             get
             {
-                return (_logger as LogService)!.Logs;
+                return _logger.Logs;
             }
         }
 

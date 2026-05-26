@@ -22,7 +22,9 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 
+using LatuCollect.Core.Logging.Models;
 using System;
+using System.Collections.ObjectModel;
 
 namespace LatuCollect.Core.Logging.Interfaces
 {
@@ -56,5 +58,8 @@ namespace LatuCollect.Core.Logging.Interfaces
 
         // Notification mise à jour logs
         event EventHandler? LogsUpdated;
+
+        
+        ReadOnlyObservableCollection<LogEntry> Logs { get; }
     }
 }
