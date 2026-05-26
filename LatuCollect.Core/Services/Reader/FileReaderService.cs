@@ -92,6 +92,9 @@ namespace LatuCollect.Core.Services.Reader
                 // 🔒 Fichier verrouillé
                 if (IsFileLocked(path))
                     return FileReadResult.Fail("Fichier verrouillé");
+                
+                if (IsBinaryFile(path))
+                    return FileReadResult.Fail("Fichier binaire non supporté");
 
                 // 🔁 Cache
                 if (TryGetFromCache(path, out var cached))
@@ -155,6 +158,39 @@ namespace LatuCollect.Core.Services.Reader
             }
         }
 
+        private static bool IsBinaryFile(string path)
+        {
+            const int sampleSize = 512;
+
+            try
+            {
+                using var stream = new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read);
+
+                byte[] buffer = new byte[sampleSize];
+
+                int read = stream.Read(buffer, 0, buffer.Length);
+
+                for (int i = 0; i < read; i++)
+                {
+                    // 🔥 caractère NULL → probablement binaire
+                    if (buffer[i] == 0)
+                        return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                // sécurité : si problème lecture
+                // on considère non binaire ici
+                return false;
+            }
+        }
+
         private static async Task<(string content, long fileSize)> ReadContentAsync(string path)
         {
             long fileSize = 0;
@@ -200,16 +236,32 @@ namespace LatuCollect.Core.Services.Reader
                 FileAccess.Read,
                 FileShare.Read);
 
-            using var fullReader = new StreamReader(
-                fullStream,
-                Encoding.UTF8,
-                detectEncodingFromByteOrderMarks: true);
+            try
+            {
+                using var fullReader = new StreamReader(
+                    fullStream,
+                    new UTF8Encoding(false, false),
+                    detectEncodingFromByteOrderMarks: true);
 
-            var fullContent = await fullReader.ReadToEndAsync();
+                var fullContent = await fullReader.ReadToEndAsync();
 
-            return (fullContent, fileSize);
+                return (fullContent, fileSize);
+            }
+            catch (DecoderFallbackException)
+            {
+                // 🔁 fallback UTF16
+                fullStream.Position = 0;
+
+                using var utf16Reader = new StreamReader(
+                    fullStream,
+                    new UnicodeEncoding(false, false, false),
+                    detectEncodingFromByteOrderMarks: true);
+
+                var utf16Content = await utf16Reader.ReadToEndAsync();
+
+                return (utf16Content, fileSize);
+            }
         }
-
 
         // ═════════════════════════════════════════════════════════════
         // 5. CACHE — GESTION
