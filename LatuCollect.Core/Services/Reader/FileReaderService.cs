@@ -92,7 +92,8 @@ namespace LatuCollect.Core.Services.Reader
                 // 🔒 Fichier verrouillé
                 if (IsFileLocked(path))
                     return FileReadResult.Fail("Fichier verrouillé");
-                
+
+                // 🚫 Fichier binaire
                 if (IsBinaryFile(path))
                     return FileReadResult.Fail("Fichier binaire non supporté");
 
@@ -101,9 +102,14 @@ namespace LatuCollect.Core.Services.Reader
                     return cached;
 
                 // 📦 Lecture fichier
-                var (content, fileSize) = await ReadContentAsync(path);
+                var (content, fileSize, isPartial) =
+                    await ReadContentAsync(path);
 
-                var result = FileReadResult.Success(content, fileSize);
+                var result = FileReadResult.Success(
+                    content,
+                    fileSize);
+
+                result.IsPartial = isPartial;
 
                 // 💾 Cache
                 AddToCache(path, result);
@@ -191,7 +197,8 @@ namespace LatuCollect.Core.Services.Reader
             }
         }
 
-        private static async Task<(string content, long fileSize)> ReadContentAsync(string path)
+        private static async Task<(string content, long fileSize, bool isPartial)>
+    ReadContentAsync(string path)
         {
             long fileSize = 0;
 
@@ -227,7 +234,7 @@ namespace LatuCollect.Core.Services.Reader
                 content += "\n\n----------------------------------------\n";
                 content += "⚠ Fichier tronqué (trop volumineux)";
 
-                return (content, fileSize);
+                return (content, fileSize, true);
             }
 
             using var fullStream = new FileStream(
@@ -245,7 +252,7 @@ namespace LatuCollect.Core.Services.Reader
 
                 var fullContent = await fullReader.ReadToEndAsync();
 
-                return (fullContent, fileSize);
+                return (fullContent, fileSize, false);
             }
             catch (DecoderFallbackException)
             {
@@ -259,7 +266,7 @@ namespace LatuCollect.Core.Services.Reader
 
                 var utf16Content = await utf16Reader.ReadToEndAsync();
 
-                return (utf16Content, fileSize);
+                return (utf16Content, fileSize, false);
             }
         }
 

@@ -75,6 +75,15 @@ namespace LatuCollect.Core.Configuration.Models
             }
         }
 
+        public List<ExclusionItem> UserExcludedFolders
+        {
+            get
+            {
+                return ExcludedFolders
+                    .Where(e => !e.IsProtected)
+                    .ToList();
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 4. MIGRATION ANCIEN FORMAT (STRING → OBJET)

@@ -48,6 +48,7 @@ namespace LatuCollect.Core.Models
 
         public long FileSize { get; set; }
 
+        public bool IsPartial { get; set; }
 
         // ═════════════════════════════════════════════════════════════
         // 3. ERREUR
@@ -73,6 +74,7 @@ namespace LatuCollect.Core.Models
                 IsSuccess = true,
                 Content = content,
                 FileSize = fileSize,
+                IsPartial = false,
                 ErrorMessage = string.Empty
             };
         }
