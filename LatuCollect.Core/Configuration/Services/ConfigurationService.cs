@@ -95,6 +95,8 @@ namespace LatuCollect.Core.Configuration.Services
         {
             try
             {
+                await _configLock.WaitAsync();
+
                 if (!File.Exists(_configPath))
                 {
                     var defaultConfig = GetDefaultConfig();
@@ -116,6 +118,10 @@ namespace LatuCollect.Core.Configuration.Services
             catch
             {
                 return GetDefaultConfig();
+            }
+            finally
+            {
+                _configLock.Release();
             }
         }
 
