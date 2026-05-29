@@ -39,6 +39,8 @@ using LatuCollect.Core.Logging.Models;
 using LatuCollect.Core.Logging.Services;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
+using LatuCollect.UI.WinUI.Models.Logs;
+using LatuCollect.UI.WinUI.ViewModels.Logs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -110,21 +112,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private UserConfig _userConfig;
 
+        private readonly LogsViewModel _logsViewModel;
+
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTANTES
         // ═════════════════════════════════════════════════════════════
 
         private const int MAX_NODES = 5000;
         private const int MAX_DEPTH = 10;
-
-
-        public enum LogFilter
-        {
-            All,
-            Info,
-            Warning,
-            Error
-        }
 
         // ═════════════════════════════════════════════════════════════
         // 4. ÉTAT GLOBAL UI
@@ -471,14 +466,12 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
             // 🔧 Logger
             _logger = new LogService();
+            _logsViewModel = new LogsViewModel(_logger);
             _logger.Info("MainViewModel initialisé");
 
-            // 🔥 Abonnement mise à jour logs pour rafraîchir UI
+            // 🔥 Rafraîchissement automatique UI lors de mise à jour logs
             _logger.LogsUpdated += (s, e) =>
             {
-                OnPropertyChanged(nameof(HasLogErrors));
-                OnPropertyChanged(nameof(Logs));
-                OnPropertyChanged(nameof(LogErrorCount));
                 RefreshFilteredLogs();
             };
 
@@ -1822,112 +1815,33 @@ namespace LatuCollect.UI.WinUI.ViewModels
             OnPropertyChanged(nameof(FilteredLogs));
         }
 
-        // Formate une entrée de log pour affichage ou export
-        private string FormatLogEntry(LogEntry log)
-        {
-            string formattedDate =
-                log.Timestamp.ToString("dd/MM/yyyy HH:mm:ss");
-
-            return $"[{formattedDate}] [{log.Level}] {log.Message}" +
-                   (string.IsNullOrWhiteSpace(log.Context)
-                       ? ""
-                       : $" ({log.Context})");
-        }
-
-        // Génère le contenu exportable des logs selon le filtre sélectionné
+        // Génère le contenu à exporter en filtrant les logs selon le filtre sélectionné
         public string GetLogsExportContent()
         {
-            var logs = FilteredLogs.ToList();
-
-            if (logs.Count == 0)
-                return string.Empty;
-
-            var lines = logs.Select(FormatLogEntry);
-
-            return string.Join(
-                Environment.NewLine
-                + "----------------------------------------"
-                + Environment.NewLine,
-                lines
-            );
+            return _logsViewModel.GetLogsExportContent();
         }
 
-        // Accès en lecture à la collection de logs complète (non filtrée)
-        public ReadOnlyObservableCollection<LogEntry> Logs
-        {
-            get
-            {
-                return _logger.Logs;
-            }
-        }
+        // Collection complète de logs (non filtrée) pour affichage dans UI ou export complet
+        public ReadOnlyObservableCollection<LogEntry> Logs =>
+            _logsViewModel.Logs;
 
-        // Indique si des logs d’erreur sont présents (pour affichage badge ou avertissement)
-        public bool HasLogErrors
-        {
-            get
-            {
-                return _logger.Logs.Any(
-                    l => l.Level == LogLevel.Error);
-            }
-        }
+        // Indicateur d’erreurs présentes dans les logs (pour affichage badge ou alerte)
+        public bool HasLogErrors =>
+            _logsViewModel.HasLogErrors;
+        
+        // Nombre d’erreurs présentes dans les logs (pour affichage badge ou alerte)
+        public int LogErrorCount =>
+            _logsViewModel.LogErrorCount;
 
-        // Compte le nombre de logs d’erreur (pour affichage badge ou statistiques)
-        public int LogErrorCount
-        {
-            get
-            {
-                return _logger.Logs.Count(
-                    l => l.Level == LogLevel.Error);
-            }
-        }
-
-        // Propriété de sélection du filtre de logs (tous, info, warning, erreur)
-        private LogFilter _selectedLogFilter = LogFilter.All;
-
-        // 🔥 IMPORTANT : rafraîchit la liste filtrée à chaque changement de filtre
+        // Collection de logs filtrée selon le filtre sélectionné (pour affichage dans UI)
         public LogFilter SelectedLogFilter
         {
-            get => _selectedLogFilter;
-            set
-            {
-                if (SetProperty(ref _selectedLogFilter, value))
-                {
-                    OnPropertyChanged(nameof(FilteredLogs));
-                }
-            }
+            get => _logsViewModel.SelectedLogFilter;
+            set => _logsViewModel.SelectedLogFilter = value;
         }
 
-        // Génère la liste filtrée des logs selon le filtre sélectionné (version optimisée pour accès interne)
-        private IEnumerable<LogEntry> GetFilteredLogs()
-        {
-            // 🔥 Snapshot stable pour éviter modification pendant énumération
-            var logs = _logger.Logs.ToList();
-
-            return SelectedLogFilter switch
-            {
-                LogFilter.Info =>
-                    logs.Where(
-                        l => l.Level == LogLevel.Info),
-
-                LogFilter.Warning =>
-                    logs.Where(
-                        l => l.Level == LogLevel.Warning),
-
-                LogFilter.Error =>
-                    logs.Where(
-                        l => l.Level == LogLevel.Error),
-
-                _ => logs
-            };
-        }
-
-        // Génère la liste filtrée des logs selon le filtre sélectionné (calculé à la volée pour toujours à jour)
-        public IEnumerable<LogEntry> FilteredLogs
-        {
-            get
-            {
-                return GetFilteredLogs();
-            }
-        }
+        // Collection de logs filtrée selon le filtre sélectionné (pour affichage dans UI)
+        public IEnumerable<LogEntry> FilteredLogs =>
+            _logsViewModel.FilteredLogs;
     }
 }

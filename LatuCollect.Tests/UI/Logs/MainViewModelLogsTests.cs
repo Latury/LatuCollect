@@ -24,7 +24,9 @@
 */
 
 using LatuCollect.Core.Logging.Interfaces;
+using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.UI.WinUI.ViewModels.Logs;
 
 namespace LatuCollect.Tests.UI.ViewModels.Logs
 {
@@ -118,7 +120,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Logs
             logger.Error("Error");
 
             vm.SelectedLogFilter =
-                MainViewModel.LogFilter.Info;
+                LogFilter.Info;
 
             // ACT
             var logs =
@@ -150,7 +152,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Logs
             logger.Error("Error");
 
             vm.SelectedLogFilter =
-                MainViewModel.LogFilter.Warning;
+                LogFilter.Warning;
 
             // ACT
             var logs =
@@ -182,7 +184,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Logs
             logger.Error("Error");
 
             vm.SelectedLogFilter =
-                MainViewModel.LogFilter.Error;
+                LogFilter.Error;
 
             // ACT
             var logs =

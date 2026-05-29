@@ -31,8 +31,10 @@
 */
 
 using LatuCollect.Core.Services.Export;
+using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.Settings.Panels;
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.UI.WinUI.ViewModels.Logs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -522,16 +524,16 @@ namespace LatuCollect.UI.WinUI
             };
 
             var allBtn = new Button { Content = "Tout" };
-            allBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.All;
+            allBtn.Click += (_, __) => vm.SelectedLogFilter = LogFilter.All;
 
             var infoBtn = new Button { Content = "Info" };
-            infoBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Info;
+            infoBtn.Click += (_, __) => vm.SelectedLogFilter = LogFilter.Info;
 
             var warnBtn = new Button { Content = "Warning" };
-            warnBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Warning;
+            warnBtn.Click += (_, __) => vm.SelectedLogFilter = LogFilter.Warning;
 
             var errorBtn = new Button { Content = "Error" };
-            errorBtn.Click += (_, __) => vm.SelectedLogFilter = MainViewModel.LogFilter.Error;
+            errorBtn.Click += (_, __) => vm.SelectedLogFilter = LogFilter.Error;   
 
             filterPanel.Children.Add(allBtn);
             filterPanel.Children.Add(infoBtn);
