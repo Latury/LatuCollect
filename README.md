@@ -10,8 +10,8 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.14.0-FFDF20?style=for-the-badge)
-![Statut](<https://img.shields.io/badge/Statut-Stabilisé%20(0.14.0)-28A745?style=for-the-badge>)
+![Version](https://img.shields.io/badge/Version-0.15.0-FFDF20?style=for-the-badge)
+![Statut](https://img.shields.io/badge/Statut-Architecture%20%26%20Split%20MainViewModel-28A745?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
 ![UI](https://img.shields.io/badge/UI-WinUI3-0078D6?style=for-the-badge)
@@ -37,7 +37,10 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 - ✅ Stabilisation majeure terminée (0.11.0)
 - ✅ Optimisations performance terminées (0.12.0)
 - ✅ Simplification architecture terminée (0.13.0)
-- 🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
+- ✅ UX & comportement stabilisés (0.14.0)
+- 🟡 Architecture & split MainViewModel en cours (0.15.0)
+
+🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
 
 ---
 
@@ -45,57 +48,122 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 
 LatuCollect permet de :
 
+## 📂 Exploration du projet
+
 - Charger un projet complet
 - Naviguer dans sa structure
 - Rechercher rapidement des fichiers
+
+## ☑️ Sélection
+
 - Sélectionner les fichiers à collecter
+- Exclure dynamiquement des dossiers
+
+## 👁️ Prévisualisation
+
 - Générer un aperçu en temps réel
 - Copier le contenu généré
+
+## 📤 Export
+
 - Exporter un document (.txt / .md)
-- Exclure dynamiquement des dossiers
+
+## ⚙️ Confort d'utilisation
+
 - Sauvegarder automatiquement les préférences utilisateur
 - Restaurer automatiquement l’état ouvert de l’arborescence
 - Ouvrir rapidement le dossier courant dans l’explorateur
 
-👉 Aucun fichier source n’est modifié
-👉 Lecture seule, aucune transformation
+## 🎯 Philosophie
+
+- ✔ Aucun fichier source n’est modifié
+- ✔ Lecture seule
+- ✔ Aucune transformation du contenu
+- ✔ Copier intelligent uniquement
 
 ---
 
 # 📦 2. Installation
 
-## 🔹 Prérequis
+## 📋 Prérequis
 
 - Windows 10 / 11
 - .NET 8
 
-## 🔹 Lancer l’application
+## 🚧 État actuel
 
-1. Télécharger la dernière version
-2. Lancer l’exécutable
+LatuCollect est actuellement en développement actif.
 
-👉 Aucune installation complexe requise
+Le projet est compilé et exécuté depuis l'environnement de développement.
+
+## 🔮 Distribution future
+
+Les futures versions proposeront :
+
+- Exécutable prêt à l'emploi
+- Packaging simplifié
+- Distribution des releases
+- Documentation d'installation
+
+👉 Voir [ROADMAP](./ROADMAP.md) pour les évolutions prévues.
 
 ---
 
 # ⚡ 3. Démarrage rapide
 
-1. Ouvrir l’application
-2. Charger un dossier
-3. Sélectionner des fichiers
-4. Visualiser l’aperçu
-5. Exporter
+## 📂 Étape 1
 
-👉 Temps total : quelques secondes
+Ouvrir l’application
+
+## 📁 Étape 2
+
+Charger un dossier
+
+## ☑️ Étape 3
+
+Sélectionner les fichiers souhaités
+
+## 👁️ Étape 4
+
+Visualiser l’aperçu généré
+
+## 📤 Étape 5
+
+Exporter le document final
+
+---
+
+## 🎯 Résultat
+
+👉 Quelques secondes suffisent pour obtenir un document prêt à être copié ou exporté.
 
 ---
 
 # 🎯 4. Cas d’usage
 
+## 🤖 Intelligence artificielle
+
 - Préparer du code pour une IA
+- Fournir un contexte projet complet
+- Regrouper rapidement plusieurs fichiers
+
+## 📚 Documentation
+
 - Générer une documentation rapide
+- Centraliser le contenu d’un projet
+- Faciliter la relecture
+
+## 🤝 Partage
+
 - Partager du code proprement
-- Extraire des parties d’un projet
+- Extraire des parties spécifiques d’un projet
+- Préparer des extraits pour un audit ou une analyse
+
+## 👥 Public visé
+
+- Débutants
+- Développeurs
+- Utilisateurs d’outils d’IA
 
 👉 Compatible débutant et avancé
 
@@ -103,7 +171,7 @@ LatuCollect permet de :
 
 # 🧠 5. Fonctionnement
 
-## 🧠 Fonctionnement utilisateur
+## 👤 Fonctionnement utilisateur
 
 ```text
 Importer → Sélectionner → Aperçu → Exporter
@@ -112,21 +180,35 @@ Importer → Sélectionner → Aperçu → Exporter
 ## ⚙️ Fonctionnement interne
 
 ```text
-Import → Lecture → Collection → Assemblage → Statistiques → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
+
+## 🎯 Principe
+
+- Le contenu des fichiers est lu
+- Les fichiers sélectionnés sont assemblés
+- Les statistiques sont calculées
+- Le contenu final est généré pour l’aperçu et l’export
+
+## 🔒 Garantie
+
+- ✔ Aucun fichier source n’est modifié
+- ✔ Le contenu est conservé tel quel
+- ✔ Aucune transformation complexe
+- ✔ Copier intelligent uniquement
 
 ---
 
 # 🖥️ 6. Interface
 
-## 🟦 Gauche — Projet (cœur de l’application)
+## 🟦 Gauche — Projet
 
 - Arborescence complète
-- Navigation dossiers
+- Navigation dans les dossiers
 - Recherche dynamique
 - Sélection via checkbox
-
----
+- Exclusions dynamiques
+- Conservation de l’arbre réel
 
 ## 🟨 Centre — Options
 
@@ -134,21 +216,19 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - Copier le contenu
 - Ouvrir le dossier dans l’explorateur
 
-Accès :
+### 📋 Accès
 
 - Paramètres
 - Statistiques
 - Aide
 - À propos
 
----
-
 ### 👨🏻‍💻 Mode développeur
 
 - Activation via ⚙ Paramètres
 - Indicateur visuel intégré
 
-👉 Rôle :
+#### 🎯 Rôle
 
 - Analyse interne
 - Outils de développement
@@ -156,27 +236,26 @@ Accès :
 
 👉 Aucun impact sur l’utilisateur standard
 
----
-
 ## 🟩 Droite — Aperçu
 
 - Contenu final en temps réel
 - Affichage type code (monospace)
+- Mise à jour automatique
+- Chargement progressif
 
-### États UI :
+### 📋 États UI
 
 - Aucun fichier sélectionné
 - Chargement
 - Erreur
 - État vide
-- Chargement progressif
-
----
+- Contenu prêt
 
 ## 🔻 Bas — Actions
 
 - Export du fichier
-- Logs application
+- Consultation des logs
+- Export des logs
 
 ---
 
@@ -185,20 +264,30 @@ Accès :
 ```text
 Chemin du fichier
 
-
 (contenu du fichier)
+
 
 
 ----------------------------------------
 ```
 
+---
+
+## 🎯 Principe
+
 👉 Aperçu = Export dans le fonctionnement standard
+
+- Le contenu est conservé tel quel
+- Aucun parsing complexe
+- Aucune transformation du contenu
+- Génération unique côté Core
 
 ---
 
 # ⚙️ 8. Fonctionnement interne
 
 👉 Pipeline simple
+
 👉 Lecture uniquement
 
 ## 🧱 Architecture
@@ -207,7 +296,7 @@ LatuCollect suit une architecture ALC :
 
 UI → ViewModel → Core
 
-Principes importants :
+### 📋 Principes importants
 
 - UI = affichage uniquement
 - Core = logique métier
@@ -215,7 +304,7 @@ Principes importants :
 - Pipeline centralisé
 - Source unique de vérité pour l’export
 
-👉 Objectif :
+### 🎯 Objectif
 
 - Stabilité
 - Lisibilité
@@ -224,20 +313,21 @@ Principes importants :
 
 ---
 
-# 🧪 Validation & stabilité
+# 🧪 9. Validation & stabilité
 
 LatuCollect possède désormais :
 
-- ✔ Plus de 115 tests automatisés
+- ✔ Plus de 116 tests automatisés
 - ✔ Validation TreeView
 - ✔ Validation recherche
 - ✔ Validation preview async
 - ✔ Validation exclusions
 - ✔ Validation export massif
 - ✔ Validation gros projets
+- ✔ Validation logging
 - ✔ Stress tests mémoire
 
-👉 Objectif :
+### 🎯 Objectif
 
 Garantir une application :
 
@@ -247,9 +337,9 @@ Garantir une application :
 
 ---
 
-# ⚡ 9. Performance
+# ⚡ 10. Performance
 
-### Optimisations
+## 🚀 Optimisations
 
 - Cache fichiers
 - Réduction I/O
@@ -260,7 +350,7 @@ Garantir une application :
 - Protection anti multi-refresh
 - Invalidation previews obsolètes
 
-### Protection gros projets
+## 🛡️ Protection gros projets
 
 - MAX_NODES
 - MAX_DEPTH
@@ -268,16 +358,15 @@ Garantir une application :
 - UI responsive pendant import massif
 - Protection contre les previews obsolètes
 
-👉 Message :
+### 💬 Message utilisateur
 
 ⚠ Projet volumineux — affichage partiel
 
-### ⚠️ Preview limité
+## ✂️ Preview limité
 
 👉 Le contenu exporté reste toujours complet.
 
-👉 Seul l’affichage peut être limité
-pour préserver la fluidité UI et la stabilité mémoire.
+👉 Seul l’affichage peut être limité afin de préserver la fluidité UI et la stabilité mémoire.
 
 Dans certains très gros projets :
 
@@ -285,7 +374,7 @@ Dans certains très gros projets :
 - l’export complet reste conservé
 - les statistiques restent calculées sur tous les fichiers sélectionnés
 
-👉 Objectif :
+### 🎯 Objectif
 
 - éviter les freezes UI
 - limiter l’utilisation mémoire
@@ -293,43 +382,52 @@ Dans certains très gros projets :
 
 ---
 
-# 🛠️ 10. Stabilité UI
+# 🛠️ 11. Stabilité UI
+
+## 📋 Garanties
 
 - Taille minimale : 1600 x 1000
-- Réduction flickering
-- Gestion propre du resize
+- Réduction du flickering
+- Gestion propre du redimensionnement
 - Fenêtres de dialogue stables
 - Réduction des refresh inutiles
 - Protection anti multi-refresh
 
 ---
 
-# 🧾 11. Logs
+# 🧾 12. Logs
+
+## 📋 Fonctionnalités
 
 - Logs intégrés
-- Visualisation UI
-- Export possible
+- Visualisation dans l’interface
+- Filtrage des logs
+- Export des logs
 
 ---
 
-# ⚠️ 12. Ce que l’application NE fait PAS
+# ⚠️ 13. Ce que l’application NE fait PAS
+
+## 🚫 Limitations volontaires
 
 - Aucune analyse de code
-- Aucune modification
+- Aucune modification des fichiers
 - Aucun parsing complexe
+
+### 🎯 Philosophie
 
 👉 LatuCollect = copier intelligent
 
 ---
 
-# ⚙️ 13. Fonctionnalités principales
+# ⚙️ 14. Fonctionnalités principales
 
-### ✅ Actuelles
+## ✅ Actuelles
 
 - Import de dossier
 - Arborescence
-- Recherche (debounce)
-- Exclusion dossiers
+- Recherche dynamique (debounce)
+- Exclusion de dossiers
 - Aperçu temps réel
 - Export TXT / Markdown
 - Copie presse-papiers
@@ -338,37 +436,42 @@ Dans certains très gros projets :
 - Mode développeur
 - Architecture simplifiée
 - Réduction du couplage Core/UI
+- Chargement progressif UI
+- Persistance expansion TreeView
 
----
+## 🔮 À venir
 
-### 🔮 À venir
-
-- Lazy loading hiérarchique avancé
 - Split progressif MainViewModel
+- TreeViewViewModel
+- PreviewViewModel
+- ExportViewModel
+- SettingsViewModel
 - Optimisations mémoire avancées
 - Virtualisation TreeView
 - Améliorations UX futures
 
+👉 Voir [ROADMAP](./ROADMAP.md)
+
 ---
 
-# 🏗️ 14. Architecture
+# 🏗️ 15. Architecture
 
 ```text
 Core = logique métier
+
 UI = affichage
 ```
 
-### Services principaux
+## 🧩 Services principaux
 
 - FileImportService
 - FileReaderService
-- FileCollectionService
 - FileExportService
 - FileStatisticsService
 
 👉 ViewModel = orchestrateur
 
-### 🔮 Évolution future
+## 🔮 Évolution future
 
 Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spécialisés afin de :
 
@@ -376,37 +479,65 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 - réduire les effets de bord
 - améliorer la stabilité async UI
 
-👉 Voir ROADMAP pour les détails
+### 📋 Découpage prévu
+
+#### ✅ Réalisé
+
+- LogsViewModel
+
+#### 🟡 Prévu
+
+- TreeViewViewModel
+- PreviewViewModel
+
+#### ⬜ Prévu ultérieurement
+
+- ExportViewModel
+- SettingsViewModel
+
+👉 Voir [ROADMAP](./ROADMAP.md) pour les détails
 
 ---
 
-# 📦 15. Structure
+# 📁 16. Structure
+
+## 📋 Organisation
 
 ```text
-Core/
-UI/WinUI/
-Resources/
+- Core/
+- UI/WinUI/
+- Resources/
+- Tests/
 ```
 
 👉 Voir : [DIRECTORY_STRUCTURE](./DIRECTORY_STRUCTURE.md)
 
 ---
 
-# 📌 16. État actuel
+# 📌 17. État actuel
+
+## 🏗️ Architecture
 
 - Application stable
 - UI stabilisée
 - Pipeline optimisé
 - Logs intégrés
 - Mode développeur actif
+
+## 👁️ Preview & TreeView
+
 - Pipeline preview async stabilisé
 - Persistance TreeView stabilisée
 - Exclusions UI stabilisées
 - Chargement progressif UI actif
 
-👉 Stabilisation majeure terminée (0.11.0)
-👉 Simplification architecture terminée (0.13.0)
-👉 Préparation des futurs refactors ViewModels
+## 📈 Évolution du projet
+
+- ✔ Stabilisation majeure terminée (0.11.0)
+- ✔ Optimisations performance terminées (0.12.0)
+- ✔ Simplification architecture terminée (0.13.0)
+- ✔ UX & comportement stabilisés (0.14.0)
+- 🟡 Préparation des futurs refactors ViewModels (0.15.0)
 
 ---
 
@@ -422,24 +553,50 @@ Resources/
 
 ---
 
-# ⚠️ 17. Limites (actuelles)
+# ⚠️ 18. Limites actuelles
+
+## 📋 Limitations connues
 
 - Pas de virtualisation avancée
 - Pas de lazy loading hiérarchique avancé
-- Chargement partiel
+- Chargement partiel sur très gros projets
 
-👉 Choix volontaire
+### 🎯 Pourquoi ?
+
+👉 Choix volontaire pour privilégier :
+
+- la simplicité
+- la stabilité
+- la maintenabilité
+- la prévisibilité
 
 ---
 
 # 🔮 Évolutions prévues
 
-- Lazy loading hiérarchique avancé
-- Optimisation performance
-- Stabilisation async UI
+## 📋 Prochaines étapes
+
 - Split progressif MainViewModel
-- Amélioration UX
-- Optimisation gros projets
+- Stabilisation async UI
+- Optimisations mémoire avancées
+- Optimisations gros projets
+- Améliorations UX
+
+## 🖥️ Découpage ViewModels
+
+### ✅ Réalisé
+
+- LogsViewModel
+
+### 🟡 Prévu
+
+- TreeViewViewModel
+- PreviewViewModel
+
+### ⬜ Prévu ultérieurement
+
+- ExportViewModel
+- SettingsViewModel
 
 👉 Voir : [ROADMAP](./ROADMAP.md)
 
@@ -464,21 +621,21 @@ Resources/
 
 # 🧠 Philosophie
 
-LatuCollect est volontairement simple.
-
-👉 L’objectif n’est PAS :
+## 🚫 Ce que LatuCollect n'est pas
 
 - Analyser du code
 - Transformer du code
 - Parser des projets complexes
 
-👉 L’objectif est :
+## ✅ Ce que LatuCollect fait
 
 - Collecter
 - Assembler
 - Exporter
 
-de manière :
+## 🎯 Objectif
+
+Fournir un outil :
 
 - Rapide
 - Stable

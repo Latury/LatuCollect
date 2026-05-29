@@ -1,4 +1,4 @@
-# 🖥️ UI GUIDE – LATUCOLLECT (V2)
+# 1. 🖥️ UI GUIDE – LATUCOLLECT (V2)
 
 Guide officiel de l’interface utilisateur WinUI 3
 
@@ -23,7 +23,7 @@ Ce document décrit :
 
 ---
 
-# 🎯 OBJECTIF
+# 2. 🎯 OBJECTIF
 
 Créer une interface :
 
@@ -36,7 +36,7 @@ Créer une interface :
 
 ---
 
-# 🧠 CONCEPT GLOBAL
+# 3. 🧠 CONCEPT GLOBAL
 
 ```text
 Importer → Sélectionner → Aperçu → Exporter
@@ -46,12 +46,15 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-# 🧩 STRUCTURE PRINCIPALE
+# 4. 🧩 STRUCTURE PRINCIPALE
 
 ```text
 Gauche → Projet
+
 Centre → Options
+
 Droite → Aperçu
+
 Bas → Actions
 ```
 
@@ -59,15 +62,15 @@ Bas → Actions
 
 ---
 
-# 💬 FEEDBACK UTILISATEUR
+# 5. 💬 FEEDBACK UTILISATEUR
 
-## 🎯 Rôle
+## 5.1 ⚙️ Rôle
 
 Informer sans bloquer l’utilisateur
 
 ---
 
-## 📦 Exemples
+## 5.2 📋 Exemples
 
 - ✔ Export réussi
 - ❌ Erreur export
@@ -76,7 +79,7 @@ Informer sans bloquer l’utilisateur
 
 ---
 
-## ⚙️ Comportement
+## 5.3 🔄 Comportement
 
 - Non bloquant
 - Temporaire
@@ -84,15 +87,15 @@ Informer sans bloquer l’utilisateur
 
 ---
 
-# 🟦 ZONE GAUCHE — PROJET (CŒUR APP)
+# 6. 🟦 ZONE GAUCHE — PROJET
 
-## 🎯 Rôle
+## ⚙️ Rôle
 
 Afficher la structure du projet
 
 ---
 
-## 📦 Contenu
+## 📋 Contenu
 
 - Bouton charger un dossier
 - Barre de recherche
@@ -101,7 +104,7 @@ Afficher la structure du projet
 
 ---
 
-## ⚙️ Comportement
+## 🔄 Comportement
 
 - Chargement asynchrone
 - Navigation fluide
@@ -109,7 +112,7 @@ Afficher la structure du projet
 
 ---
 
-## 🔎 Recherche
+## 🔍 Recherche
 
 - Insensible à la casse
 - Débounce actif
@@ -129,7 +132,7 @@ Afficher la structure du projet
 
 ---
 
-## ⚠️ Aucun résultat
+## ❌ Aucun résultat
 
 👉 Message affiché :
 
@@ -137,7 +140,7 @@ Afficher la structure du projet
 
 ---
 
-## ✅ Sélection
+## ☑️ Sélection
 
 - Multi-sélection
 - Synchronisation simplifiée parent ↔ enfants
@@ -154,15 +157,15 @@ Afficher la structure du projet
 
 ---
 
-# 🟨 ZONE CENTRE — OPTIONS
+# 7. 🟨 ZONE CENTRE — OPTIONS
 
-## 🎯 Rôle
+## ⚙️ Rôle
 
 Configurer et interagir
 
 ---
 
-## 📦 Contenu
+## 📋 Contenu
 
 - Format (TXT / Markdown)
 - Bouton Copier
@@ -170,7 +173,7 @@ Configurer et interagir
 
 ---
 
-## Accès :
+## 🚪 Accès
 
 - Paramètres
 - Statistiques
@@ -220,7 +223,7 @@ Configurer et interagir
 
 ---
 
-# 🟩 ZONE DROITE — APERÇU
+# 8. 🟩 ZONE DROITE — APERÇU
 
 ## 🎯 Rôle
 
@@ -316,22 +319,22 @@ Le contenu exporté reste complet.
 
 ---
 
-# 🔻 ZONE BASSE — ACTIONS
+# 9. 🔻 ZONE BASSE — ACTIONS
 
-## 🎯 Rôle
+## ⚙️ Rôle
 
 Actions finales
 
 ---
 
-## 📦 Contenu
+## 📋 Contenu
 
 - Exporter
 - Logs
 
 ---
 
-## ⚙️ Comportement
+## 🔄 Comportement
 
 - Génération du fichier
 - Respect du format
@@ -354,7 +357,7 @@ Actions finales
 
 ---
 
-# 🖥️ STABILITÉ UI
+# 10. 🖥️ STABILITÉ UI
 
 ## 📏 Fenêtre
 
@@ -362,16 +365,16 @@ Actions finales
 
 ---
 
-## ⚡ Redimensionnement
+## 📐 Redimensionnement
 
 - UI toujours lisible
 - Aucun flickering
 
 ---
 
-# ⚡ STABILITÉ UI / PERFORMANCE
+# 11. ⚡ STABILITÉ UI / PERFORMANCE
 
-## Règles importantes
+## 📋 Règles importantes
 
 - Aucun reload complet inutile
 - Aucun blocage UI volontaire
@@ -379,24 +382,39 @@ Actions finales
 - Preview synchronisé avec la sélection
 - Aperçu toujours cohérent avec l’export
 
-## Optimisations actuelles
+---
 
-- Protection anti multi-refresh
-- Protection anti multi-clic
-- Réduction recalculs preview
+## 🚀 Optimisations actuelles
+
+### 🌳 TreeView
+
 - Mise à jour ciblée TreeView
 - Conservation de l’arbre réel (pas de duplication)
 - Filtrage basé visibilité (`IsVisible`)
 - Mise à jour ciblée sans reload complet
+- Conservation état ouvert TreeView
+
+### 🖥️ Interface utilisateur
+
 - Chargement progressif UI
 - Yield UI pendant construction TreeView
 - Préservation fluidité pendant imports volumineux
-- Conservation état ouvert TreeView
+
+### ⚡ Preview
+
+- Protection anti multi-refresh
+- Protection anti multi-clic
+- Réduction recalculs preview
+
+### 📂 Exclusions
+
 - Réduction rebuild complets ListView exclusions
 
 ---
 
 ## 🔄 Évolution future — Stabilisation async UI
+
+### 🎯 Objectif
 
 Le projet évolue progressivement vers une gestion async UI plus robuste afin de :
 
@@ -404,11 +422,16 @@ Le projet évolue progressivement vers une gestion async UI plus robuste afin de
 - améliorer la stabilité du TreeView
 - limiter les doubles refresh preview
 - améliorer la testabilité
-  ✔ Stabilisation preview async réalisée en v0.14.0
 
 ---
 
-### Zones concernées
+### ✅ Déjà réalisé
+
+- ✔ Stabilisation preview async réalisée en v0.14.0
+
+---
+
+### 🟡 Zones concernées
 
 - sélection TreeView
 - refresh preview
@@ -417,7 +440,7 @@ Le projet évolue progressivement vers une gestion async UI plus robuste afin de
 
 ---
 
-### Objectif
+### 🎯 Résultat attendu
 
 - UI plus prévisible
 - interactions plus fiables
@@ -425,14 +448,16 @@ Le projet évolue progressivement vers une gestion async UI plus robuste afin de
 
 ---
 
-# 🧠 RÈGLE ALC
+# 12. 🧠 RÈGLE ALC
 
 - UI = affichage uniquement
 - Aucune logique métier
 
 ---
 
-## 🔮 Évolution future — Split MainViewModel
+# 13. 🔮 ÉVOLUTION FUTURE — SPLIT MAINVIEWMODEL
+
+## 🎯 Objectif
 
 Le `MainViewModel` sera progressivement séparé en plusieurs ViewModels spécialisés afin de :
 
@@ -443,17 +468,37 @@ Le `MainViewModel` sera progressivement séparé en plusieurs ViewModels spécia
 
 ---
 
-### Découpage prévu
+## 📊 État actuel du découpage
 
-- `TreeViewViewModel`
-- `PreviewViewModel`
-- `ExportViewModel`
-- `SettingsViewModel`
-- `LogsViewModel`
+### ✅ LogsViewModel
+
+Extraction réalisée en v0.15.0 :
+
+- filtrage logs
+- export logs
+- formatage logs
+- compteurs erreurs
+
+Compatibilité UI actuellement conservée
+via redirections MainViewModel.
 
 ---
 
-### ⚠️ Important
+### 🟡 Découpage restant
+
+- `TreeViewViewModel`
+- `PreviewViewModel`
+
+---
+
+### ⬜ Découpage prévu ultérieurement
+
+- `ExportViewModel`
+- `SettingsViewModel`
+
+---
+
+## ⚠️ Important
 
 Cette évolution restera progressive afin de préserver :
 
@@ -463,7 +508,7 @@ Cette évolution restera progressive afin de préserver :
 
 ---
 
-# 🧠 RÈGLES UX
+# 14. 🧠 RÈGLES UX
 
 - Une action = un rôle
 - Pas de surcharge
@@ -472,7 +517,7 @@ Cette évolution restera progressive afin de préserver :
 
 ---
 
-# ⚠️ INTERDIT
+# 15. ⚠️ INTERDIT
 
 - Logique métier dans UI
 - Multiples écrans
@@ -480,7 +525,7 @@ Cette évolution restera progressive afin de préserver :
 
 ---
 
-# 🎨 ÉVOLUTION UI (v0.17.0)
+# 16. 🎨 ÉVOLUTION UI (v0.17.0)
 
 ## 🎯 Objectif
 
@@ -488,7 +533,7 @@ Améliorer l’interface sans changer son fonctionnement
 
 ---
 
-## Axes
+## 🧭 Axes d’amélioration
 
 - Thèmes (clair / sombre)
 - Couleurs centralisées
@@ -500,7 +545,7 @@ Améliorer l’interface sans changer son fonctionnement
 
 ## 🔍 Audit UX/UI
 
-👉 Fonctionnement :
+### ⚙️ Fonctionnement
 
 - Choix guidé
 - Comparaison visuelle
@@ -508,7 +553,7 @@ Améliorer l’interface sans changer son fonctionnement
 
 ---
 
-## Sujets concernés
+## 🎨 Sujets concernés
 
 - Thème global
 - Boutons
@@ -522,24 +567,48 @@ Améliorer l’interface sans changer son fonctionnement
 
 ---
 
-# 📌 ÉTAT ACTUEL
+# 17. 📌 ÉTAT ACTUEL
+
+## 🏗️ Architecture
+
+- ✔ Architecture simplifiée
+- ✔ Réduction du couplage Core/UI
+- ✔ Première étape du split MainViewModel
+- ✔ Extraction LogsViewModel
+
+---
+
+## 🖥️ Interface utilisateur
 
 - ✔ Structure stable
 - ✔ UI fluide
-- ✔ Pipeline respecté
-- ✔ Preview = Export
-- ✔ Système de simulation supprimé (v0.13.0)
-- ✔ Architecture simplifiée
-- ✔ Réduction du couplage Core/UI
-- ✔ Pipeline preview async stabilisé
-- ✔ Persistance expansion TreeView
-- ✔ Exclusions UI stabilisées
 - ✔ Chargement progressif UI
 - ✔ Réduction des refresh inutiles
 
 ---
 
-# 🎯 OBJECTIF FINAL
+## 🌳 TreeView
+
+- ✔ Persistance expansion TreeView
+- ✔ Exclusions UI stabilisées
+
+---
+
+## 🔄 Pipeline
+
+- ✔ Pipeline respecté
+- ✔ Preview = Export
+- ✔ Pipeline preview async stabilisé
+
+---
+
+## 🕘 Historique majeur
+
+- ✔ Système de simulation supprimé (v0.13.0)
+
+---
+
+# 18. 🎯 OBJECTIF FINAL
 
 Une interface :
 
@@ -547,5 +616,9 @@ Une interface :
 - Rapide
 - Claire
 - Prévisible
+
+---
+
+## 🧭 Résultat recherché
 
 👉 L’utilisateur comprend immédiatement quoi faire

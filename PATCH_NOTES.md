@@ -2236,6 +2236,503 @@ et NON à un lazy loading hiérarchique dynamique.
 
 ---
 
+# 🚀 VERSION 0.15.0
+
+## 📌 Statut
+
+## 🟡 En cours — Architecture & split progressif MainViewModel
+
+## 🎯 Objectif
+
+Réduire les responsabilités du MainViewModel,
+préparer les futurs refactors async/UI
+et corriger progressivement les derniers écarts ALC.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🏗️ ARCHITECTURE
+
+## ✅ Services
+
+- ✅ Introduction de `IFileExportService`
+- ✅ `FileExportService` implémente maintenant une interface dédiée
+- ✅ Introduction de `IFileImportService`
+- ✅ `FileImportService` implémente maintenant une interface dédiée
+- ✅ Introduction progressive des contrats logging
+- ✅ `ILogService` enrichi avec `LogsUpdated`
+- ✅ Introduction progressive des contrats logging
+- ✅ `ILogService` enrichi avec :
+  - `Logs`
+  - `MinimumLevel`
+
+- ✅ Découplage progressif runtime `MainViewModel → Core`
+- ✅ Préparation des futures abstractions services
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧠 Configuration
+
+- ✅ Sécurisation progressive des sauvegardes configuration async
+- ✅ Ajout d’un verrou async :
+  - `SemaphoreSlim`
+
+- ✅ Préservation des exclusions utilisateur existantes
+- ✅ `Sanitize()` complète maintenant uniquement :
+  - les exclusions système manquantes
+
+- ✅ Suppression de la correction automatique des exclusions existantes
+- ✅ Réduction des risques :
+  - écrasement utilisateur
+  - modifications silencieuses
+  - effets de bord configuration
+
+- ✅ Nouveau comportement :
+  - les données utilisateur existantes sont conservées
+
+- ✅ Mise à jour des tests configuration :
+  - `LoadAsync_ShouldPreserveExistingSystemExclusion`
+
+- ✅ Protection des écritures concurrentes :
+  - `SaveAsync()`
+
+- ✅ Réduction des risques :
+  - race conditions
+  - collisions `.tmp`
+  - corruption configuration
+
+- ✅ Conservation de l’écriture atomique :
+  - fichier temporaire
+  - remplacement sécurisé
+
+  - ✅ Sécurisation progressive du chargement configuration async
+
+- ✅ `LoadAsync()` utilise maintenant :
+  - `_configLock`
+
+- ✅ Synchronisation :
+  - lecture
+  - écriture
+  - reset configuration
+
+- ✅ Réduction des risques :
+  - lecture pendant écriture
+  - JSON partiellement écrit
+  - état runtime incohérent
+  - collisions async configuration
+
+- ✅ Stabilisation du pipeline configuration runtime
+
+⚠️ Migration volontairement progressive
+afin d’éviter les régressions async/UI.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🖥️ UI — Split MainViewModel
+
+## ✅ Préparation séparation responsabilités UI
+
+- ✅ MainViewModel dépend désormais de `IFileExportService`
+
+- ✅ MainViewModel dépend désormais de `IFileImportService`
+
+- ✅ Réduction progressive du couplage avec `LogService`
+
+- ✅ Suppression du champ runtime inutilisé :
+  - `FileCollectionService`
+
+- ✅ Réduction progressive du couplage ViewModel ↔ Services
+
+- ✅ Stabilisation progressive de l’initialisation async
+
+- ✅ Introduction du helper :
+  - `WaitForInitializationAsync()`
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ LogsViewModel
+
+- ✅ Création de :
+  - `LogsViewModel`
+
+- ✅ Extraction de :
+  - `LogFilter`
+    👉 vers :
+    - `UI.WinUI/Models/Logs/`
+
+- ✅ Déplacement de :
+  - `GetFilteredLogs()`
+  - `FilteredLogs`
+  - `SelectedLogFilter`
+
+- ✅ Déplacement de :
+  - `HasLogErrors`
+  - `LogErrorCount`
+  - `Logs`
+
+- ✅ Déplacement de :
+  - `FormatLogEntry()`
+  - `GetLogsExportContent()`
+
+- ✅ Centralisation de la logique logs dans :
+  - `LogsViewModel`
+
+- ✅ Remplacement de la logique logs du MainViewModel
+  par des redirections vers :
+  - `_logsViewModel`
+
+- ✅ Simplification du rafraîchissement UI logs
+
+- ✅ Compatibilité UI préservée
+  via redirections MainViewModel
+
+- ✅ Mise à jour :
+  - `MainWindow.xaml.cs`
+  - `MainViewModelLogsTests.cs`
+
+- ✅ Validation complète :
+  - Build OK
+  - 116 tests verts
+
+- ✅ Première extraction ViewModel
+  réalisée dans le cadre du split progressif
+  du MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🟡 TreeViewViewModel
+
+Préparation du futur découpage :
+
+- ⬜ Sélection TreeView
+- ⬜ Expansion TreeView
+- ⬜ Synchronisation parent/enfant
+- ⬜ Gestion tri-state
+- ⬜ Gestion visibilité recherche
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🟡 PreviewViewModel
+
+Préparation du futur découpage :
+
+- ⬜ Gestion Preview
+- ⬜ États Preview
+- ⬜ Génération Preview
+- ⬜ Rafraîchissement Preview
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🟡 ExportViewModel
+
+Préparation du futur découpage :
+
+- ⬜ Gestion Export
+- ⬜ États Export
+- ⬜ Validation Export
+- ⬜ Résultats Export
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🟡 SettingsViewModel
+
+Préparation du futur découpage :
+
+- ⬜ Paramètres utilisateur
+- ⬜ Gestion thème
+- ⬜ Préférences UI
+- ⬜ États configuration
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧪 TESTS
+
+## ✅ Stabilisation tests configuration
+
+- ✅ Séparation des responsabilités des tests ExpandedPaths
+- ✅ Ajout du test :
+  - `SaveExpandedNodes_ShouldUpdate_RuntimeExpandedPaths`
+
+- ✅ Le test configuration vérifie maintenant uniquement :
+  - la persistance configuration
+
+- ✅ Réduction du couplage des tests runtime/configuration
+- ✅ Meilleure précision des diagnostics de régression
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ Stabilisation tests async
+
+- ✅ Suppression des `Task.Delay(100)` fragiles
+- ✅ Attente basée sur état réel ViewModel
+- ✅ Stabilisation des tests dépendants de :
+  - `LoadConfigurationAsync()`
+
+- ✅ Réduction des effets de bord liés au timing runtime
+- ✅ Stabilisation des tests Preview/Selection
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ Nouveaux tests logs
+
+Création :
+
+- ✅ `MainViewModelLogsTests.cs`
+
+Ajout couverture :
+
+- ✅ `HasLogErrors_ShouldReturnFalse_WhenNoErrorExists`
+- ✅ `HasLogErrors_ShouldReturnTrue_WhenErrorExists`
+- ✅ `LogErrorCount_ShouldReturnZero_WhenNoErrorExists`
+- ✅ `LogErrorCount_ShouldReturnCorrectCount_WhenErrorsExist`
+- ✅ `FilteredLogs_ShouldReturnOnlyInfoLogs`
+- ✅ `FilteredLogs_ShouldReturnOnlyWarningLogs`
+- ✅ `FilteredLogs_ShouldReturnOnlyErrorLogs`
+
+- ✅ Validation rafraîchissement logs filtrés
+- ✅ Validation formatage logs
+- ✅ Validation export logs
+- ✅ Validation filtres logging
+- ✅ Validation compteur erreurs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ Validation
+
+- ✅ 116 tests verts
+- ✅ Aucune régression Preview
+- ✅ Aucune régression Export
+- ✅ Aucune régression Import
+- ✅ Aucune régression TreeView
+- ✅ Aucune régression Logging
+- ✅ Aucune régression async/UI
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ⚠️ Découvertes architecture importantes
+
+## 🟡 Initialisation async constructeur
+
+Identification d’une fragilité potentielle liée à :
+
+```csharp
+_ = LoadConfigurationAsync();
+```
+
+Observations :
+
+- initialisation implicite async
+- dépendance timing runtime/tests
+- risques d’états runtime instables
+- futur sujet de stabilisation progressive
+
+⚠️ Aucun refactor massif effectué pour éviter les régressions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🟡 Couplage runtime logging
+
+Le découplage logging a été amélioré progressivement :
+
+- suppression du formatage UI dans le Core
+- suppression de `LogEntry.Date`
+- utilisation de `Timestamp` brut
+- déplacement du formatage date côté UI/ViewModel
+
+Le logging reste cependant encore partiellement géré dans :
+
+MainViewModel
+
+Observations :
+
+- logique logs extraite vers :
+  - LogsViewModel
+
+- compatibilité UI actuellement assurée
+  via redirections MainViewModel
+
+- futur nettoyage possible :
+  - suppression progressive des redirections UI
+  - migration complète des bindings
+
+⚠️ Migration volontairement progressive pour éviter les régressions UI.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧾 Logging
+
+- ✅ Suppression du formatage UI dans `LogEntry`
+- ✅ `LogEntry` contient maintenant uniquement :
+  - `Timestamp`
+  - `Level`
+  - `Message`
+  - `Context`
+
+- ✅ Déplacement du formatage date vers `UI/ViewModel`
+
+- ✅ Centralisation du formatage logs dans :
+  - `LogsViewModel`
+
+- ✅ Respect renforcé séparation Core ↔ UI (ALC)
+
+- ✅ Suppression de la propriété :
+  - `Date`
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧱 FileReader
+
+- ✅ Détection des fichiers verrouillés
+- ✅ Nouveau message explicite :
+  - `Fichier verrouillé`
+
+- ✅ Ajout validation préventive avant lecture
+- ✅ Réduction des erreurs IO ambiguës
+- ✅ Meilleure stabilité lecture/export
+
+- ✅ Ajout méthode interne :
+  - `IsFileLocked()`
+
+- ✅ Stabilisation filtrage logs :
+  - snapshot locale via `ToList()`
+
+- ✅ Correction d’un risque :
+  - modification collection pendant énumération
+
+- ✅ Réduction des risques :
+  - `InvalidOperationException`
+  - crash filtrage logs runtime
+
+- ✅ Lecture UTF8 explicite sécurisée
+- ✅ Activation détection BOM automatique
+- ✅ Utilisation explicite :
+  - `StreamReader`
+  - `Encoding.UTF8`
+
+- ✅ Préparation des futurs fallback :
+  - UTF16
+  - encodages invalides
+  - détection binaire
+
+- ✅ Réduction des risques :
+  - caractères illisibles
+  - erreurs encodage implicites
+
+  - ✅ Ajout état explicite :
+  - `FileReadResult.IsPartial`
+
+- ✅ Homogénéisation progressive des états FileReader
+
+- ✅ Le pipeline lecture détecte maintenant :
+  - contenu partiel réel
+
+- ✅ Préparation futurs :
+  - Preview warnings
+  - badges UI
+  - export warnings
+  - statistiques avancées
+
+- ✅ Réduction de la dépendance :
+  - aux messages texte implicites
+
+  - ✅ Détection simple des fichiers binaires
+
+- ✅ Validation préventive avant lecture texte
+- ✅ Nouveau message explicite :
+  - `Fichier binaire non supporté`
+
+- ✅ Ajout méthode interne :
+  - `IsBinaryFile()`
+
+- ✅ Détection basée sur :
+  - présence caractères NULL (`0x00`)
+
+- ✅ Réduction des risques :
+  - preview illisible
+  - export incohérent
+  - lecture `.exe`
+  - lecture `.dll`
+  - lecture images/archives
+
+- ✅ Préparation des futures validations lecture
+
+- ✅ Ajout fallback UTF16 sécurisé
+- ✅ Tentative automatique UTF16 :
+  - si lecture UTF8 échoue
+
+- ✅ Gestion :
+  - `DecoderFallbackException`
+
+- ✅ Réinitialisation stream avant fallback :
+  - `fullStream.Position = 0`
+
+- ✅ Réduction des risques :
+  - contenu Unicode illisible
+  - fichiers UTF16 incompatibles
+  - erreurs lecture encodage
+
+- ✅ Compatibilité améliorée :
+  - fichiers Windows Unicode
+  - anciens exports texte
+
+- ✅ Préparation future :
+  - gestion caractères invalides
+- ✅ Gestion sécurisée des caractères invalides
+- ✅ Remplacement automatique des séquences Unicode invalides
+- ✅ Utilisation explicite :
+  - `UTF8Encoding(false, false)`
+  - `UnicodeEncoding(false, false, false)`
+
+- ✅ Réduction des risques :
+  - exceptions encodage brutales
+  - contenu Unicode corrompu
+  - lecture instable
+
+- ✅ Compatibilité améliorée :
+  - fichiers texte partiellement corrompus
+  - anciens exports Unicode
+  - encodages mixtes
+
+- ✅ Stabilisation globale du pipeline lecture
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🎯 Impact
+
+- ✔ Première vraie transition architecture de la v0.15.0
+- ✔ Réduction progressive du couplage MainViewModel
+- ✔ Réduction progressive du couplage logging runtime
+- ✔ Préparation du split progressif MainViewModel
+- ✔ Préparation des futurs ViewModels spécialisés
+- ✔ Architecture plus maintenable
+- ✔ Logging plus cohérent
+- ✔ Tests plus robustes
+- ✔ Stabilisation progressive des tests async
+- ✔ Aucun impact utilisateur visible
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧠 Philosophie
+
+Cette version poursuit l’objectif principal de LatuCollect :
+
+✔ simple
+✔ stable
+✔ prévisible
+✔ maintenable
+
+❌ aucune complexité inutile
+❌ aucun pipeline secondaire inutile
+❌ aucun comportement implicite inutile
+
+👉 Copier intelligent uniquement
+
+
+---
+
 # 🧠 Philosophie
 
 Cette version poursuit l’objectif principal de LatuCollect :

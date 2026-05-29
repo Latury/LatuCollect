@@ -1,4 +1,4 @@
-# 🧪 TESTS – LATUCOLLECT (V2)
+# 1. 🧪 TESTS – LATUCOLLECT (V2)
 
 Stratégie officielle de validation du projet LatuCollect
 
@@ -26,7 +26,7 @@ Ce document définit la stratégie de tests de LatuCollect.
 
 ---
 
-# 🎯 OBJECTIF
+# 2. 🎯 OBJECTIF
 
 Garantir :
 
@@ -38,7 +38,7 @@ Garantir :
 
 ---
 
-# 🧩 NIVEAUX DE TESTS
+# 3. 🧩 NIVEAUX DE TESTS
 
 Approche progressive :
 
@@ -48,21 +48,21 @@ Approche progressive :
 
 ---
 
-# 🧪 TESTS MANUELS (UI)
+# 4. 🖥️ TESTS MANUELS (UI)
 
 Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## 📂 CHARGEMENT DU PROJET
+## 4.1 📂 Chargement du projet
 
-### Cas OK
+### ✅ Cas OK
 
 - Charger un dossier valide
 - Chargement avec sous-dossiers
 - Projet volumineux
 
-### Cas erreurs
+### ❌ Cas erreurs
 
 - Dossier invalide
 - Accès refusé
@@ -77,9 +77,9 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## 🌳 ARBORESCENCE
+## 4.2 🌳 Arborescence
 
-### Vérifier :
+### 🔍 Vérifier
 
 - Affichage correct
 - Navigation fluide
@@ -87,15 +87,17 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## 🔍 RECHERCHE
+## 4.3 🔍 Recherche
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Filtrage correct
 - Mise à jour rapide
 - Structure conservée
 
-### Cas limites :
+---
+
+### ⚠️ Cas limites
 
 - Recherche vide
 - Aucun résultat
@@ -107,7 +109,7 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-### ✔ Extensions
+### 📄 Extensions
 
 - .cs
 - .xaml
@@ -135,9 +137,9 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## ☑️ SÉLECTION
+## 4.4 ☑️ Sélection
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Checkbox fonctionnelle
 - Multi-sélection
@@ -145,7 +147,7 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-### ⚠️ Cas limites :
+### ⚠️ Cas limites
 
 - Aucun fichier sélectionné
 
@@ -157,16 +159,18 @@ Tests réalisés directement dans l’interface WinUI
 
 ---
 
-## 🌳 COHÉRENCE ARBORESCENCE (CRITIQUE — 0.11.0)
+## 4.5 🌳 Cohérence arborescence
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Sélection parent → sélection enfants
 - Désélection cohérente
 - Aucun comportement incohérent
 - Synchronisation correcte sélection ↔ preview
 
-### Cas critiques :
+---
+
+### 🚨 Cas critiques
 
 - Décoche un fichier → ne doit pas recocher le parent
 - Dossier contenant des fichiers sélectionnés et non sélectionnés
@@ -181,19 +185,23 @@ Tests réalisés directement dans l’interface WinUI
 - Persistance dossiers ouverts
 - Restauration expansion après reload
 
-👉 Priorité : haute
+---
+
+### 🔥 Priorité
+
+- Haute
 
 ---
 
-## 👁️ APERÇU
+## 4.6 👁️ Aperçu
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Mise à jour en temps réel
 - Aperçu = export dans le fonctionnement standard
 - Lisibilité correcte
 
-### Déclencheurs :
+### 🔄 Déclencheurs
 
 - Sélection
 - Désélection
@@ -207,16 +215,15 @@ Tests réalisés directement dans l’interface WinUI
 
 👉 Message :
 
-```text
 ⚠ Aperçu limité à 20 fichiers
-```
 
 👉 Cette limitation concerne uniquement l’affichage.
+
 L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-### ⚡ Optimisation
+### ⚡ Optimisations
 
 - Pas de recalcul inutile
 - Cache actif
@@ -228,9 +235,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## ⚠️ PREVIEW LIMITÉ / EXPORT COMPLET
+## 4.7 ✂️ Preview limité / Export complet
 
-### Vérifier :
+### 🔎 Vérifier
 
 - preview tronqué correctement
 - export complet conservé
@@ -239,7 +246,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-### Cas critiques :
+### 🚨 Cas critiques
 
 - très gros projet
 - limite mémoire atteinte
@@ -248,7 +255,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-👉 Résultat attendu :
+### 🎯 Résultat attendu
 
 - Aucun freeze UI
 - Export complet conservé
@@ -257,7 +264,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 🔄 ÉTATS UI
+## 4.8 📊 États UI
 
 - Loading
 - Ready
@@ -268,22 +275,26 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 💬 FEEDBACK UI
+## 4.9 💬 Feedback UI
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Message affiché après action
 - Disparition automatique
 - Aucun blocage UI
 
-### Cas :
+---
+
+### 📋 Cas testés
 
 - Export réussi
 - Erreur export
 - Copier
 - Sélection invalide
 
-👉 Résultat attendu :
+---
+
+### 🎯 Résultat attendu
 
 - Feedback visible
 - Compréhensible
@@ -291,17 +302,15 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## ⚠️ PROJETS VOLUMINEUX
+## 4.10 ⚠️ Projets volumineux
 
 👉 Message :
 
-```text
 ⚠ Projet volumineux — affichage partiel
-```
 
 ---
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Aucun freeze
 - UI fluide
@@ -309,9 +318,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## ⚡ PERFORMANCE
+## 4.11 ⚡ Performance
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Cache actif (pas de relecture disque)
 - Pas de recalcul inutile
@@ -322,12 +331,14 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-### Cas :
+### 📋 Cas testés
 
 - Clics rapides
 - Sélections répétées
 
-👉 Résultat :
+---
+
+### 🎯 Résultat attendu
 
 - Aucun ralentissement
 - Aucun bug visuel
@@ -336,7 +347,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ### 🧠 Mémoire & cache
 
-### Vérifier :
+#### 🔎 Vérifier
 
 - Nettoyage correct du cache
 - Réduction des recalculs inutiles
@@ -345,7 +356,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-👉 Résultat attendu :
+#### 🎯 Résultat attendu
 
 - Mémoire stable
 - UI fluide
@@ -353,9 +364,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 🔄 TESTS ASYNC UI
+## 4.12 🔄 Tests async UI
 
-### Vérifier :
+### 🔎 Vérifier
 
 - absence de double refresh
 - absence de race conditions
@@ -367,7 +378,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-### Cas critiques :
+### 🚨 Cas critiques
 
 - multi-clic rapide
 - sélection massive
@@ -376,7 +387,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-👉 Résultat attendu :
+### 🎯 Résultat attendu
 
 - Aucun comportement incohérent
 - Aucun freeze
@@ -387,19 +398,23 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ### 🖥️ Fenêtre
 
+#### 🔎 Vérifier
+
 - Impossible de réduire sous 1600 x 1000
 - Aucun flickering visible
 
-👉 Résultat :
+---
+
+#### 🎯 Résultat attendu
 
 - UI stable
 - Aucun effet visuel parasite
 
 ---
 
-## ⏳ LOADER
+## 4.13 ⏳ Loader
 
-### Vérifier :
+### 🔎 Vérifier
 
 - Visible pendant chargement
 - Disparaît correctement
@@ -407,9 +422,9 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 📤 EXPORT
+## 4.14 📤 Export
 
-### TXT
+### 📄 TXT
 
 - Fichier créé
 - Contenu correct
@@ -417,7 +432,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-### MARKDOWN
+### 📝 Markdown
 
 - Structure correcte
 - Lisible
@@ -445,7 +460,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 📋 COPIER
+## 4.15 📋 Copier
 
 ### Vérifier :
 
@@ -455,7 +470,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 🧾 LOGS
+## 4.16 🧾 Logs
 
 ### Vérifier :
 
@@ -480,7 +495,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 📊 STATISTIQUES
+## 4.17 📊 Statistiques
 
 ### Vérifier :
 
@@ -499,7 +514,7 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 👨🏻‍💻 MODE DÉVELOPPEUR
+## 4.18 👨🏻‍💻 Mode développeur
 
 ### Vérifier :
 
@@ -532,20 +547,20 @@ L’export final contient toujours l’ensemble des fichiers sélectionnés.
 
 ---
 
-## 📄 FORMAT
+## 4.19 📄 Format
 
 ```text
 Chemin du fichier
 
 (contenu du fichier)
 
----
+----------------------------------------
 
 ```
 
 ---
 
-## ⚠️ CAS PARTICULIERS
+## 4.20 ⚠️ Cas particuliers
 
 - Fichier vide
 - Fichier volumineux
@@ -564,7 +579,7 @@ Chemin du fichier
 
 ---
 
-## 🧹 VALIDATION POST-SUPPRESSION SIMULATION
+## 4.21 🧹 Validation post-suppression simulation
 
 ### Vérifier :
 
@@ -584,7 +599,7 @@ Chemin du fichier
 
 ---
 
-# 🧠 TESTS UNITAIRES
+# 5. 🧠 TESTS UNITAIRES
 
 ## 🎯 Objectif
 
@@ -607,9 +622,9 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-## 📋 Cas principaux
+## 5.1 📋 Cas principaux
 
-### Recherche TreeView
+### 5.1.1 🌳 Recherche TreeView
 
 - Filtrage visibilité
 - Expansion automatique
@@ -619,7 +634,7 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-### Sélection TreeView
+### 5.1.2 ☑️ Sélection TreeView
 
 - Propagation parent ↔ enfants
 - Synchronisation preview
@@ -629,7 +644,7 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-### Exclusions
+### 5.1.3 📁 Exclusions
 
 - Exclusion fichiers
 - Exclusion dossiers
@@ -641,7 +656,7 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-### États UI / Export
+### 5.1.4 📊 États UI / Export
 
 - États Loading / Ready / Empty / Error
 - Validation export
@@ -650,14 +665,14 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-### Lecture
+### 5.1.5 📖 Lecture
 
 - Lecture valide
 - Gestion des erreurs
 
 ---
 
-### Export
+### 5.1.6 📤 Export
 
 - Génération TXT
 - Génération Markdown
@@ -665,7 +680,7 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-### Statistiques
+### 5.1.7 📈 Statistiques
 
 - Comptage lignes
 - Comptage caractères
@@ -673,7 +688,7 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-# 📊 COUVERTURE CIBLE
+# 6. 📊 COUVERTURE CIBLE
 
 |  Module   | Objectif |
 | :-------: | :------: |
@@ -684,9 +699,9 @@ Tester la logique métier indépendamment de l’UI
 
 ---
 
-# 🧭 STRATÉGIE
+# 7. 🧭 STRATÉGIE
 
-Priorité :
+## 🎯 Priorités
 
 1. Import fiable
 2. Sélection correcte
@@ -696,50 +711,73 @@ Priorité :
 
 ---
 
-# 🧠 FONCTIONNEMENT VALIDÉ
+# 8. 🧠 FONCTIONNEMENT VALIDÉ
 
-## Flux utilisateur
+## 👤 Flux utilisateur
 
-```text
 Importer → Sélectionner → Aperçu → Exporter
-```
 
 ---
 
-## Pipeline interne
+## ⚙️ Pipeline interne
 
-```text
 Import → Lecture → Collection → Assemblage → Statistiques → Export
-```
 
 👉 Copier intelligent uniquement
+
 👉 Aucun traitement complexe
 
 ---
 
-# 📌 ÉTAT ACTUEL
+# 9. 📌 ÉTAT ACTUEL
+
+## 🧪 Couverture de tests
 
 - ✔ Tests manuels complets (UI)
 - ✔ Base importante de tests unitaires
+- ✔ Extension progressive de la couverture
+
+---
+
+## 🌳 TreeView & Recherche
+
 - ✔ Validation TreeView / Recherche / Sélection
-- ✔ Validation Export / Statistics / Collection
-- ✔ Validation états UI / ViewModel
-- ✔ Vérification des performances principales
-- ✔ Suppression complète du système de simulation (v0.13.0)
-- ✔ Simplification architecture Core/UI
-- ✔ Stabilisation pipeline preview async
 - ✔ Validation persistance expansion TreeView
 - ✔ Validation exclusions groupées
-- ✔ Validation reset runtime configuration
+
+---
+
+## 🖥️ UI & ViewModels
+
+- ✔ Validation états UI / ViewModel
 - ✔ Validation chargement progressif UI
-- ✔ 115 tests unitaires verts
+- ✔ Stabilisation pipeline preview async
+
+---
+
+## 🏗️ Architecture
+
+- ✔ Simplification architecture Core/UI
+- ✔ Validation reset runtime configuration
+
+---
+
+## 🕘 Historique majeur
+
+- ✔ Suppression complète du système de simulation (v0.13.0)
+
+---
+
+## 📊 Résultat actuel
+
+- ✔ 116 tests unitaires verts
 - 🔄 Extension couverture tests avancés
 
 ---
 
-# 🏁 CONCLUSION
+# 10. 🏁 CONCLUSION
 
-Les tests garantissent :
+## ✅ Garanties actuelles
 
 - Aucun export incorrect
 - Aucun crash
@@ -747,7 +785,9 @@ Les tests garantissent :
 
 ---
 
-👉 LatuCollect reste :
+## 🎯 Résultat
+
+LatuCollect reste :
 
 - Stable
 - Fiable
@@ -755,11 +795,23 @@ Les tests garantissent :
 
 ---
 
-# 🔮 ÉVOLUTIONS
+# 11. 🔮 ÉVOLUTIONS
+
+## 🧪 Couverture de tests
 
 - Extension couverture tests unitaires
 - Extension couverture tests automatisés
+
+---
+
+## ⚡ Performance
+
 - Tests de performance avancés
+
+---
+
+## 🖥️ Architecture UI
+
 - Tests communication inter-ViewModels
 - Validation synchronisation états UI
 - Validation stabilité bindings

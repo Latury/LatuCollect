@@ -155,51 +155,58 @@ Dans la classe :
 
 ---
 
-## 🔮 Évolution future — Split MainViewModel
+# 🔮 ÉVOLUTION FUTURE — SPLIT MAINVIEWMODEL
 
-### 🎯 Objectif
+## 🎯 Objectif
 
 Réduire les responsabilités du `MainViewModel`
 et améliorer la maintenabilité de l’UI.
 
 ---
 
-### ⚠️ Constat actuel
+## 📊 État actuel
 
-Le `MainViewModel` centralise actuellement :
+Le `MainViewModel` centralise encore :
 
 - sélection TreeView
 - recherche
 - preview
 - export
-- logs
 - statistiques
 - états UI
 - commandes
 
-👉 Cette centralisation simplifie actuellement le développement
-mais augmente progressivement :
+---
 
-- les risques d’effets de bord
-- la complexité des refresh UI
-- la difficulté des tests
-- les risques liés aux interactions async
+### ✅ LogsViewModel
+
+Extraction réalisée en v0.15.0 :
+
+- filtrage logs
+- export logs
+- formatage logs
+- compteurs erreurs
+
+Compatibilité UI conservée
+via redirections MainViewModel.
 
 ---
 
-### 🔧 Évolution prévue
-
-Le projet évoluera progressivement vers plusieurs ViewModels spécialisés :
+### 🟡 Découpage restant
 
 - `TreeViewViewModel`
 - `PreviewViewModel`
-- `ExportViewModel`
-- `SettingsViewModel`
-- `LogsViewModel`
 
 ---
 
-### ⚠️ Important
+### ⬜ Découpage prévu ultérieurement
+
+- `ExportViewModel`
+- `SettingsViewModel`
+
+---
+
+## ⚠️ Important
 
 Cette séparation restera progressive afin de :
 
@@ -210,7 +217,7 @@ Cette séparation restera progressive afin de :
 
 ---
 
-## 🔹 Rôle réel du ViewModel (v0.8.0)
+## 🔹 Rôle réel du ViewModel
 
 Le ViewModel ne contient plus de logique métier complexe.
 
@@ -263,64 +270,96 @@ Le projet utilise deux modèles distincts :
 ## 🔹 Core
 
 - ✔ Contient la logique métier
-- ✔ Services (lecture / export)
+- ✔ Services métier
 - ✔ Configuration globale
+- ✔ Configuration utilisateur
 
 ---
 
-# 3.1 CONFIGURATION GLOBALE
+# 4. ⚙️ CONFIGURATION
 
 ## 📄 AppConfig
 
-```text
 Core/Configuration/AppConfig.cs
-```
 
-### Rôle :
+### ⚙️ Rôle
 
 - ✔ Centraliser les paramètres globaux
-- ✔ Gérer les exclusions de dossiers
+- ✔ Gérer les exclusions système
 
-### Exemple :
+### 📋 Exemple
 
-```csharp
 ExcludedFolders = ["bin", "obj", ".git"]
-```
-
-### Utilisation :
-
-- ✔ Utilisé dans CreateNode (ViewModel)
-- ✔ Permet d’éviter la création de nodes inutiles
-
-👉 Impact :
-
-- ✔ Amélioration des performances
-- ✔ Réduction du bruit dans l’arborescence
-- ✔ Base pour Options dynamiques
 
 ---
 
-# 4. PIPELINE LATUCOLLECT
+## 📄 UserConfig
 
-## 🔹 Pipeline réel (Core)
+Core/Configuration/UserConfig.cs
+
+### ⚙️ Rôle
+
+- ✔ Stocker les préférences utilisateur
+- ✔ Stocker les exclusions utilisateur
+- ✔ Conserver les états UI persistants
+
+### 📊 État
+
+✔ Séparation AppConfig / UserConfig réalisée en v0.15.0
+
+---
+
+# 4.1 🔄 PIPELINE LATUCOLLECT
+
+## ⚙️ Pipeline réel (Core)
 
 ```text
-Import → Lecture → Collection → Assemblage → Statistiques → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
-
-⚠️ Note :
-
-Le pipeline est maintenant partiellement découplé :
-
-- Assemblage → FileExportService
-- Statistiques → FileStatisticsService
-
-👉 Séparation introduite en v0.9.0
-👉 Évolution progressive vers un pipeline totalement modulaire
 
 ---
 
-## 🔹 Pipeline utilisateur (UI simplifiée)
+## 🧩 Services du pipeline
+
+- Import → `FileImportService`
+- Lecture → `FileReaderService`
+- Assemblage → `FileExportService`
+- Statistiques → `FileStatisticsService`
+- Export → `FileExportService`
+
+---
+
+## 📊 État actuel
+
+- ✔ Lecture via `FileReaderService`
+- ✔ Assemblage via `FileExportService`
+- ✔ Calcul statistiques via `FileStatisticsService`
+- ✔ Source unique de vérité pour le contenu
+- ✔ Aperçu = Export dans le fonctionnement standard
+
+---
+
+## 🎯 Bénéfices
+
+- ✔ Responsabilités mieux séparées
+- ✔ Core plus maintenable
+- ✔ Tests plus simples
+- ✔ Architecture plus évolutive
+
+---
+
+## 🔮 Évolutions futures
+
+- Extension du système de statistiques
+- Amélioration du `FileStatisticsService`
+- Réduction progressive des responsabilités du `FileExportService`
+- Poursuite du découpage architectural du Core
+
+👉 Voir [ROADMAP](./ROADMAP.md) pour les évolutions détaillées
+
+---
+
+## 🖥️ Pipeline utilisateur
 
 ```text
 Importer → Sélectionner → Aperçu → Exporter
@@ -328,160 +367,148 @@ Importer → Sélectionner → Aperçu → Exporter
 
 ---
 
-# 4.1 RÉALITÉ ACTUELLE
-
-- ✔ Lecture via FileReaderService
-- ✔ Assemblage via FileExportService
-- ✔ Source unique de vérité pour le contenu
-- ✔ Aperçu = Export dans le fonctionnement standard
-
----
-
-## 🔍 État réel (v0.9.0)
-
-👉 Le pipeline est maintenant partiellement découpé en services distincts.
-
-### ✔ Services actuellement en place
-
-- Import → `FileImportService`
-- Lecture → `FileReaderService`
-- Collection → `FileCollectionService`
-- Export + Assemblage → `FileExportService`
-
-👉 Les responsabilités sont maintenant réparties :
-
-- `FileExportService` → assemblage + génération du contenu
-- `FileStatisticsService` → calcul des statistiques
-
-👉 Cette séparation améliore :
-
-- la lisibilité
-- la maintenabilité
-- la scalabilité du Core
-
----
-
-### ⚠️ Ce qui sera refactorisé plus tard
-
-- Amélioration du FileStatisticsService
-- Extension du système de statistiques
-- Réduction du rôle du `FileExportService`
-- Découpage plus fin du pipeline
-
-👉 Voir ROADMAP pour la suite
-
----
-
-# 5. CORRESPONDANCE SERVICES
+# 5. ⚙️ CORRESPONDANCE SERVICES
 
 | Étape        | Service               |
 | ------------ | --------------------- |
 | Import       | FileImportService     |
 | Lecture      | FileReaderService     |
-| Collection   | FileCollectionService |
 | Statistiques | FileStatisticsService |
 | Assemblage   | FileExportService     |
 | Export       | FileExportService     |
 
 ---
 
-# 6. SERVICES PRINCIPAUX
+# 6. 🛠️ SERVICES PRINCIPAUX
 
 ## 📄 FileReaderService
 
+### ⚙️ Responsabilités
+
 - ✔ Lit le contenu des fichiers
-- ✔ Retourne le texte brut
+- ✔ Gère les encodages
+- ✔ Détecte les fichiers binaires
+- ✔ Détecte les fichiers verrouillés
 
 ---
 
 ## 📤 FileExportService
 
+### ⚙️ Responsabilités
+
 - ✔ Génère TXT / Markdown
 - ✔ Structure le document final
-- ✔ Méthode centrale : BuildContent()
+- ✔ Méthode centrale : `BuildContent()`
 - ✔ Garantit la cohérence aperçu/export
 
-## 📊 FileStatisticsService (v0.9.0)
+---
+
+## 📊 FileStatisticsService
+
+### ⚙️ Responsabilités
 
 - ✔ Calcule les statistiques des fichiers
-- ✔ Séparation complète de la logique métier liée aux stats
 - ✔ Aucune dépendance UI
+- ✔ Logique métier dédiée aux statistiques
 
-👉 Responsabilités :
+---
+
+### 📋 Calculs réalisés
 
 - Nombre de fichiers
 - Nombre de lignes
 - Nombre de caractères
 - Taille totale
 
-👉 Objectif :
+---
 
-- Alléger FileExportService
-- Préparer une architecture évolutive et robuste
+### 🎯 Objectif
 
-### 🔄 Évolution (v0.9.0)
-
-- ✔ Optimisation du traitement des fichiers
-- ✔ Participation au calcul global (via le flux)
-- ✔ Réduction des lectures multiples
-
-👉 Objectif :
-
-- Améliorer les performances
-- Centraliser la logique
+- Alléger `FileExportService`
+- Séparer les responsabilités
+- Préparer une architecture évolutive
 
 ---
 
-# 📊 7. STATISTIQUES — COMPORTEMENT
+### ⚡ Optimisations
 
-Les statistiques sont calculées à partir des fichiers sélectionnés :
+- ✔ Réduction des lectures multiples
+- ✔ Participation au calcul global du pipeline
+- ✔ Amélioration des performances
+
+---
+
+# 7. 📊 STATISTIQUES
+
+## 📋 Données calculées
 
 - ✔ Nombre de fichiers
 - ✔ Nombre de lignes
 - ✔ Nombre de caractères
 - ✔ Taille totale
 
-### ⚙️ Fonctionnement
+---
+
+## ⚙️ Fonctionnement
 
 - Calcul déclenché par le ViewModel
-- Exécuté en arrière-plan (`Task.Run`)
+- Exécution en arrière-plan (`Task.Run`)
 - Mise à jour en temps réel
-
-👉 Objectif :
-
-- Fournir un retour utilisateur immédiat
-- Sans impacter les performances
 
 ---
 
-# ⚡ 8. PERFORMANCE
+## 🎯 Objectif
 
-## ✔ État actuel (v0.14.0)
+- Fournir un retour utilisateur immédiat
+- Limiter l’impact sur les performances
 
-- Mise en cache des fichiers (FileReaderService)
+---
+
+# 8. ⚡ PERFORMANCE
+
+## 📊 État actuel
+
+### 📂 Lecture & cache
+
+- Mise en cache des fichiers (`FileReaderService`)
 - Réduction des accès disque (I/O)
 - Réduction des recalculs inutiles
 - Optimisation mémoire
 - Amélioration du temps de génération du preview
 
+---
+
+### 🌳 TreeView
+
 - Réduction des reload complets TreeView
 - Mise à jour ciblée des nodes
+- Conservation de l’arbre réel (sans duplication)
+- Conservation état ouvert TreeView
+- Réduction rebuild complets exclusions
+
+---
+
+### 👁️ Preview
+
 - Réduction des recalculs preview
 - Protection anti multi-refresh
 - Protection anti double génération preview
 - Optimisation signature sélection
 - Limitation automatique preview volumineux
-- Conservation de l’arbre réel (sans duplication)
-
 - Debounce preview async
 - Invalidation previews obsolètes
+
+---
+
+### 🖥️ Interface utilisateur
+
 - Chargement progressif UI
 - Yield UI pendant construction TreeView
-- Conservation état ouvert TreeView
-- Réduction rebuild complets exclusions
 - Préservation fluidité pendant imports massifs
 
-👉 Résultat :
+---
+
+## 🎯 Résultat
 
 - Application plus rapide
 - UI plus fluide
@@ -491,18 +518,24 @@ Les statistiques sont calculées à partir des fichiers sélectionnés :
 
 ---
 
-# 9. UI WINUI (STRUCTURE OFFICIELLE)
+# 9. 🖥️ UI WINUI (STRUCTURE OFFICIELLE)
 
-```text id="fix-structure-ui"
 Gauche → Projet (arborescence)
 Centre → Options (format + actions)
 Droite → Aperçu
 Bas → Actions
-```
 
 ---
 
-# 10. COMPORTEMENT UI
+## ⚠️ Règle
+
+Cette structure est fixe et ne doit pas être modifiée.
+
+---
+
+# 10. 🖱️ COMPORTEMENT UI
+
+## 📋 Fonctionnalités principales
 
 - ✔ Sélection via checkbox
 - ✔ Navigation dossiers
@@ -512,46 +545,58 @@ Bas → Actions
 
 ---
 
-# 11. MODE DÉVELOPPEUR
+# 11. 👨🏻‍💻 MODE DÉVELOPPEUR
 
-Le mode développeur permet d’activer des fonctionnalités internes de debug.
+## ⚙️ Rôle
 
-### ✔ Règles
+Le mode développeur permet d’activer des fonctionnalités internes de diagnostic.
+
+---
+
+## 📋 Règles
 
 - Désactivé par défaut
 - Activé uniquement via l’interface (Paramètres)
 - Aucun impact sur l’utilisateur standard
 
-### ✔ Comportement
+---
+
+## 🔄 Comportement
 
 - Affichage d’un message dans l’UI (pas de popup bloquant)
 - Activation de fonctionnalités internes non visibles en mode standard
 
-### ✔ Objectif
+---
+
+## 🎯 Objectif
 
 - Analyse interne
 - Outils de développement
 - Gestion avancée des exclusions protégées
 
-👉 Le mode développeur reste strictement isolé du comportement normal.
+---
+
+## ⚠️ Important
+
+Le mode développeur reste strictement isolé du comportement normal.
 
 ---
 
-# 12. FORMAT D’EXPORT
+# 12. 📤 FORMAT D’EXPORT
+
+## 📄 Format standard
 
 ```text
 Chemin du fichier
 
-
 (contenu du fichier)
-
 
 ----------------------------------------
 ```
 
 ---
 
-## 🎯 Règle
+## 📋 Règles
 
 - Chaque fichier est affiché avec son chemin complet
 - Le contenu est affiché tel quel (aucune modification)
@@ -559,7 +604,7 @@ Chemin du fichier
 
 ---
 
-## ⚠️ IMPORTANT
+## ⚠️ Restrictions
 
 - ✔ Aucun traitement du contenu
 - ✔ Aucun parsing
@@ -571,7 +616,7 @@ Chemin du fichier
 
 ## 🔁 Cohérence
 
-👉 Le format d’export doit être :
+Le format d’export doit être :
 
 - Identique à l’aperçu
 - Généré par le Core uniquement
@@ -579,11 +624,11 @@ Chemin du fichier
 
 ---
 
-## 📄 Format Markdown
+## 📝 Format Markdown
 
-```text
 ## 📄 Chemin du fichier
 
+```text
 (contenu du fichier)
 
 ---
@@ -591,7 +636,7 @@ Chemin du fichier
 
 ---
 
-## 📌 Objectif
+## 🎯 Objectif
 
 - Lisible
 - Structuré
@@ -607,7 +652,9 @@ Le contenu généré pour l’aperçu est également utilisé pour l’export.
 
 👉 Aucun contenu spécifique n’est régénéré côté UI.
 
-Objectif :
+---
+
+### 🎯 Objectifs
 
 - éviter les désynchronisations
 - garantir Preview = Export
@@ -615,7 +662,9 @@ Objectif :
 
 ---
 
-## ⚠️ Cas particulier — Preview limité
+## ✂️ Cas particulier — Preview limité
+
+### 📋 Comportement
 
 Pour les très gros projets :
 
@@ -623,7 +672,11 @@ Pour les très gros projets :
 - l’export complet reste conservé
 - les statistiques restent calculées sur l’ensemble réel des fichiers
 
-👉 Cette limitation protège :
+---
+
+### 🛡️ Protection
+
+Cette limitation protège :
 
 - la mémoire
 - les performances
@@ -651,52 +704,90 @@ Le contenu exporté reste complet.
 
 ---
 
-# 13. STRUCTURE PROJET
+# 13. 📁 STRUCTURE PROJET
 
 ```text
-Core/
-├── Services/
+LatuCollect.Core/
 ├── Configuration/
+│   ├── Constants/
+│   ├── Interfaces/
+│   ├── Models/
+│   └── Services/
+│
 ├── Logging/
+│   ├── Interfaces/
+│   ├── Models/
+│   └── Services/
+│
 ├── Models/
+│   └── Export/
+│
+└── Services/
+    ├── Export/
+    ├── Import/
+    ├── Reader/
+    └── Statistics/
 
-UI/
-└── WinUI/
-    ├── ViewModels/
-    ├── Models/
-    ├── Converters/
+LatuCollect.UI.WinUI/
+├── Converters/
+├── Models/
+│   └── Logs/
+│
+├── Settings/
+│   ├── Pages/
+│   ├── Panels/
+│   └── ViewModels/
+│
+└── ViewModels/
+    └── Logs/
+
+LatuCollect.Tests/
+├── Core/
+├── UI/
+│   ├── Logs/
+│   ├── TreeView/
+│   └── ViewModels/
+│
+└── Helpers/
 ```
 
 👉 Voir : [DIRECTORY_STRUCTURE](./DIRECTORY_STRUCTURE.md)
 
 ---
 
-# 14. RÈGLES STRICTES
+# 14. 📏 RÈGLES STRICTES
+
+## 📋 Principes
 
 - ✔ 1 classe = 1 responsabilité
 - ✔ Pas de code mort
 - ✔ Pas de logique UI dans Core
 - ✔ Pas de logique métier complexe dans UI
-- ✔ Pas de valeurs en dur UI
+- ✔ Pas de valeurs en dur dans l’UI
 - ✔ Réduire les dépendances inutiles entre Core et UI
 
 ---
 
-# 15. EMOJIS
+# 15. 📝 DOCUMENTATION & EMOJIS
 
-- ❌ Interdits dans le code en version finale
+## 📋 Règles
+
+- ❌ Interdits dans le code final
 - ✔ Autorisés dans la documentation
+- ✔ Utilisés pour améliorer la lisibilité
 
 ---
 
-# 16. COMMENTAIRES
+# 16. 💬 COMMENTAIRES
 
-Classe :
+## 📄 Classes
 
 - ✔ Rôle
 - ✔ Responsabilités
 
-Méthode :
+---
+
+## ⚙️ Méthodes
 
 - ✔ Objectif
 - ✔ Paramètres
@@ -704,29 +795,53 @@ Méthode :
 
 ---
 
-# 17. ASYNCHRONE
+# 17. 🔄 ASYNCHRONE
 
-- ✔ async / await
-- ❌ .Result / .Wait()
+## 📋 Règles
+
+- ✔ Utilisation de `async / await`
+- ❌ Utilisation de `.Result`
+- ❌ Utilisation de `.Wait()`
 - ✔ UI jamais bloquée
-
-👉 Les opérations coûteuses doivent être contrôlées (ex : debounce côté UI)
 
 ---
 
-### 🔮 Évolution future — Stabilisation async UI
+## ⚡ Bonnes pratiques
 
-Certaines interactions UI utilisent encore actuellement :
+- Débounce côté UI
+- Chargement progressif
+- Yield UI sur traitements volumineux
+- Protection contre les doubles rafraîchissements
+
+---
+
+## 🎯 Objectif
+
+- Préserver la fluidité UI
+- Limiter les race conditions
+- Réduire les blocages utilisateur
+
+---
+
+## 🔮 ÉVOLUTION FUTURE — STABILISATION ASYNC UI
+
+### 📊 État actuel
+
+Certaines interactions UI utilisent encore :
 
 async void
 
 ✔ Stabilisation majeure du pipeline preview async réalisée en v0.14.0
 
-👉 Une migration progressive vers :
+---
+
+### 🎯 Objectif
+
+Migration progressive vers :
 
 async Task
 
-est prévue pour :
+afin de :
 
 - améliorer la stabilité
 - réduire les race conditions
@@ -735,7 +850,7 @@ est prévue pour :
 
 ---
 
-### ⚠️ Important
+### ⚠️ Impact
 
 Cette évolution impacte fortement :
 
@@ -743,44 +858,64 @@ Cette évolution impacte fortement :
 - les refresh preview
 - les interactions rapides UI
 
-👉 Elle doit être réalisée progressivement
-et uniquement après stabilisation architecture.
+---
+
+### 📋 Règle
+
+Cette migration doit être réalisée progressivement
+et uniquement après stabilisation de l’architecture.
 
 ---
 
-# 18. STABILITÉ UI
+# 18. 🖥️ STABILITÉ UI
 
-### ✔ Taille minimale
+## 📏 Taille minimale
 
 - Définie à 1600 x 1000
 - Empêche la dégradation de l’interface
 
-### ✔ Redimensionnement
+---
+
+## 🔄 Redimensionnement
 
 - Gestion native (Win32)
 - Réduction du flickering
 - Pas de boucle de resize agressive
 
-### ✔ Dialogs
+---
+
+## 💬 Dialogs
 
 - Aucun dialog imbriqué
 - Gestion contrôlée
 - Aucun blocage UI
 
-👉 Objectif : garantir une expérience fluide et stable
+---
+
+## 🎯 Objectif
+
+Garantir une expérience fluide et stable
 
 ---
 
-# 19. JOURNALISATION
+# 19. 🧾 JOURNALISATION
 
-- ✔ Tracer actions
-- ✔ Tracer erreurs
+## 📋 Objectifs
 
-❌ Pas d’écriture directe fichier
+- ✔ Tracer les actions
+- ✔ Tracer les erreurs
 
 ---
 
-# 20. NOMMAGE
+## ⚠️ Restrictions
+
+- ❌ Pas d’écriture directe fichier
+
+---
+
+# 20. 🏷️ NOMMAGE
+
+## 📋 Règles
 
 - ✔ PascalCase
 - ✔ Noms explicites
@@ -788,33 +923,43 @@ et uniquement après stabilisation architecture.
 
 ---
 
-# 21. INJECTION DE DÉPENDANCES
+# 21. 🔌 INJECTION DE DÉPENDANCES
 
-Actuel :
+## 📊 État actuel
 
 - ✔ Instanciation directe
 
-Futur :
+---
+
+## 🔮 Évolution future
 
 - ✔ Injection via interfaces
 
 ---
 
-# 22. ÉTAT ACTUEL
+## 🎯 Objectif
+
+- Réduire le couplage
+- Améliorer la testabilité
+- Faciliter les futurs refactors
+
+---
+
+# 22. 📌 ÉTAT ACTUEL
+
+## 🏗️ Architecture
 
 - ✔ Core fonctionnel
 - ✔ Export opérationnel
 - ✔ UI WinUI fonctionnelle
+- ✔ Réduction du couplage Core/UI
+- ✔ Simplification architecture globale
+
+---
+
+## 🔍 Recherche & TreeView
+
 - ✔ Recherche performante et filtrage dynamique
-- ✔ Configuration globale centralisée
-- ✔ Statistiques temps réel
-- ✔ Optimisation des performances (aperçu limité)
-
-- ✔ Optimisation globale du pipeline (v0.9.0)
-- ✔ Mise en cache des fichiers
-- ✔ Séparation des statistiques
-- ✔ UI plus stable (gestion des états améliorée)
-
 - ✔ Sélection TreeView simplifiée et stabilisée
 - ✔ Synchronisation parent ↔ enfants
 - ✔ Filtrage basé visibilité (`IsVisible`)
@@ -822,32 +967,60 @@ Futur :
 - ✔ Exclusions dynamiques stabilisées
 - ✔ Réduction des reload complets TreeView
 - ✔ Mise à jour ciblée des nodes
+- ✔ Persistance complète expansion TreeView
+
+---
+
+## 👁️ Preview & Export
+
+- ✔ Optimisation des performances (aperçu limité)
+- ✔ Preview synchronisé avec la sélection
+- ✔ Validation Preview = Export
+- ✔ Pipeline preview async stabilisé
+- ✔ Validation previews obsolètes
+- ✔ Chargement progressif UI
+
+---
+
+## ⚡ Performance & stabilité
+
+- ✔ Optimisation globale du pipeline
+- ✔ Mise en cache des fichiers
+- ✔ Séparation des statistiques
+- ✔ UI plus stable (gestion des états améliorée)
 - ✔ Protection anti multi-refresh
 - ✔ Protection anti double génération preview
 - ✔ Réduction des recalculs inutiles
-- ✔ Preview synchronisé avec la sélection
-- ✔ Validation Preview = Export
-- ✔ Core largement couvert par les tests
-- ✔ Tests ViewModel stabilisés
-
-- ✔ Suppression complète du système de simulation (v0.13.0)
-- ✔ Réduction du couplage Core/UI
-- ✔ Simplification architecture globale
-- ✔ Pipeline preview async stabilisé
-- ✔ Persistance complète expansion TreeView
-- ✔ Validation previews obsolètes
-- ✔ Chargement progressif UI
-- ✔ Exclusions groupées stabilisées
 - ✔ Reset runtime configuration sécurisé
 - ✔ Réduction importante des race conditions UI
 
 ---
 
-# 23. ÉVOLUTIONS
+## ⚙️ Configuration
 
-## 🔮 À venir
+- ✔ Configuration globale centralisée
+- ✔ Séparation AppConfig / UserConfig
+- ✔ Exclusions groupées stabilisées
 
-- Séparation AppConfig / UserConfig
+---
+
+## 🧪 Tests
+
+- ✔ Core largement couvert par les tests
+- ✔ Tests ViewModel stabilisés
+
+---
+
+## 🕘 Historique majeur
+
+- ✔ Suppression complète du système de simulation (v0.13.0)
+
+---
+
+# 23. 🔮 ÉVOLUTIONS
+
+## 📋 Prochaines étapes
+
 - Injection de dépendances (interfaces)
 - Refactor avancé du Core
 - Amélioration UI
@@ -861,7 +1034,31 @@ Futur :
 
 ---
 
+## 🖥️ Split MainViewModel
+
+### ✅ Réalisé
+
+- LogsViewModel
+
+### 🟡 Prévu
+
+- TreeViewViewModel
+- PreviewViewModel
+
+### ⬜ Prévu ultérieurement
+
+- ExportViewModel
+- SettingsViewModel
+
+---
+
+👉 Voir ROADMAP.md pour le détail
+
+---
+
 # ⚠️ IMPORTANT — SIMPLICITÉ
+
+## 🎯 Philosophie
 
 LatuCollect est volontairement simplifié :
 
@@ -870,13 +1067,14 @@ LatuCollect est volontairement simplifié :
 - ✔ Pas de parsing complexe
 
 👉 Copier intelligent
+
 👉 Pas un analyseur
 
 ---
 
-# 24. VALIDATION & TESTS
+# 24. 🧪 VALIDATION & TESTS
 
-## ✔ Tests actuels
+## 📋 Tests actuels
 
 - Tests Core
 - Tests ViewModel
@@ -891,6 +1089,10 @@ LatuCollect est volontairement simplifié :
 - Tests persistance expansion
 - Tests exclusions groupées
 - Tests reset configuration runtime
+- Tests logging
+- Tests LogsViewModel
+
+---
 
 ## 🎯 Objectif
 
@@ -902,7 +1104,7 @@ Garantir :
 
 ---
 
-# 25. OBJECTIF GLOBAL
+# 25. 🎯 OBJECTIF GLOBAL
 
 - ✔ Simple
 - ✔ Structuré

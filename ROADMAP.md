@@ -1048,18 +1048,28 @@ et préparer les futurs refactors async/UI.
 
 ## 🧠 Core
 
-- ⬜ Interfaces services
-- 🟡 Séparation AppConfig / UserConfig (améliorée mais encore incomplète)
-- ⬜ Homogénéisation complète FileReadResult
-- ⬜ Séparation exclusions système / utilisateur
-- ⬜ Sécurisation ResetAsync / LoadAsync
-- ⬜ Éviter écrasement exclusions utilisateur
+- ✅ Interfaces services
+
+- ✅ Séparation AppConfig / UserConfig
+
+- 🟡 Homogénéisation progressive FileReadResult
+  - ✅ Ajout état explicite `IsPartial`
+  - ✅ Détection contenu partiel réel
+  - 🟡 Préparation futurs warnings Preview/Export
+
+- 🟡 Séparation exclusions système / utilisateur
+  - ✅ Préparation `UserExcludedFolders`
+  - ⬜ Migration complète
+
+- ✅ Sécurisation ResetAsync / LoadAsync
+
+- ✅ Éviter écrasement exclusions utilisateur
 
 ---
 
 ## 📦 Modèles
 
-- ⬜ Déplacer :
+- ✅ Déplacer :
   - ExportResult
   - ExportData
   - StatisticsResult
@@ -1069,38 +1079,80 @@ et préparer les futurs refactors async/UI.
 
 ## 🧱 FileNode
 
-- ⬜ Supprimer IsSelected du Core
-- ⬜ Ajouter IsFolder réel
+- ✅ Ajouter IsFolder réel
+
+- 🟡 Préparer suppression IsSelected du Core
+  - ✅ Suppression FileCollectionService
+  - ✅ Suppression FileCollectionServiceTests
 
 ---
 
 ## 🧱 FileReader
 
-- ⬜ Gestion encodages invalides
-- ⬜ Validation fichiers verrouillés
-- ⬜ Détection simple fichiers binaires
-- ⬜ Fallback UTF8 / UTF16 sécurisé
-- ⬜ Gestion caractères invalides
+- ✅ Gestion encodages invalides
+- ✅ Validation fichiers verrouillés
+- ✅ Détection simple fichiers binaires
+- ✅ Fallback UTF8 / UTF16 sécurisé
+- ✅ Gestion caractères invalides
 
 ---
 
 ## 🧾 Logging
 
-- ⬜ Déplacer formatage Date côté UI
+- ✅ Déplacer formatage Date côté UI
+- ✅ Extraction logique logs vers LogsViewModel
 
 ---
 
 ## 🖥️ UI — Split MainViewModel
 
-- ⬜ Préparer séparation des responsabilités UI
-- ⬜ Réduire taille MainViewModel
-- ⬜ Éviter accumulation logique UI + pipeline
-- ⬜ Préparer découpage :
-  - TreeViewViewModel
-  - PreviewViewModel
-  - ExportViewModel
-  - SettingsViewModel
-  - LogsViewModel
+- ✅ Préparer séparation des responsabilités UI
+
+- 🟡 Réduire taille MainViewModel
+
+- 🟡 Éviter accumulation logique UI + pipeline
+
+### ✅ LogsViewModel
+
+- ✅ Fichier créé
+- ✅ LogFilter extrait
+- ✅ LogFilter déplacé vers Models
+- ✅ Branché dans MainViewModel
+- ✅ Filtrage déplacé
+- ✅ Collection Logs déplacée
+- ✅ Compteurs erreurs déplacés
+- ✅ Export logs
+- ✅ Formatage logs
+- ✅ Compatibilité UI préservée via redirections MainViewModel
+
+### 🟡 TreeViewViewModel
+
+- ⬜ Sélection TreeView
+- ⬜ Expansion TreeView
+- ⬜ Synchronisation parent/enfant
+- ⬜ Gestion tri-state
+- ⬜ Gestion visibilité recherche
+
+### 🟡 PreviewViewModel
+
+- ⬜ Gestion Preview
+- ⬜ États Preview
+- ⬜ Génération Preview
+- ⬜ Rafraîchissement Preview
+
+### ⬜ ExportViewModel
+
+- ⬜ Gestion Export
+- ⬜ États Export
+- ⬜ Validation Export
+- ⬜ Résultats Export
+
+### ⬜ SettingsViewModel
+
+- ⬜ Paramètres utilisateur
+- ⬜ Gestion thème
+- ⬜ Préférences UI
+- ⬜ États configuration
 
 ---
 
@@ -1116,58 +1168,133 @@ afin d’éviter :
 
 ---
 
-# 🚀 20. Version 0.16.0 — STABILISATION ASYNC UI & LOGS
+# 🚀 20. Version 0.16.0 — FINALISATION SPLIT MAINVIEWMODEL
 
 ## 🎯 Objectif
 
-Fiabiliser complètement les interactions async UI
-et améliorer la stabilité globale.
+Finaliser le découpage du MainViewModel,
+réduire les redirections temporaires
+et poursuivre les améliorations d’architecture préparées en v0.15.0.
 
 ---
 
-## 🧾 Logs
+## 🧠 Core
 
-- ⬜ Limite mémoire
-- ⬜ Thread safety
+### 🟡 Configuration
+
+- ⬜ Migration complète exclusions système / utilisateur
+- ⬜ Suppression progressive des dépendances héritées
+- ⬜ Validation complète UserExcludedFolders
+
+### 🟡 FileReadResult
+
+- ⬜ Warnings Preview basés sur IsPartial
+- ⬜ Warnings Export basés sur IsPartial
+- ⬜ Préparation badges UI contenu partiel
+
+---
+
+## 🖥️ UI — Split MainViewModel
+
+### ⬜ ExportViewModel
+
+- ⬜ Création ExportViewModel
+- ⬜ Déplacement logique export
+- ⬜ Déplacement états export
+- ⬜ Déplacement validation export
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+### ⬜ SettingsViewModel
+
+- ⬜ Création SettingsViewModel
+- ⬜ Déplacement préférences utilisateur
+- ⬜ Déplacement gestion thème
+- ⬜ Déplacement états configuration
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+---
+
+## 🧹 Nettoyage architecture
+
+- ⬜ Réduction progressive des redirections MainViewModel
+- ⬜ Migration progressive des bindings UI
+- ⬜ Réduction taille MainViewModel
+- ⬜ Simplification responsabilités MainViewModel
+
+---
+
+## 🧪 Tests
+
+- ⬜ Couverture tests ExportViewModel
+- ⬜ Couverture tests SettingsViewModel
+- ⬜ Validation absence régression bindings UI
+- ⬜ Validation complète Preview = Export
+
+---
+
+## ⚠️ Important
+
+La suppression des redirections MainViewModel
+doit rester progressive afin d’éviter :
+
+- régressions UI
+- cassures bindings
+- effets de bord async
+- pertes stabilité TreeView
+
+---
+
+# 🚀 21. Version 0.17.0 — STABILISATION ASYNC UI & FINALISATION ARCHITECTURE
+
+## 🎯 Objectif
+
+Finaliser les travaux préparés lors des versions précédentes
+et fiabiliser complètement les interactions async/UI.
+
+---
+
+## 🧾 Logging
+
+### ✅ Déjà réalisé
+
 - ✅ Export logs
 - ✅ Niveaux de logs
-- ✅ Filtrage
+- ✅ Filtrage logs
+- ✅ LogsViewModel
+- ✅ Formatage logs côté UI
+
+### ⬜ À étudier
+
+- ⬜ Limite mémoire logs
+- ⬜ Thread safety avancée
+- ⬜ Rotation / nettoyage automatique des logs
+
+---
+
+## 🧠 Finalisation architecture
+
+### ⬜ Suppression progressive des redirections MainViewModel
+
+- ⬜ Migration progressive des bindings UI
+- ⬜ Réduction des propriétés de redirection
+- ⬜ Simplification MainViewModel
+
+### ⬜ Finalisation exclusions système / utilisateur
+
+- ⬜ Migration complète
+- ⬜ Validation architecture définitive
+
+### ⬜ Exploitation complète de IsPartial
+
+- ⬜ Warnings Preview
+- ⬜ Warnings Export
+- ⬜ Badges UI contenu partiel
 
 ---
 
 ## 🔄 Async UI
 
-### ⚠️ Problème actuel
-
-Certains handlers utilisent actuellement :
-
-async void
-
-Ce qui provoque plusieurs risques :
-
-- impossibilité d’attendre correctement les opérations async
-- tests potentiellement instables
-- race conditions UI
-- exceptions async difficiles à capturer
-- comportements imprévisibles lors des clics rapides
-
----
-
-## 🔧 Évolutions prévues
-
-### ⬜ Transformer les handlers async critiques
-
-Remplacer progressivement :
-
-async void
-
-par :
-
-async Task
-
----
-
-### ⬜ Stabiliser pipeline async UI
+### ⬜ Stabilisation pipeline async UI
 
 Vérifier :
 
@@ -1179,7 +1306,7 @@ Vérifier :
 
 ---
 
-### ⬜ Améliorer testabilité
+### ⬜ Améliorer testabilité async
 
 Permettre aux tests de :
 
@@ -1215,136 +1342,61 @@ Valider :
 
 ## 📌 Preview limité / Export complet
 
-### 🎯 Objectif
+### ⬜ Clarifier comportement utilisateur
 
-Clarifier le comportement des très gros projets lorsque le preview est tronqué
-mais que les statistiques continuent d’être calculées sur l’ensemble des fichiers sélectionnés.
+- ⬜ Indicateur visuel preview tronqué
+- ⬜ Distinction Preview / Export complet
+- ⬜ Messages utilisateur améliorés
+- ⬜ Validation cohérence UX
 
----
+### ⬜ Validation architecture
 
-### ⚠️ Contexte actuel
-
-Pour les gros volumes :
-
-- le preview est volontairement limité pour protéger :
-  - la mémoire
-  - les performances
-  - la fluidité UI
-
-- mais les statistiques continuent d’être calculées sur :
-  - tous les fichiers sélectionnés
-  - l’export complet réel
-
-Conséquence actuelle :
-
-Preview ≠ Export
-
-dans certains cas extrêmes.
-
----
-
-### 🔍 Évolutions prévues
-
-- ⬜ Ajouter un indicateur visuel clair lorsque le preview est tronqué
-- ⬜ Différencier explicitement :
-  - statistiques export complet
-  - contenu preview limité
-- ⬜ Clarifier le message utilisateur lors des limites de caractères
-- ⬜ Vérifier cohérence UX du mode preview tronqué
-- ⬜ Étudier un mode :
-  - preview partiel intelligent
-  - export complet conservé
-- ⬜ Vérifier cohérence architecture ALC avec la règle :
+- ⬜ Vérifier cohérence avec :
   - Preview = Export
 
----
-
-### 🧠 Important
-
-Cette évolution ne concerne que :
-
-- les très gros projets
-- les limites de protection mémoire/performance
-
-Le comportement actuel reste volontaire afin de :
-
-- éviter les freezes UI
-- limiter l’utilisation mémoire
-- conserver une application fluide
+- ⬜ Vérifier cohérence ALC
 
 ---
 
-## ⚠️ Risques
-
-Cette modification impacte :
-
-- pipeline UI
-- interactions utilisateur
-- rafraîchissement preview
-- stabilité TreeView
-
-👉 Refactor à faire uniquement après stabilisation architecture.
-
----
-
-## ✅ Conditions avant implémentation
-
-- stabilisation performance 0.12.0 terminée
-- TreeView stable
-- recherche stable
-- preview stable
-- split MainViewModel suffisamment avancé
-- tests actuels validés
-
----
-
-## 🧪 Tests à prévoir
-
-### Sélection
-
-- parent → enfants
-- enfants → parent
-- clics rapides
-
----
-
-### Recherche
-
-- recherche dynamique
-- suppression recherche
-- expansion automatique
-- conservation état UI
-
----
+## 🧪 Tests
 
 ### Async
 
-- multi-clic rapide
-- double refresh
-- refresh simultanés
-- absence race conditions
-
----
+- ⬜ multi-clic rapide
+- ⬜ double refresh
+- ⬜ refresh simultanés
+- ⬜ absence race conditions
 
 ### Preview / Export
 
-- cohérence preview ↔ export
-- preview tronqué gros projets
-- statistiques export complet
+- ⬜ cohérence preview ↔ export
+- ⬜ preview tronqué gros projets
+- ⬜ statistiques export complet
+
+### Architecture
+
+- ⬜ validation suppression redirections MainViewModel
+- ⬜ validation migration bindings UI
 
 ---
 
 ## 🎯 Résultat attendu
 
+✔ MainViewModel allégé
+
+✔ Architecture plus propre
+
+✔ Async plus fiable
+
+✔ Tests plus robustes
+
 ✔ UI plus prévisible
-✔ Tests plus fiables
-✔ Async plus propre
-✔ Réduction comportements aléatoires
-✔ Base plus robuste pour futures optimisations
+
+✔ Base solide pour les futures évolutions
 
 ---
 
-# 🎨 🚀 21. Version 0.17.0 — UI / THÈMES / AUDIT COMPLET
+# 🎨 🚀 22. Version 0.18.0 — UI / THÈMES / AUDIT COMPLET
 
 ## 🎯 Objectif
 
@@ -1543,7 +1595,7 @@ Ex :
 
 ---
 
-# 🚀 22. Version 0.18.0 — FINALISATION & DISTRIBUTION
+# 🚀 23. Version 0.19.0 — FINALISATION & DISTRIBUTION
 
 ## 🎯 Objectif
 
