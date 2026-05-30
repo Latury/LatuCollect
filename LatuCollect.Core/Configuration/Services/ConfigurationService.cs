@@ -101,7 +101,11 @@ namespace LatuCollect.Core.Configuration.Services
                 {
                     var defaultConfig = GetDefaultConfig();
 
-                    await SaveAsync(defaultConfig);
+                    var defaultJson = Serialize(defaultConfig);
+
+                    await File.WriteAllTextAsync(
+                        _configPath,
+                        defaultJson);
 
                     return defaultConfig;
                 }
