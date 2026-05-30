@@ -41,6 +41,7 @@ using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.ViewModels.Logs;
+using LatuCollect.UI.WinUI.ViewModels.TreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,7 +62,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         private string _previewText = string.Empty;
         private string _currentFolderPath = string.Empty;
-        private string _searchText = string.Empty;
         private string? _selectedFormat = null;
 
         private string _lastSelectionSignature = string.Empty;
@@ -78,8 +78,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private int _lastCompletedPreviewId = 0;
         private bool _isBusy = false;
 
-        private bool _isSearchVisible;
-        private bool _hasSearchResult = true;
         private bool _isLimitReached;
 
         private bool _isDeveloperMode;
@@ -113,6 +111,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private UserConfig _userConfig;
 
         private readonly LogsViewModel _logsViewModel;
+
+        private readonly TreeViewViewModel _treeViewViewModel;
 
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTANTES
@@ -430,11 +430,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string SearchText
         {
-            get => _searchText;
+            get => _treeViewViewModel.SearchText;
             set
             {
-                if (SetProperty(ref _searchText, value))
+                if (_treeViewViewModel.SearchText != value)
                 {
+                    _treeViewViewModel.SearchText = value;
+
+                    OnPropertyChanged();
+
                     _ = DebounceFilterAsync();
                 }
             }
@@ -442,14 +446,28 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public bool HasSearchResult
         {
-            get => _hasSearchResult;
-            set => SetProperty(ref _hasSearchResult, value);
+            get => _treeViewViewModel.HasSearchResult;
+            set
+            {
+                if (_treeViewViewModel.HasSearchResult != value)
+                {
+                    _treeViewViewModel.HasSearchResult = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public bool IsSearchVisible
         {
-            get => _isSearchVisible;
-            set => SetProperty(ref _isSearchVisible, value);
+            get => _treeViewViewModel.IsSearchVisible;
+            set
+            {
+                if (_treeViewViewModel.IsSearchVisible != value)
+                {
+                    _treeViewViewModel.IsSearchVisible = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public bool IsLimitReached
@@ -468,6 +486,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
             _logger = new LogService();
             _logsViewModel = new LogsViewModel(_logger);
             _logger.Info("MainViewModel initialisé");
+
+            // 🖥️ ViewModels spécialisés
+            _treeViewViewModel = new TreeViewViewModel();
 
             // 🔥 Rafraîchissement automatique UI lors de mise à jour logs
             _logger.LogsUpdated += (s, e) =>
