@@ -612,7 +612,6 @@ Tester la logique métier indépendamment de l’UI
 - FileReaderService
 - FileExportService
 - FileStatisticsService
-- FileCollectionService
 - MainViewModel
 - Recherche TreeView
 - Sélection TreeView

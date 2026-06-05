@@ -1052,14 +1052,12 @@ et préparer les futurs refactors async/UI.
 
 - ✅ Séparation AppConfig / UserConfig
 
-- 🟡 Homogénéisation progressive FileReadResult
+- ✅ Homogénéisation progressive FileReadResult
   - ✅ Ajout état explicite `IsPartial`
   - ✅ Détection contenu partiel réel
-  - 🟡 Préparation futurs warnings Preview/Export
+  - ✅ Warnings Preview implémentés
 
-- 🟡 Séparation exclusions système / utilisateur
-  - ✅ Préparation `UserExcludedFolders`
-  - ⬜ Migration complète
+- ✅ Préparation `UserExcludedFolders`
 
 - ✅ Sécurisation ResetAsync / LoadAsync
 
@@ -1081,9 +1079,13 @@ et préparer les futurs refactors async/UI.
 
 - ✅ Ajouter IsFolder réel
 
-- 🟡 Préparer suppression IsSelected du Core
-  - ✅ Suppression FileCollectionService
-  - ✅ Suppression FileCollectionServiceTests
+- ✅ Audit complet IsSelected
+- ✅ Maintien temporaire IsSelected justifié par ConvertToCoreNodes()
+- ✅ Réévaluation suppression IsSelected reportée (v0.17.0)
+
+- ✅ Suppression FileCollectionService
+- ✅ Suppression FileCollectionServiceTests
+- ✅ Audit usages restants
 
 ---
 
@@ -1106,13 +1108,17 @@ et préparer les futurs refactors async/UI.
 
 ## 🖥️ UI — Split MainViewModel
 
-- ✅ Préparer séparation des responsabilités UI
+- 🟢 Allègement du MainViewModel
+  - ✅ LogsViewModel extrait
+  - ✅ TreeViewViewModel extrait
+  - ✅ SettingsViewModel préparé
 
-- 🟡 Réduire taille MainViewModel
+- 🟢 Réduction du couplage UI / Pipeline
+  - ✅ Extraction logique logs
+  - ✅ Extraction logique TreeView
+  - ✅ Préparation extraction Settings
 
-- 🟡 Éviter accumulation logique UI + pipeline
-
-### ✅ LogsViewModel
+### 🟢 LogsViewModel
 
 - ✅ Fichier créé
 - ✅ LogFilter extrait
@@ -1125,34 +1131,42 @@ et préparer les futurs refactors async/UI.
 - ✅ Formatage logs
 - ✅ Compatibilité UI préservée via redirections MainViewModel
 
-### 🟡 TreeViewViewModel
+### 🟢 TreeViewViewModel
 
-- ⬜ Sélection TreeView
-- ⬜ Expansion TreeView
-- ⬜ Synchronisation parent/enfant
-- ⬜ Gestion tri-state
-- ⬜ Gestion visibilité recherche
+- ✅ Sélection TreeView
+  - ✅ SetNodeSelection extrait
+  - ✅ GetSelectedFiles extrait
+  - ✅ CollectSelectedFilesRecursive extrait
+  - ✅ Redirection MainViewModel
+  - ✅ OnNodeSelectionChanged conservé comme coordinateur UI
 
-### 🟡 PreviewViewModel
+- 🟢 Expansion TreeView
+  - ✅ Infrastructure créée
+  - ✅ OnNodeExpandedChanged extrait
+  - ✅ Redirection MainViewModel
 
-- ⬜ Gestion Preview
-- ⬜ États Preview
-- ⬜ Génération Preview
-- ⬜ Rafraîchissement Preview
+- ✅ Propagation parent → enfants
+  - ✅ SetNodeSelection extrait
+  - ✅ Propagation parent → enfants
+  - ✅ Redirection MainViewModel
 
-### ⬜ ExportViewModel
+- 🟢 Gestion visibilité recherche
+  - ✅ Création TreeViewViewModel
+  - ✅ SearchText
+  - ✅ HasSearchResult
+  - ✅ IsSearchVisible
+  - ✅ ApplyFilterRecursive()
+  - ✅ SetVisibilityRecursive()
 
-- ⬜ Gestion Export
-- ⬜ États Export
-- ⬜ Validation Export
-- ⬜ Résultats Export
+### 🟢 PreviewViewModel
 
-### ⬜ SettingsViewModel
+- ✅ Fichier créé
 
-- ⬜ Paramètres utilisateur
-- ⬜ Gestion thème
-- ⬜ Préférences UI
-- ⬜ États configuration
+### 🟢 SettingsViewModel
+
+- ✅ Fichier créé
+- ✅ Dépendances préparées
+- ✅ Intégration MainViewModel préparée
 
 ---
 
@@ -1189,7 +1203,6 @@ et poursuivre les améliorations d’architecture préparées en v0.15.0.
 ### 🟡 FileReadResult
 
 - ⬜ Warnings Preview basés sur IsPartial
-- ⬜ Warnings Export basés sur IsPartial
 - ⬜ Préparation badges UI contenu partiel
 
 ---
@@ -1204,13 +1217,38 @@ et poursuivre les améliorations d’architecture préparées en v0.15.0.
 - ⬜ Déplacement validation export
 - ⬜ Compatibilité UI via redirections MainViewModel
 
-### ⬜ SettingsViewModel
+### 🟡 PreviewViewModel
 
-- ⬜ Création SettingsViewModel
+- ⬜ Extraction logique Preview
+- ⬜ Finalisation extraction Preview
+- ⬜ Déplacement états Preview
+- ⬜ Déplacement génération Preview
+- ⬜ Déplacement rafraîchissement Preview
+- ⬜ Réduction redirections MainViewModel
+- ⬜ Compatibilité UI via redirections MainViewModel
+
+### 🟡 SettingsViewModel
+
+- ⬜ Déplacement paramètres utilisateur
 - ⬜ Déplacement préférences utilisateur
 - ⬜ Déplacement gestion thème
 - ⬜ Déplacement états configuration
 - ⬜ Compatibilité UI via redirections MainViewModel
+- ⬜ Déplacement niveau de logs
+- ⬜ Déplacement mode développeur
+
+### 🟡 TreeViewViewModel
+
+#### ⬜ Finalisation migration Tree
+
+- ⬜ Migration Tree
+- ⬜ Migration FilteredTree
+- ⬜ Réduction dépendances MainViewModel
+
+#### ⬜ Finalisation recherche
+
+- ⬜ Extraction visibilité recherche
+- ⬜ Compatibilité Tree / FilteredTree
 
 ---
 
@@ -1355,6 +1393,22 @@ Valider :
   - Preview = Export
 
 - ⬜ Vérifier cohérence ALC
+
+---
+
+### 🌳 Synchronisation hiérarchique
+
+- ⬜ Réévaluer nécessité de IsSelected dans le Core
+- ⬜ Validation architecture sélection définitive
+- ⬜ Synchronisation enfant → parent
+- ⬜ Gestion tri-state
+- ⬜ Validation UX sélection hiérarchique
+
+### 🌳 Validation TreeView
+
+- ⬜ Validation performances gros arbres
+- ⬜ Validation stabilité sélection massive
+- ⬜ Validation cohérence visibilité ↔ sélection
 
 ---
 
@@ -1612,11 +1666,16 @@ Transformer l’application en produit final.
 - ⬜ Build release propre
 - ⬜ Tests complets
 - ⬜ Vérification stabilité
+
 - ⬜ Installateur
+- ⬜ Validation installateur
+
 - ⬜ Dépendances
 - ⬜ Multi-architecture
 - ⬜ Choix dossier
 - ⬜ Raccourcis
+
+- ⬜ Validation mise à jour propre
 
 ---
 

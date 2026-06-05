@@ -299,8 +299,14 @@ LatuCollect.UI.WinUI/
 ├── Themes/
 └── ViewModels/
     ├── MainViewModel.cs
-    └── Logs/
-        └── LogsViewModel.cs
+    ├── Logs/
+    │   └── LogsViewModel.cs
+    ├── TreeView/
+    │   └── TreeViewViewModel.cs
+    ├── Preview/
+    │   └── PreviewViewModel.cs
+    └── Settings/
+        └── SettingsViewModel.cs
 
 LatuCollect.Tests/
 ├── Core/
@@ -346,6 +352,12 @@ LatuCollect.Tests/
 
 ✔ LogsViewModel extrait
 
+✔ TreeViewViewModel créé
+
+✔ PreviewViewModel créé
+
+✔ SettingsViewModel créé
+
 👉 Base solide déjà fonctionnelle
 
 ---
@@ -363,8 +375,19 @@ LatuCollect.Tests/
 - Installer
 - Centralisation complète des Assets
 - Système de thèmes avancé
-- TreeViewViewModel
-- PreviewViewModel
 - ExportViewModel
-- SettingsViewModel
 ```
+
+## 🟡 PARTIELLEMENT IMPLÉMENTÉ
+
+- TreeViewViewModel
+  👉 Créé et utilisé
+  👉 Migration complète encore en cours
+
+- PreviewViewModel
+  👉 Créé
+  👉 Extraction logique prévue en v0.16.0
+
+- SettingsViewModel
+  👉 Créé et intégré
+  👉 Migration complète prévue en v0.16.0

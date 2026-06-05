@@ -115,6 +115,67 @@ Importer → Sélectionner → Aperçu → Exporter
 
 # 📐 FORMAT STANDARD OBLIGATOIRE
 
+### 📌 Utilisation des blocs de code
+
+Les blocs de code sont :
+
+- ✔ Obligatoires pour les titres de commit
+- ✔ Obligatoires pour les descriptions de commit
+- ✔ Autorisés pour les exemples techniques
+- ✔ Autorisés pour les pipelines
+- ✔ Autorisés pour les arborescences
+
+Exemples :
+
+```text
+Import → Lecture → Export
+```
+
+```text
+Core/
+UI/
+Tests/
+```
+
+---
+
+### 📋 Format de restitution des commits
+
+Lorsque Jarvis génère un commit :
+
+- ✔ Le titre doit être fourni dans un bloc de code
+- ✔ La description doit être fournie dans un bloc de code
+- ✔ Le contenu doit être directement copiable
+- ✔ Les listes doivent utiliser le caractère "-"
+- ✔ Aucun caractère de liste automatique ne doit être utilisé
+
+Exemple :
+
+Titre :
+
+```text
+🏗️ [Architecture][MVVM] Exemple de commit
+```
+
+Description :
+
+```text
+📎 Description simple
+
+Exemple de description.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👨🏻‍💻 Description technique
+
+- Exemple 1
+- Exemple 2
+```
+
+👉 Cette règle existe pour garantir une copie directe dans GitHub Desktop sans devoir corriger la mise en forme.
+
+---
+
 ## 1️⃣ SUMMARY
 
 Longueur recommandée : 50 caractères
@@ -267,9 +328,11 @@ Toujours préciser :
 
 📎 Description simple :
 
-Ajout de l’affichage des dossiers et fichiers du projet.
+- Ajout de l’affichage des dossiers et fichiers du projet.
 
----
+- L’utilisateur peut maintenant parcourir facilement la structure complète du projet.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 👨🏻‍💻 Description technique :
 
@@ -277,25 +340,30 @@ Ajout de l’affichage des dossiers et fichiers du projet.
 - Ajout navigation dossiers
 - Ajout checkbox sélection
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📁 Fichiers concernés :
 
 - UI/Views/MainWindow.xaml
 - UI/ViewModels/MainViewModel.cs
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ⚠️ Impact :
 
 - ✔ Amélioration UX
+
 - ✔ Navigation projet possible
 
----
+- ✔ Aucun impact sur le pipeline
 
-⚠️ Aucun fichier source modifié
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
----
+🎯 Roadmap :
+
+- ✔ Fonction prévue réalisée
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 📚 COMMITS VS PATCH NOTES
 

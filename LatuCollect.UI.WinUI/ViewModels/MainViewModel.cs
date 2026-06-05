@@ -41,6 +41,7 @@ using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.ViewModels.Logs;
+using LatuCollect.UI.WinUI.ViewModels.Settings;
 using LatuCollect.UI.WinUI.ViewModels.TreeView;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly LogsViewModel _logsViewModel;
 
         private readonly TreeViewViewModel _treeViewViewModel;
+
+        private readonly SettingsViewModel _settingsViewModel;
 
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTANTES
@@ -487,9 +490,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             _logsViewModel = new LogsViewModel(_logger);
             _logger.Info("MainViewModel initialisé");
 
-            // 🖥️ ViewModels spécialisés
-            _treeViewViewModel = new TreeViewViewModel();
-
             // 🔥 Rafraîchissement automatique UI lors de mise à jour logs
             _logger.LogsUpdated += (s, e) =>
             {
@@ -501,6 +501,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
             RebuildGroupedExclusions();
             _configurationService = new ConfigurationService();
             _userConfig = new UserConfig();
+
+            // 🖥️ ViewModels spécialisés
+            _treeViewViewModel = new TreeViewViewModel();
+
+            _settingsViewModel =
+                new SettingsViewModel(
+                    _userConfig,
+                    _config,
+                    _logger);
 
             // 📂 Services Core
             _importService = new FileImportService(_config);
@@ -1539,7 +1548,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 _userConfig = await _configurationService.LoadAsync() ?? new UserConfig();
 
-                // 🔥 Restore état ouvert TreeView
+                // 🔥 IMPORTANT : restauration état ouvert TreeView
                 _expandedPaths.Clear();
 
                 foreach (var path in _userConfig.ExpandedPaths)
@@ -1640,9 +1649,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig.LogLevel =
                     GetCurrentLogLevel();
 
-                // 🔥 Sauvegarde état ouvert TreeView
+                // 🔥 IMPORTANT : sauvegarde des paths ouverts
                 _userConfig.ExpandedPaths =
-                    _expandedPaths.ToList();
+                _expandedPaths.ToList();
 
                 await _configurationService.SaveAsync(_userConfig);
 

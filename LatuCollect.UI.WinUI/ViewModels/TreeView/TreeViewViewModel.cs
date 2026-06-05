@@ -236,6 +236,12 @@ namespace LatuCollect.UI.WinUI.ViewModels.TreeView
             }
         }
 
+        // Récupère la liste des fichiers sélectionnés
+        public List<string> GetSelectedFiles()
+        {
+            return GetSelectedFilesOptimized();
+        }
+
         // Récupère la liste des paths sélectionnés de manière récursive
         private List<string> GetSelectedFilesOptimized()
         {

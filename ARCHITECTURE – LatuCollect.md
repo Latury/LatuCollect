@@ -192,17 +192,19 @@ via redirections MainViewModel.
 
 ---
 
-### 🟡 Découpage restant
+### ✅ Réalisé
 
+- `LogsViewModel`
 - `TreeViewViewModel`
+- `SettingsViewModel` (préparation)
+
+### 🟡 En cours
+
 - `PreviewViewModel`
 
----
-
-### ⬜ Découpage prévu ultérieurement
+### ⬜ Prévu ultérieurement
 
 - `ExportViewModel`
-- `SettingsViewModel`
 
 ---
 
@@ -264,6 +266,29 @@ Le projet utilise deux modèles distincts :
 - Conversion Core → UI lors du chargement
 
 👉 Cette conversion est gérée dans le ViewModel ou via des services dédiés.
+
+---
+
+### 🌳 Architecture de sélection
+
+- ✔ Audit complet IsSelected réalisé
+- ✔ Maintien temporaire validé
+- ✔ Dépendance ConvertToCoreNodes() documentée
+- ✔ Réévaluation reportée en v0.17.0
+
+#### 📋 Constat
+
+- IsSelected reste utilisé par le pipeline actuel
+- ConvertToCoreNodes() dépend encore de IsSelected
+- La suppression immédiate provoquerait des régressions
+
+#### 🎯 Décision
+
+Le maintien temporaire de IsSelected dans Core.Models.FileNode
+a été validé en v0.15.0 afin de préserver la stabilité du pipeline.
+
+La suppression éventuelle sera réévaluée lors de la finalisation
+de l’architecture de sélection prévue en v0.17.0.
 
 ---
 
@@ -730,6 +755,7 @@ LatuCollect.Core/
 
 LatuCollect.UI.WinUI/
 ├── Converters/
+│
 ├── Models/
 │   └── Logs/
 │
@@ -739,7 +765,10 @@ LatuCollect.UI.WinUI/
 │   └── ViewModels/
 │
 └── ViewModels/
-    └── Logs/
+    ├── Logs/
+    ├── TreeView/
+    ├── Settings/
+    └── Preview/
 
 LatuCollect.Tests/
 ├── Core/
@@ -954,6 +983,7 @@ Garantir une expérience fluide et stable
 - ✔ UI WinUI fonctionnelle
 - ✔ Réduction du couplage Core/UI
 - ✔ Simplification architecture globale
+- ✔ Première phase du split MainViewModel terminée
 
 ---
 
@@ -1008,6 +1038,7 @@ Garantir une expérience fluide et stable
 
 - ✔ Core largement couvert par les tests
 - ✔ Tests ViewModel stabilisés
+- ✔ 116 tests verts
 
 ---
 
@@ -1038,21 +1069,21 @@ Garantir une expérience fluide et stable
 
 ### ✅ Réalisé
 
-- LogsViewModel
+- `LogsViewModel`
+- `TreeViewViewModel`
+- `SettingsViewModel` (préparation)
 
-### 🟡 Prévu
+### 🟡 En cours
 
-- TreeViewViewModel
-- PreviewViewModel
+- `PreviewViewModel`
 
 ### ⬜ Prévu ultérieurement
 
-- ExportViewModel
-- SettingsViewModel
+- `ExportViewModel`
 
 ---
 
-👉 Voir ROADMAP.md pour le détail
+👉 Voir [ROADMAP](./ROADMAP.md) pour le détail
 
 ---
 

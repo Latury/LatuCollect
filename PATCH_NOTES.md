@@ -2240,7 +2240,7 @@ et NON à un lazy loading hiérarchique dynamique.
 
 ## 📌 Statut
 
-## 🟡 En cours — Architecture & split progressif MainViewModel
+## ✅ Terminée — Architecture & split progressif MainViewModel
 
 ## 🎯 Objectif
 
@@ -2322,6 +2322,9 @@ et corriger progressivement les derniers écarts ALC.
 
 - ✅ Stabilisation du pipeline configuration runtime
 
+- ✅ Préparation UserExcludedFolders
+- ✅ Séparation AppConfig / UserConfig
+
 ⚠️ Migration volontairement progressive
 afin d’éviter les régressions async/UI.
 
@@ -2346,6 +2349,22 @@ afin d’éviter les régressions async/UI.
 
 - ✅ Introduction du helper :
   - `WaitForInitializationAsync()`
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 📦 Modèles Export
+
+- ✅ Déplacement de :
+  - ExportResult
+  - ExportData
+  - StatisticsResult
+
+- ✅ Centralisation dans :
+  - Core/Models/Export/
+
+- ✅ Clarification de l’organisation du Core
+
+- ✅ Préparation des futurs refactors Export
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2399,52 +2418,35 @@ afin d’éviter les régressions async/UI.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 🟡 TreeViewViewModel
+## ✅ TreeViewViewModel
 
-Préparation du futur découpage :
-
-- ⬜ Sélection TreeView
-- ⬜ Expansion TreeView
-- ⬜ Synchronisation parent/enfant
-- ⬜ Gestion tri-state
-- ⬜ Gestion visibilité recherche
-- ⬜ Compatibilité UI via redirections MainViewModel
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## 🟡 PreviewViewModel
-
-Préparation du futur découpage :
-
-- ⬜ Gestion Preview
-- ⬜ États Preview
-- ⬜ Génération Preview
-- ⬜ Rafraîchissement Preview
-- ⬜ Compatibilité UI via redirections MainViewModel
+- ✅ Création du TreeViewViewModel
+- ✅ Extraction de SetNodeSelection()
+- ✅ Extraction de GetSelectedFiles()
+- ✅ Extraction de CollectSelectedFilesRecursive()
+- ✅ Extraction de OnNodeExpandedChanged()
+- ✅ Gestion visibilité recherche
+- ✅ SearchText
+- ✅ HasSearchResult
+- ✅ IsSearchVisible
+- ✅ ApplyFilterRecursive()
+- ✅ SetVisibilityRecursive()
+- ✅ Compatibilité UI préservée via redirections MainViewModel
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 🟡 ExportViewModel
+## ✅ PreviewViewModel
 
-Préparation du futur découpage :
-
-- ⬜ Gestion Export
-- ⬜ États Export
-- ⬜ Validation Export
-- ⬜ Résultats Export
-- ⬜ Compatibilité UI via redirections MainViewModel
+- ✅ Création du PreviewViewModel
+- ⏩ Extraction complète reportée en v0.16.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 🟡 SettingsViewModel
+## ✅ SettingsViewModel
 
-Préparation du futur découpage :
-
-- ⬜ Paramètres utilisateur
-- ⬜ Gestion thème
-- ⬜ Préférences UI
-- ⬜ États configuration
-- ⬜ Compatibilité UI via redirections MainViewModel
+- ✅ Création du SettingsViewModel
+- ✅ Préparation des dépendances
+- ✅ Intégration préparée dans MainViewModel
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2512,9 +2514,9 @@ Ajout couverture :
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# ⚠️ Découvertes architecture importantes
+# ⚠️ Décisions d’architecture & travaux reportés
 
-## 🟡 Initialisation async constructeur
+## ✅ Initialisation async constructeur
 
 Identification d’une fragilité potentielle liée à :
 
@@ -2527,13 +2529,13 @@ Observations :
 - initialisation implicite async
 - dépendance timing runtime/tests
 - risques d’états runtime instables
-- futur sujet de stabilisation progressive
+- stabilisation reportée à une version ultérieure
 
 ⚠️ Aucun refactor massif effectué pour éviter les régressions.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 🟡 Couplage runtime logging
+## ✅ Couplage runtime logging
 
 Le découplage logging a été amélioré progressivement :
 
@@ -2554,11 +2556,35 @@ Observations :
 - compatibilité UI actuellement assurée
   via redirections MainViewModel
 
-- futur nettoyage possible :
+- nettoyage complémentaire reporté à une version ultérieure
   - suppression progressive des redirections UI
   - migration complète des bindings
 
 ⚠️ Migration volontairement progressive pour éviter les régressions UI.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ✅ Architecture de sélection (FileNode)
+
+Audit réalisé sur :
+
+- FileNode.IsSelected
+- ConvertToCoreNodes()
+- TreeViewViewModel
+- Tests de sélection
+
+Constats :
+
+- IsSelected reste utilisé par le pipeline actuel
+- ConvertToCoreNodes() dépend encore de IsSelected
+- La suppression immédiate provoquerait des régressions
+
+Décision :
+
+- maintien temporaire validé
+- réévaluation reportée en v0.17.0
+
+⚠️ Aucun refactor massif effectué afin de préserver la stabilité TreeView.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2580,6 +2606,20 @@ Observations :
 
 - ✅ Suppression de la propriété :
   - `Date`
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 🧱 FileNode
+
+- ✅ Ajout de IsFolder réel
+
+- ✅ Audit complet IsSelected
+- ✅ Maintien temporaire IsSelected validé
+- ✅ Dépendance ConvertToCoreNodes() documentée
+- ✅ Réévaluation architecture reportée en v0.17.0
+
+- ✅ Suppression FileCollectionService
+- ✅ Suppression FileCollectionServiceTests
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2702,15 +2742,17 @@ Observations :
 
 # 🎯 Impact
 
-- ✔ Première vraie transition architecture de la v0.15.0
-- ✔ Réduction progressive du couplage MainViewModel
-- ✔ Réduction progressive du couplage logging runtime
-- ✔ Préparation du split progressif MainViewModel
-- ✔ Préparation des futurs ViewModels spécialisés
+- ✔ Première phase du split MainViewModel réalisée
+- ✔ Extraction réussie de LogsViewModel
+- ✔ Extraction réussie de TreeViewViewModel
+- ✔ Préparation de SettingsViewModel
+- ✔ Préparation de PreviewViewModel
+- ✔ Réduction du couplage MainViewModel ↔ Services
+- ✔ Réduction du couplage logging runtime
 - ✔ Architecture plus maintenable
 - ✔ Logging plus cohérent
 - ✔ Tests plus robustes
-- ✔ Stabilisation progressive des tests async
+- ✔ Stabilisation des tests async
 - ✔ Aucun impact utilisateur visible
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2729,7 +2771,6 @@ Cette version poursuit l’objectif principal de LatuCollect :
 ❌ aucun comportement implicite inutile
 
 👉 Copier intelligent uniquement
-
 
 ---
 

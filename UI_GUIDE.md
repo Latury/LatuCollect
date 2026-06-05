@@ -19,7 +19,7 @@ Ce document décrit :
 ## 📊 État
 
 - ✔ Stabilisé majoritairement (v0.11.0)
-- 🔄 Évolution UI prévue (v0.17.0 — thèmes & audit UX)
+- 🔄 Évolution UI prévue (v0.18.0 — thèmes & audit UX)
 
 ---
 
@@ -472,29 +472,23 @@ Le `MainViewModel` sera progressivement séparé en plusieurs ViewModels spécia
 
 ### ✅ LogsViewModel
 
-Extraction réalisée en v0.15.0 :
+Extraction réalisée en v0.15.0
 
-- filtrage logs
-- export logs
-- formatage logs
-- compteurs erreurs
+### ✅ TreeViewViewModel
 
-Compatibilité UI actuellement conservée
-via redirections MainViewModel.
+Première extraction réalisée en v0.15.0
 
----
+### ✅ SettingsViewModel
+
+Créé et intégré en v0.15.0
 
 ### 🟡 Découpage restant
 
-- `TreeViewViewModel`
 - `PreviewViewModel`
-
----
 
 ### ⬜ Découpage prévu ultérieurement
 
 - `ExportViewModel`
-- `SettingsViewModel`
 
 ---
 
@@ -525,7 +519,7 @@ Cette évolution restera progressive afin de préserver :
 
 ---
 
-# 16. 🎨 ÉVOLUTION UI (v0.17.0)
+# 16. 🎨 ÉVOLUTION UI (v0.18.0)
 
 ## 🎯 Objectif
 
@@ -571,10 +565,11 @@ Améliorer l’interface sans changer son fonctionnement
 
 ## 🏗️ Architecture
 
-- ✔ Architecture simplifiée
-- ✔ Réduction du couplage Core/UI
 - ✔ Première étape du split MainViewModel
 - ✔ Extraction LogsViewModel
+- ✔ Extraction TreeViewViewModel
+- ✔ Préparation SettingsViewModel
+- ✔ Préparation PreviewViewModel
 
 ---
 

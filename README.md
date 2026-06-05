@@ -38,7 +38,8 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 - ✅ Optimisations performance terminées (0.12.0)
 - ✅ Simplification architecture terminée (0.13.0)
 - ✅ UX & comportement stabilisés (0.14.0)
-- 🟡 Architecture & split MainViewModel en cours (0.15.0)
+- ✅ Version 0.15.0 terminée
+- 🟡 Finalisation du split MainViewModel en cours
 
 🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
 
@@ -317,7 +318,7 @@ UI → ViewModel → Core
 
 LatuCollect possède désormais :
 
-- ✔ Plus de 116 tests automatisés
+- ✔ 116 tests automatisés
 - ✔ Validation TreeView
 - ✔ Validation recherche
 - ✔ Validation preview async
@@ -441,11 +442,10 @@ Dans certains très gros projets :
 
 ## 🔮 À venir
 
-- Split progressif MainViewModel
-- TreeViewViewModel
-- PreviewViewModel
+- Finalisation PreviewViewModel
 - ExportViewModel
-- SettingsViewModel
+- Finalisation SettingsViewModel
+- Réduction des redirections MainViewModel
 - Optimisations mémoire avancées
 - Virtualisation TreeView
 - Améliorations UX futures
@@ -483,17 +483,17 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 
 #### ✅ Réalisé
 
-- LogsViewModel
+- `LogsViewModel`
+- `TreeViewViewModel`
+- `SettingsViewModel` (première phase)
 
-#### 🟡 Prévu
+#### 🟡 En cours
 
-- TreeViewViewModel
-- PreviewViewModel
+- `PreviewViewModel`
 
 #### ⬜ Prévu ultérieurement
 
-- ExportViewModel
-- SettingsViewModel
+- `ExportViewModel`
 
 👉 Voir [ROADMAP](./ROADMAP.md) pour les détails
 
@@ -537,7 +537,7 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 - ✔ Optimisations performance terminées (0.12.0)
 - ✔ Simplification architecture terminée (0.13.0)
 - ✔ UX & comportement stabilisés (0.14.0)
-- 🟡 Préparation des futurs refactors ViewModels (0.15.0)
+- ✔ Première étape du découpage du MainViewModel réalisée (v0.15.0)
 
 ---
 
@@ -576,7 +576,7 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 
 ## 📋 Prochaines étapes
 
-- Split progressif MainViewModel
+- Poursuite du découpage du MainViewModel
 - Stabilisation async UI
 - Optimisations mémoire avancées
 - Optimisations gros projets
@@ -586,17 +586,17 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 
 ### ✅ Réalisé
 
-- LogsViewModel
+- `LogsViewModel`
+- `TreeViewViewModel`
+- `SettingsViewModel` (première phase)
 
-### 🟡 Prévu
+### 🟡 En cours
 
-- TreeViewViewModel
-- PreviewViewModel
+- `PreviewViewModel`
 
 ### ⬜ Prévu ultérieurement
 
-- ExportViewModel
-- SettingsViewModel
+- `ExportViewModel`
 
 👉 Voir : [ROADMAP](./ROADMAP.md)
 

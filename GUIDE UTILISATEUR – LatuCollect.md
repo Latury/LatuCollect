@@ -22,7 +22,9 @@ Ce guide explique comment utiliser LatuCollect étape par étape, de l’import 
 ## 📊 État des fonctionnalités
 
 - ✅ Disponible
-- 🔄 En cours / amélioration
+- ✅ UX & comportement stabilisés (v0.14.0)
+- ✅ Première étape du split MainViewModel réalisée (v0.15.0)
+- 🔄 Finalisation du split MainViewModel prévue (v0.16.0)
 - 🔮 À venir [ROADMAP](./ROADMAP.md)
 
 ---
@@ -211,6 +213,12 @@ L’aperçu se met à jour :
 
 - ✅ L’aperçu correspond exactement au fichier exporté
 - ✅ Aucun écart possible entre ce que vous voyez et ce qui sera généré
+
+👉 Dans le fonctionnement standard :
+Aperçu = Export
+
+⚠️ Sur les très gros projets, l’aperçu peut être limité pour préserver la fluidité de l’interface, mais l’export reste complet.
+
 - ✅ Le contenu est généré une seule fois pour garantir la fiabilité
 
 ---
@@ -383,7 +391,13 @@ L’application propose plusieurs actions :
 
 ## ⚙️ Options
 
-- ✅ Paramètres de base (évolutifs)
+Les paramètres permettent actuellement de gérer :
+
+- ✅ Les exclusions utilisateur
+- ✅ Le mode développeur
+- ✅ Le thème de l’application (clair / sombre)
+
+👉 D’autres options pourront être ajoutées dans les versions futures.
 
 ---
 
@@ -408,7 +422,7 @@ L’application propose plusieurs actions :
 # ⚙️ 11. Fonctionnement interne
 
 ```text
-Import → Lecture → Collection → Assemblage → Statistiques → Export
+Import → Lecture → Assemblage → Statistiques → Export
 ```
 
 👉 L’application ne modifie jamais le contenu
@@ -433,7 +447,15 @@ puis utilisé à la fois pour l’aperçu et l’export
 
 - ✅ Aucun fichier source n’est modifié
 - ✅ Seuls les fichiers sélectionnés sont exportés
-- ✅ L’aperçu = résultat final
+
+👉 Dans le fonctionnement standard :
+
+- ✅ Aperçu = Export
+
+⚠️ Sur les très gros projets :
+
+- l’aperçu peut être limité
+- l’export reste complet
 
 ---
 
@@ -445,7 +467,7 @@ puis utilisé à la fois pour l’aperçu et l’export
 
 ---
 
-# 🎯 Objectif
+# 🎯 14. Objectif
 
 LatuCollect permet de :
 
@@ -457,14 +479,36 @@ LatuCollect permet de :
 
 ---
 
-# ⚙️ 14. Évolutions futures
+# 🏗️ 15. Architecture UI
+
+LatuCollect évolue progressivement vers plusieurs ViewModels spécialisés afin d’améliorer la maintenabilité du projet.
+
+### ✅ Déjà en place
+
+- LogsViewModel
+- TreeViewViewModel
+
+### 🟡 Créés et préparés
+
+- SettingsViewModel
+- PreviewViewModel
+
+### ⬜ Prévu ultérieurement
+
+- ExportViewModel
+
+👉 Cette évolution est interne à l’application et ne modifie pas son utilisation.
+
+---
+
+# ⚙️ 16. Évolutions futures
 
 - 🔄 Options avancées
 - 🔄 Amélioration UX
 
 ---
 
-# ⚡ Performances
+# ⚡ 17. Performances
 
 L’application est optimisée pour :
 
@@ -472,12 +516,17 @@ L’application est optimisée pour :
 - ✅ Maintenir une interface fluide
 - ✅ Éviter les blocages
 
+- ✅ Protection anti multi-refresh
+- ✅ Débounce recherche
+- ✅ Débounce preview
+- ✅ Chargement progressif UI
+
 👉 Aucun changement dans l’utilisation :
 l’application reste simple et identique à prendre en main
 
 ---
 
-# 🔮 Évolutions
+# 🔮 18. Évolutions
 
 Les améliorations futures sont définies dans la roadmap.
 
