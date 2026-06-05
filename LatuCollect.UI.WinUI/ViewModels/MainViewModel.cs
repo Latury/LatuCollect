@@ -914,7 +914,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
         }
 
-        // 🔥 TESTS — sauvegarde expansion
+        // 🔥 TESTS — accès fichiers sélectionnés
         internal void SaveExpandedNodesForTests()
         {
             SaveExpandedNodes();
@@ -1029,17 +1029,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return Task.CompletedTask;
         }
 
-        // Applique sélection récursive
+        // Propagation récursive sélection/désélection
         private void SetNodeSelection(
             UiFileNode node,
             bool isSelected)
         {
-            node.IsSelected = isSelected;
-
-            foreach (var child in node.Children)
-            {
-                SetNodeSelection(child, isSelected);
-            }
+            _treeViewViewModel.SetNodeSelection(
+                node,
+                isSelected);
         }
 
         // Ajout d’un node de l’arbre (exclusion)
@@ -1290,7 +1287,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 foreach (var node in Tree)
                 {
-                    SetVisibilityRecursive(node, true);
+                    _treeViewViewModel.SetVisibilityRecursive(node, true);
                     FilteredTree.Add(node);
                 }
 
@@ -1307,7 +1304,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             foreach (var node in Tree)
             {
-                bool visible = ApplyFilterRecursive(node);
+                bool visible = _treeViewViewModel.ApplyFilterRecursive(node);
 
                 if (visible)
                 {
@@ -1321,56 +1318,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             _logger.Info(
                 "ApplyFilter terminé",
                 $"FilteredAfter: {FilteredTree.Count}");
-        }
-
-        // Applique visibilité récursive
-        private bool ApplyFilterRecursive(UiFileNode node)
-        {
-            bool match = node.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
-
-            bool hasVisibleChild = false;
-
-            // 🔥 synchronisation optimisée
-            foreach (var child in node.Children)
-            {
-                if (ApplyFilterRecursive(child))
-                {
-                    hasVisibleChild = true;
-                }
-            }
-
-            bool isVisible = match || hasVisibleChild;
-
-            if (node.IsVisible != isVisible)
-            {
-                node.IsVisible = isVisible;
-            }
-
-            // 🔥 IMPORTANT : n’expande que si match ou enfant visible, et seulement si il y a une recherche en cours
-            // sinon on garde l’état d’expansion de l’utilisateur
-            if (!string.IsNullOrWhiteSpace(SearchText))
-            {
-                if (hasVisibleChild && !node.IsExpanded)
-                {
-                    node.IsExpanded = true;
-                }
-            }
-
-            return isVisible;
-        }
-
-        // Applique visibilité récursive (sans toucher à l’expansion)
-        private void SetVisibilityRecursive(
-           UiFileNode node,
-           bool visible)
-        {
-            // ✔ visibilité
-            node.IsVisible = visible;
-
-            foreach (var child in node.Children)
-            {
-                SetVisibilityRecursive(child, visible);
-            }
         }
 
         // Debounce recherche
@@ -1519,20 +1466,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return GetSelectedFilesOptimized();
         }
 
-        // Synchronisation runtime expansion TreeView
+        // Synchronisation runtime expansion
         private void OnNodeExpandedChanged(UiFileNode node)
         {
-            if (node == null)
-                return;
-
-            if (node.IsExpanded)
-            {
-                _expandedPaths.Add(node.Path);
-            }
-            else
-            {
-                _expandedPaths.Remove(node.Path);
-            }
+            _treeViewViewModel.OnNodeExpandedChanged(node);
         }
 
         // Reset expansion runtime
