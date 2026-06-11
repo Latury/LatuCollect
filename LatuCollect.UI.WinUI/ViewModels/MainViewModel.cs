@@ -815,7 +815,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
 
                 bool isMarkdown = SelectedFormat == ".md";
-                string currentSignature = BuildSelectionSignature(files);
+                string currentSignature =
+                    _previewViewModel.BuildSelectionSignature(files);
 
                 // 🔥 IMPORTANT : optimisation pour éviter de régénérer si même sélection + même format
                 if (currentSignature ==
@@ -870,19 +871,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     await ShowFeedbackAsync(data.PartialMessage);
                 }
 
-                // 🔥 Limitation de l’aperçu pour éviter les problèmes de performance
-                const int MAX_PREVIEW_LENGTH = 100_000;
-
-                if (data.Content.Length > MAX_PREVIEW_LENGTH)
-                {
-                    PreviewText = data.Content.Substring(0, MAX_PREVIEW_LENGTH)
-                        + "\n\n----------------------------------------\n"
-                        + "⚠ Aperçu limité (contenu trop volumineux)";
-                }
-                else
-                {
-                    PreviewText = data.Content;
-                }
+                _previewViewModel.ApplyPreviewContent(
+                    data.Content);
 
                 var stats = data.Stats;
 
@@ -967,16 +957,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
         internal ILogService GetLoggerForTests()
         {
             return _logger;
-        }
-
-        private string BuildSelectionSignature(List<string> filePaths)
-        {
-            if (filePaths == null || filePaths.Count == 0)
-                return string.Empty;
-
-            var ordered = filePaths.OrderBy(p => p);
-
-            return string.Join("|", ordered);
         }
 
         // ═════════════════════════════════════════════════════════════

@@ -22,6 +22,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 */
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LatuCollect.UI.WinUI.ViewModels.Preview
 {
@@ -154,5 +156,45 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             TotalCharacters = totalCharacters;
             TotalSize = totalSize;
         }
+
+        public void ApplyPreviewContent(
+            string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                PreviewText = string.Empty;
+                return;
+            }
+
+            if (content.Length > MAX_PREVIEW_LENGTH)
+            {
+                PreviewText =
+                    content.Substring(0, MAX_PREVIEW_LENGTH)
+                    + "\n\n----------------------------------------\n"
+                    + "⚠ Aperçu limité (contenu trop volumineux)";
+            }
+            else
+            {
+                PreviewText = content;
+            }
+        }
+
+        public string BuildSelectionSignature(
+            List<string> filePaths)
+        {
+            if (filePaths == null || filePaths.Count == 0)
+                return string.Empty;
+
+            var ordered = filePaths.OrderBy(p => p);
+
+            return string.Join("|", ordered);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 6. CONSTANTES
+        // ═════════════════════════════════════════════════════════════
+
+        private const int MAX_PREVIEW_LENGTH = 100_000;
+
     }
 }
