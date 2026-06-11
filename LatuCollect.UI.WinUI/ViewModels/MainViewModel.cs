@@ -65,18 +65,13 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private string _currentFolderPath = string.Empty;
         private string? _selectedFormat = null;
 
-        private string _lastSelectionSignature = string.Empty;
-        private bool _lastIsMarkdown = false;
         private bool _isInitializing = false;
 
         private string _feedbackMessage = "";
         private bool _isFeedbackVisible;
 
         private CancellationTokenSource? _searchCts;
-        private bool _isPreviewLoading = false;
-        // 🔥 Versioning preview async
-        private int _previewRequestId = 0;
-        private int _lastCompletedPreviewId = 0;
+
         private bool _isBusy = false;
 
         private bool _isLimitReached;
@@ -538,7 +533,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             try
             {
-                _hasShownPartialWarning = false;
+                _previewViewModel.HasShownPartialWarning = false;
 
                 _logger.Info("Chargement du dossier lancé");
                 _logger.Info("Dossier sélectionné", path);
@@ -603,7 +598,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _ = SaveConfigurationAsync();
 
                 // ✅ ICI LA BONNE LOGIQUE
-                await RefreshPreviewAsync(_previewRequestId);
+                await RefreshPreviewAsync(
+                     _previewViewModel.PreviewRequestId);
             }
             catch (Exception ex)
             {
@@ -756,7 +752,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     ExportMode
                 );
 
-                if (data.IsPartial && !_hasShownPartialWarning)
+                if (data.IsPartial &&
+                    !_previewViewModel.HasShownPartialWarning)
                 {
                     _hasShownPartialWarning = true;
                     await ShowFeedbackAsync(data.PartialMessage);
@@ -780,7 +777,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         {
 
 
-            _isPreviewLoading = true;
+            _previewViewModel.IsPreviewLoading = true;
 
             try
             {
@@ -791,8 +788,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 {
                     _logger.Warning("Aucun fichier sélectionné pour le preview");
 
-                    _lastSelectionSignature = string.Empty;
-                    _lastIsMarkdown = false;
+                    _previewViewModel.LastSelectionSignature = string.Empty;
+                    _previewViewModel.LastIsMarkdown = false;
 
                     // ✅ Reset preview
                     PreviewText = "Aucun fichier sélectionné...";
@@ -817,8 +814,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 string currentSignature = BuildSelectionSignature(files);
 
                 // 🔥 IMPORTANT : optimisation pour éviter de régénérer si même sélection + même format
-                if (currentSignature == _lastSelectionSignature &&
-                    isMarkdown == _lastIsMarkdown)
+                if (currentSignature ==
+                        _previewViewModel.LastSelectionSignature &&
+                    isMarkdown ==
+                        _previewViewModel.LastIsMarkdown)
                 {
                     if (files.Count == 0)
                     {
@@ -832,11 +831,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     return;
                 }
 
-                _lastSelectionSignature = currentSignature;
-                _lastIsMarkdown = isMarkdown;
+                _previewViewModel.LastSelectionSignature =
+                    currentSignature;
+
+                _previewViewModel.LastIsMarkdown =
+                    isMarkdown;
 
                 // 🔥 RESET message partiel si nouvelle sélection
-                _hasShownPartialWarning = false;
+                _previewViewModel.HasShownPartialWarning = false;
 
                 CurrentState = UiState.Loading;
 
@@ -846,8 +848,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     ExportMode
                 );
 
-                // 🔥 Ignore preview devenu obsolète
-                if (requestId != _previewRequestId)
+                // 🔥 Vérification versioning async
+                if (requestId != _previewViewModel.PreviewRequestId)
                 {
                     _logger.Info(
                         "Preview ignoré",
@@ -856,8 +858,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     return;
                 }
 
-                // 🔥 message si export partiel (une seule fois)
-                if (data.IsPartial && !_hasShownPartialWarning)
+                // 🔥 Avertissement partiel (une seule fois par session)
+                if (data.IsPartial &&
+                    !_previewViewModel.HasShownPartialWarning)
                 {
                     _hasShownPartialWarning = true;
                     await ShowFeedbackAsync(data.PartialMessage);
@@ -904,14 +907,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
             finally
             {
-                _isPreviewLoading = false;
+                _previewViewModel.IsPreviewLoading = false;
             }
         }
 
         // Méthode d’accès aux fichiers sélectionnés
         public async Task RefreshPreviewForTestsAsync()
         {
-            await RefreshPreviewAsync(_previewRequestId);
+            await RefreshPreviewAsync(
+                _previewViewModel.PreviewRequestId);
         }
 
         // 🔥 TESTS — attente fin initialisation async
@@ -1356,7 +1360,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Demande un refresh preview non bloquant
         private void RequestPreviewRefresh()
         {
-            int requestId = ++_previewRequestId;
+            int requestId = ++_previewViewModel.PreviewRequestId;
 
             _ = DebouncePreviewAsync(requestId);
         }
@@ -1367,13 +1371,13 @@ namespace LatuCollect.UI.WinUI.ViewModels
             // 🔥 Attente courte stabilité utilisateur
             await Task.Delay(300);
 
-            // 🔥 Ignore previews obsolètes AVANT démarrage
-            if (requestId != _previewRequestId)
+            // 🔥 Vérification versioning async pour éviter refresh obsolète
+            if (requestId != _previewViewModel.PreviewRequestId)
                 return;
 
             await RefreshPreviewAsync(requestId);
 
-            _lastCompletedPreviewId = requestId;
+            _previewViewModel.LastCompletedPreviewId = requestId;
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -1668,20 +1672,23 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Reset runtime dossier chargé
         private void ResetLoadedFolderState()
         {
-            // 🔥 Invalide tous previews async en cours
-            _previewRequestId++;
+            // 🔥 Incrémente pour invalider tous les previews en cours
+            _previewViewModel.PreviewRequestId++;
 
-            _lastCompletedPreviewId = 0;
+            _previewViewModel.LastCompletedPreviewId = 0;
 
-            _isPreviewLoading = false;
+            _previewViewModel.IsPreviewLoading = false;
             _isBulkSelectionUpdating = false;
 
-            // 🔥 Reset signatures preview
-            _lastSelectionSignature = string.Empty;
-            _lastIsMarkdown = false;
+            // 🔥 Reset signature sélection pour forcer refresh preview
+            _previewViewModel.LastSelectionSignature =
+                string.Empty;
 
-            // 🔥 Reset feedback preview
-            _hasShownPartialWarning = false;
+            _previewViewModel.LastIsMarkdown =
+                false;
+
+            // 🔥 Reset avertissement partiel
+            _previewViewModel.HasShownPartialWarning = false;
 
             // 🔥 Reset expansion TreeView
             ClearExpandedPaths();
@@ -1725,7 +1732,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             try
             {
-                _hasShownPartialWarning = false;
+                _previewViewModel.HasShownPartialWarning = false;
                 _logger.Info("Reset configuration utilisateur");
 
                 _userConfig = await _configurationService.ResetAsync();

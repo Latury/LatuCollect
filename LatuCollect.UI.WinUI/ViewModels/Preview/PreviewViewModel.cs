@@ -78,5 +78,57 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             get => _totalSize;
             set => SetProperty(ref _totalSize, value);
         }
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. ÉTATS PREVIEW
+        // ═════════════════════════════════════════════════════════════
+
+        private string _lastSelectionSignature = string.Empty;
+
+        public string LastSelectionSignature
+        {
+            get => _lastSelectionSignature;
+            set => SetProperty(ref _lastSelectionSignature, value);
+        }
+
+        private bool _lastIsMarkdown;
+
+        public bool LastIsMarkdown
+        {
+            get => _lastIsMarkdown;
+            set => SetProperty(ref _lastIsMarkdown, value);
+        }
+
+        private bool _isPreviewLoading;
+
+        public bool IsPreviewLoading
+        {
+            get => _isPreviewLoading;
+            set => SetProperty(ref _isPreviewLoading, value);
+        }
+
+        private int _previewRequestId;
+
+        public int PreviewRequestId
+        {
+            get => _previewRequestId;
+            set => SetProperty(ref _previewRequestId, value);
+        }
+
+        private int _lastCompletedPreviewId;
+
+        public int LastCompletedPreviewId
+        {
+            get => _lastCompletedPreviewId;
+            set => SetProperty(ref _lastCompletedPreviewId, value);
+        }
+
+        private bool _hasShownPartialWarning;
+
+        public bool HasShownPartialWarning
+        {
+            get => _hasShownPartialWarning;
+            set => SetProperty(ref _hasShownPartialWarning, value);
+        }
     }
 }
