@@ -1,11 +1,11 @@
 ﻿/*
 ╔══════════════════════════════════════════════════════════════════════╗
-║                        LATUCOLLECT                                  ║
-║  Module : Tests.UI.MainViewModel                                    ║
-║  Fichier : MainViewModelPreviewTests.cs                             ║
+║                        LATUCOLLECT                                   ║
+║  Module : Tests.UI.MainViewModel                                     ║
+║  Fichier : MainViewModelPreviewTests.cs                              ║
 ║                                                                      ║
 ║  Rôle :                                                              ║
-║  Tester le système de preview du MainViewModel                      ║
+║  Tester le système de preview du MainViewModel                       ║
 ║                                                                      ║
 ║  Responsabilités principales :                                       ║
 ║  - Vérifier les états du preview                                     ║
