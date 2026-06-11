@@ -21,10 +21,11 @@
 ║  Copyright © 2026 Flo Latury                                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 */
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LatuCollect.UI.WinUI.ViewModels.Preview
 {
-    public class PreviewViewModel
+    public partial class PreviewViewModel : ObservableObject
     {
         // ═════════════════════════════════════════════════════════════
         // 1. CONSTRUCTEUR
@@ -32,6 +33,50 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
 
         public PreviewViewModel()
         {
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 2. CONTENU PREVIEW
+        // ═════════════════════════════════════════════════════════════
+
+        private string _previewText = string.Empty;
+
+        public string PreviewText
+        {
+            get => _previewText;
+            set => SetProperty(ref _previewText, value);
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 3. STATISTIQUES
+        // ═════════════════════════════════════════════════════════════
+
+        private int _fileCount;
+        public int FileCount
+        {
+            get => _fileCount;
+            set => SetProperty(ref _fileCount, value);
+        }
+
+        private long _totalLines;
+        public long TotalLines
+        {
+            get => _totalLines;
+            set => SetProperty(ref _totalLines, value);
+        }
+
+        private long _totalCharacters;
+        public long TotalCharacters
+        {
+            get => _totalCharacters;
+            set => SetProperty(ref _totalCharacters, value);
+        }
+
+        private long _totalSize;
+        public long TotalSize
+        {
+            get => _totalSize;
+            set => SetProperty(ref _totalSize, value);
         }
     }
 }

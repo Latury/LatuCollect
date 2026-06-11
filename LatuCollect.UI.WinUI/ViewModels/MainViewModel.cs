@@ -43,6 +43,7 @@ using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.ViewModels.Logs;
 using LatuCollect.UI.WinUI.ViewModels.Settings;
 using LatuCollect.UI.WinUI.ViewModels.TreeView;
+using LatuCollect.UI.WinUI.ViewModels.Preview;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,7 +62,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 1. CHAMPS PRIVÉS — ÉTAT UI
         // ═════════════════════════════════════════════════════════════
 
-        private string _previewText = string.Empty;
         private string _currentFolderPath = string.Empty;
         private string? _selectedFormat = null;
 
@@ -116,6 +116,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly TreeViewViewModel _treeViewViewModel;
 
         private readonly SettingsViewModel _settingsViewModel;
+
+        private readonly PreviewViewModel _previewViewModel;
 
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTANTES
@@ -369,8 +371,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
         public string PreviewText
         {
-            get => _previewText;
-            set => SetProperty(ref _previewText, value);
+            get => _previewViewModel.PreviewText;
+            set => _previewViewModel.PreviewText = value;
         }
 
         public string CurrentFolderPath
@@ -394,32 +396,28 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 11. STATISTIQUES
         // ═════════════════════════════════════════════════════════════
 
-        private int _fileCount;
         public int FileCount
         {
-            get => _fileCount;
-            set => SetProperty(ref _fileCount, value);
+            get => _previewViewModel.FileCount;
+            set => _previewViewModel.FileCount = value;
         }
 
-        private long _totalLines;
         public long TotalLines
         {
-            get => _totalLines;
-            set => SetProperty(ref _totalLines, value);
+            get => _previewViewModel.TotalLines;
+            set => _previewViewModel.TotalLines = value;
         }
 
-        private long _totalCharacters;
         public long TotalCharacters
         {
-            get => _totalCharacters;
-            set => SetProperty(ref _totalCharacters, value);
+            get => _previewViewModel.TotalCharacters;
+            set => _previewViewModel.TotalCharacters = value;
         }
 
-        private long _totalSize;
         public long TotalSize
         {
-            get => _totalSize;
-            set => SetProperty(ref _totalSize, value);
+            get => _previewViewModel.TotalSize;
+            set => _previewViewModel.TotalSize = value;
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -504,6 +502,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             // 🖥️ ViewModels spécialisés
             _treeViewViewModel = new TreeViewViewModel();
+
+            _previewViewModel = new PreviewViewModel();
 
             _settingsViewModel =
                 new SettingsViewModel(
