@@ -130,5 +130,29 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             get => _hasShownPartialWarning;
             set => SetProperty(ref _hasShownPartialWarning, value);
         }
+
+        // ═════════════════════════════════════════════════════════════
+        // 5. MÉTHODES PUBLIQUES
+        // ═════════════════════════════════════════════════════════════
+
+        public void ResetPreview()
+        {
+            FileCount = 0;
+            TotalLines = 0;
+            TotalCharacters = 0;
+            TotalSize = 0;
+        }
+
+        public void ApplyStatistics(
+            int fileCount,
+            long totalLines,
+            long totalCharacters,
+            long totalSize)
+        {
+            FileCount = fileCount;
+            TotalLines = totalLines;
+            TotalCharacters = totalCharacters;
+            TotalSize = totalSize;
+        }
     }
 }

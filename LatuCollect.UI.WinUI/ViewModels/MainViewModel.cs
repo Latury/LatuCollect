@@ -419,8 +419,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // 12. ARBORESCENCE & RECHERCHE
         // ═════════════════════════════════════════════════════════════
 
-        public ObservableCollection<UiFileNode> Tree { get; } = new();
-        public ObservableCollection<UiFileNode> FilteredTree { get; } = new();
+        public ObservableCollection<UiFileNode> Tree
+        {
+            get => _treeViewViewModel.Tree;
+        }
+
+        public ObservableCollection<UiFileNode> FilteredTree
+        {
+            get => _treeViewViewModel.FilteredTree;
+        }
+
         private readonly ObservableCollection<object>
             _groupedExclusions = new();
 
@@ -681,7 +689,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 _logger.Info("Export lancé");
 
-                var files = GetSelectedFiles();
+                var files = _treeViewViewModel.GetSelectedFiles();
 
                 if (files.Count == 0)
                 {
@@ -725,7 +733,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 _logger.Info("Export async lancé");
 
-                var files = GetSelectedFiles();
+                var files = _treeViewViewModel.GetSelectedFiles();
 
                 if (files.Count == 0)
                 {
@@ -781,7 +789,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             try
             {
-                var files = GetSelectedFiles();
+                var files = _treeViewViewModel.GetSelectedFiles();
 
                 // 🟡 Aucun fichier sélectionné
                 if (files.Count == 0)
@@ -794,11 +802,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     // ✅ Reset preview
                     PreviewText = "Aucun fichier sélectionné...";
 
-                    // ✅ Reset statistiques
-                    FileCount = 0;
-                    TotalLines = 0;
-                    TotalCharacters = 0;
-                    TotalSize = 0;
+                    _previewViewModel.ResetPreview();
 
                     CurrentState = UiState.Empty;
 
@@ -882,10 +886,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 var stats = data.Stats;
 
-                FileCount = stats.FileCount;
-                TotalLines = stats.TotalLines;
-                TotalCharacters = stats.TotalCharacters;
-                TotalSize = stats.TotalSizeBytes;
+                _previewViewModel.ApplyStatistics(
+                    stats.FileCount,
+                    stats.TotalLines,
+                    stats.TotalCharacters,
+                    stats.TotalSizeBytes);
 
                 _logger.Info(
                     "Preview généré avec succès",
@@ -1415,35 +1420,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             return uiNode;
         }
 
-        private List<string> GetSelectedFilesOptimized()
-        {
-            var result = new List<string>();
-
-            foreach (var node in Tree)
-            {
-                CollectSelectedFilesRecursive(node, result);
-            }
-
-            return result;
-        }
-
-        private void CollectSelectedFilesRecursive(
-            UiFileNode node,
-            List<string> result)
-        {
-            // ✔ uniquement fichiers sélectionnés
-            if (!node.IsDirectory &&
-                node.IsSelected)
-            {
-                result.Add(node.Path);
-            }
-
-            foreach (var child in node.Children)
-            {
-                CollectSelectedFilesRecursive(child, result);
-            }
-        }
-
         private List<CoreFileNode> ConvertToCoreNodes(IEnumerable<UiFileNode> uiNodes)
         {
             var result = new List<CoreFileNode>();
@@ -1472,11 +1448,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             }
 
             return result;
-        }
-
-        private List<string> GetSelectedFiles()
-        {
-            return GetSelectedFilesOptimized();
         }
 
         // Synchronisation runtime expansion
