@@ -51,10 +51,22 @@ namespace LatuCollect.UI.WinUI.ViewModels.Settings
         // 2. PROPRIÉTÉS PUBLIQUES
         // ═════════════════════════════════════════════════════════════
 
-        public string SelectedTheme
+        public string SelectedLogLevel
         {
-            get => _selectedTheme;
-            set => SetProperty(ref _selectedTheme, value);
+            get => _selectedLogLevel;
+            set => SetProperty(ref _selectedLogLevel, value);
+        }
+
+        public bool IsDeveloperMode
+        {
+            get => _isDeveloperMode;
+            set => SetProperty(ref _isDeveloperMode, value);
+        }
+
+        public bool IsDeveloperModeEnabled
+        {
+            get => IsDeveloperMode;
+            set => IsDeveloperMode = value;
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -69,6 +81,16 @@ namespace LatuCollect.UI.WinUI.ViewModels.Settings
             _userConfig = userConfig;
             _config = config;
             _logger = logger;
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // 4. MÉTHODES PUBLIQUES
+        // ═════════════════════════════════════════════════════════════
+
+        public void UpdateDeveloperMode(
+            bool value)
+        {
+            IsDeveloperMode = value;
         }
     }
 }

@@ -625,7 +625,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Toggle recherche UI
         public void ToggleSearch()
         {
-            IsSearchVisible = !IsSearchVisible;
+            _treeViewViewModel.ToggleSearchVisibility();
         }
 
         // ═════════════════════════════════════════════════════════════
@@ -818,11 +818,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 string currentSignature =
                     _previewViewModel.BuildSelectionSignature(files);
 
-                // 🔥 IMPORTANT : optimisation pour éviter de régénérer si même sélection + même format
-                if (currentSignature ==
-                        _previewViewModel.LastSelectionSignature &&
-                    isMarkdown ==
-                        _previewViewModel.LastIsMarkdown)
+                // 🟢 Vérification si le preview est à jour (optimisation)
+                if (_previewViewModel.IsPreviewUpToDate(
+                        currentSignature,
+                        isMarkdown))
                 {
                     if (files.Count == 0)
                     {
@@ -836,11 +835,9 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     return;
                 }
 
-                _previewViewModel.LastSelectionSignature =
-                    currentSignature;
-
-                _previewViewModel.LastIsMarkdown =
-                    isMarkdown;
+                _previewViewModel.UpdatePreviewState(
+                    currentSignature,
+                    isMarkdown);
 
                 // 🔥 RESET message partiel si nouvelle sélection
                 _previewViewModel.HasShownPartialWarning = false;
@@ -1289,7 +1286,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                     FilteredTree.Add(node);
                 }
 
-                HasSearchResult = true;
+                _treeViewViewModel.UpdateSearchResult(true);
 
                 _logger.Info(
                     "ApplyFilter terminé",
@@ -1311,7 +1308,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 }
             }
 
-            HasSearchResult = hasResult;
+            _treeViewViewModel.UpdateSearchResult(hasResult);
 
             _logger.Info(
                 "ApplyFilter terminé",
@@ -1362,7 +1359,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             await RefreshPreviewAsync(requestId);
 
-            _previewViewModel.LastCompletedPreviewId = requestId;
+            _previewViewModel.CompletePreviewRequest(
+                requestId);
         }
 
         // ═════════════════════════════════════════════════════════════

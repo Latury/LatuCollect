@@ -190,6 +190,31 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             return string.Join("|", ordered);
         }
 
+        public bool IsPreviewUpToDate(
+            string currentSignature,
+            bool isMarkdown)
+        {
+            return currentSignature ==
+                   LastSelectionSignature
+                   &&
+                   isMarkdown ==
+                   LastIsMarkdown;
+        }
+
+        public void UpdatePreviewState(
+            string currentSignature,
+            bool isMarkdown)
+        {
+            LastSelectionSignature = currentSignature;
+            LastIsMarkdown = isMarkdown;
+        }
+
+        public void CompletePreviewRequest(
+            int requestId)
+        {
+            LastCompletedPreviewId = requestId;
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 6. CONSTANTES
         // ═════════════════════════════════════════════════════════════

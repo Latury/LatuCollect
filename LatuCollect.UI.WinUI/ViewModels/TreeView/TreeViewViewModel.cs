@@ -255,6 +255,19 @@ namespace LatuCollect.UI.WinUI.ViewModels.TreeView
             return result;
         }
 
+        // Indique si la recherche retourne des résultats
+        public void UpdateSearchResult(
+            bool hasResult)
+        {
+            HasSearchResult = hasResult;
+        }
+
+        // Affiche / masque la zone de recherche
+        public void ToggleSearchVisibility()
+        {
+            IsSearchVisible = !IsSearchVisible;
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 5. MÉTHODES PRIVÉES
         // ═════════════════════════════════════════════════════════════
