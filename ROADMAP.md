@@ -1192,81 +1192,50 @@ et poursuivre les améliorations d’architecture préparées en v0.15.0.
 
 ---
 
-## 🧠 Core
-
-### 🟡 Configuration
-
-- ⬜ Migration complète exclusions système / utilisateur
-- ⬜ Suppression progressive des dépendances héritées
-- ⬜ Validation complète UserExcludedFolders
-
-### 🟡 FileReadResult
-
-- ⬜ Warnings Preview basés sur IsPartial
-- ⬜ Préparation badges UI contenu partiel
-
----
-
 ## 🖥️ UI — Split MainViewModel
 
-### ⬜ ExportViewModel
+### 🟢 PreviewViewModel
 
-- ⬜ Création ExportViewModel
-- ⬜ Déplacement logique export
-- ⬜ Déplacement états export
-- ⬜ Déplacement validation export
-- ⬜ Compatibilité UI via redirections MainViewModel
+- ✅ Extraction logique Preview
+- ✅ Finalisation extraction Preview
+- ✅ Déplacement états Preview
+- ✅ Déplacement génération Preview
+- ✅ Réduction redirections MainViewModel
+- ✅ Compatibilité UI via redirections MainViewModel
 
-### 🟡 PreviewViewModel
+### 🟢 SettingsViewModel
 
-- ⬜ Extraction logique Preview
-- ⬜ Finalisation extraction Preview
-- ⬜ Déplacement états Preview
-- ⬜ Déplacement génération Preview
-- ⬜ Déplacement rafraîchissement Preview
-- ⬜ Réduction redirections MainViewModel
-- ⬜ Compatibilité UI via redirections MainViewModel
+- ✅ Préparation du ViewModel Settings
+- ✅ Migration des états Settings
+- ✅ Préparation des futures redirections MainViewModel
 
-### 🟡 SettingsViewModel
+### 🟢 TreeViewViewModel
 
-- ⬜ Déplacement paramètres utilisateur
-- ⬜ Déplacement préférences utilisateur
-- ⬜ Déplacement gestion thème
-- ⬜ Déplacement états configuration
-- ⬜ Compatibilité UI via redirections MainViewModel
-- ⬜ Déplacement niveau de logs
-- ⬜ Déplacement mode développeur
+#### 🟢 Finalisation migration Tree
 
-### 🟡 TreeViewViewModel
+- ✅ Migration Tree
+- ✅ Migration FilteredTree
+- ✅ Réduction dépendances MainViewModel
 
-#### ⬜ Finalisation migration Tree
+#### 🟢 Finalisation recherche
 
-- ⬜ Migration Tree
-- ⬜ Migration FilteredTree
-- ⬜ Réduction dépendances MainViewModel
-
-#### ⬜ Finalisation recherche
-
-- ⬜ Extraction visibilité recherche
-- ⬜ Compatibilité Tree / FilteredTree
+- ✅ Extraction visibilité recherche
 
 ---
 
 ## 🧹 Nettoyage architecture
 
-- ⬜ Réduction progressive des redirections MainViewModel
-- ⬜ Migration progressive des bindings UI
-- ⬜ Réduction taille MainViewModel
-- ⬜ Simplification responsabilités MainViewModel
+- ✅ Réduction taille MainViewModel
+- ✅ Simplification responsabilités MainViewModel
 
 ---
 
-## 🧪 Tests
+## 🧪 Validation
 
-- ⬜ Couverture tests ExportViewModel
-- ⬜ Couverture tests SettingsViewModel
-- ⬜ Validation absence régression bindings UI
-- ⬜ Validation complète Preview = Export
+- ✅ Validation absence de régression Build
+- ✅ Validation migration PreviewViewModel
+- ✅ Validation migration TreeViewViewModel
+- ✅ Validation préparation SettingsViewModel
 
 ---
 
@@ -1317,16 +1286,30 @@ et fiabiliser complètement les interactions async/UI.
 - ⬜ Réduction des propriétés de redirection
 - ⬜ Simplification MainViewModel
 
+### ⬜ Création ExportViewModel
+
+- ⬜ Création du ViewModel spécialisé Export
+- ⬜ Migration des états Export vers ExportViewModel
+- ⬜ Migration des validations Export vers ExportViewModel
+- ⬜ Migration des commandes Export vers ExportViewModel
+- ⬜ Compatibilité UI via redirections temporaires MainViewModel
+- ⬜ Validation complète Preview = Export après migration
+
 ### ⬜ Finalisation exclusions système / utilisateur
 
-- ⬜ Migration complète
-- ⬜ Validation architecture définitive
+- ⬜ Migration complète exclusions système
+- ⬜ Migration complète exclusions utilisateur
+- ⬜ Validation complète UserExcludedFolders
+- ⬜ Suppression des dépendances héritées exclusions
+- ⬜ Validation architecture définitive exclusions
 
 ### ⬜ Exploitation complète de IsPartial
 
-- ⬜ Warnings Preview
-- ⬜ Warnings Export
-- ⬜ Badges UI contenu partiel
+- ⬜ Affichage des avertissements Preview basés sur IsPartial
+- ⬜ Affichage des avertissements Export basés sur IsPartial
+- ⬜ Création des badges UI de contenu partiel
+- ⬜ Validation cohérence Preview / Export pour contenu partiel
+- ⬜ Validation UX des messages utilisateur
 
 ---
 
@@ -1429,8 +1412,10 @@ Valider :
 
 ### Architecture
 
-- ⬜ validation suppression redirections MainViewModel
-- ⬜ validation migration bindings UI
+- ⬜ Couverture tests ExportViewModel
+- ⬜ Couverture tests SettingsViewModel
+- ⬜ Validation suppression redirections MainViewModel
+- ⬜ Validation migration bindings UI
 
 ---
 

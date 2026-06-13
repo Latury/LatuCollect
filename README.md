@@ -10,7 +10,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/Version-0.15.0-FFDF20?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.16.0-FFDF20?style=for-the-badge)
 ![Statut](https://img.shields.io/badge/Statut-Architecture%20%26%20Split%20MainViewModel-28A745?style=for-the-badge)
 ![Licence](https://img.shields.io/badge/Licence-MIT-FF0000?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8-800080?style=for-the-badge)
@@ -39,7 +39,8 @@ LatuCollect est un outil qui permet de regrouper rapidement le contenu de plusie
 - ✅ Simplification architecture terminée (0.13.0)
 - ✅ UX & comportement stabilisés (0.14.0)
 - ✅ Version 0.15.0 terminée
-- 🟡 Finalisation du split MainViewModel en cours
+- ✅ Version 0.16.0 terminée
+- 🟡 Version 0.17.0 en préparation
 
 🔮 Évolutions futures → [ROADMAP](./ROADMAP.md)
 
@@ -442,12 +443,11 @@ Dans certains très gros projets :
 
 ## 🔮 À venir
 
-- Finalisation PreviewViewModel
-- ExportViewModel
-- Finalisation SettingsViewModel
+- Création ExportViewModel
+- Migration progressive des paramètres Settings
 - Réduction des redirections MainViewModel
+- Stabilisation async UI
 - Optimisations mémoire avancées
-- Virtualisation TreeView
 - Améliorations UX futures
 
 👉 Voir [ROADMAP](./ROADMAP.md)
@@ -485,11 +485,14 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 
 - `LogsViewModel`
 - `TreeViewViewModel`
-- `SettingsViewModel` (première phase)
 
-#### 🟡 En cours
+#### 🟢 Migration avancée
 
 - `PreviewViewModel`
+
+#### 🟢 Migration partielle
+
+- `SettingsViewModel`
 
 #### ⬜ Prévu ultérieurement
 
@@ -538,6 +541,10 @@ Le `MainViewModel` sera progressivement découpé en plusieurs ViewModels spéci
 - ✔ Simplification architecture terminée (0.13.0)
 - ✔ UX & comportement stabilisés (0.14.0)
 - ✔ Première étape du découpage du MainViewModel réalisée (v0.15.0)
+
+- ✔ Extraction avancée PreviewViewModel (v0.16.0)
+- ✔ Migration TreeViewViewModel poursuivie (v0.16.0)
+- ✔ Préparation SettingsViewModel poursuivie (v0.16.0)
 
 ---
 

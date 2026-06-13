@@ -265,7 +265,7 @@ UI → ViewModel → Core
 
 ---
 
-# 12. 🧩 STRUCTURE ACTUELLE (v0.15.0)
+# 12. 🧩 STRUCTURE ACTUELLE (v0.16.0)
 
 ```text
 LatuCollect.Core/
@@ -358,6 +358,16 @@ LatuCollect.Tests/
 
 ✔ SettingsViewModel créé
 
+✔ PreviewViewModel créé
+
+✔ SettingsViewModel créé
+
+✔ Réduction progressive des responsabilités MainViewModel
+
+✔ Centralisation progressive des responsabilités Preview
+
+✔ Centralisation progressive des responsabilités TreeView
+
 👉 Base solide déjà fonctionnelle
 
 ---
@@ -380,14 +390,16 @@ LatuCollect.Tests/
 
 ## 🟡 PARTIELLEMENT IMPLÉMENTÉ
 
-- TreeViewViewModel
-  👉 Créé et utilisé
-  👉 Migration complète encore en cours
-
 - PreviewViewModel
-  👉 Créé
-  👉 Extraction logique prévue en v0.16.0
+  👉 Créé et utilisé
+  👉 États Preview migrés
+  👉 États techniques migrés
+  👉 Génération Preview partiellement migrée
+  👉 Extraction avancée réalisée en v0.16.0
+  👉 Migration complète encore en cours
 
 - SettingsViewModel
   👉 Créé et intégré
-  👉 Migration complète prévue en v0.16.0
+  👉 États Settings migrés
+  👉 Préparation des futures redirections réalisée en v0.16.0
+  👉 Migration complète encore en cours

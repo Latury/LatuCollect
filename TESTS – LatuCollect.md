@@ -758,6 +758,10 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 - ✔ Simplification architecture Core/UI
 - ✔ Validation reset runtime configuration
+- ✔ Réduction progressive des responsabilités MainViewModel
+- ✔ Extraction avancée PreviewViewModel
+- ✔ Migration TreeViewViewModel
+- ✔ Préparation SettingsViewModel
 
 ---
 
@@ -770,6 +774,9 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 ## 📊 Résultat actuel
 
 - ✔ 116 tests unitaires verts
+- ✔ Validation PreviewViewModel
+- ✔ Validation TreeViewViewModel
+- ✔ Validation pipeline preview async
 - 🔄 Extension couverture tests avancés
 
 ---
@@ -811,7 +818,11 @@ LatuCollect reste :
 
 ## 🖥️ Architecture UI
 
-- Tests communication inter-ViewModels
+- Validation communication inter-ViewModels
 - Validation synchronisation états UI
 - Validation stabilité bindings
 - Validation stabilité commandes async
+- Validation migration PreviewViewModel
+- Validation migration TreeViewViewModel
+- Préparation validation SettingsViewModel
+- Préparation validation ExportViewModel

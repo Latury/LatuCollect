@@ -24,7 +24,7 @@ Ce guide explique comment utiliser LatuCollect étape par étape, de l’import 
 - ✅ Disponible
 - ✅ UX & comportement stabilisés (v0.14.0)
 - ✅ Première étape du split MainViewModel réalisée (v0.15.0)
-- 🔄 Finalisation du split MainViewModel prévue (v0.16.0)
+- 🔄 Finalisation progressive du split MainViewModel en cours (v0.16.0)
 - 🔮 À venir [ROADMAP](./ROADMAP.md)
 
 ---
@@ -488,10 +488,13 @@ LatuCollect évolue progressivement vers plusieurs ViewModels spécialisés afin
 - LogsViewModel
 - TreeViewViewModel
 
-### 🟡 Créés et préparés
+### 🟢 Migration avancée
+
+- PreviewViewModel
+
+### 🟢 Migration partielle
 
 - SettingsViewModel
-- PreviewViewModel
 
 ### ⬜ Prévu ultérieurement
 

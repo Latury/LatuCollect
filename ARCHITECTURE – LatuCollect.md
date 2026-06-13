@@ -196,11 +196,25 @@ via redirections MainViewModel.
 
 - `LogsViewModel`
 - `TreeViewViewModel`
-- `SettingsViewModel` (préparation)
+- `SettingsViewModel` (préparation et migration partielle)
 
-### 🟡 En cours
+### 🟢 Très avancé
 
 - `PreviewViewModel`
+
+Éléments déjà migrés :
+
+- états Preview
+- états techniques Preview
+- génération Preview
+- gestion du contenu Preview
+- gestion des statistiques Preview
+
+Migration restante :
+
+- RefreshPreviewAsync
+- RequestPreviewRefresh
+- DebouncePreviewAsync
 
 ### ⬜ Prévu ultérieurement
 
@@ -985,6 +999,11 @@ Garantir une expérience fluide et stable
 - ✔ Simplification architecture globale
 - ✔ Première phase du split MainViewModel terminée
 
+- ✔ Extraction avancée PreviewViewModel
+- ✔ Migration TreeViewViewModel
+- ✔ Préparation et migration partielle SettingsViewModel
+- ✔ Réduction progressive des responsabilités MainViewModel
+
 ---
 
 ## 🔍 Recherche & TreeView
@@ -1037,7 +1056,9 @@ Garantir une expérience fluide et stable
 ## 🧪 Tests
 
 - ✔ Core largement couvert par les tests
-- ✔ Tests ViewModel stabilisés
+- ✔ Validation PreviewViewModel
+- ✔ Validation TreeViewViewModel
+- ✔ Stabilisation pipeline preview async
 - ✔ 116 tests verts
 
 ---

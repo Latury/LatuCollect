@@ -480,15 +480,30 @@ Première extraction réalisée en v0.15.0
 
 ### ✅ SettingsViewModel
 
-Créé et intégré en v0.15.0
+Créé et partiellement migré.
+Migration progressive poursuivie en v0.16.0.
 
-### 🟡 Découpage restant
+### 🟢 PreviewViewModel
 
-- `PreviewViewModel`
+Extraction largement avancée en v0.16.0.
 
-### ⬜ Découpage prévu ultérieurement
+Éléments déjà migrés :
 
-- `ExportViewModel`
+- états Preview
+- états techniques Preview
+- génération Preview
+- gestion du contenu Preview
+- gestion des statistiques Preview
+
+Migration restante :
+
+- RefreshPreviewAsync
+- RequestPreviewRefresh
+- DebouncePreviewAsync
+
+### ⬜ ExportViewModel
+
+Découpage prévu en v0.17.0.
 
 ---
 
@@ -568,8 +583,9 @@ Améliorer l’interface sans changer son fonctionnement
 - ✔ Première étape du split MainViewModel
 - ✔ Extraction LogsViewModel
 - ✔ Extraction TreeViewViewModel
-- ✔ Préparation SettingsViewModel
-- ✔ Préparation PreviewViewModel
+- ✔ Préparation et migration partielle SettingsViewModel
+- ✔ Extraction avancée PreviewViewModel
+- ✔ Réduction progressive des responsabilités MainViewModel
 
 ---
 

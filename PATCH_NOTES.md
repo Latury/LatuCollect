@@ -66,7 +66,7 @@ Les documents du projet sont organisés par rôle :
 | ------------------ | ------------------------- |
 | Code extractor.png | Maquette / visuel initial |
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.1.0
 
@@ -120,7 +120,7 @@ Import → Lecture → Export
 - ❌ Pas de sélection visuelle
 - ❌ Export peu structuré
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.2.0
 
@@ -263,7 +263,7 @@ Import → Lecture → Assemblage → Export
 - ❌ Pas de sauvegarde des préférences utilisateur
 - ❌ Gestion des erreurs encore basique
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.3.0
 
@@ -320,7 +320,7 @@ Permettre de simuler des cas d’erreurs essentiels sans complexité inutile ni 
 - ✔ Garantir un comportement stable et prévisible
 - ✔ Simplifier l’architecture sans sur-ingénierie
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.4.0
 
@@ -412,7 +412,7 @@ Import → Lecture → Assemblage → Export
 - ✔ Cohérent
 - ✔ Prêt pour l’amélioration UX (v0.5.0)
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.5.0
 
@@ -545,7 +545,7 @@ Cette version introduit :
 
 👉 Base solide pour les futures évolutions (0.6.0+)
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.6.0
 
@@ -672,7 +672,7 @@ Cette version introduit :
 - filtrage avancé
 - amélioration performance future
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.7.0
 
@@ -820,7 +820,7 @@ Cette version introduit :
 - optimisation avancée
 - amélioration UX future (v0.8.0)
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.8.0
 
@@ -952,7 +952,7 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 
 👉 Prêt pour la version 0.9.0
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.9.0
 
@@ -1077,9 +1077,7 @@ Cette version introduit :
 
 👉 Base solide pour la finalisation du projet (v0.10.0)
 
----
-
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.10.0
 
@@ -1368,7 +1366,7 @@ LatuCollect est désormais :
 - performant
 - prêt pour évoluer
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.11.0
 
@@ -1722,7 +1720,7 @@ et améliorer fortement l’expérience utilisateur.
 ✔ Meilleure maintenabilité
 ✔ Stabilisation majeure de la 0.11.0
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.12.0
 
@@ -1909,7 +1907,7 @@ pour rendre l’application plus fluide et plus prévisible sur les gros projets
 
 🚀 17. Version 0.13.0 — REFACTOR ARCHITECTURE
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.13.0
 
@@ -2060,7 +2058,7 @@ Import → Lecture → Collection → Assemblage → Statistiques → Export
 - meilleure maintenabilité
 - meilleure stabilité future
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.14.0
 
@@ -2234,7 +2232,7 @@ et NON à un lazy loading hiérarchique dynamique.
 - Éviter les effets de bord complexes
 - Améliorer la fluidité sur gros projets
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🚀 VERSION 0.15.0
 
@@ -2248,7 +2246,7 @@ Réduire les responsabilités du MainViewModel,
 préparer les futurs refactors async/UI
 et corriger progressivement les derniers écarts ALC.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🏗️ ARCHITECTURE
 
@@ -2268,7 +2266,7 @@ et corriger progressivement les derniers écarts ALC.
 - ✅ Découplage progressif runtime `MainViewModel → Core`
 - ✅ Préparation des futures abstractions services
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧠 Configuration
 
@@ -2328,7 +2326,7 @@ et corriger progressivement les derniers écarts ALC.
 ⚠️ Migration volontairement progressive
 afin d’éviter les régressions async/UI.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🖥️ UI — Split MainViewModel
 
@@ -2350,7 +2348,7 @@ afin d’éviter les régressions async/UI.
 - ✅ Introduction du helper :
   - `WaitForInitializationAsync()`
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 📦 Modèles Export
 
@@ -2366,7 +2364,7 @@ afin d’éviter les régressions async/UI.
 
 - ✅ Préparation des futurs refactors Export
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ LogsViewModel
 
@@ -2416,7 +2414,7 @@ afin d’éviter les régressions async/UI.
   réalisée dans le cadre du split progressif
   du MainViewModel
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ TreeViewViewModel
 
@@ -2433,14 +2431,14 @@ afin d’éviter les régressions async/UI.
 - ✅ SetVisibilityRecursive()
 - ✅ Compatibilité UI préservée via redirections MainViewModel
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ PreviewViewModel
 
 - ✅ Création du PreviewViewModel
 - ⏩ Extraction complète reportée en v0.16.0
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ SettingsViewModel
 
@@ -2448,7 +2446,7 @@ afin d’éviter les régressions async/UI.
 - ✅ Préparation des dépendances
 - ✅ Intégration préparée dans MainViewModel
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧪 TESTS
 
@@ -2464,7 +2462,7 @@ afin d’éviter les régressions async/UI.
 - ✅ Réduction du couplage des tests runtime/configuration
 - ✅ Meilleure précision des diagnostics de régression
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ Stabilisation tests async
 
@@ -2476,7 +2474,7 @@ afin d’éviter les régressions async/UI.
 - ✅ Réduction des effets de bord liés au timing runtime
 - ✅ Stabilisation des tests Preview/Selection
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ Nouveaux tests logs
 
@@ -2500,7 +2498,7 @@ Ajout couverture :
 - ✅ Validation filtres logging
 - ✅ Validation compteur erreurs
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ Validation
 
@@ -2512,7 +2510,7 @@ Ajout couverture :
 - ✅ Aucune régression Logging
 - ✅ Aucune régression async/UI
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # ⚠️ Décisions d’architecture & travaux reportés
 
@@ -2533,7 +2531,7 @@ Observations :
 
 ⚠️ Aucun refactor massif effectué pour éviter les régressions.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ Couplage runtime logging
 
@@ -2562,7 +2560,7 @@ Observations :
 
 ⚠️ Migration volontairement progressive pour éviter les régressions UI.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 ## ✅ Architecture de sélection (FileNode)
 
@@ -2586,7 +2584,7 @@ Décision :
 
 ⚠️ Aucun refactor massif effectué afin de préserver la stabilité TreeView.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧾 Logging
 
@@ -2607,7 +2605,7 @@ Décision :
 - ✅ Suppression de la propriété :
   - `Date`
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧱 FileNode
 
@@ -2621,7 +2619,7 @@ Décision :
 - ✅ Suppression FileCollectionService
 - ✅ Suppression FileCollectionServiceTests
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🧱 FileReader
 
@@ -2738,7 +2736,7 @@ Décision :
 
 - ✅ Stabilisation globale du pipeline lecture
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
 # 🎯 Impact
 
@@ -2757,22 +2755,268 @@ Décision :
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# 🧠 Philosophie
+# 🚀 VERSION 0.16.0
 
-Cette version poursuit l’objectif principal de LatuCollect :
+## 📌 Statut
 
-✔ simple
-✔ stable
-✔ prévisible
-✔ maintenable
-
-❌ aucune complexité inutile
-❌ aucun pipeline secondaire inutile
-❌ aucun comportement implicite inutile
-
-👉 Copier intelligent uniquement
+🟡 En cours — Finalisation Split MainViewModel
 
 ---
+
+## 🎯 Objectif
+
+Finaliser le découpage progressif du MainViewModel,
+réduire les responsabilités centralisées
+et préparer les futures extractions Preview, Export et Settings.
+
+---
+
+## 🖥️ PreviewViewModel
+
+### ✅ Création du ViewModel
+
+- Création du PreviewViewModel
+- Héritage ObservableObject
+- Préparation de la migration progressive du système Preview
+
+### ✅ Migration des états Preview
+
+Déplacement des propriétés :
+
+- PreviewText
+- FileCount
+- TotalLines
+- TotalCharacters
+- TotalSize
+
+vers PreviewViewModel.
+
+### ✅ Migration des états techniques Preview
+
+Déplacement des états internes :
+
+- LastSelectionSignature
+- LastIsMarkdown
+- HasShownPartialWarning
+- IsPreviewLoading
+- PreviewRequestId
+- LastCompletedPreviewId
+
+vers PreviewViewModel.
+
+### ✅ Première extraction de logique Preview
+
+Ajout de méthodes dédiées dans PreviewViewModel :
+
+- ResetPreview()
+- ApplyStatistics(...)
+- ApplyPreviewContent(...)
+- BuildSelectionSignature(...)
+
+Déplacement progressif de la logique Preview
+vers PreviewViewModel.
+
+Améliorations :
+
+- réduction des responsabilités de RefreshPreviewAsync
+- centralisation de la gestion du contenu Preview
+- centralisation de la gestion des statistiques Preview
+- centralisation de la génération des signatures Preview
+- préparation de l'extraction complète du système Preview
+
+### ✅ Compatibilité UI
+
+Conservation des propriétés publiques dans MainViewModel
+via redirections temporaires.
+
+Objectifs :
+
+- préserver les bindings existants
+- éviter les régressions UI
+- permettre une migration progressive
+
+### ✅ Nettoyage MainViewModel
+
+Suppression des états Preview migrés
+devenus inutiles dans MainViewModel.
+
+Améliorations :
+
+- réduction de la taille du MainViewModel
+- réduction des responsabilités Preview
+- meilleure séparation des responsabilités
+
+---
+
+## ⚙️ SettingsViewModel
+
+### ✅ Préparation du ViewModel
+
+Création du SettingsViewModel
+et préparation de la future migration des paramètres utilisateur.
+
+Ajouts :
+
+- SelectedTheme
+- SelectedLogLevel
+- IsDeveloperMode
+- IsDeveloperModeEnabled
+- UpdateDeveloperMode(...)
+
+Améliorations :
+
+- préparation des futures extractions Settings
+- réduction progressive des responsabilités du MainViewModel
+- préparation des futures redirections MainViewModel
+
+---
+
+## 🌳 TreeViewViewModel
+
+### ✅ Migration de la sélection des fichiers
+
+Suppression de la duplication de logique
+entre MainViewModel et TreeViewViewModel.
+
+Suppression dans MainViewModel :
+
+- GetSelectedFiles()
+- GetSelectedFilesOptimized()
+- CollectSelectedFilesRecursive()
+
+La récupération des fichiers sélectionnés
+est désormais entièrement gérée par TreeViewViewModel.
+
+Améliorations :
+
+- réduction des dépendances MainViewModel
+- suppression de duplication de code
+- meilleure séparation des responsabilités
+
+### ✅ Migration de la recherche
+
+Déplacement progressif des états de recherche
+vers TreeViewViewModel.
+
+Migration :
+
+- SearchText
+- HasSearchResult
+- IsSearchVisible
+
+Améliorations :
+
+- réduction des dépendances MainViewModel
+- centralisation des états de recherche
+- préparation des futures extractions de logique TreeView
+
+---
+
+## 🧹 Architecture
+
+### ✅ Réduction des responsabilités MainViewModel
+
+Poursuite de l'extraction du domaine Preview
+vers un ViewModel spécialisé.
+
+Améliorations :
+
+- meilleure séparation des responsabilités
+- réduction progressive de la taille du MainViewModel
+- migration des états Preview
+- migration des états techniques Preview
+- extraction des premières méthodes Preview
+- migration partielle de la génération Preview
+- réduction des dépendances MainViewModel
+- préparation des futures extractions de logique Preview
+- préparation du SettingsViewModel
+- migration des états de recherche TreeView
+- réduction des dépendances TreeView
+
+### ✅ Respect architecture ALC
+
+Aucun changement sur :
+
+- Import
+- Lecture
+- Collection
+- Assemblage
+- Statistiques
+- Export
+
+Le pipeline métier reste inchangé.
+
+---
+
+## 🧪 Validation
+
+### ✅ Build
+
+- Compilation réussie
+
+### ✅ Validation
+
+- Build vert
+- Compilation réussie
+- 116 tests réussis
+- 0 erreur
+- 0 avertissement
+
+### ✅ Régressions
+
+Validation :
+
+- bindings UI existants
+- états Preview
+- états techniques Preview
+- statistiques Preview
+- comportement MainViewModel
+- versionnement Preview async
+- génération Preview
+- limitation contenu volumineux
+- signature de sélection Preview
+
+---
+
+## ⚠️ Aucun impact utilisateur
+
+Cette évolution prépare uniquement
+la poursuite du découpage architectural.
+
+Aucune modification visible de l'interface.
+
+---
+
+## 🔜 Suite prévue
+
+### 🟡 PreviewViewModel
+
+- Migration de RefreshPreviewAsync
+- Migration de RequestPreviewRefresh
+- Migration de DebouncePreviewAsync
+- Réduction des redirections MainViewModel
+
+### 🟡 SettingsViewModel
+
+- Migration de la gestion du thème
+- Migration de la gestion du niveau de logs
+- Migration de la gestion du mode développeur
+- Migration des paramètres utilisateur
+
+### 🟡 ExportViewModel
+
+- Création du ViewModel spécialisé Export
+- Migration des états Export
+- Migration des validations Export
+- Compatibilité UI via redirections temporaires
+
+### 🟡 Architecture
+
+- Migration progressive des bindings UI
+- Réduction des propriétés de redirection MainViewModel
+- Poursuite de l’allègement du MainViewModel
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 # 🧠 Philosophie
 
