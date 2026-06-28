@@ -65,10 +65,12 @@ namespace LatuCollect.UI.WinUI.ViewModels.Logs
             _logger.Logs;
 
         public bool HasLogErrors =>
-            _logger.Logs.Any(l => l.Level == LogLevel.Error);
+            _logger.Logs.ToList()
+        .Any(l => l.Level == LogLevel.Error);
 
         public int LogErrorCount =>
-            _logger.Logs.Count(l => l.Level == LogLevel.Error);
+           _logger.Logs.ToList()
+        .Count(l => l.Level == LogLevel.Error);
 
         public LogFilter SelectedLogFilter
         {

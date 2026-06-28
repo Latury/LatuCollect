@@ -39,6 +39,8 @@ namespace LatuCollect.Core.Logging.Services
 
         private readonly ObservableCollection<LogEntry> _logs = new();
 
+        private const int MAX_LOGS = 5000;
+
         private LogLevel _minimumLevel = LogLevel.Info;
 
 
@@ -102,6 +104,11 @@ namespace LatuCollect.Core.Logging.Services
                 return;
 
             var log = CreateEntry(level, message, context);
+
+            if (_logs.Count >= MAX_LOGS)
+            {
+                _logs.RemoveAt(0);
+            }
 
             _logs.Add(log);
 
