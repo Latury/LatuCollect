@@ -53,8 +53,8 @@ namespace LatuCollect.Tests.UI.ViewModels.Selection
                 await vm.OnNodeSelectionChanged(root, false);
             }
 
-            // 🔥 Attend stabilisation preview async
-            await Task.Delay(1000);
+            // 🔥 Attend la fin réelle du preview
+            await vm.WaitForPreviewAsync();
 
             // ASSERT — aucun enfant sélectionné
             Assert.All(
