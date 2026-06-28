@@ -309,8 +309,8 @@ namespace LatuCollect.Tests.UI.ViewModels.Selection
             await vm.OnNodeSelectionChanged(file2, true);
 
             // 🔥 IMPORTANT
-            // Attend debounce + preview async
-            await Task.Delay(500);
+            // On attend que le preview soit généré après la sélection
+            await vm.WaitForPreviewAsync();
 
             // ASSERT — état sélection cohérent
             Assert.True(file1.IsSelected);

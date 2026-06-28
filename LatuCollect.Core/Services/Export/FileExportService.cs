@@ -203,8 +203,8 @@ namespace LatuCollect.Core.Services.Export
                         ref partialMessage,
                         builder,
                         exportMode?.ToLower() == "ai"
-                            ? $"⚠ Limite atteinte : {MAX_CHARACTERS_AI:N0} caractères (mode IA)"
-                            : $"⚠ Limite atteinte : {MAX_CHARACTERS_NORMAL:N0} caractères");
+                            ? "⚠ Aperçu limité pour préserver les performances. (mode IA)."
+                            : "⚠ Aperçu limité pour préserver les performances.");
                 }
             }
 

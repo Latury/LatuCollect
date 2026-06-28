@@ -133,6 +133,30 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             set => SetProperty(ref _hasShownPartialWarning, value);
         }
 
+        private bool _isPartial;
+
+        public bool IsPartial
+        {
+            get => _isPartial;
+            set => SetProperty(ref _isPartial, value);
+        }
+
+        private string _partialMessage = string.Empty;
+
+        public string PartialMessage
+        {
+            get => _partialMessage;
+            set => SetProperty(ref _partialMessage, value);
+        }
+
+        private bool _isPreviewTruncated;
+
+        public bool IsPreviewTruncated
+        {
+            get => _isPreviewTruncated;
+            set => SetProperty(ref _isPreviewTruncated, value);
+        }
+
         // ═════════════════════════════════════════════════════════════
         // 5. MÉTHODES PUBLIQUES
         // ═════════════════════════════════════════════════════════════
@@ -143,6 +167,10 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             TotalLines = 0;
             TotalCharacters = 0;
             TotalSize = 0;
+
+            IsPartial = false;
+            PartialMessage = string.Empty;
+            IsPreviewTruncated = false;
         }
 
         public void ApplyStatistics(
@@ -157,25 +185,24 @@ namespace LatuCollect.UI.WinUI.ViewModels.Preview
             TotalSize = totalSize;
         }
 
-        public void ApplyPreviewContent(
-            string content)
+        public void ApplyPreviewContent(string content)
         {
             if (string.IsNullOrEmpty(content))
             {
                 PreviewText = string.Empty;
+                IsPreviewTruncated = false;
                 return;
             }
 
             if (content.Length > MAX_PREVIEW_LENGTH)
             {
-                PreviewText =
-                    content.Substring(0, MAX_PREVIEW_LENGTH)
-                    + "\n\n----------------------------------------\n"
-                    + "⚠ Aperçu limité (contenu trop volumineux)";
+                PreviewText = content.Substring(0, MAX_PREVIEW_LENGTH);
+                IsPreviewTruncated = true;
             }
             else
             {
                 PreviewText = content;
+                IsPreviewTruncated = false;
             }
         }
 

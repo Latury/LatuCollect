@@ -390,6 +390,28 @@
 
                     <Grid Grid.Row="1">
 
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  BANNIÈRE PREVIEW LIMITÉ  -->
+                        <Border
+                            Grid.Row="0"
+                            Margin="20,20,20,10"
+                            Padding="8"
+                            Background="#665500"
+                            CornerRadius="6"
+                            Visibility="{Binding IsPreviewTruncated, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="⚠ Aperçu limité pour préserver les performances. Seul l'aperçu est tronqué. L'export contiendra l'intégralité des fichiers sélectionnés."
+                                TextWrapping="Wrap" />
+
+                        </Border>
+
                         <!--  CONTENU  -->
                         <ScrollViewer
                             Grid.Row="1"
@@ -412,7 +434,10 @@
 
                         </ScrollViewer>
 
-                        <Grid IsHitTestVisible="False" Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid
+                            Grid.Row="1"
+                            IsHitTestVisible="False"
+                            Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -428,6 +453,7 @@
 
                         <!--  LOADER OVERLAY  -->
                         <Grid
+                            Grid.RowSpan="2"
                             Background="#80000000"
                             IsHitTestVisible="True"
                             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -451,7 +477,10 @@
                         </Grid>
 
                         <!--  ERREUR OVERLAY  -->
-                        <Grid Background="#CC000000" Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid
+                            Grid.RowSpan="2"
+                            Background="#CC000000"
+                            Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                             <TextBlock
                                 MaxWidth="400"

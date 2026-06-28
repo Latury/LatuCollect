@@ -118,7 +118,7 @@ namespace LatuCollect.Core.Services.Import
                 (!allowRootLevel && count >= MAX_NODES))
             {
                 result.IsPartial = true;
-                result.Message = "⚠ Projet volumineux — affichage partiel";
+                result.Message = "⚠ Projet volumineux détecté. Optimisations activées pour préserver les performances.";
                 return null;
             }
 
@@ -138,7 +138,7 @@ namespace LatuCollect.Core.Services.Import
             if (count >= MAX_NODES)
             {
                 result.IsPartial = true;
-                result.Message = "⚠ Projet volumineux — affichage partiel";
+                result.Message = "⚠ Projet volumineux détecté. Optimisations activées pour préserver les performances.";
 
                 return node;
             }
