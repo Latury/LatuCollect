@@ -25,6 +25,7 @@
 
 using LatuCollect.Tests.Helpers;
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.UI.WinUI.ViewModels.Export;
 
 namespace LatuCollect.Tests.UI.ViewModels.State
 {
@@ -141,7 +142,7 @@ namespace LatuCollect.Tests.UI.ViewModels.State
 
             // ASSERT
             Assert.Equal(
-                MainViewModel.ExportCheckResult.NoSelection,
+                ExportViewModel.ExportCheckResult.NoSelection,
                 vm.CheckExportState());
         }
 
@@ -157,7 +158,7 @@ namespace LatuCollect.Tests.UI.ViewModels.State
 
             // ASSERT
             Assert.Equal(
-                MainViewModel.ExportCheckResult.EmptyFiles,
+                ExportViewModel.ExportCheckResult.EmptyFiles,
                 vm.CheckExportState());
         }
 
@@ -173,7 +174,7 @@ namespace LatuCollect.Tests.UI.ViewModels.State
 
             // ASSERT
             Assert.Equal(
-                MainViewModel.ExportCheckResult.Ok,
+                ExportViewModel.ExportCheckResult.Ok,
                 vm.CheckExportState());
         }
 

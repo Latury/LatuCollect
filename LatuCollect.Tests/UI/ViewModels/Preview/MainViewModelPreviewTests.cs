@@ -24,6 +24,7 @@
 */
 
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.UI.WinUI.ViewModels.Export;
 using Xunit;
 
 namespace LatuCollect.Tests.UI.ViewModels.Preview
@@ -141,7 +142,7 @@ namespace LatuCollect.Tests.UI.ViewModels.Preview
 
             // ASSERT
             Assert.Equal(
-                MainViewModel.ExportCheckResult.NoSelection,
+                ExportViewModel.ExportCheckResult.NoSelection,
                 vm.CheckExportState());
         }
     }

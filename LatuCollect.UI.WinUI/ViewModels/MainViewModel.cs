@@ -40,10 +40,11 @@ using LatuCollect.Core.Logging.Services;
 using LatuCollect.Core.Services.Export;
 using LatuCollect.Core.Services.Import;
 using LatuCollect.UI.WinUI.Models.Logs;
+using LatuCollect.UI.WinUI.ViewModels.Export;
 using LatuCollect.UI.WinUI.ViewModels.Logs;
+using LatuCollect.UI.WinUI.ViewModels.Preview;
 using LatuCollect.UI.WinUI.ViewModels.Settings;
 using LatuCollect.UI.WinUI.ViewModels.TreeView;
-using LatuCollect.UI.WinUI.ViewModels.Preview;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -113,6 +114,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
         private readonly SettingsViewModel _settingsViewModel;
 
         private readonly PreviewViewModel _previewViewModel;
+
+        private readonly ExportViewModel _exportViewModel;
 
         // ═════════════════════════════════════════════════════════════
         // 3. CONSTANTES
@@ -197,6 +200,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             {
                 if (SetProperty(ref _currentState, value))
                 {
+                    IsPreviewEmpty = value == UiState.Empty;
+
                     OnPropertyChanged(nameof(IsLoading));
                     OnPropertyChanged(nameof(IsReady));
                     OnPropertyChanged(nameof(HasError));
@@ -367,7 +372,18 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public string PreviewText
         {
             get => _previewViewModel.PreviewText;
-            set => _previewViewModel.PreviewText = value;
+            set
+            {
+                _previewViewModel.PreviewText = value;
+
+                HasEmptyFiles =
+                    value?.Contains("\n\n\n\n") == true;
+            }
+        }
+
+        public bool IsPreviewTruncated
+        {
+            get => _previewViewModel.IsPreviewTruncated;
         }
 
         public string CurrentFolderPath
@@ -386,6 +402,32 @@ namespace LatuCollect.UI.WinUI.ViewModels
             string.IsNullOrWhiteSpace(CurrentFolderPath)
                 ? "Aucun dossier"
                 : CurrentFolderPath;
+
+        public string ExportMode
+        {
+            get => _exportViewModel.ExportMode;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _logger.Warning("ExportMode ignoré (null ou vide)");
+                    return;
+                }
+
+                if (_exportViewModel.ExportMode != value)
+                {
+                    _exportViewModel.ExportMode = value;
+
+                    _logger.Info(
+                        "ExportMode changé",
+                        value);
+
+                    _userConfig.ExportMode = value;
+
+                    _ = SaveConfigurationAsync();
+                }
+            }
+        }
 
         // ═════════════════════════════════════════════════════════════
         // 11. STATISTIQUES
@@ -508,6 +550,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
             _previewViewModel = new PreviewViewModel();
 
+            _previewViewModel.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(PreviewViewModel.IsPreviewTruncated))
+                {
+                    OnPropertyChanged(nameof(IsPreviewTruncated));
+                }
+            };
+
+            _exportViewModel = new ExportViewModel();
+
             _settingsViewModel =
                 new SettingsViewModel(
                     _userConfig,
@@ -626,56 +678,37 @@ namespace LatuCollect.UI.WinUI.ViewModels
         public void ToggleSearch()
         {
             _treeViewViewModel.ToggleSearchVisibility();
+
+            OnPropertyChanged(nameof(IsSearchVisible));
         }
 
         // ═════════════════════════════════════════════════════════════
         // 15. EXPORT
         // ═════════════════════════════════════════════════════════════
 
-        private string _exportMode = "normal";
-
-        public string ExportMode
+        public bool HasEmptyFiles
         {
-            get => _exportMode;
-            set
-            {
-                if (SetProperty(ref _exportMode, value))
-                {
-                    _userConfig.ExportMode = value;
-                    _ = SaveConfigurationAsync();
-                }
-            }
+            get => _exportViewModel.HasEmptyFiles;
+            set => _exportViewModel.HasEmptyFiles = value;
         }
-
-        public bool HasEmptyFiles => PreviewText.Contains("\n\n\n\n");
 
         public bool CanCopy =>
     CurrentState == UiState.Ready &&
     !string.IsNullOrWhiteSpace(PreviewText);
 
-        public bool IsPreviewEmpty =>
-    CurrentState == UiState.Empty;
+        public bool IsPreviewEmpty
+        {
+            get => _exportViewModel.IsPreviewEmpty;
+            set => _exportViewModel.IsPreviewEmpty = value;
+        }
 
         public bool CanExport =>
     !IsPreviewEmpty &&
     !string.IsNullOrWhiteSpace(SelectedFormat);
 
-        public enum ExportCheckResult
+        public ExportViewModel.ExportCheckResult CheckExportState()
         {
-            Ok,
-            NoSelection,
-            EmptyFiles
-        }
-
-        public ExportCheckResult CheckExportState()
-        {
-            if (IsPreviewEmpty)
-                return ExportCheckResult.NoSelection;
-
-            if (HasEmptyFiles)
-                return ExportCheckResult.EmptyFiles;
-
-            return ExportCheckResult.Ok;
+            return _exportViewModel.CheckExportState();
         }
 
         // Export sync
@@ -757,14 +790,18 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 var data = await _exportService.BuildContentWithStatsAsync(
                     files,
                     isMarkdown,
-                    ExportMode
+                    _exportViewModel.ExportMode
                 );
 
-                if (data.IsPartial &&
-                    !_previewViewModel.HasShownPartialWarning)
+                _previewViewModel.IsPartial =
+                    data.IsPartial;
+
+                _previewViewModel.PartialMessage =
+                    data.PartialMessage;
+
+                if (data.IsPartial)
                 {
-                    _hasShownPartialWarning = true;
-                    await ShowFeedbackAsync(data.PartialMessage);
+                    _previewViewModel.HasShownPartialWarning = true;
                 }
 
                 _logger.Info("Export async généré avec succès");
@@ -804,13 +841,16 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                     _previewViewModel.ResetPreview();
 
+                    HasEmptyFiles = false;
+
+                    IsPreviewEmpty = true;
+
                     CurrentState = UiState.Empty;
 
                     OnPropertyChanged(nameof(CanCopy));
                     OnPropertyChanged(nameof(IsPreviewEmpty));
                     OnPropertyChanged(nameof(CanExport));
-                    OnPropertyChanged(nameof(HasEmptyFiles));
-
+                
                     return;
                 }
 
@@ -847,8 +887,14 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 var data = await _exportService.BuildContentWithStatsAsync(
                     files,
                     isMarkdown,
-                    ExportMode
+                    _exportViewModel.ExportMode
                 );
+
+                _previewViewModel.IsPartial =
+                    data.IsPartial;
+
+                _previewViewModel.PartialMessage =
+                    data.PartialMessage;
 
                 // 🔥 Vérification versioning async
                 if (requestId != _previewViewModel.PreviewRequestId)
@@ -864,12 +910,15 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 if (data.IsPartial &&
                     !_previewViewModel.HasShownPartialWarning)
                 {
-                    _hasShownPartialWarning = true;
+                    _previewViewModel.HasShownPartialWarning = true;
                     await ShowFeedbackAsync(data.PartialMessage);
                 }
 
                 _previewViewModel.ApplyPreviewContent(
-                    data.Content);
+                        data.Content);
+
+                HasEmptyFiles =
+                    PreviewText.Contains("\n\n\n\n");
 
                 var stats = data.Stats;
 
@@ -885,10 +934,11 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 CurrentState = UiState.Ready;
 
+                IsPreviewEmpty = false;
+
                 OnPropertyChanged(nameof(CanCopy));
                 OnPropertyChanged(nameof(IsPreviewEmpty));
                 OnPropertyChanged(nameof(CanExport));
-                OnPropertyChanged(nameof(HasEmptyFiles));
             }
             catch (Exception ex)
             {
@@ -914,6 +964,21 @@ namespace LatuCollect.UI.WinUI.ViewModels
         internal async Task WaitForInitializationAsync()
         {
             while (_isInitializing)
+            {
+                await Task.Delay(10);
+            }
+        }
+
+        // 🔥 TESTS — attente fin du preview async
+        internal async Task WaitForPreviewAsync()
+        {
+            while (_previewViewModel.IsPreviewLoading)
+            {
+                await Task.Delay(10);
+            }
+
+            while (_previewViewModel.LastCompletedPreviewId !=
+                   _previewViewModel.PreviewRequestId)
             {
                 await Task.Delay(10);
             }
@@ -1501,6 +1566,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
 
                 _userConfig = await _configurationService.LoadAsync() ?? new UserConfig();
 
+                _logger.Info(
+    "ExportMode chargé",
+    _userConfig.ExportMode);
+
                 // 🔥 IMPORTANT : restauration état ouvert TreeView
                 _expandedPaths.Clear();
 
@@ -1522,7 +1591,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig.LastOpenedFolder = _userConfig.LastOpenedFolder;
                 _userConfig.AutoLoadLastFolder = _userConfig.AutoLoadLastFolder;
 
-                ExportMode = _userConfig.ExportMode ?? "normal";
+                _exportViewModel.ExportMode = _userConfig.ExportMode = _userConfig.ExportMode ?? "normal";
 
                 _config.ExcludedFolders.Clear();
 
@@ -1592,7 +1661,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 _userConfig.AutoLoadLastFolder =
                     _userConfig.AutoLoadLastFolder;
 
-                _userConfig.ExportMode = ExportMode;
+                _userConfig.ExportMode = _exportViewModel.ExportMode;
 
                 SaveExpandedNodes();
 
@@ -1605,6 +1674,10 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 // 🔥 IMPORTANT : sauvegarde des paths ouverts
                 _userConfig.ExpandedPaths =
                 _expandedPaths.ToList();
+
+                _logger.Info(
+    "ExportMode avant sauvegarde",
+    _userConfig.ExportMode);
 
                 await _configurationService.SaveAsync(_userConfig);
 
@@ -1662,6 +1735,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
             TotalCharacters = 0;
             TotalSize = 0;
 
+            IsPreviewEmpty = true;
+
             // 🔥 Reset état UI
             CurrentState = UiState.Empty;
 
@@ -1670,7 +1745,6 @@ namespace LatuCollect.UI.WinUI.ViewModels
             OnPropertyChanged(nameof(CanCopy));
             OnPropertyChanged(nameof(IsPreviewEmpty));
             OnPropertyChanged(nameof(CanExport));
-            OnPropertyChanged(nameof(HasEmptyFiles));
         }
 
         public async Task ResetConfigurationAsync()
@@ -1704,7 +1778,8 @@ namespace LatuCollect.UI.WinUI.ViewModels
                 // 🔧 SETTINGS
                 SelectedFormat = _userConfig.DefaultFormat;
                 IsDeveloperMode = _userConfig.IsDeveloperMode;
-                ExportMode = _userConfig.ExportMode ?? "normal";
+                _exportViewModel.ExportMode =
+                _userConfig.ExportMode ?? "normal";
 
                 // 🔥 Reset runtime UI
                 ResetLoadedFolderState();
@@ -1751,7 +1826,7 @@ namespace LatuCollect.UI.WinUI.ViewModels
         // Indicateur d’erreurs présentes dans les logs (pour affichage badge ou alerte)
         public bool HasLogErrors =>
             _logsViewModel.HasLogErrors;
-        
+
         // Nombre d’erreurs présentes dans les logs (pour affichage badge ou alerte)
         public int LogErrorCount =>
             _logsViewModel.LogErrorCount;

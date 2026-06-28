@@ -34,6 +34,7 @@ using LatuCollect.Core.Services.Export;
 using LatuCollect.UI.WinUI.Models.Logs;
 using LatuCollect.UI.WinUI.Settings.Panels;
 using LatuCollect.UI.WinUI.ViewModels;
+using LatuCollect.UI.WinUI.ViewModels.Export;
 using LatuCollect.UI.WinUI.ViewModels.Logs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -379,13 +380,13 @@ namespace LatuCollect.UI.WinUI
 
             var check = _viewModel.CheckExportState();
 
-            if (check == MainViewModel.ExportCheckResult.NoSelection)
+            if (check == ExportViewModel.ExportCheckResult.NoSelection)
             {
                 await ShowDialog("Aucun contenu", "Aucun fichier sélectionné.");
                 return;
             }
 
-            if (check == MainViewModel.ExportCheckResult.EmptyFiles)
+            if (check == ExportViewModel.ExportCheckResult.EmptyFiles)
             {
                 bool confirm = await ShowConfirm(
                     "Fichiers vides",
