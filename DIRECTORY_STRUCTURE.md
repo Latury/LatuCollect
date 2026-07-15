@@ -1,271 +1,569 @@
-# 1. 📁 STRUCTURE DU PROJET – LATUCOLLECT (VERSION CIBLE V2)
+<div align="center">
 
-👉 ⚠️ Cette structure correspond à l’organisation cible
+# 📁 DIRECTORY_STRUCTURE – LATUCOLLECT
 
-👉 Elle n’est pas entièrement implémentée actuellement
+### Organisation officielle des dossiers du projet
 
-👉 Voir [ROADMAP](./ROADMAP.md) pour l’évolution
+🔹 Structure du projet
+🔹 Organisation des dossiers
+🔹 Architecture physique
+🔹 État actuel et structure cible
+
+</div>
+
+Ce document décrit l'organisation officielle des dossiers et des fichiers du projet **LatuCollect**.
+
+Il présente la structure actuellement implémentée, la structure cible définie par l'architecture **ALC**, ainsi que les règles d'organisation permettant de garantir la cohérence, la lisibilité et la maintenabilité du projet.
+
+> [!IMPORTANT]
+> Ce document constitue la **référence officielle** concernant l'organisation des projets, des dossiers et des fichiers de **LatuCollect**.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### **📖 Sommaire**
+
+#### Général
+
+- [📁 01. Structure du projet](#structure-du-projet)
+- [🎯 02. Objectif](#objectif)
+- [🧩 03. Structure principale](#structure-principale)
+- [⚠️ 04. Informations importantes](#informations-importantes)
+- [📦 05. Description des dossiers](#description-des-dossiers)
+- [🧠 06. Architecture MVVM](#architecture-mvvm)
+- [🔄 07. Fonctionnement global](#fonctionnement-global)
+- [🖥️ 08. Structure de l'interface](#structure-interface)
+- [🔄 09. Communication](#communication)
+- [⚠️ 10. Règles d'organisation](#regles-organisation)
+- [🧠 11. Philosophie](#philosophie)
+- [🧩 12. Structure actuelle](#structure-actuelle)
+- [🔄 13. Différences avec la structure cible](#differences-cible)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="structure-du-projet"></a>
+
+### **📁 01. Structure du projet**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente l'organisation générale des projets, des dossiers et des principaux fichiers qui composent **LatuCollect**.
+
+Elle distingue la structure actuellement implémentée de la structure cible définie par l'architecture **ALC** afin de faciliter la compréhension, la maintenance et l'évolution du projet.
+
+> [!NOTE]
+> La structure cible correspond à l'organisation visée à long terme.
+> Certaines parties sont encore en cours de migration et seront implémentées progressivement au fil des versions.
+
+> Pour suivre l'avancement de cette évolution, consulter la [ROADMAP](./ROADMAP.md).
 
 ---
 
-## 📌 Résumé
+#### 🎯 Objectifs
 
-Ce document décrit la structure du projet LatuCollect, la différence entre l’état actuel et la structure cible, ainsi que l’organisation des dossiers.
+- ✅ Présenter l'organisation générale de la solution.
+- ✅ Décrire le rôle des principaux projets et dossiers.
+- ✅ Distinguer la structure actuelle de la structure cible.
+- ✅ Garantir une organisation cohérente de la solution.
+- ✅ Faciliter les évolutions de l'architecture.
 
-👉 Il sert de guide pour maintenir une architecture cohérente.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="objectif"></a>
+
+### **🎯 02. Objectif**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente les principaux objectifs de l'organisation des projets, des dossiers et des fichiers de **LatuCollect**.
+
+Une structure claire facilite la navigation dans le dépôt, améliore la compréhension de l'architecture, simplifie la maintenance et accompagne l'évolution progressive du projet.
 
 ---
 
-# 2. 🎯 OBJECTIF
+#### 🎯 Objectifs
 
-Permettre :
+- ✅ Faciliter la navigation dans le projet.
+- ✅ Identifier rapidement le rôle de chaque projet et dossier.
+- ✅ Préserver une organisation cohérente.
+- ✅ Simplifier la maintenance du code.
+- ✅ Favoriser une évolution progressive de l'architecture.
 
-- Navigation rapide
-- Compréhension immédiate
-- Maintenance facilitée
-- Évolutivité propre
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="structure-principale"></a>
+
+### **🧩 03. Structure principale**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente l'organisation cible de la solution **LatuCollect**.
+
+Elle illustre la répartition des principaux projets, dossiers et composants conformément aux principes de l'architecture **ALC**.
+
+> [!NOTE]
+> Cette structure représente l'organisation cible du projet.
+> Certaines parties sont encore en cours de migration et seront mises en place progressivement au fil des versions.
 
 ---
 
-# 3. 🧩 STRUCTURE PRINCIPALE (CIBLE)
+#### 📂 Arborescence cible
 
 ```text
 LatuCollect/
 │
 ├── Core/
-│   ├── Services/
-│   │   ├── Import/
-│   │   ├── Reader/
-│   │   ├── Statistics/
-│   │   ├── Export/
-│   │   └── Utils/
-│   │
 │   ├── Configuration/
+│   ├── Interfaces/
 │   ├── Logging/
 │   ├── Models/
-│   ├── Interfaces/
-│   │   👉 Centralisation progressive
-│   │   👉 Plusieurs interfaces existent déjà
-│   │      (Import, Export, Logging, Configuration)
-│   │
-│   ├── Helpers/
-│   └── DTOs/
+│   └── Services/
+│       ├── Export/
+│       ├── Import/
+│       ├── Reader/
+│       └── Statistics/
 │
 ├── UI/
 │   └── WinUI/
-│       ├── Views/
-│       ├── ViewModels/
-│       │   ├── TreeView/
-│       │   ├── Preview/
-│       │   ├── Export/
-│       │   ├── Logs/
-│       │   ├── Search/
-│       │   └── Settings/
-│       │
-│       │   👉 LogsViewModel extrait (v0.15.0)
-│       │   👉 Découpage progressif du MainViewModel en cours
-│       │
-│       ├── Models/
 │       ├── Converters/
-│       ├── Services/
-│       └── Themes/
+│       ├── Models/
+│       ├── Settings/
+│       └── ViewModels/
+│           ├── Export/
+│           ├── Logs/
+│           ├── Preview/
+│           ├── Settings/
+│           └── TreeView/
 │
-├── Resources/
 ├── Tests/
-├── Installer/
-├── Assets/
 │
 ├── README.md
 ├── ARCHITECTURE.md
-├── UI_GUIDE.md
 ├── DIRECTORY_STRUCTURE.md
 ├── GUIDE_UTILISATEUR.md
-├── ROADMAP.md
 ├── PATCH_NOTES.md
+├── ROADMAP.md
 ├── TESTS.md
+└── UI_GUIDE.md
 ```
 
 ---
 
-# 4. ⚠️ IMPORTANT
+#### 📋 Principes d'organisation
 
-- Structure cible (pas encore complète)
-- Implémentation progressive
-- Alignement avec la ROADMAP obligatoire
-- ✔ Système de simulation supprimé (v0.13.0)
-- ✔ Architecture simplifiée
+- ✅ La structure évolue progressivement au fil des versions.
+- ✅ Chaque projet et chaque dossier possède une responsabilité clairement définie.
+- ✅ Le découpage du `MainViewModel` est réalisé progressivement afin de limiter les régressions.
+- ✅ Les interfaces sont progressivement centralisées dans le Core.
+- ✅ L'organisation respecte les principes de l'architecture **ALC**.
+- ✅ Toute évolution importante doit rester cohérente avec la `ROADMAP.md`.
 
----
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# 5. 🧠 DESCRIPTION DES DOSSIERS
+<a id="informations-importantes"></a>
 
-## 5.1 🧠 Core/
+### **⚠️ 04. Informations importantes**
 
-Contient toute la logique métier.
+#### 📋 Vue d'ensemble
 
-### 📋 Responsabilités
-
-- Import des fichiers
-- Lecture du contenu
-- Assemblage
-- Export
-
-👉 Source unique de vérité
-
-👉 Aucune dépendance UI
-
-### 🛠️ Utils/
-
-Fonctions utilitaires génériques.
-
-👉 Helpers techniques réutilisables
-
-### 🔧 Helpers/
-
-Fonctions d’aide spécifiques au projet.
-
-👉 Logique d'assistance interne
-
-### 📦 DTOs/
-
-Objets de transfert de données entre services.
-
-👉 Échanges de données structurés
+Cette section regroupe les principales informations à connaître concernant l'organisation du projet et l'évolution de sa structure.
 
 ---
 
-## 5.2 ⚙️ Configuration/
+#### 📌 Points importants
 
-Centralise :
-
-- Paramètres globaux
-- Préférences utilisateur
-
-### 📋 Éléments principaux
-
-- AppConfig
-- UserConfig
+- ✅ La structure présentée dans ce document correspond à l'organisation cible de LatuCollect.
+- ✅ Certaines parties sont encore en cours de migration.
+- ✅ Les évolutions sont réalisées progressivement afin de limiter les régressions.
+- ✅ Toute modification importante doit rester cohérente avec la `ROADMAP.md`.
+- ✅ L'organisation des dossiers doit respecter les principes de l'architecture **ALC**.
 
 ---
 
-## 5.3 🧾 Logging/
+#### 📊 État actuel
 
-Permet :
+- ✅ Le système de simulation a été supprimé (v0.13.0).
+- ✅ L'architecture a été progressivement simplifiée.
+- ✅ Le découpage des ViewModels est en cours de finalisation.
+- ✅ L'organisation du projet continue d'évoluer au fil des versions.
 
-- Traçage des actions
-- Gestion des erreurs
-- Diagnostic
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-👉 Utilisé par l’ensemble du pipeline
+<a id="description-des-dossiers"></a>
 
----
+### **📦 05. Description des dossiers**
 
-## 5.4 🖥️ UI/
+#### 📋 Vue d'ensemble
 
-Contient l’interface WinUI.
+Cette section présente le rôle des principaux dossiers qui composent la solution **LatuCollect**.
 
-### 📋 Responsabilités
-
-- Affichage
-- Interaction utilisateur
-- Aperçu
-
-👉 Aucune logique métier
-
-👉 Consomme uniquement le Core
+Chaque dossier possède une responsabilité clairement définie afin de respecter les principes de l'architecture **ALC**.
 
 ---
 
-## 5.5 🎨 Resources/
+#### 🧠 Core/
 
-- Couleurs
-- Styles
-- Dimensions
+Contient l'ensemble de la logique métier de l'application.
 
-👉 Base pour le système de thèmes
+Le **Core** constitue le cœur fonctionnel de LatuCollect et reste totalement indépendant de l'interface utilisateur.
 
----
+##### 📋 Responsabilités
 
-## 5.6 🧪 Tests/
-
-- Tests unitaires
-- Tests fonctionnels
-- Tests ViewModel
-
-👉 Couverture de tests en constante évolution
+- ✅ Import des fichiers.
+- ✅ Lecture du contenu.
+- ✅ Assemblage des données.
+- ✅ Calcul des statistiques.
+- ✅ Génération des exports.
+- ✅ Gestion de la configuration.
+- ✅ Gestion du logging.
 
 ---
 
-## 5.7 📦 Installer/
+#### 🖥️ UI/
 
-- Packaging
-- Distribution
-- Dépendances
+Contient l'interface utilisateur **WinUI** ainsi que les composants dédiés à l'affichage et aux interactions avec l'utilisateur.
 
-👉 Prévu dans les versions futures
+##### 📋 Responsabilités
 
----
-
-## 5.8 🖼️ Assets/
-
-- Icônes
-- Images
-- Logo
+- ✅ Affichage des données.
+- ✅ Interactions utilisateur.
+- ✅ Gestion des ViewModels.
+- ✅ Présentation de l'aperçu.
+- ✅ Communication avec le Core via les ViewModels.
 
 ---
 
-# 6. 🧠 ARCHITECTURE MVVM
+#### 🧪 Tests/
 
-View → ViewModel → Core
+Regroupe les tests automatisés du projet.
+
+##### 📋 Responsabilités
+
+- ✅ Tests du Core.
+- ✅ Tests des ViewModels.
+- ✅ Validation du comportement de l'application.
+- ✅ Détection des régressions.
 
 ---
 
-# 7. 🧩 FONCTIONNEMENT GLOBAL
+#### ⚙️ Configuration/
 
+Regroupe les composants liés à la configuration globale et utilisateur.
+
+##### 📋 Éléments principaux
+
+- ✅ `AppConfig`
+- ✅ `UserConfig`
+
+> Les détails du fonctionnement de ces composants sont présentés dans `ARCHITECTURE.md`.
+
+---
+
+#### 🧾 Logging/
+
+Regroupe les composants dédiés à la journalisation et au diagnostic de l'application.
+
+##### 📋 Responsabilités
+
+- ✅ Journalisation des événements.
+- ✅ Gestion des erreurs.
+- ✅ Outils de diagnostic.
+- ✅ Suivi des traitements du Core.
+
+---
+
+#### 📌 Remarque
+
+Les dossiers présentés dans cette section constituent les principaux composants de la solution.
+
+Leur organisation peut évoluer progressivement afin de rester cohérente avec l'architecture **ALC** et la `ROADMAP.md`.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="architecture-mvvm"></a>
+
+### **🧠 06. Architecture MVVM**
+
+#### 📋 Vue d'ensemble
+
+LatuCollect repose sur une architecture **MVVM (Model - View - ViewModel)** associée aux principes de l'architecture **ALC**.
+
+Cette organisation permet de séparer clairement l'interface utilisateur de la logique métier afin de faciliter la maintenance, les tests et l'évolution du projet.
+
+---
+
+#### 🔄 Organisation générale
+
+```text
+View
+   │
+   ▼
+ViewModel
+   │
+   ▼
+Core
+```
+
+---
+
+#### 📋 Responsabilités
+
+**🖥️ View**
+
+- ✅ Afficher les informations.
+- ✅ Capturer les interactions utilisateur.
+- ✅ Transmettre les actions au ViewModel.
+
+---
+
+**⚙️ ViewModel**
+
+- ✅ Gérer l'état de l'interface utilisateur.
+- ✅ Orchestrer les traitements.
+- ✅ Communiquer avec le Core.
+- ✅ Convertir les données entre l'UI et le Core.
+
+---
+
+**🧠 Core**
+
+- ✅ Contenir la logique métier.
+- ✅ Regrouper les services.
+- ✅ Produire les données utilisées par l'interface.
+- ✅ Rester indépendant de l'interface utilisateur.
+
+---
+
+#### 📌 Remarque
+
+L'architecture **MVVM** constitue le lien entre l'interface utilisateur et les services du **Core**.
+
+Elle contribue à limiter le couplage entre les composants et facilite les évolutions de l'application.
+
+> Pour une description détaillée de l'architecture **ALC** et des responsabilités de chaque couche, consulter [📖 ARCHITECTURE.md](./ARCHITECTURE.md).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="fonctionnement-global"></a>
+
+### **🔄 07. Fonctionnement global**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente le fonctionnement général de **LatuCollect**, depuis l'import des fichiers jusqu'à la génération du document exporté.
+
+Elle met en évidence le parcours suivi par l'utilisateur ainsi que le pipeline interne utilisé par le **Core**.
+
+---
+
+#### 🖥️ Pipeline utilisateur
+
+Le parcours utilisateur suit les étapes suivantes :
+
+```text
 Importer → Sélectionner → Aperçu → Exporter
+```
 
 ---
 
-# 8. 🖥️ UI STRUCTURE
+#### ⚙️ Pipeline interne
 
-Gauche → Arborescence
+Le pipeline interne du **Core** réalise les traitements suivants :
 
-Centre → Options
-
-Droite → Aperçu
-
-Bas → Actions
+```text
+Import → Lecture → Collection → Assemblage → Statistiques → Export
+```
 
 ---
 
-# 9. 🔄 COMMUNICATION
+#### 📋 Fonctionnement
 
-UI → ViewModel → Core
-
-❌ Jamais l’inverse
-
----
-
-# 10. ⚠️ RÈGLES
-
-- Core ne dépend jamais de UI
-- UI peut dépendre de Core
-- 1 dossier = 1 responsabilité
-- Pas de logique métier dans UI
+- ✅ L'utilisateur importe un projet ou un dossier.
+- ✅ Les fichiers sont sélectionnés dans l'arborescence.
+- ✅ Le **Core** construit la collection des fichiers sélectionnés.
+- ✅ Le **Core** génère le contenu utilisé par l'aperçu et l'export.
+- ✅ Les statistiques sont calculées à partir des données du pipeline.
 
 ---
 
-# 11. 🧠 PHILOSOPHIE
+#### 📌 Remarque
 
-- Simplicité
-- Lisibilité
-- Efficacité
+Le pipeline utilisateur décrit les actions réalisées dans l'interface, tandis que le pipeline interne représente les traitements exécutés par le **Core**.
 
-👉 Éviter toute complexité inutile
+> Pour une description détaillée du pipeline et des services associés, consulter [📖 ARCHITECTURE.md](./ARCHITECTURE.md).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="structure-interface"></a>
+
+### **🖥️ 08. Structure de l'interface**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente l'organisation générale de l'interface utilisateur de **LatuCollect**.
+
+L'interface est répartie en plusieurs zones ayant chacune une responsabilité clairement définie afin de garantir une utilisation simple, cohérente et prévisible.
 
 ---
 
-# 12. 🧩 STRUCTURE ACTUELLE (v0.16.0)
+#### 🧩 Organisation générale
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│ Projet               │ Options │                      Aperçu │
+├──────────────────────────────────────────────────────────────┤
+│                          Actions                             │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+#### 📋 Répartition des zones
+
+- **Gauche** → Projet (arborescence)
+- **Centre** → Options (configuration et paramètres)
+- **Droite** → Aperçu
+- **Bas** → Actions principales
+
+---
+
+#### 📌 Remarque
+
+Cette organisation constitue la structure officielle de l'interface utilisateur de **LatuCollect**.
+
+Toute évolution de l'interface doit préserver cette disposition afin de garantir une expérience utilisateur cohérente.
+
+> Pour une description détaillée des composants, des comportements et des règles de l'interface, consulter [📖 UI_GUIDE.md](./UI_GUIDE.md).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="communication"></a>
+
+### **🔄 09. Communication**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente les règles de communication entre les différentes couches de **LatuCollect**.
+
+Les échanges suivent une direction unique afin de préserver une architecture modulaire, de limiter le couplage et de garantir une séparation claire des responsabilités.
+
+---
+
+#### 🔄 Flux de communication
+
+```text
+Interface utilisateur
+        │
+        ▼
+   ViewModel
+        │
+        ▼
+      Core
+```
+
+---
+
+#### 📋 Règles
+
+- ✅ L'interface utilisateur communique uniquement avec les ViewModels.
+- ✅ Les ViewModels communiquent avec le Core.
+- ✅ Le Core reste totalement indépendant de l'interface utilisateur.
+- ✅ Les échanges entre les couches respectent l'architecture **ALC**.
+- 🟥 Le Core ne dépend jamais de l'UI.
+- 🟥 Les communications directes entre l'UI et le Core sont interdites.
+
+---
+
+#### 📌 Remarque
+
+Cette organisation garantit une architecture plus simple, plus modulaire et plus facile à maintenir.
+
+Elle permet également de limiter les dépendances entre les composants et de faciliter les évolutions du projet.
+
+> Pour une description détaillée des responsabilités de chaque couche, consulter [📖 ARCHITECTURE.md](./ARCHITECTURE.md).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="regles-organisation"></a>
+
+### **⚠️ 10. Règles d'organisation**
+
+#### 📋 Vue d'ensemble
+
+Cette section regroupe les principales règles d'organisation des projets et des dossiers de **LatuCollect**.
+
+Le respect de ces règles garantit une architecture cohérente, une maintenance facilitée et une évolution progressive du projet.
+
+---
+
+#### 📋 Règles
+
+- ✅ Le **Core** ne dépend jamais de l'interface utilisateur.
+- ✅ L'interface utilisateur communique avec le **Core** uniquement via les **ViewModels**.
+- ✅ Chaque projet et chaque dossier possède une responsabilité clairement définie.
+- ✅ La logique métier est centralisée dans le **Core**.
+- ✅ L'interface utilisateur est dédiée à l'affichage et aux interactions.
+- ✅ Les **ViewModels** assurent l'orchestration entre l'UI et le **Core**.
+- ✅ Les composants sont organisés par domaine fonctionnel.
+- ✅ Toute évolution de la structure doit rester cohérente avec l'architecture **ALC**.
+
+---
+
+#### 📌 Remarque
+
+Ces règles constituent les fondements de l'organisation du projet.
+
+Elles doivent être respectées lors de toute évolution de la structure afin de préserver la cohérence, la stabilité et la maintenabilité de **LatuCollect**.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="philosophie"></a>
+
+### **🧠 11. Philosophie**
+
+#### 📋 Vue d'ensemble
+
+LatuCollect est conçu autour d'une architecture volontairement simple.
+
+Chaque choix technique vise à limiter la complexité, à faciliter la compréhension du code et à garantir une évolution progressive de l'application.
+
+---
+
+#### 📋 Principes
+
+- ✅ Privilégier la simplicité.
+- ✅ Concevoir un code clair, lisible et maintenable.
+- ✅ Organiser les composants par responsabilité.
+- ✅ Favoriser une architecture modulaire.
+- ✅ Préserver un comportement prévisible.
+- ✅ Faire évoluer le projet de manière progressive.
+
+---
+
+#### 💡 Principe fondamental
+
+> Une solution simple, cohérente et maintenable est toujours préférable à une architecture sur-ingénierée.
+
+> Toute complexité doit être justifiée par un bénéfice réel pour l'application.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="structure-actuelle"></a>
+
+### **🧩 12. Structure actuelle**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente l'organisation actuellement implémentée de la solution **LatuCollect**.
+
+Elle reflète l'état réel du projet au moment de la rédaction de cette documentation et permet de comparer la structure existante avec la structure cible présentée précédemment.
+
+> [!NOTE]
+> Cette arborescence reflète l'état actuel du projet au moment de la rédaction de cette documentation.
+> Elle évoluera progressivement conformément à la `ROADMAP.md`.
+
+---
+
+#### 📂 Arborescence actuelle
 
 ```text
 LatuCollect.Core/
@@ -301,12 +599,12 @@ LatuCollect.UI.WinUI/
     ├── MainViewModel.cs
     ├── Logs/
     │   └── LogsViewModel.cs
-    ├── TreeView/
-    │   └── TreeViewViewModel.cs
     ├── Preview/
     │   └── PreviewViewModel.cs
-    └── Settings/
-        └── SettingsViewModel.cs
+    ├── Settings/
+    │   └── SettingsViewModel.cs
+    └── TreeView/
+        └── TreeViewViewModel.cs
 
 LatuCollect.Tests/
 ├── Core/
@@ -332,74 +630,80 @@ LatuCollect.Tests/
 
 ---
 
-# 13. 🔄 DIFFÉRENCES AVEC LA CIBLE
+#### 📊 État actuel
 
-## ✅ ÉLÉMENTS DÉJÀ EN PLACE
-
-✔ Services Core principaux
-
-✔ Logging centralisé
-
-✔ Configuration globale
-
-✔ Séparation AppConfig / UserConfig
-
-✔ UI WinUI structurée
-
-✔ Séparation stricte UI / Core
-
-✔ Première étape du split MainViewModel
-
-✔ LogsViewModel extrait
-
-✔ TreeViewViewModel créé
-
-✔ PreviewViewModel créé
-
-✔ SettingsViewModel créé
-
-✔ PreviewViewModel créé
-
-✔ SettingsViewModel créé
-
-✔ Réduction progressive des responsabilités MainViewModel
-
-✔ Centralisation progressive des responsabilités Preview
-
-✔ Centralisation progressive des responsabilités TreeView
-
-👉 Base solide déjà fonctionnelle
+- ✅ Architecture **ALC** opérationnelle.
+- ✅ Organisation du **Core** stabilisée.
+- ✅ Séparation entre le **Core**, l'interface utilisateur et les tests.
+- ✅ Découpage du `MainViewModel` largement avancé.
+- ✅ `LogsViewModel`, `TreeViewViewModel`, `PreviewViewModel` et `SettingsViewModel` sont désormais séparés.
+- ✅ Les futures évolutions continueront de respecter les principes de l'architecture **ALC**.
 
 ---
 
-## ❌ NON IMPLÉMENTÉ
+#### 📄 Références
 
-```text
-- Utils/
-- Interfaces/
-- Helpers/
-- DTOs/
-- Centralisation complète des ressources UI
-- Structure finale des tests
-- Tests système automatisés
-- Installer
-- Centralisation complète des Assets
-- Système de thèmes avancé
-- ExportViewModel
-```
+Pour suivre l'évolution de cette structure et de l'architecture du projet, consulter :
 
-## 🟡 PARTIELLEMENT IMPLÉMENTÉ
+- `ARCHITECTURE.md`
+- `ROADMAP.md`
+- `PATCH_NOTES.md`
 
-- PreviewViewModel
-  👉 Créé et utilisé
-  👉 États Preview migrés
-  👉 États techniques migrés
-  👉 Génération Preview partiellement migrée
-  👉 Extraction avancée réalisée en v0.16.0
-  👉 Migration complète encore en cours
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- SettingsViewModel
-  👉 Créé et intégré
-  👉 États Settings migrés
-  👉 Préparation des futures redirections réalisée en v0.16.0
-  👉 Migration complète encore en cours
+<a id="differences-cible"></a>
+
+### **🔄 13. Différences avec la structure cible**
+
+#### 📋 Vue d'ensemble
+
+Cette section présente les principaux écarts entre la structure actuellement implémentée et l'organisation cible définie pour LatuCollect.
+
+Les évolutions sont réalisées progressivement afin de préserver la stabilité de l'application et de limiter les régressions.
+
+---
+
+#### ✅ Éléments déjà implémentés
+
+- ✅ Architecture **ALC** opérationnelle.
+- ✅ Services principaux du Core.
+- ✅ Logging centralisé.
+- ✅ Séparation `AppConfig` / `UserConfig`.
+- ✅ Séparation du Core, de l'UI et des tests.
+- ✅ Organisation des services par domaine fonctionnel.
+- ✅ Découpage progressif du `MainViewModel`.
+- ✅ `LogsViewModel` spécialisé.
+- ✅ `TreeViewViewModel` spécialisé.
+- ✅ `PreviewViewModel` largement avancé.
+- ✅ `SettingsViewModel` largement avancé.
+- ✅ Centralisation progressive des responsabilités des ViewModels.
+
+---
+
+#### 🟡 Évolutions en préparation
+
+- 🟡 Refonte progressive de l'interface utilisateur.
+- 🟡 Finalisation des thèmes clair et sombre.
+- 🟡 Harmonisation des couleurs, des icônes et de la typographie.
+- 🟡 Amélioration de la hiérarchie visuelle et des espacements.
+- 🟡 Audit UX/UI progressif des principaux composants de l'application.
+
+---
+
+#### ⏳ Évolutions prévues
+
+- ⏳ Validation complète de l'application sur de très gros projets.
+- ⏳ Validation des performances, de la consommation mémoire et des exports massifs.
+- ⏳ Génération d'une version Release.
+- ⏳ Préparation de la distribution de l'application.
+- ⏳ Création de l'installateur et validation de l'installation.
+- ⏳ Finalisation de LatuCollect pour une utilisation en production.
+
+---
+
+#### 📄 Références
+
+Pour connaître le détail des évolutions prévues, consulter :
+
+- `ROADMAP.md`
+- `PATCH_NOTES.md`
