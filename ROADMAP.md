@@ -1159,11 +1159,11 @@ Le découpage du `MainViewModel` reste volontairement progressif afin de préser
 
 <a id="v180"></a>
 
-### **🎨 22. Version 0.18.0 — UI, thèmes & audit UX**
+### **🎨 22. Version 0.18.0 — Refonte UI, thèmes & audit visuel**
 
 📌 Statut : ⬜ Prévue
 
-🎯 Objectif : Finaliser l'identité visuelle de LatuCollect afin d'offrir une interface moderne, cohérente et agréable, sans modifier les principes de simplicité et de stabilité de l'application.
+🎯 Objectif : Finaliser l'identité visuelle de LatuCollect afin d'offrir une interface moderne, cohérente et harmonisée, tout en préservant l'architecture ALC, le pipeline utilisateur et les principes de simplicité de l'application.
 
 ---
 
@@ -1171,84 +1171,91 @@ Le découpage du `MainViewModel` reste volontairement progressif afin de préser
 
 ### 🎨 Thèmes
 
-- ⬜ Finalisation du mode clair
-- ⬜ Finalisation du mode sombre
-- ⬜ Centralisation des couleurs
+- ⬜ Finalisation du thème clair
+- ⬜ Finalisation du thème sombre
+- ⬜ Centralisation de la palette de couleurs
 - ⬜ Suppression des couleurs codées en dur
-- ⬜ Mise en place d'une palette cohérente
 - ⬜ Uniformisation des couleurs d'état (succès, avertissement, erreur)
 
 ---
 
-### 🖥️ Interface
+### 🖥️ Interface utilisateur
 
 - ⬜ Harmonisation des espacements
-- ⬜ Alignement des éléments
+- ⬜ Harmonisation des alignements
 - ⬜ Amélioration de la hiérarchie visuelle
 - ⬜ Uniformisation de la typographie
 - ⬜ Uniformisation des icônes
+- ⬜ Harmonisation des composants WinUI
 
 ---
 
-### 🖥️ Cohérence UI
+### 🔘 Composants
 
 - ⬜ Harmonisation des boutons
+- ⬜ Harmonisation des cartes
 - ⬜ Harmonisation des dialogues
 - ⬜ Uniformisation des états visuels
-- ⬜ Amélioration du feedback utilisateur
+- ⬜ Amélioration des feedbacks utilisateur
 
 ---
 
 ### 📐 Structure de l'application
 
-**Organisation conservée :**
+**Structure conservée :**
 
-- ✔ Gauche → Arborescence
+- ✔ Gauche → Projet
 - ✔ Centre → Options
 - ✔ Droite → Aperçu
 - ✔ Bas → Actions
 
-**Améliorations prévues :**
+**Améliorations visuelles prévues :**
 
-- ⬜ Lisibilité de l'arborescence
-- ⬜ Clarté des actions
-- ⬜ Confort de lecture de l'aperçu
-- ⬜ Meilleure visibilité des actions principales
+- ⬜ Amélioration de la lisibilité de l'arborescence
+- ⬜ Amélioration du confort de lecture de l'aperçu
+- ⬜ Renforcement de la hiérarchie visuelle
+- ⬜ Meilleure mise en valeur des actions principales
 
 ---
 
-### 🔍 Audit UX/UI
+### 🎨 Audit UI
 
-Validation progressive de chaque composant de l'interface :
+Validation progressive de chaque composant graphique de l'application :
 
 - ⬜ Thème général
-- ⬜ Boutons
-- ⬜ Cartes
-- ⬜ TreeView
-- ⬜ Aperçu
-- ⬜ Messages utilisateur
-- ⬜ Journaux
-- ⬜ Paramètres
 - ⬜ Palette de couleurs
 - ⬜ Typographie
+- ⬜ Cartes
+- ⬜ Boutons
+- ⬜ Arborescence
+- ⬜ Zone Aperçu
+- ⬜ Zone Actions
+- ⬜ Messages utilisateur
+- ⬜ Journaux (Logs)
+- ⬜ Paramètres
+- ⬜ Icônes
+- ⬜ Espacements
 
 Pour chaque sujet :
 
-- ✔ Analyse de plusieurs solutions
-- ✔ Comparaison des avantages et inconvénients
+- ✔ Analyse de plusieurs propositions
+- ✔ Comparaison des avantages et des inconvénients
 - ✔ Présentation de références visuelles
 - ✔ Validation avant implémentation
+- ✔ Respect de Fluent Design et de WinUI 3
 
 ---
 
 ### 🏁 Résultat attendu
 
-- ✔ Interface moderne
-- ✔ Identité graphique cohérente
+- ✔ Identité graphique unifiée
+- ✔ Interface moderne et harmonisée
 - ✔ Meilleure lisibilité
-- ✔ Expérience utilisateur améliorée
+- ✔ Composants visuels cohérents
+- ✔ Thèmes clair et sombre finalisés
 - ✔ Architecture ALC préservée
-- ✔ Philosophie de simplicité préservée
+- ✔ Pipeline utilisateur inchangé
+- ✔ Philosophie de simplicité conservée
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
