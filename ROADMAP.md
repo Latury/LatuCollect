@@ -46,7 +46,7 @@ Les fonctionnalités réellement implémentées sont documentées dans
 - [🚀 19. Version 0.15.0 — Architecture & Split MainViewModel](#v150)
 - [🚀 20. Version 0.16.0 — Finalisation Split MainViewModel](#v160)
 - [🚀 21. Version 0.17.0 — Stabilisation Async UI & finalisation architecture](#v170)
-- [🎨 22. Version 0.18.0 — Refonte UI, thèmes & audit UX](#v180)
+- [🎨 22. Version 0.18.0 — Refonte UI, thèmes & audit visuel](#v180)
 - [🚀 23. Version 0.19.0 — Finalisation & distribution](#v190)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1161,9 +1161,9 @@ Le découpage du `MainViewModel` reste volontairement progressif afin de préser
 
 ### **🎨 22. Version 0.18.0 — Refonte UI, thèmes & audit visuel**
 
-📌 Statut : ⬜ Prévue
+📌 Statut : 🟨 Audit graphique terminé — Implémentation en cours
 
-🎯 Objectif : Finaliser l'identité visuelle de LatuCollect afin d'offrir une interface moderne, cohérente et harmonisée, tout en préservant l'architecture ALC, le pipeline utilisateur et les principes de simplicité de l'application.
+🎯 Objectif : Définir et implémenter l'identité visuelle officielle de LatuCollect afin d'offrir une interface moderne, cohérente et harmonisée, tout en préservant l'architecture ALC, le pipeline utilisateur et les principes de simplicité de l'application.
 
 ---
 
@@ -1218,41 +1218,56 @@ Le découpage du `MainViewModel` reste volontairement progressif afin de préser
 
 ---
 
-### 🎨 Audit UI
+### 📚 Audit graphique
 
-Validation progressive de chaque composant graphique de l'application :
+Objectif :
 
-- ⬜ Thème général
-- ⬜ Palette de couleurs
-- ⬜ Typographie
-- ⬜ Cartes
-- ⬜ Boutons
-- ⬜ Arborescence
-- ⬜ Zone Aperçu
-- ⬜ Zone Actions
-- ⬜ Messages utilisateur
-- ⬜ Journaux (Logs)
-- ⬜ Paramètres
-- ⬜ Icônes
-- ⬜ Espacements
+Définir l'identité visuelle officielle de LatuCollect.
+
+Résultat :
+
+- ✅ 14 audits documentés
+- ✅ Design System défini
+- ✅ Principes graphiques validés
+- ✅ Référence officielle : UI_AUDIT.md
+
+---
+
+### 🎨 Audit du Design System
+
+Validation des principes graphiques de chaque composant :
+
+- ✅ Thème général
+- ✅ Palette de couleurs
+- ✅ Typographie
+- ✅ Cartes
+- 🟨 Boutons (principes validés, style final à confirmer)
+- ✅ Arborescence
+- ✅ Zone Aperçu
+- ✅ Zone Actions
+- ✅ Messages utilisateur
+- ✅ Journaux (Logs)
+- ✅ Paramètres
+- ✅ Icônes
+- ✅ Espacements
 
 Pour chaque sujet :
 
-- ✔ Analyse de plusieurs propositions
-- ✔ Comparaison des avantages et des inconvénients
-- ✔ Présentation de références visuelles
-- ✔ Validation avant implémentation
-- ✔ Respect de Fluent Design et de WinUI 3
+- ✅ Analyse de plusieurs propositions
+- ✅ Comparaison des avantages et des inconvénients
+- ✅ Présentation de références visuelles
+- ✅ Validation avant implémentation
+- ✅ Respect de Fluent Design et de WinUI 3
 
 ---
 
 ### 🏁 Résultat attendu
 
-- ✔ Identité graphique unifiée
-- ✔ Interface moderne et harmonisée
-- ✔ Meilleure lisibilité
-- ✔ Composants visuels cohérents
-- ✔ Thèmes clair et sombre finalisés
+- ⬜ Identité graphique unifiée
+- ⬜ Interface moderne et harmonisée
+- ⬜ Meilleure lisibilité
+- ⬜ Composants visuels cohérents
+- ⬜ Thèmes clair et sombre finalisés
 - ✔ Architecture ALC préservée
 - ✔ Pipeline utilisateur inchangé
 - ✔ Philosophie de simplicité conservée

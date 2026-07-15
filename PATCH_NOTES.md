@@ -101,6 +101,7 @@ Les documents du projet sont organisés par rôle :
 - [🏷️ Version 0.15.0](#version-0-15-0)
 - [🏷️ Version 0.16.0](#version-0-16-0)
 - [🏷️ Version 0.17.0](#version-0-17-0)
+- [🏷️ Version 0.18.0](#version-0-18-0)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -3343,8 +3344,6 @@ Aucune modification visible de l'interface.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 <a id="version-0-17-0"></a>
 
 ### **🏷️ VERSION 0.17.0**
@@ -3700,3 +3699,148 @@ Cette version poursuit l’objectif principal de LatuCollect :
 - ❌ Aucun comportement implicite inutile
 
 👉 Copier intelligent uniquement.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+<a id="version-0-18-0"></a>
+
+### **🏷️ VERSION 0.18.0**
+
+📅 Date : 15/07/2026
+
+📌 Statut : 🟡 En cours — Refonte UI, thèmes & audit visuel
+
+🎯 Objectif : Définir et implémenter l'identité visuelle officielle de LatuCollect afin d'offrir une interface moderne, cohérente et harmonisée, tout en préservant l'architecture ALC, le pipeline utilisateur et la philosophie de simplicité de l'application.
+
+---
+
+### **🎨 Audit graphique**
+
+#### ✅ Réalisation de l'audit visuel complet
+
+- ✅ Définition de l'identité visuelle officielle
+- ✅ Analyse de l'ensemble de l'interface
+- ✅ Validation des principes graphiques
+- ✅ Documentation des choix retenus
+- ✅ Création du Design System de référence
+
+---
+
+### **🖌️ Identité visuelle**
+
+#### ✅ Principes validés
+
+- ✅ Interface moderne et sobre
+- ✅ Respect du Fluent Design
+- ✅ Utilisation des composants WinUI 3 natifs
+- ✅ Hiérarchie visuelle clarifiée
+- ✅ Uniformisation des espacements
+- ✅ Harmonisation des icônes
+- ✅ Compatibilité thème clair / thème sombre
+
+---
+
+### **🖥️ Interface utilisateur**
+
+#### 🟡 Refonte progressive
+
+- 🟡 Harmonisation des cartes
+- 🟡 Refonte des boutons
+- 🟡 Uniformisation des zones de contenu
+- 🟡 Modernisation de l'arborescence
+- 🟡 Amélioration de la zone Aperçu
+- 🟡 Amélioration des panneaux d'actions
+- 🟡 Amélioration des dialogues
+- 🟡 Amélioration des messages utilisateur
+
+---
+
+### **🌙 Gestion des thèmes**
+
+#### 🟡 Harmonisation
+
+- 🟡 Finalisation du thème clair
+- 🟡 Finalisation du thème sombre
+- 🟡 Uniformisation des couleurs
+- 🟡 Vérification des contrastes
+- 🟡 Amélioration de l'accessibilité
+
+---
+
+### **🧱 Architecture**
+
+#### ✅ Préservation de l'architecture ALC
+
+Aucune modification du pipeline métier :
+
+```text
+Import → Lecture → Collection → Assemblage → Statistiques → Export
+```
+
+Conservation de :
+
+- ✅ Preview = Export
+- ✅ Séparation Core / UI
+- ✅ Structure principale de l'interface
+- ✅ Pipeline officiel
+
+---
+
+### **🚀 Performances**
+
+#### ✅ Objectifs conservés
+
+- ✅ Aucun blocage de l'interface
+- ✅ Préservation des optimisations existantes
+- ✅ Compatibilité avec les gros projets
+- ✅ Conservation du chargement partiel
+- ✅ Conservation des protections anti-freeze
+
+---
+
+### **🧪 Validation**
+
+Validation en cours sur :
+
+- 🟡 Interface utilisateur
+- 🟡 Thème clair
+- 🟡 Thème sombre
+- 🟡 Cohérence graphique
+- 🟡 Accessibilité
+- 🟡 Preview = Export
+- 🟡 Performances
+- 🟡 Recherche
+- 🟡 Export
+
+---
+
+### **📈 Résultat**
+
+Objectifs de cette version :
+
+- ⬜ Identité visuelle officielle
+- ⬜ Interface modernisée
+- ⬜ Composants harmonisés
+- ⬜ Thèmes finalisés
+- ⬜ Expérience utilisateur améliorée
+- ✔ Architecture ALC préservée
+- ✔ Pipeline inchangé
+- ✔ Philosophie de simplicité conservée
+
+---
+
+### **🏁 Objectif**
+
+La version **0.18.0** est consacrée exclusivement à la modernisation visuelle de LatuCollect.
+
+Aucune nouvelle fonctionnalité métier n'est introduite.
+
+Les évolutions concernent uniquement :
+
+- l'identité graphique ;
+- l'expérience utilisateur ;
+- la cohérence visuelle ;
+- les thèmes clair et sombre ;
+- l'accessibilité.
+
+L'objectif est de finaliser l'apparence officielle de l'application tout en garantissant la stabilité, les performances et le respect de l'architecture ALC.
